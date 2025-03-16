@@ -1,13 +1,13 @@
 spring:
   datasource:
-    url:
+    url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
     username: sa
     password:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: update #자동생성
     show-sql: true
     properties:
       hibernate:
