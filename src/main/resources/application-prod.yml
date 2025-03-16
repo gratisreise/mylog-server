@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/yourdb}
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+jwt:
+  secret: ${JWT_SECRET_PROD}
+  expiration: 86400000 # 24 hours in milliseconds
+
+oauth2:
+  client:
+    google:
+      client-id: ${GOOGLE_CLIENT_ID_PROD}
+      client-secret: ${GOOGLE_CLIENT_SECRET_PROD}
+      redirect-uri: https://your-domain.com/api/login/oauth2/code/google
+    github:
+      client-id: ${GITHUB_CLIENT_ID_PROD}
+      client-secret: ${GITHUB_CLIENT_SECRET_PROD}
+      redirect-uri: https://your-domain.com/api/login/oauth2/code/github
+
+sentry:
+  dsn: ${SENTRY_DSN_PROD}
+  environment: production
+
+aws:
+  s3:
+    bucket: ${AWS_S3_BUCKET_PROD}
+    region: ${AWS_REGION:us-east-1}
+    credentials:
+      access-key: ${AWS_ACCESS_KEY_PROD}
+      secret-key: ${AWS_SECRET_KEY_PROD}
