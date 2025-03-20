@@ -1,8 +1,10 @@
 package com.mylog.service;
 
 
+import com.mylog.common.ResultCode;
 import com.mylog.dto.SignUpRequest;
 import com.mylog.entity.Member;
+import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,9 @@ public class MemberService {
     @Transactional
     public void saveMember(SignUpRequest request) {
         String cryptedPassword = passwordEncoder.encode(request.getPassword());
+        if (cryptedPassword == null) {
+            throw new CMissingDataException(ResultCode.DATA_MISSED.getMsg());
+        }
         Member member = Member.builder()
             .email(request.getEmail())
             .memberName(request.getMemberName())
