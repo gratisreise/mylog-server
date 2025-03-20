@@ -12,6 +12,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    private static final String[] PUBLIC_MATCHERS = {
+        "/api/auth/**",
+        "/api/members/sign-up",
+        "/swagger-ui/**",
+        "/v3/api-docs/**",
+        "h2-console/**",
+        "/actuator/**"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -21,13 +29,16 @@ public class SecurityConfig {
             .formLogin(AbstractHttpConfigurer::disable)  // 폼 로그인 비활성화
             .httpBasic(AbstractHttpConfigurer::disable)  // HTTP Basic 인증 비활성화
 
-            // 모든 요청 허용
+            // 요청 정책
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
+                .requestMatchers(PUBLIC_MATCHERS).permitAll() // 해당 url 허용
+                .anyRequest().authenticated() // 나머지 접근 방지
             )
+
             //h2 콘솔 프레임 표시 허용
             .headers(headers -> headers
                 .frameOptions(frame -> frame.disable()))
+
             // 세션 설정
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
