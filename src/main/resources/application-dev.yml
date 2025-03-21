@@ -18,10 +18,10 @@ spring:
       enabled: true
       path: /h2-console
 
-#jwt:
-#  secret:
-#  expiration: 86400000 # 24 hours in milliseconds
-#
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000 # 24 hours in milliseconds
+
 #oauth2:
 #  client:
 #    google:
