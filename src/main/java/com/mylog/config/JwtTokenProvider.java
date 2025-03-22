@@ -10,16 +10,20 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
     private final SecretKey key;
-    private final long tokenValidityInMilliseconds = 1000 * 60 * 60 * 24; // 24시간
+    private final long tokenValidity; // 24시간
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
+    public JwtTokenProvider(
+        @Value("${jwt.secret}") String secretKey,
+        @Value("${jwt.expiration}") long tokenValidity
+    ) {
         // HMAC SHA-512 알고리즘을 사용하는 키 생성
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+        this.tokenValidity = tokenValidity;
     }
 
     public String createToken(String email) {
         Date now = new Date();
-        Date validity = new Date(now.getTime() + tokenValidityInMilliseconds);
+        Date validity = new Date(now.getTime() + tokenValidity);
 
         return Jwts.builder()
             .subject(email)

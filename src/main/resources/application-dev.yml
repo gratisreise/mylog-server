@@ -20,7 +20,7 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
-  expiration: 86400000 # 24 hours in milliseconds
+  expiration: 86400000  # 24 hours in milliseconds
 
 #oauth2:
 #  client:
