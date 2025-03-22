@@ -36,18 +36,19 @@ public class AuthService {
         return createLoginResponse(request, refreshToken);
     }
 
-    private void saveUserInfoToSecurityContext(LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
     //액세스 리프레쉬
     public RefreshResponse refresh(RefreshRequest request) {
         String email = jwtUtil.getEmail(request.getRefreshToken());
         validateRefreshToken(request, email);
         return createRefreshResponse(email);
+    }
+
+
+    private void saveUserInfoToSecurityContext(LoginRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     private RefreshResponse createRefreshResponse(String email) {

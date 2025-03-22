@@ -10,24 +10,28 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
-    private final RedisTemplate<String, String> redisTemplate;
+    private static final String KEY_PREFIX = "refreshToken:";
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 7L;
+
     private final ValueOperations<String, String> valueOperations;
 
-
-    // 리프레쉬토큰 저장
-    public void saveRefreshToken(String email, String refreshToken){
-        redisTemplate.opsForValue().set(generateKey(email), refreshToken, 7, TimeUnit.DAYS);
+    public void saveRefreshToken(String email, String refreshToken) {
+        valueOperations.set(
+            generateKey(email),
+            refreshToken,
+            REFRESH_TOKEN_EXPIRE_TIME,
+            TimeUnit.DAYS
+        );
     }
 
-    //리프레쉬 토큰검증
-    public boolean validateRefreshToken(String email, String refreshToken){
-        String redisRefreshToken = redisTemplate.opsForValue().get(generateKey(email));
-        return redisRefreshToken != null && redisRefreshToken.equals(refreshToken);
+    public boolean validateRefreshToken(String email, String refreshToken) {
+        String storedToken = valueOperations.get(generateKey(email));
+        return storedToken != null && storedToken.equals(refreshToken);
     }
 
-    //키생성
-    private String generateKey(String email){
-        return "refreshToken:" + email;
+    private String generateKey(String email) {
+        return KEY_PREFIX + email;
     }
+
 
 }
