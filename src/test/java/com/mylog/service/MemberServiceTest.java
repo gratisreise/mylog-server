@@ -11,14 +11,17 @@ import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
+@ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
 
 
@@ -34,10 +37,7 @@ class MemberServiceTest {
     @Captor
     private ArgumentCaptor<Member> memberCaptor;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+
 
     @Test
     void 회원정보저장_유요한회원정보_성공() {
