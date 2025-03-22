@@ -15,7 +15,7 @@ public enum ResultCode {
     //실패
     FAILED(-100, "failed"),
     DATA_MISSED(-101, "정보가 없습니다."),
-    DATA_DUPLICATED(-102, "정보가 중복됩니다."),
+    DATA_DUPLICATED(-102, "중복된 정보입니다."),
     DATA_INVALID(-103, "유효하지 않은 정보입니다."),
     UNKNOWN_ERROR(-1, "정의되지 않은 에러입니다.")
     ;
