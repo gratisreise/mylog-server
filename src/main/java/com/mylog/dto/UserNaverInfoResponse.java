@@ -1,5 +1,6 @@
 package com.mylog.dto;
 
+import com.mylog.dto.social.NaverUserInfo;
 import lombok.Getter;
 import lombok.Setter;
 

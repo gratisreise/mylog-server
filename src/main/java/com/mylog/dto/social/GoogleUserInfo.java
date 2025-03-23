@@ -1,7 +1,5 @@
-package com.mylog.dto;
+package com.mylog.dto.social;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import lombok.Getter;
 import lombok.Setter;
 

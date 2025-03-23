@@ -1,4 +1,4 @@
-package com.mylog.dto;
+package com.mylog.dto.social;
 
 import com.mylog.enums.OauthProvider;
 import lombok.Getter;

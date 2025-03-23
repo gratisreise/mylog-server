@@ -5,14 +5,15 @@ import com.mylog.common.SingleResult;
 import com.mylog.dto.LoginRequest;
 import com.mylog.dto.LoginResponse;
 
-import com.mylog.dto.NaverUserInfo;
-import com.mylog.dto.OAuthRequest;
+import com.mylog.dto.social.OAuthRequest;
 import com.mylog.dto.RefreshRequest;
 import com.mylog.dto.RefreshResponse;
 import com.mylog.enums.OauthProvider;
+import com.mylog.interfaces.OAuth2UserService;
 import com.mylog.service.AuthService;
 
 import com.mylog.service.OAuthService;
+import com.mylog.service.social.OAuth2UserServiceFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AuthController {
     private final AuthService authService;
-    private final OAuthService oauthService;
+    private final OAuth2UserServiceFactory oAuth2UserServiceFactory;
 
     @PostMapping("/login")
     public SingleResult<LoginResponse> login(@RequestBody LoginRequest request){
@@ -41,13 +42,8 @@ public class AuthController {
 
     @PostMapping("/oauth/login")
     public SingleResult<LoginResponse> socialLogin(@RequestBody OAuthRequest request){
-        LoginResponse response = new LoginResponse("", "");
-        if(request.getProvider() == OauthProvider.GOOGLE){
-            response = oauthService.socialGoogleLogin(request);
-        } else if(request.getProvider() == OauthProvider.NAVER){
-            response = oauthService.socialNaverLogin(request);
-        }
-        return ResponseService.getSingleResult(response);
+        OAuth2UserService service = oAuth2UserServiceFactory.getOAuth2UserService(request.getProvider());
+        return ResponseService.getSingleResult(service.login(request));
     }
 
 //    @PostMapping("/oauth/naver/login")
