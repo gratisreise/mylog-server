@@ -43,6 +43,10 @@ oauth2:
       client-id: ${NAVER_CLIENT_ID}
       client-secret: ${NAVER_CLIENT_SECRET}
       redirect-uri: http://localhost:3000
+    kakao:
+      client-id: ${KAKAO_CLIENT_ID}
+      client-secret: ${KAKAO_CLIENT_SECRET}
+      redirect-uri: http://localhost:3000
 
 #sentry:
 #  dsn: ${SENTRY_DSN_DEV}

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 public class OAuth2UserServiceFactory {
     private final GoogleOAuth2UserService googleOAuth2UserService;
     private final NaverOAuth2UserService naverOAuth2UserService;
+    private final KakaoOAuth2UserService kakaoOAuth2UserService;
 
     public OAuth2UserService getOAuth2UserService(OauthProvider provider){
         switch(provider){
@@ -18,6 +19,8 @@ public class OAuth2UserServiceFactory {
                 return googleOAuth2UserService;
             case NAVER:
                 return naverOAuth2UserService;
+            case KAKAO:
+                return kakaoOAuth2UserService;
             default:
                 throw new CInvalidDataException("지원 하지 않는 OAuth 제공자입니다." + provider);
         }

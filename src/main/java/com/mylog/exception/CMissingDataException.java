@@ -1,5 +1,8 @@
 package com.mylog.exception;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class CMissingDataException extends RuntimeException {
 
     public CMissingDataException(String message) {

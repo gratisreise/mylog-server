@@ -7,6 +7,7 @@ import com.mylog.dto.RefreshRequest;
 import com.mylog.dto.RefreshResponse;
 import com.mylog.entity.Member;
 import com.mylog.exception.CInvalidDataException;
+import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -64,7 +65,7 @@ public class AuthService {
 
     private Member createMember(LoginRequest request) {
         return memberRepository.findByEmail(request.getEmail())
-            .orElseThrow();
+            .orElseThrow(CMissingDataException::new);
     }
 
     private LoginResponse createLoginResponse(LoginRequest request, String refreshToken) {

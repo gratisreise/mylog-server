@@ -9,6 +9,7 @@ import com.mylog.dto.social.OAuthRequest;
 import com.mylog.dto.RefreshRequest;
 import com.mylog.dto.RefreshResponse;
 import com.mylog.enums.OauthProvider;
+import com.mylog.interfaces.OAuth2UserInfo;
 import com.mylog.interfaces.OAuth2UserService;
 import com.mylog.service.AuthService;
 
@@ -45,11 +46,11 @@ public class AuthController {
         return ResponseService.getSingleResult(service.login(request));
     }
 
-//    @PostMapping("/oauth/naver/login")
-//    public SingleResult<String> tokenTest(@RequestBody OAuthRequest request){
-//        log.info("Received authorization code: {}", request.getCode());
-//        log.info("Provider: {}", request.getProvider());
-//        return ResponseService.getSingleResult(oauthService.getNaverToken(request));
-//    }
+    @PostMapping("/oauth/kakao/login")
+    public SingleResult<LoginResponse> tokenTest(@RequestBody OAuthRequest request){
+        OAuth2UserService service = oAuth2UserServiceFactory.getOAuth2UserService(request.getProvider());
+
+        return ResponseService.getSingleResult(service.login(request));
+    }
 
 }
