@@ -34,6 +34,12 @@ public class ResponseService {
         result.setMessage(resultCode.getMsg());
         return result;
     }
+    public static CommonResult getFailResult(Exception e) {
+        CommonResult result = new CommonResult();
+        result.setCode(-1);
+        result.setMessage(e.getMessage());
+        return result;
+    }
 
     private static void setSuccessResult(CommonResult result) {
         result.setCode(ResultCode.SUCCESS.getCode());

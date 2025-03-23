@@ -28,24 +28,18 @@ spring:
 
 
 jwt:
-  access_secret: ${ACCESS_JWT_SECRET}
+  access_secret: ${ACCESS_TOKEN_SECRET}
   access_expiration: 30  # 1hours
   refresh_secret: ${REFRESH_TOKEN_SECRET}
   refresh_expiration: 7 #1주
 
+oauth2:
+  client:
+    google:
+      client-id: ${GOOGLE_CLIENT_ID}
+      client-secret: ${GOOGLE_CLIENT_SECRET}
+      redirect-uri: http://localhost:3000
 
-
-#oauth2:
-#  client:
-#    google:
-#      client-id: ${GOOGLE_CLIENT_ID_DEV}
-#      client-secret: ${GOOGLE_CLIENT_SECRET_DEV}
-#      redirect-uri: http://localhost:8080/api/login/oauth2/code/google
-#    github:
-#      client-id: ${GITHUB_CLIENT_ID_DEV}
-#      client-secret: ${GITHUB_CLIENT_SECRET_DEV}
-#      redirect-uri: http://localhost:8080/api/login/oauth2/code/github
-#
 #sentry:
 #  dsn: ${SENTRY_DSN_DEV}
 #  environment: development

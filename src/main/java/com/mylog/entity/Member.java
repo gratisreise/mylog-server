@@ -1,7 +1,10 @@
 package com.mylog.entity;
 
+import com.mylog.enums.OauthProvider;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,7 +32,7 @@ public class Member {
     @Column(length = 30)
     private String email;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 20)
     private String password;
 
     @Column(length = 30, nullable = false)
@@ -44,8 +47,11 @@ public class Member {
     @Column(length = 200)
     private String bio;
 
+    @Column(length = 20)
+    @Enumerated(EnumType.STRING)
+    private OauthProvider provider;
 
-
+    private String providerId;
 
     @CreatedDate
     private LocalDateTime createdAt;

@@ -26,11 +26,10 @@ public class AuthService {
 
     //로그인
     public LoginResponse login(LoginRequest request) {
-        String refreshToken = jwtUtil.createRefreshToken(request.getEmail());
-
         //컨텍스트 저장
         saveUserInfoToSecurityContext(request);
         //리프레쉬 토큰저장
+        String refreshToken = jwtUtil.createRefreshToken(request.getEmail());
         refreshTokenService.saveRefreshToken(request.getEmail(), refreshToken);
         //로그인 응답반환
         return createLoginResponse(request, refreshToken);
