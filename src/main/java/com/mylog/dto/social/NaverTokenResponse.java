@@ -13,6 +13,4 @@ public class NaverTokenResponse {
     private String refreshToken;
     @JsonProperty("token_type")
     private String tokenType;
-    @JsonProperty("expires_in")
-    private String expiresIn; // 네이버는 문자열로 반환
 }

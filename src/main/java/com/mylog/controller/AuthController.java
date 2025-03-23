@@ -12,7 +12,6 @@ import com.mylog.enums.OauthProvider;
 import com.mylog.interfaces.OAuth2UserService;
 import com.mylog.service.AuthService;
 
-import com.mylog.service.OAuthService;
 import com.mylog.service.social.OAuth2UserServiceFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
