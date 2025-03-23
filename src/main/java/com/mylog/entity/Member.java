@@ -41,7 +41,7 @@ public class Member {
     @Column(length = 30)
     private String email;
 
-    @Column(length = 20)
+    @Column(length = 150)
     private String password;
 
     @Column(length = 30, nullable = false)
@@ -56,10 +56,11 @@ public class Member {
     @Column(length = 200)
     private String bio;
 
-    @Column(length = 20)
+    @Column(length = 20, nullable = false)
     @Enumerated(EnumType.STRING)
     private OauthProvider provider;
 
+    @Column(length = 200, nullable = false)
     private String providerId;
 
     @CreatedDate

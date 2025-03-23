@@ -1,5 +1,6 @@
 package com.mylog.config;
 
+import com.mylog.repository.MemberRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,15 +19,18 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil tokenProvider;
     private final UserDetailsService userDetailsService;
+    private final MemberRepository memberRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                   HttpServletResponse response,
                                   FilterChain filterChain) throws ServletException, IOException {
+
         String jwt = resolveToken(request);
-        
+
         if (StringUtils.hasText(jwt) && tokenProvider.validateAccessToken(jwt)) {
-            String email = tokenProvider.getEmail(jwt);
+            Long memberId = tokenProvider.getIdNumber(jwt);
+            String email = memberRepository.findById(memberId).orElseThrow().getEmail();
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
             
             UsernamePasswordAuthenticationToken authentication =

@@ -1,5 +1,6 @@
 package com.mylog.config;
 
+import com.mylog.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtUtil token;
+    private final MemberRepository memberRepository;
 
     private static final String[] PUBLIC_MATCHERS = {
         "/api/auth/**",
@@ -68,7 +70,7 @@ public class SecurityConfig {
             )
             //jwt 커스텀필터 넣기
             .addFilterBefore(
-                new JwtAuthenticationFilter(token, userDetailsService),
+                new JwtAuthenticationFilter(token, userDetailsService, memberRepository),
                 UsernamePasswordAuthenticationFilter.class
             )
 

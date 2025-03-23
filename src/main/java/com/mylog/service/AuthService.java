@@ -29,18 +29,28 @@ public class AuthService {
     public LoginResponse login(LoginRequest request) {
         //컨텍스트 저장
         saveUserInfoToSecurityContext(request);
+        Member member = createMember(request);
         //리프레쉬 토큰저장
-        String refreshToken = jwtUtil.createRefreshToken(request.getEmail());
-        refreshTokenService.saveRefreshToken(request.getEmail(), refreshToken);
+        String refreshToken = jwtUtil.createRefreshToken(member.getId());
+        String accessToken = jwtUtil.createAccessToken(member.getId());
+        refreshTokenService.saveRefreshToken(member.getId().toString(), refreshToken);
+
         //로그인 응답반환
-        return createLoginResponse(request, refreshToken);
+        return new LoginResponse(accessToken, refreshToken);
     }
 
     //액세스 리프레쉬
     public RefreshResponse refresh(RefreshRequest request) {
-        String email = jwtUtil.getEmail(request.getRefreshToken());
-        validateRefreshToken(request, email);
-        return createRefreshResponse(email);
+        String memberId = jwtUtil.getId(request.getRefreshToken());
+
+        //토큰 검증
+        if (!refreshTokenService.validateRefreshToken(memberId, request.getRefreshToken())) {
+            throw new CInvalidDataException("유요하지 않은 토큰입니다.");
+        }
+
+        //액세스 토큰 발급
+        String accessToken = jwtUtil.createAccessToken(Long.valueOf(memberId));
+        return new RefreshResponse(accessToken);
     }
 
 
@@ -51,14 +61,13 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    private RefreshResponse createRefreshResponse(String email) {
-        Long memberId = memberRepository.findByEmail(email).orElseThrow().getId();
-        String accessToken = jwtUtil.createAccessToken(email, memberId);
+    private RefreshResponse createRefreshResponse(Long id) {
+        String accessToken = jwtUtil.createAccessToken(id);
         return new RefreshResponse(accessToken);
     }
 
-    private void validateRefreshToken(RefreshRequest request, String email) {
-        if (!refreshTokenService.validateRefreshToken(email, request.getRefreshToken())) {
+    private void validateRefreshToken(RefreshRequest request, String memberId) {
+        if (!refreshTokenService.validateRefreshToken(memberId, request.getRefreshToken())) {
             throw new CInvalidDataException("유요하지 않은 토큰입니다.");
         }
     }
@@ -68,11 +77,4 @@ public class AuthService {
             .orElseThrow(CMissingDataException::new);
     }
 
-    private LoginResponse createLoginResponse(LoginRequest request, String refreshToken) {
-        Long memberId = createMember(request).getId();
-        return new LoginResponse(
-            jwtUtil.createAccessToken(request.getEmail(), memberId),
-            refreshToken
-        );
-    }
 }

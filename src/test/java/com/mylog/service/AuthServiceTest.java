@@ -59,8 +59,8 @@ class AuthServiceTest {
 
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
             .thenReturn(authentication);
-        when(jwtUtil.createRefreshToken(email)).thenReturn(refreshToken);
-        when(jwtUtil.createAccessToken(email, memberId)).thenReturn(accessToken);
+        when(jwtUtil.createRefreshToken(memberId)).thenReturn(refreshToken);
+        when(jwtUtil.createAccessToken(memberId)).thenReturn(accessToken);
         when(memberRepository.findByEmail(email)).thenReturn(Optional.of(mockMember));
 
         // when
@@ -72,8 +72,8 @@ class AuthServiceTest {
         assertThat(response.getRefreshToken()).isEqualTo(refreshToken);
 
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
-        verify(jwtUtil).createRefreshToken(email);
-        verify(jwtUtil).createAccessToken(email, memberId);
+        verify(jwtUtil).createRefreshToken(memberId);
+        verify(jwtUtil).createAccessToken(memberId);
         verify(memberRepository).findByEmail(email);
         verify(refreshTokenService).saveRefreshToken(email, refreshToken);
     }

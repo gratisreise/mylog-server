@@ -32,12 +32,12 @@ public class JwtUtil {
     }
 
 
-    public String createAccessToken(String email, Long member_id) {
+    public String createAccessToken(Long member_id) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + accessValidity);
 
         return Jwts.builder()
-            .subject(email)
+            .subject(member_id.toString())
             .claim("member_id", member_id)
             .issuedAt(now)
             .expiration(validity)
@@ -45,22 +45,19 @@ public class JwtUtil {
             .compact();
     }
 
-
-    public String createRefreshToken(String email) {
+    public String createRefreshToken(Long id) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + refreshValidity);
 
         return Jwts.builder()
-            .subject(email)
+            .subject(id.toString())
             .issuedAt(now)
             .expiration(validity)
             .signWith(refreshKey, SIG.HS512)
             .compact();
     }
 
-
-
-    public String getEmail(String token) {
+    public String getId(String token) {
         return Jwts.parser()
             .verifyWith(accessKey)  // 0.12.x 버전의 새로운 검증 방식, 유요한지?, 만료되었는지
             .build()
@@ -69,16 +66,14 @@ public class JwtUtil {
             .getSubject();
     }
 
-
-    public String getMemberId(String token) {
+    public Long getIdNumber(String token){
         return Jwts.parser()
             .verifyWith(accessKey)
             .build()
             .parseSignedClaims(token)
             .getPayload()
-            .get("member_id", String.class);
+            .get("member_id", Long.class);
     }
-
 
 
     public boolean validateAccessToken(String token) {

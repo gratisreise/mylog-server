@@ -15,17 +15,17 @@ public class RefreshTokenService {
 
     private final ValueOperations<String, String> valueOperations;
 
-    public void saveRefreshToken(String email, String refreshToken) {
+    public void saveRefreshToken(String id, String refreshToken) {
         valueOperations.set(
-            generateKey(email),
+            generateKey(id),
             refreshToken,
             REFRESH_TOKEN_EXPIRE_TIME,
             TimeUnit.DAYS
         );
     }
 
-    public boolean validateRefreshToken(String email, String refreshToken) {
-        String storedToken = valueOperations.get(generateKey(email));
+    public boolean validateRefreshToken(String memberId, String refreshToken) {
+        String storedToken = valueOperations.get(generateKey(memberId));
         return storedToken != null && storedToken.equals(refreshToken);
     }
 
