@@ -2,17 +2,19 @@ package com.mylog.controller;
 
 import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;
-import com.mylog.dto.GoogleTokenResponse;
 import com.mylog.dto.LoginRequest;
 import com.mylog.dto.LoginResponse;
 
+import com.mylog.dto.NaverUserInfo;
 import com.mylog.dto.OAuthRequest;
 import com.mylog.dto.RefreshRequest;
 import com.mylog.dto.RefreshResponse;
+import com.mylog.enums.OauthProvider;
 import com.mylog.service.AuthService;
 
 import com.mylog.service.OAuthService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
     private final AuthService authService;
     private final OAuthService oauthService;
@@ -37,10 +40,21 @@ public class AuthController {
 
 
     @PostMapping("/oauth/login")
-    public SingleResult<LoginResponse> tokenTest(@RequestBody OAuthRequest request){
-        return ResponseService.getSingleResult(oauthService.socialLogin(request));
+    public SingleResult<LoginResponse> socialLogin(@RequestBody OAuthRequest request){
+        LoginResponse response = new LoginResponse("", "");
+        if(request.getProvider() == OauthProvider.GOOGLE){
+            response = oauthService.socialGoogleLogin(request);
+        } else if(request.getProvider() == OauthProvider.NAVER){
+            response = oauthService.socialNaverLogin(request);
+        }
+        return ResponseService.getSingleResult(response);
     }
 
-
+//    @PostMapping("/oauth/naver/login")
+//    public SingleResult<String> tokenTest(@RequestBody OAuthRequest request){
+//        log.info("Received authorization code: {}", request.getCode());
+//        log.info("Provider: {}", request.getProvider());
+//        return ResponseService.getSingleResult(oauthService.getNaverToken(request));
+//    }
 
 }

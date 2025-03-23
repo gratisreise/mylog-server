@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public CommonResult handleRuntimeException(RuntimeException ex){
-        return ResponseService.getFailResult(ResultCode.UNKNOWN_ERROR);
+        return ResponseService.getFailResult(ex);
     }
 
 }

@@ -39,6 +39,10 @@ oauth2:
       client-id: ${GOOGLE_CLIENT_ID}
       client-secret: ${GOOGLE_CLIENT_SECRET}
       redirect-uri: http://localhost:3000
+    naver:
+      client-id: ${NAVER_CLIENT_ID}
+      client-secret: ${NAVER_CLIENT_SECRET}
+      redirect-uri: http://localhost:3000
 
 #sentry:
 #  dsn: ${SENTRY_DSN_DEV}

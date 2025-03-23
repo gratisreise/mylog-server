@@ -1,15 +1,17 @@
 package com.mylog.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
-public class GoogleUserInfo {
+@ToString
+public class NaverUserInfo {
     private String id;
-    private String email;
+    private String nickname;
     private String name;
-    private String picture;
+    @JsonProperty("profile_image")
+    private String profileImage;
 }
