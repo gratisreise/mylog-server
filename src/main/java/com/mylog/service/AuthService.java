@@ -27,12 +27,16 @@ public class AuthService {
 
     //로그인
     public LoginResponse login(LoginRequest request) {
-        //컨텍스트 저장
-        saveUserInfoToSecurityContext(request);
+        //비밀번호 검증
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        );
+
         Member member = createMember(request);
+
         //리프레쉬 토큰저장
         String refreshToken = jwtUtil.createRefreshToken(member.getId());
-        String accessToken = jwtUtil.createAccessToken(member.getId());
+        String accessToken = jwtUtil.createAccessToken(member.getId(), member.getProvider());
         refreshTokenService.saveRefreshToken(member.getId().toString(), refreshToken);
 
         //로그인 응답반환
@@ -49,28 +53,10 @@ public class AuthService {
         }
 
         //액세스 토큰 발급
-        String accessToken = jwtUtil.createAccessToken(Long.valueOf(memberId));
+        String accessToken = jwtUtil.createAccessToken(Long.valueOf(memberId), request.getProvider());
         return new RefreshResponse(accessToken);
     }
 
-
-    private void saveUserInfoToSecurityContext(LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
-    private RefreshResponse createRefreshResponse(Long id) {
-        String accessToken = jwtUtil.createAccessToken(id);
-        return new RefreshResponse(accessToken);
-    }
-
-    private void validateRefreshToken(RefreshRequest request, String memberId) {
-        if (!refreshTokenService.validateRefreshToken(memberId, request.getRefreshToken())) {
-            throw new CInvalidDataException("유요하지 않은 토큰입니다.");
-        }
-    }
 
     private Member createMember(LoginRequest request) {
         return memberRepository.findByEmail(request.getEmail())

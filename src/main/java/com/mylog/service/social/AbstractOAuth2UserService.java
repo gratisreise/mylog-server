@@ -25,7 +25,7 @@ public abstract class AbstractOAuth2UserService implements OAuth2UserService {
         String refreshToken = jwtUtil.createRefreshToken(member.getId());
         refreshTokenService.saveRefreshToken(member.getEmail(), refreshToken);
 
-        String jwtAccessToken = jwtUtil.createAccessToken(member.getId());
+        String jwtAccessToken = jwtUtil.createAccessToken(member.getId(), member.getProvider());
         return new LoginResponse(jwtAccessToken, refreshToken);
     }
 }

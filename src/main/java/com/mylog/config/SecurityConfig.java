@@ -1,6 +1,7 @@
 package com.mylog.config;
 
 import com.mylog.repository.MemberRepository;
+import com.mylog.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -70,7 +71,9 @@ public class SecurityConfig {
             )
             //jwt 커스텀필터 넣기
             .addFilterBefore(
-                new JwtAuthenticationFilter(token, userDetailsService, memberRepository),
+                new JwtAuthenticationFilter(token,
+                    userDetailsService,
+                    memberRepository),
                 UsernamePasswordAuthenticationFilter.class
             )
 

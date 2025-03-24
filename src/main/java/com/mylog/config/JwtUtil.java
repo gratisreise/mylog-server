@@ -1,5 +1,6 @@
 package com.mylog.config;
 
+import com.mylog.enums.OauthProvider;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.Jwts.SIG;
 import io.jsonwebtoken.security.Keys;
@@ -32,13 +33,14 @@ public class JwtUtil {
     }
 
 
-    public String createAccessToken(Long member_id) {
+    public String createAccessToken(Long member_id, OauthProvider provider) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + accessValidity);
 
         return Jwts.builder()
             .subject(member_id.toString())
             .claim("member_id", member_id)
+            .claim("provider", provider.name())
             .issuedAt(now)
             .expiration(validity)
             .signWith(accessKey, Jwts.SIG.HS512) // 0.12.x 버전의 새로운 서명 방식
@@ -75,6 +77,14 @@ public class JwtUtil {
             .get("member_id", Long.class);
     }
 
+    public OauthProvider getProvider(String token) {
+        return Jwts.parser()
+            .verifyWith(accessKey)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload()
+            .get("provider", OauthProvider.class);
+    }
 
     public boolean validateAccessToken(String token) {
         try {
@@ -87,6 +97,7 @@ public class JwtUtil {
             return false;
         }
     }
+
 
 
 }

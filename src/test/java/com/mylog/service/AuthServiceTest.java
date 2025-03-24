@@ -60,7 +60,7 @@ class AuthServiceTest {
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
             .thenReturn(authentication);
         when(jwtUtil.createRefreshToken(memberId)).thenReturn(refreshToken);
-        when(jwtUtil.createAccessToken(memberId)).thenReturn(accessToken);
+        when(jwtUtil.createAccessToken(memberId, )).thenReturn(accessToken);
         when(memberRepository.findByEmail(email)).thenReturn(Optional.of(mockMember));
 
         // when

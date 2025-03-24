@@ -1,6 +1,8 @@
 package com.mylog.config;
 
+import com.mylog.enums.OauthProvider;
 import com.mylog.repository.MemberRepository;
+import com.mylog.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,10 +31,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt = resolveToken(request);
 
         if (StringUtils.hasText(jwt) && tokenProvider.validateAccessToken(jwt)) {
-            Long memberId = tokenProvider.getIdNumber(jwt);
-            String email = memberRepository.findById(memberId).orElseThrow().getEmail();
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-            
+            String memberId = tokenProvider.getId(jwt);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(memberId);
+
             UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 

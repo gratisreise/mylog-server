@@ -40,5 +40,12 @@ public class MemberService {
         log.info("member: {}", member.toString());
         memberRepository.save(member);
     }
+    //멤버 조회
+    public Member getMember(){
+
+        return null;
+    }
+
+
 
 }
