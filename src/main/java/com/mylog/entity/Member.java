@@ -28,7 +28,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true)
+@Builder
 @Getter
 @Setter
 @Table(indexes = {
@@ -70,14 +70,11 @@ public class Member {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public Member update(UpdateMemberRequest request) {
-        return this.toBuilder()
-            .email(request.getEmail())
-            .memberName(request.getMemberName())
-            .nickname(request.getNickname())
-            .bio(request.getBio())
-            .profileImg(request.getProfileImage())
-            .build();
-
+    public void update(UpdateMemberRequest request) {
+        this.password = request.getPassword();
+        this.memberName = request.getMemberName();
+        this.nickname = request.getNickname();
+        this.profileImg = request.getProfileImage();
+        this.bio = request.getBio();
     }
 }

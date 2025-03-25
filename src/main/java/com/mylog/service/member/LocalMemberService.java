@@ -28,6 +28,11 @@ public class LocalMemberService implements MemberService{
     //회원가입
     @Transactional
     public void saveMember(SignUpRequest request) {
+
+        if(memberRepository.existsByEmail(request.getEmail())){
+            throw new CMissingDataException("이미 존재하는 이메일입니다.");
+        }
+
         String cryptedPassword = passwordEncoder.encode(request.getPassword());
         log.info("cryptedPassword: {}", cryptedPassword);
         if (cryptedPassword == null) {
