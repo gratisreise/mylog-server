@@ -42,7 +42,15 @@ public class MemberController {
     }
 
 
-
+    @PutMapping("/me")
+    public CommonResult updateMember(
+        @RequestBody @Valid UpdateMemberRequest request,
+        @AuthenticationPrincipal CustomUser customUser
+    ){
+        MemberService service = factory.getMemberService(customUser.getProvider());
+        service.updateMember(request, customUser);
+        return ResponseService.getSuccessResult();
+    }
 
 
 

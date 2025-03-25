@@ -56,7 +56,10 @@ public class LocalMemberService implements MemberService{
     @Override
     @Transactional
     public void updateMember(UpdateMemberRequest request, CustomUser customUser) {
-
+        String email = customUser.getUsername();
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(CMissingDataException::new);
+        member.update(request);
     }
 
     @Override

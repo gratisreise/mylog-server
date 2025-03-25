@@ -38,7 +38,10 @@ public class SocialMemberService implements MemberService{
     @Override
     @Transactional
     public void updateMember(UpdateMemberRequest request, CustomUser customUser) {
-
+        memberRepository
+            .findById(Long.valueOf(customUser.getUsername()))
+            .orElseThrow(CMissingDataException::new)
+            .update(request);
     }
 
     @Override
