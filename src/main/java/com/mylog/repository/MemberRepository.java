@@ -17,4 +17,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // provider와 providerId 조합의 존재 여부 확인
     boolean existsByProviderAndProviderId(OauthProvider provider, String providerId);
 
+    void deleteByEmail(String email);
 }

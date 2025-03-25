@@ -1,5 +1,6 @@
 package com.mylog.dto;
 
+import com.mylog.enums.OauthProvider;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -15,4 +16,6 @@ public class SignUpRequest {
     private String memberName;
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$")
     private String password;
+
+    private OauthProvider provider;
 }

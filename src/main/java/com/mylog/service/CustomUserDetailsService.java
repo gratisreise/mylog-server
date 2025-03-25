@@ -23,7 +23,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
 
     @Override
-    //일반 로그인에서 반드시 사용되니깐??
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
         Member member = memberRepository.findById(Long.valueOf(id)).orElseThrow();
         UserDetails userDetails;
@@ -33,7 +32,6 @@ public class CustomUserDetailsService implements UserDetailsService {
             loadUserById(member.getId());
     }
 
-    //유저가 존재하는지만 확인
     private UserDetails loadUserById(Long id) throws UsernameNotFoundException {
         if(!memberRepository.existsById(id))
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.");

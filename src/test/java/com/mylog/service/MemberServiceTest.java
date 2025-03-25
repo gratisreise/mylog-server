@@ -9,14 +9,13 @@ import com.mylog.dto.SignUpRequest;
 import com.mylog.entity.Member;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
-import org.junit.jupiter.api.BeforeEach;
+import com.mylog.service.member.MemberService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

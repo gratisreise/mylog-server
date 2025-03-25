@@ -1,5 +1,6 @@
 package com.mylog.entity;
 
+import com.mylog.dto.UpdateMemberRequest;
 import com.mylog.enums.OauthProvider;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,7 +28,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @Setter
 @Table(indexes = {
@@ -68,4 +69,15 @@ public class Member {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public Member update(UpdateMemberRequest request) {
+        return this.toBuilder()
+            .email(request.getEmail())
+            .memberName(request.getMemberName())
+            .nickname(request.getNickname())
+            .bio(request.getBio())
+            .profileImg(request.getProfileImage())
+            .build();
+
+    }
 }

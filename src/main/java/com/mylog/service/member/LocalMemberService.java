@@ -1,23 +1,27 @@
-package com.mylog.service;
+package com.mylog.service.member;
 
-
-import com.mylog.common.ResultCode;
+import com.mylog.annotations.ServiceType;
 import com.mylog.dto.SignUpRequest;
+import com.mylog.dto.UpdateMemberRequest;
+import com.mylog.dto.classes.CustomUser;
 import com.mylog.entity.Member;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
-import jakarta.transaction.Transactional;
+
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class MemberService {
+@ServiceType(OauthProvider.LOCAL)
+@Transactional(readOnly = true)
+public class LocalMemberService implements MemberService{
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -40,12 +44,23 @@ public class MemberService {
         log.info("member: {}", member.toString());
         memberRepository.save(member);
     }
-    //멤버 조회
-    public Member getMember(){
 
+    @Override
+    //사용자 정보 조회
+    public Member getMember(CustomUser customUser) {
         return null;
     }
 
+    @Override
+    @Transactional
+    public void updateMember(UpdateMemberRequest request, CustomUser customUser) {
 
+    }
 
+    @Override
+    @Transactional
+    public void deleteMember(CustomUser customUser) {
+
+    }
 }
+
