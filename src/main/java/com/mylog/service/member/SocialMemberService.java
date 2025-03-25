@@ -30,7 +30,9 @@ public class SocialMemberService implements MemberService{
 
     @Override
     public Member getMember(CustomUser customUser) {
-        return null;
+        return memberRepository
+            .findById(Long.valueOf(customUser.getUsername()))
+            .orElseThrow(CMissingDataException::new);
     }
 
     @Override

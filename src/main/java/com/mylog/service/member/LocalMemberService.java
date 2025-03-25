@@ -48,7 +48,9 @@ public class LocalMemberService implements MemberService{
     @Override
     //사용자 정보 조회
     public Member getMember(CustomUser customUser) {
-        return null;
+        String email = customUser.getUsername();
+        return memberRepository.findByEmail(email)
+            .orElseThrow(CMissingDataException::new);
     }
 
     @Override
