@@ -65,7 +65,7 @@ public class LocalMemberService implements MemberService{
     @Override
     @Transactional
     public void deleteMember(CustomUser customUser) {
-
+        memberRepository.deleteByEmail(customUser.getUsername());
     }
 }
 

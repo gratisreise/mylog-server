@@ -52,6 +52,12 @@ public class MemberController {
         return ResponseService.getSuccessResult();
     }
 
+    @DeleteMapping("/me")
+    public CommonResult deleteMember(@AuthenticationPrincipal CustomUser customUser){
+        MemberService service = factory.getMemberService(customUser.getProvider());
+        service.deleteMember(customUser);
+        return ResponseService.getSuccessResult();
+    }
 
 
 
