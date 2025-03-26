@@ -2,6 +2,8 @@ package com.mylog.service.article;
 
 import com.mylog.dto.ArticleCreateRequest;
 import com.mylog.dto.ArticleResponse;
+import com.mylog.dto.ArticleUpdateRequest;
+import com.mylog.dto.classes.CustomUser;
 import com.mylog.repository.ArticleRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +12,28 @@ import org.springframework.stereotype.Service;
 
 public interface ArticleService {
 
-    void createArticle(ArticleCreateRequest request);
-    ArticleResponse getArticle(long id);
+    // 게시글 생성
+    void createArticle(ArticleCreateRequest request, CustomUser customUser);
+
+    //게시글 조회
+    ArticleResponse getArticle(Long id);
+
+    //게시글 수정
+    void updateArticle(ArticleUpdateRequest request, CustomUser customUser);
+
+    //게시글 삭제
+    void deleteArticle(Long id, CustomUser customUser);
+
+    //전체 게시글 목록
     List<ArticleResponse> getArticles();
-    void updateArticle(ArticleUpdateRequest id);
-    void deleteArticle(long id);
+
+    //내 게시글 목록
+    List<ArticleResponse> getArticles(CustomUser customUser);
+
+    //내 게시글 검색
+    List<ArticleResponse> getArticles(CustomUser customUser, String keyword);
+
+    //전체 게시글 검색
+    List<ArticleResponse> getArticles(String keyword);
+
 }
