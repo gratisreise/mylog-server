@@ -22,10 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 @ServiceType(OauthProvider.SOCIAL)
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class SocialArticleService implements ArticleService{
+public class SocialArticleService implements ArticleService {
     private final ArticleRepository articleRepository;
-    private final CategoryRepository categoryRepository;
     private final MemberRepository memberRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     @Transactional
@@ -48,11 +48,6 @@ public class SocialArticleService implements ArticleService{
     }
 
     @Override
-    public ArticleResponse getArticle(Long id) {
-        return null;
-    }
-
-    @Override
     public void updateArticle(ArticleUpdateRequest request, CustomUser customUser) {
 
     }
@@ -60,11 +55,6 @@ public class SocialArticleService implements ArticleService{
     @Override
     public void deleteArticle(Long id, CustomUser customUser) {
 
-    }
-
-    @Override
-    public List<ArticleResponse> getArticles() {
-        return List.of();
     }
 
     @Override
@@ -77,8 +67,5 @@ public class SocialArticleService implements ArticleService{
         return List.of();
     }
 
-    @Override
-    public List<ArticleResponse> getArticles(String keyword) {
-        return List.of();
-    }
+
 }

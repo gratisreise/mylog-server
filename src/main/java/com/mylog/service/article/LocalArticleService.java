@@ -21,8 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @ServiceType(OauthProvider.LOCAL)
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class LocalArticleService implements ArticleService{
 
     private final ArticleRepository articleRepository;
@@ -32,9 +32,9 @@ public class LocalArticleService implements ArticleService{
     @Override
     @Transactional
     public void createArticle(ArticleCreateRequest request, CustomUser customUser) {
-
         Category category = categoryRepository.findByCategoryName(request.getCategory())
             .orElseThrow(CMissingDataException::new);
+
         Member member = memberRepository.findByEmail(customUser.getUsername())
             .orElseThrow(CMissingDataException::new);
 
@@ -48,10 +48,6 @@ public class LocalArticleService implements ArticleService{
         articleRepository.save(article);
     }
 
-    @Override
-    public ArticleResponse getArticle(Long id) {
-        return null;
-    }
 
     @Override
     @Transactional
@@ -66,11 +62,6 @@ public class LocalArticleService implements ArticleService{
     }
 
     @Override
-    public List<ArticleResponse> getArticles() {
-        return List.of();
-    }
-
-    @Override
     public List<ArticleResponse> getArticles(CustomUser customUser) {
         return List.of();
     }
@@ -80,8 +71,5 @@ public class LocalArticleService implements ArticleService{
         return List.of();
     }
 
-    @Override
-    public List<ArticleResponse> getArticles(String keyword) {
-        return List.of();
-    }
+
 }

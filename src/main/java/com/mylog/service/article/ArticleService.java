@@ -15,25 +15,16 @@ public interface ArticleService {
     // 게시글 생성
     void createArticle(ArticleCreateRequest request, CustomUser customUser);
 
-    //게시글 조회
-    ArticleResponse getArticle(Long id);
-
     //게시글 수정
     void updateArticle(ArticleUpdateRequest request, CustomUser customUser);
 
     //게시글 삭제
     void deleteArticle(Long id, CustomUser customUser);
 
-    //전체 게시글 목록
-    List<ArticleResponse> getArticles();
-
     //내 게시글 목록
     List<ArticleResponse> getArticles(CustomUser customUser);
 
     //내 게시글 검색
     List<ArticleResponse> getArticles(CustomUser customUser, String keyword);
-
-    //전체 게시글 검색
-    List<ArticleResponse> getArticles(String keyword);
 
 }
