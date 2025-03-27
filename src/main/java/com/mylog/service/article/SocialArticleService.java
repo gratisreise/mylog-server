@@ -15,6 +15,8 @@ import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
+import io.sentry.MeasurementUnit.Custom;
+import java.awt.print.Pageable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -84,12 +86,12 @@ public class SocialArticleService implements ArticleService {
     }
 
     @Override
-    public List<ArticleResponse> getArticles(CustomUser customUser) {
+    public List<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser) {
         return List.of();
     }
 
     @Override
-    public List<ArticleResponse> getArticles(CustomUser customUser, String keyword) {
+    public List<ArticleResponse> getArticles(Pageable pageable, Custom customUser, String keyword) {
         return List.of();
     }
 

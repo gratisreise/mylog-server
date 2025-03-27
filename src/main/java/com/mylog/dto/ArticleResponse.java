@@ -10,17 +10,28 @@ import lombok.Setter;
 @Setter
 @Builder
 public class ArticleResponse {
+    private Long id;
     private String title;
     private String content;
     private String author;
     private String category;
-    private LocalDateTime createdDate;
+    private LocalDateTime createdAt;
 
     public ArticleResponse(Article article, String author, String category) {
         this.title = article.getTitle();
         this.content = article.getContent();
         this.author = author;
         this.category = category;
-        this.createdDate = article.getCreatedAt();
+        this.createdAt = article.getCreatedAt();
+    }
+
+    public static ArticleResponse from(Article article) {
+        return ArticleResponse.builder()
+            .id(article.getId())
+            .title(article.getTitle())
+            .content(article.getContent())
+            .author(article.getMember().getNickname())
+            .createdAt(article.getCreatedAt())
+            .build();
     }
 }
