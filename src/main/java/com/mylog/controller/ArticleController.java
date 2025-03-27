@@ -5,6 +5,7 @@ import com.mylog.common.CommonResult;
 import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;
 import com.mylog.dto.ArticleCreateRequest;
+import com.mylog.dto.ArticleDeleteRequest;
 import com.mylog.dto.ArticleResponse;
 import com.mylog.dto.ArticleUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
@@ -13,8 +14,10 @@ import com.mylog.repository.ArticleRepository;
 import com.mylog.service.article.ArticleService;
 import com.mylog.service.article.ArticleServiceFactory;
 import com.mylog.service.article.CommonArticleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,7 +53,7 @@ public class ArticleController {
     //게시글 수정
     @PutMapping
     public CommonResult updateArticle(
-        @RequestBody ArticleUpdateRequest request,
+        @RequestBody @Valid ArticleUpdateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ){
         ArticleService service = factory.getMemberService(customUser.getProvider());
@@ -59,6 +62,14 @@ public class ArticleController {
     }
 
     //게시글 삭제
-
+    @DeleteMapping
+    public CommonResult deleteArticle(
+        @AuthenticationPrincipal CustomUser customUser,
+        @RequestBody ArticleDeleteRequest request
+    ){
+        ArticleService service = factory.getMemberService(customUser.getProvider());
+        service.deleteArticle(request, customUser);
+        return ResponseService.getSuccessResult();
+    }
 
 }

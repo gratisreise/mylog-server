@@ -2,6 +2,7 @@ package com.mylog.service.article;
 
 import com.mylog.annotations.ServiceType;
 import com.mylog.dto.ArticleCreateRequest;
+import com.mylog.dto.ArticleDeleteRequest;
 import com.mylog.dto.ArticleResponse;
 import com.mylog.dto.ArticleUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
@@ -49,8 +50,9 @@ public class SocialArticleService implements ArticleService {
     }
 
     @Override
+    @Transactional
     public void updateArticle(ArticleUpdateRequest request, CustomUser customUser) {
-        Member requestMember = memberRepository.findByNickName(request.getAuthor())
+        Member requestMember = memberRepository.findByNickname(request.getAuthor())
             .orElseThrow(CMissingDataException::new);
         Member userMember = memberRepository.findById(Long.valueOf(customUser.getUsername()))
             .orElseThrow(CMissingDataException::new);
@@ -68,8 +70,17 @@ public class SocialArticleService implements ArticleService {
     }
 
     @Override
-    public void deleteArticle(Long id, CustomUser customUser) {
+    public void deleteArticle(ArticleDeleteRequest request, CustomUser customUser) {
+        Member requestMember = memberRepository.findByNickname(request.getAuthor())
+            .orElseThrow(CMissingDataException::new);
+        Member userMember = memberRepository.findById(Long.valueOf(customUser.getUsername()))
+            .orElseThrow(CMissingDataException::new);
 
+        if(!requestMember.getId().equals(userMember.getId())){
+            throw new CUnAuthorizedException("허용 되지 않는 유저입니다.");
+        }
+
+        articleRepository.deleteById(request.getId());
     }
 
     @Override
