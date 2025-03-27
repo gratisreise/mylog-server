@@ -18,4 +18,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     boolean existsByProviderAndProviderId(OauthProvider provider, String providerId);
 
     void deleteByEmail(String email);
+
+    Optional<Member> findByNickName(String author);
 }

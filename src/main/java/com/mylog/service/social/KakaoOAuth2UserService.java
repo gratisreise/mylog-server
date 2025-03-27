@@ -107,9 +107,11 @@ public class KakaoOAuth2UserService extends AbstractOAuth2UserService{
             OauthProvider.KAKAO,
             userInfo.getId()
         ).orElseGet(Member::new);
+
         member.setProvider(OauthProvider.KAKAO);
         member.setProviderId(userInfo.getId());
         member.setProfileImg(userInfo.getImageUrl());
+        member.setNickname(userInfo.getId() + OauthProvider.KAKAO);
 
         return member;
     }

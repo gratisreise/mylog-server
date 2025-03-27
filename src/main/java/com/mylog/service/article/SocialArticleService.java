@@ -10,6 +10,7 @@ import com.mylog.entity.Category;
 import com.mylog.entity.Member;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
+import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
@@ -49,7 +50,21 @@ public class SocialArticleService implements ArticleService {
 
     @Override
     public void updateArticle(ArticleUpdateRequest request, CustomUser customUser) {
+        Member requestMember = memberRepository.findByNickName(request.getAuthor())
+            .orElseThrow(CMissingDataException::new);
+        Member userMember = memberRepository.findById(Long.valueOf(customUser.getUsername()))
+            .orElseThrow(CMissingDataException::new);
 
+        if(!requestMember.getId().equals(userMember.getId())){
+            throw new CUnAuthorizedException("허용 되지 않는 유저입니다.");
+        }
+
+        Article article = articleRepository.findById(request.getId())
+            .orElseThrow(CMissingDataException::new);
+        Category category = categoryRepository.findByCategoryName(request.getCategory())
+            .orElseThrow(CMissingDataException::new);
+
+        article.update(request, category);
     }
 
     @Override

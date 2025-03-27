@@ -106,6 +106,7 @@ public class GoogleOAuth2UserService extends AbstractOAuth2UserService {
 
         member.setProviderId(userInfo.getId());
         member.setMemberName(userInfo.getName());
+        member.setNickname(userInfo.getId() + OauthProvider.GOOGLE);
         member.setProvider(OauthProvider.GOOGLE);
         member.setProfileImg(userInfo.getImageUrl());
 

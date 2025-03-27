@@ -9,12 +9,15 @@ import com.mylog.entity.Article;
 import com.mylog.entity.Category;
 import com.mylog.entity.Member;
 import com.mylog.enums.OauthProvider;
+import com.mylog.exception.CInvalidDataException;
 import com.mylog.exception.CMissingDataException;
+import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
 import com.mylog.service.CategoryService;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +55,21 @@ public class LocalArticleService implements ArticleService{
     @Override
     @Transactional
     public void updateArticle(ArticleUpdateRequest request, CustomUser customUser) {
+        Member requestMember = memberRepository.findByNickName(request.getAuthor())
+            .orElseThrow(CMissingDataException::new);
+        Member userMember = memberRepository.findByEmail(customUser.getUsername())
+            .orElseThrow(CMissingDataException::new);
 
+        if(!requestMember.getId().equals(userMember.getId())){
+            throw new CUnAuthorizedException("허용 되지 않는 유저입니다.");
+        }
+
+        Article article = articleRepository.findById(request.getId())
+            .orElseThrow(CMissingDataException::new);
+        Category category = categoryRepository.findByCategoryName(request.getCategory())
+            .orElseThrow(CMissingDataException::new);
+
+        article.update(request, category);
     }
 
     @Override

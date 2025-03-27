@@ -1,6 +1,7 @@
 package com.mylog.entity;
 
 
+import com.mylog.dto.ArticleUpdateRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -55,5 +56,10 @@ public class Article {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    public void update(ArticleUpdateRequest request, Category category) {
+        this.title = request.getTitle();
+        this.content = request.getContent();
+        this.category = category;
+    }
 
 }

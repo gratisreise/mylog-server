@@ -31,6 +31,12 @@ public class GlobalExceptionHandler {
         return ResponseService.getFailResult(ResultCode.DATA_INVALID);
     }
 
+    @ExceptionHandler(CUnAuthorizedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public CommonResult handleUnAuthorizedException(CUnAuthorizedException ex){
+        return ResponseService.getFailResult(ResultCode.UNAUTHORIZED_ACCESS);
+    }
+
     @ExceptionHandler(RestClientException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public CommonResult handleRestClientException(RestClientException ex){

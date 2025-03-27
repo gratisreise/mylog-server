@@ -119,6 +119,7 @@ public class NaverOAuth2UserService extends AbstractOAuth2UserService {
         member.setMemberName(userInfo.getName());
         member.setProvider(OauthProvider.NAVER);
         member.setProfileImg(userInfo.getImageUrl());
+        member.setNickname(userInfo.getId() + OauthProvider.NAVER);
 
         return memberRepository.save(member);
     }

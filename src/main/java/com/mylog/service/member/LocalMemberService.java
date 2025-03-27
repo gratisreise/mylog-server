@@ -42,7 +42,7 @@ public class LocalMemberService implements MemberService{
             .email(request.getEmail())
             .memberName(request.getMemberName())
             .password(cryptedPassword)
-            .nickname(request.getMemberName())
+            .nickname(request.getEmail())
             .provider(OauthProvider.LOCAL)
             .providerId(request.getEmail())
             .build();
