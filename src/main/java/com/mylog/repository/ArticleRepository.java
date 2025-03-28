@@ -15,4 +15,10 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     //제목검색
     Page<Article> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
+    Page<Article> findByMemberIdAndTitleContainingIgnoreCase(
+        Long memberId,
+        String keyword,
+        Pageable pageable
+    );
+
 }

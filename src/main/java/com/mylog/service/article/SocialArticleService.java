@@ -86,17 +86,20 @@ public class SocialArticleService implements ArticleService {
         articleRepository.deleteById(request.getId());
     }
 
+    //내 게시글 목록 조회
     @Override
     public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser) {
-        Long memberId = Long.valueOf(customUser.getUsername());
-        return articleRepository.findAllByMemberId(memberId, pageable)
+        return articleRepository
+            .findAllByMemberId(Long.valueOf(customUser.getUsername()), pageable)
             .map(ArticleResponse::from);
     }
 
+    //내 게시글 검색
     @Override
-    public Page<ArticleResponse> getArticles(Pageable pageable, Custom customUser, String keyword) {
-        return null;
+    public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser, String keyword) {
+        return articleRepository.findByMemberIdAndTitleContainingIgnoreCase(
+                Long.valueOf(customUser.getUsername()), keyword, pageable)
+            .map(ArticleResponse::from);
     }
-
 
 }

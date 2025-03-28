@@ -5,13 +5,8 @@ import com.mylog.dto.ArticleDeleteRequest;
 import com.mylog.dto.ArticleResponse;
 import com.mylog.dto.ArticleUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
-import com.mylog.repository.ArticleRepository;
-import io.sentry.MeasurementUnit.Custom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import java.util.List;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 
 public interface ArticleService {
@@ -29,6 +24,6 @@ public interface ArticleService {
     Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser);
 
     //내 게시글 검색
-    Page<ArticleResponse> getArticles(Pageable pageable, Custom customUser, String keyword);
+    Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser, String keyword);
 
 }

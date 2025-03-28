@@ -86,6 +86,7 @@ public class ArticleController {
         return ResponseService.getSingleResult(articleService.getArticles(pageable));
     }
 
+    //내 게시글 목록 조회
     @GetMapping("/me")
     public SingleResult<Page<ArticleResponse>> getArticles(
         @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable,
@@ -102,5 +103,15 @@ public class ArticleController {
         @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable
     ){
         return ResponseService.getSingleResult(articleService.getArticles(keyword, pageable));
+    }
+
+    //내 게시글 검색
+    public SingleResult<Page<ArticleResponse>> searchArticles(
+        @RequestParam String keyword,
+        @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable,
+        @AuthenticationPrincipal CustomUser customUser
+    ){
+        ArticleService service = factory.getMemberService(customUser.getProvider());
+        return ResponseService.getSingleResult(service.getArticles(pageable, customUser, keyword));
     }
 }

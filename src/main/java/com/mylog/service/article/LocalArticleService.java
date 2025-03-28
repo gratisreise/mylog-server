@@ -89,6 +89,7 @@ public class LocalArticleService implements ArticleService{
         articleRepository.deleteById(request.getId());
     }
 
+    //내 게시글 목록조회
     @Override
     public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser) {
         Long memberId = memberRepository.findByEmail(customUser.getUsername())
@@ -99,8 +100,14 @@ public class LocalArticleService implements ArticleService{
             .map(ArticleResponse::from);
     }
 
+    //내 게시글 검색
     @Override
-    public Page<ArticleResponse> getArticles(Pageable pageable, Custom customUser, String keyword) {
-        return null;
+    public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser, String keyword) {
+        Long memberId = memberRepository.findByEmail(customUser.getUsername())
+            .orElseThrow(CMissingDataException::new)
+            .getId();
+        return articleRepository
+            .findByMemberIdAndTitleContainingIgnoreCase(memberId, keyword, pageable)
+            .map(ArticleResponse::from);
     }
 }
