@@ -2,16 +2,13 @@ package com.mylog.controller;
 
 
 import com.mylog.common.CommonResult;
-import com.mylog.common.ListResult;
 import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;
-import com.mylog.dto.ArticleCreateRequest;
-import com.mylog.dto.ArticleDeleteRequest;
-import com.mylog.dto.ArticleResponse;
-import com.mylog.dto.ArticleUpdateRequest;
+import com.mylog.dto.article.ArticleCreateRequest;
+import com.mylog.dto.article.ArticleDeleteRequest;
+import com.mylog.dto.article.ArticleResponse;
+import com.mylog.dto.article.ArticleUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
-import com.mylog.entity.Article;
-import com.mylog.repository.ArticleRepository;
 import com.mylog.service.article.ArticleService;
 import com.mylog.service.article.ArticleServiceFactory;
 import com.mylog.service.article.CommonArticleService;

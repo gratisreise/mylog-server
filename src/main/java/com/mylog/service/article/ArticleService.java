@@ -1,9 +1,9 @@
 package com.mylog.service.article;
 
-import com.mylog.dto.ArticleCreateRequest;
-import com.mylog.dto.ArticleDeleteRequest;
-import com.mylog.dto.ArticleResponse;
-import com.mylog.dto.ArticleUpdateRequest;
+import com.mylog.dto.article.ArticleCreateRequest;
+import com.mylog.dto.article.ArticleDeleteRequest;
+import com.mylog.dto.article.ArticleResponse;
+import com.mylog.dto.article.ArticleUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,7 +1,6 @@
-package com.mylog.dto;
+package com.mylog.dto.article;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class ArticleCreateRequest {

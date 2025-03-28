@@ -1,4 +1,4 @@
-package com.mylog.dto;
+package com.mylog.dto.article;
 
 import com.mylog.entity.Article;
 import java.time.LocalDateTime;

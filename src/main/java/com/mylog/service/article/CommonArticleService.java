@@ -1,14 +1,10 @@
 package com.mylog.service.article;
 
-import com.mylog.dto.ArticleCreateRequest;
-import com.mylog.dto.ArticleResponse;
-import com.mylog.dto.ArticleUpdateRequest;
-import com.mylog.dto.classes.CustomUser;
+import com.mylog.dto.article.ArticleResponse;
 import com.mylog.entity.Article;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CategoryRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
