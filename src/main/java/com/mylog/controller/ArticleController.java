@@ -86,4 +86,12 @@ public class ArticleController {
         return ResponseService.getSingleResult(articleService.getArticles(pageable));
     }
 
+    @GetMapping("/me")
+    public SingleResult<Page<ArticleResponse>> getArticles(
+        @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable,
+        @AuthenticationPrincipal CustomUser customUser
+    ){
+        ArticleService service = factory.getMemberService(customUser.getProvider());
+        return ResponseService.getSingleResult(service.getArticles(pageable, customUser));
+    }
 }

@@ -16,9 +16,11 @@ import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
 import io.sentry.MeasurementUnit.Custom;
-import java.awt.print.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,12 +90,17 @@ public class LocalArticleService implements ArticleService{
     }
 
     @Override
-    public List<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser) {
-        return List.of();
+    public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser) {
+        Long memberId = memberRepository.findByEmail(customUser.getUsername())
+            .orElseThrow(CMissingDataException::new)
+            .getId();
+
+        return articleRepository.findAllByMemberId(memberId, pageable)
+            .map(ArticleResponse::from);
     }
 
     @Override
-    public List<ArticleResponse> getArticles(Pageable pageable, Custom customUser, String keyword) {
-        return List.of();
+    public Page<ArticleResponse> getArticles(Pageable pageable, Custom customUser, String keyword) {
+        return null;
     }
 }
