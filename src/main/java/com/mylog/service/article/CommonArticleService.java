@@ -38,7 +38,8 @@ public class CommonArticleService{
     };
 
     //전체 게시글 검색
-    List<ArticleResponse> getArticles(String keyword, Pageable pageable){
-        return null;
+    public Page<ArticleResponse> getArticles(String keyword, Pageable pageable){
+        return articleRepository.findByTitleContainingIgnoreCase(keyword, pageable)
+            .map(ArticleResponse::from);
     };
 }

@@ -94,4 +94,13 @@ public class ArticleController {
         ArticleService service = factory.getMemberService(customUser.getProvider());
         return ResponseService.getSingleResult(service.getArticles(pageable, customUser));
     }
+
+    //전체 게시글 검색
+    @GetMapping("/search")
+    public SingleResult<Page<ArticleResponse>> searchArticles(
+        @RequestParam String keyword,
+        @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable
+    ){
+        return ResponseService.getSingleResult(articleService.getArticles(keyword, pageable));
+    }
 }
