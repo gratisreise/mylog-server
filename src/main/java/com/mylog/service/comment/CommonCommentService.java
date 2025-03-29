@@ -24,8 +24,9 @@ public class CommonCommentService {
     };
 
     //대댓글 목록 조회
-    public Page<CommentResponse> getChildComments(Long parentId, Pageable pageable){
-        return null;
+    public Page<CommentResponse> getChildComments(Long articleId, Long parentId, Pageable pageable){
+        return commentRepository.findByArticleIdAndParentId(articleId, parentId, pageable)
+            .map(CommentResponse::from);
     };
 
 }

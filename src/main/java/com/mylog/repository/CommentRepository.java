@@ -13,7 +13,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Page<Comment> findByArticleId(Long articleId, Pageable pageable);
 
     //대댓글 목록 조회
-
+    Page<Comment> findByArticleIdAndParentId(Long articleId, Long parentId, Pageable pageable);
     //나의 댓글 조회
 
     //나의 게시글 댓글 조회

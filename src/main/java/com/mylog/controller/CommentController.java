@@ -52,6 +52,17 @@ public class CommentController {
     }
 
     //대댓글 목록 조회
+    @GetMapping("/{articleId}/{parentId}")
+    public SingleResult<Page<CommentResponse>> getChildComments(
+        @PathVariable Long articleId,
+        @PathVariable Long parentId,
+        @PageableDefault(size= 5, sort="createdAt", direction = Direction.DESC)
+        Pageable pageable
+    ) {
+        return ResponseService.getSingleResult(
+            commentService.getChildComments(articleId, parentId, pageable)
+        );
+    }
 
     //댓글 수정
 
