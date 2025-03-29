@@ -6,6 +6,7 @@ import com.mylog.common.SingleResult;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.dto.comment.CommentCreateRequest;
 import com.mylog.dto.comment.CommentResponse;
+import com.mylog.dto.comment.CommentUpdateRequest;
 import com.mylog.service.comment.CommentService;
 import com.mylog.service.comment.CommentServiceFactory;
 import com.mylog.service.comment.CommonCommentService;
@@ -19,6 +20,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,6 +67,16 @@ public class CommentController {
     }
 
     //댓글 수정
+    @PutMapping("/{commentId}")
+    public CommonResult updateComments(
+        @RequestBody @Valid CommentUpdateRequest request,
+        @PathVariable Long commentId,
+        @AuthenticationPrincipal CustomUser customUser
+    ) {
+        CommentService service = factory.getCommentService(customUser.getProvider());
+        service.updateComment(request, commentId, customUser);
+        return ResponseService.getSuccessResult();
+    }
 
     //댓글 삭제
 

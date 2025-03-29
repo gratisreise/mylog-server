@@ -4,6 +4,7 @@ package com.mylog.service.comment;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.dto.comment.CommentCreateRequest;
 import com.mylog.dto.comment.CommentResponse;
+import com.mylog.dto.comment.CommentUpdateRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,7 +13,7 @@ public interface CommentService {
     void createComment(CommentCreateRequest request, CustomUser customUser);
 
     //댓글 수정
-    void updateComment(Long commentId, CustomUser customUser);
+    void updateComment(CommentUpdateRequest request, Long commentId, CustomUser customUser);
 
     //댓글 삭제
     void deleteComment(Long commentId, CustomUser customUser);
