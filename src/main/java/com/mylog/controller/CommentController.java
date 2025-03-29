@@ -2,14 +2,22 @@ package com.mylog.controller;
 
 import com.mylog.common.CommonResult;
 import com.mylog.common.ResponseService;
+import com.mylog.common.SingleResult;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.dto.comment.CommentCreateRequest;
+import com.mylog.dto.comment.CommentResponse;
 import com.mylog.service.comment.CommentService;
 import com.mylog.service.comment.CommentServiceFactory;
 import com.mylog.service.comment.CommonCommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +42,14 @@ public class CommentController {
     }
 
     //게시글 댓글목록 조회
+    @GetMapping("/{articleId}")
+    public SingleResult<Page<CommentResponse>> getComments(
+        @PathVariable Long articleId,
+        @PageableDefault(sort="createdAt", direction = Direction.DESC)
+        Pageable pageable
+    ) {
+        return ResponseService.getSingleResult(commentService.getComments(articleId, pageable));
+    }
 
     //대댓글 목록 조회
 

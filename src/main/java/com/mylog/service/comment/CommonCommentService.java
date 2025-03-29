@@ -19,7 +19,8 @@ public class CommonCommentService {
 
     //게시글 댓글목록 조회
     public Page<CommentResponse> getComments(Long articleId, Pageable pageable){
-        return null;
+        return commentRepository.findByArticleId(articleId, pageable)
+            .map(CommentResponse::from);
     };
 
     //대댓글 목록 조회
