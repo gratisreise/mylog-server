@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -53,6 +54,7 @@ public class SocialCommentService implements CommentService {
     }
 
     @Override
+    @Transactional
     public void updateComment(CommentUpdateRequest request, Long commentId, CustomUser customUser) {
         //댓글 객체불러오기
         Comment comment = commentRepository.findById(commentId)
@@ -60,15 +62,15 @@ public class SocialCommentService implements CommentService {
 
         //맴버 검증
         Long commentMemberId = comment.getMember().getId();
-        Long requestMemberId = memberRepository
+        Long userMemberId = memberRepository
             .findById(Long.valueOf(customUser.getUsername()))
             .orElseThrow(CMissingDataException::new)
             .getId();
 
-        if(commentMemberId == null || requestMemberId == null){
+        if(commentMemberId == null || userMemberId == null){
             throw new CMissingDataException("존재하지 않는 유저입니다.");
         }
-        if(!commentMemberId.equals(requestMemberId)){
+        if(!commentMemberId.equals(userMemberId)){
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         }
 
@@ -77,8 +79,24 @@ public class SocialCommentService implements CommentService {
     }
 
     @Override
+    @Transactional
     public void deleteComment(Long commentId, CustomUser customUser) {
+        Comment comment = commentRepository.findById(commentId)
+            .orElseThrow(CMissingDataException::new);
+        Article article = comment.getArticle();
+        Long commentMemberId = comment.getMember().getId();
+        Long articleMemberId = article.getMember().getId();
+        Long userMemberId = Long.valueOf(customUser.getUsername());
 
+        if(commentMemberId == null || articleMemberId == null || userMemberId == null){
+            throw new CMissingDataException("존재 하지 않는 유저입니다.");
+        }
+
+        if(!userMemberId.equals(commentMemberId) && !userMemberId.equals(articleMemberId)){
+            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
+        }
+
+        commentRepository.deleteById(commentId);
     }
 
     @Override

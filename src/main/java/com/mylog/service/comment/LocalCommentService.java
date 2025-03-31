@@ -79,8 +79,26 @@ public class LocalCommentService implements CommentService {
     }
 
     @Override
+    @Transactional
     public void deleteComment(Long commentId, CustomUser customUser) {
+        Comment comment = commentRepository.findById(commentId)
+            .orElseThrow(CMissingDataException::new);
+        Article article = comment.getArticle();
+        Long commentMemberId = comment.getMember().getId();
+        Long articleMemberId = article.getMember().getId();
+        Long userMemberId = memberRepository.findByEmail(customUser.getUsername())
+            .orElseThrow(CMissingDataException::new)
+            .getId();
 
+        if(commentMemberId == null || articleMemberId == null || userMemberId == null){
+            throw new CMissingDataException("존재 하지 않는 유저입니다.");
+        }
+
+        if(!userMemberId.equals(commentMemberId) && !userMemberId.equals(articleMemberId)){
+            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
+        }
+
+        commentRepository.deleteById(commentId);
     }
 
     @Override
