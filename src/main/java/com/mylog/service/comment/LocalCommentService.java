@@ -111,6 +111,9 @@ public class LocalCommentService implements CommentService {
 
     @Override
     public Page<CommentResponse> getComments(CustomUser customUser, Pageable pageable) {
-        return null;
+        Member member = memberRepository.findByEmail(customUser.getUsername())
+            .orElseThrow(CMissingDataException::new);
+        return commentRepository.findAllByArticle_Member(member, pageable)
+            .map(CommentResponse::from);
     }
 }

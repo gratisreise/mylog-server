@@ -91,7 +91,7 @@ public class CommentController {
     }
 
     //나의 댓글 조회
-    @GetMapping
+    @GetMapping("/me")
     public SingleResult<Page<CommentResponse>> getComments(
         @AuthenticationPrincipal CustomUser customUser,
         @PageableDefault(size = 20, sort="createdAt", direction = Direction.DESC)
@@ -103,5 +103,15 @@ public class CommentController {
 
 
     //나의 게시글 댓글 조회
+    @GetMapping("/me/articles")
+    public SingleResult<Page<CommentResponse>> getMyArticlesComments(
+        @AuthenticationPrincipal CustomUser customUser,
+        @PageableDefault(size = 20, sort="createdAt", direction = Direction.DESC)
+        Pageable pageable
+    ){
+        CommentService service = factory.getCommentService(customUser.getProvider());
+        return ResponseService.getSingleResult(service.getComments(customUser, pageable));
+    }
+
 
 }
