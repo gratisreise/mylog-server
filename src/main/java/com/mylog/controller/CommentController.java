@@ -87,9 +87,20 @@ public class CommentController {
     ) {
         CommentService service = factory.getCommentService(customUser.getProvider());
         service.deleteComment(commentId, customUser);
+        return ResponseService.getSuccessResult();
     }
 
     //나의 댓글 조회
+    @GetMapping
+    public SingleResult<Page<CommentResponse>> getComments(
+        @AuthenticationPrincipal CustomUser customUser,
+        @PageableDefault(size = 20, sort="createdAt", direction = Direction.DESC)
+        Pageable pageable
+    ) {
+        CommentService service = factory.getCommentService(customUser.getProvider());
+        return ResponseService.getSingleResult(service.getMyComments(customUser, pageable));
+    }
+
 
     //나의 게시글 댓글 조회
 
