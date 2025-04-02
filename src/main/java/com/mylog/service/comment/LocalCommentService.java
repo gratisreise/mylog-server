@@ -61,7 +61,7 @@ public class LocalCommentService implements CommentService {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(CMissingDataException::new);
 
-        //맴버 검증
+        //맴버 검증 validateUpdate
         Long commentMemberId = comment.getMember().getId();
         Long requestMemberId = memberRepository.findByEmail(customUser.getUsername())
             .orElseThrow(CMissingDataException::new)
@@ -84,6 +84,8 @@ public class LocalCommentService implements CommentService {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(CMissingDataException::new);
         Article article = comment.getArticle();
+
+        //검증 validateDelete
         Long commentMemberId = comment.getMember().getId();
         Long articleMemberId = article.getMember().getId();
         Long userMemberId = memberRepository.findByEmail(customUser.getUsername())

@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @ServiceType(OauthProvider.SOCIAL)
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class SocialCommentService implements CommentService {
 
     private final CommentRepository commentRepository;
@@ -31,6 +32,7 @@ public class SocialCommentService implements CommentService {
     private final ArticleRepository articleRepository;
 
     @Override
+    @Transactional
     public void createComment(CommentCreateRequest request, CustomUser customUser) {
         //게시글 아이디로 게시글 작성자 찾기
         Article article = articleRepository.findById(request.getArticleId())
@@ -61,18 +63,9 @@ public class SocialCommentService implements CommentService {
             .orElseThrow(CMissingDataException::new);
 
         //맴버 검증
-        Long commentMemberId = comment.getMember().getId();
-        Long userMemberId = memberRepository
-            .findById(Long.valueOf(customUser.getUsername()))
-            .orElseThrow(CMissingDataException::new)
-            .getId();
-
-        if(commentMemberId == null || userMemberId == null){
-            throw new CMissingDataException("존재하지 않는 유저입니다.");
-        }
-        if(!commentMemberId.equals(userMemberId)){
+        if(!validateUpdate(customUser, comment)){
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
-        }
+        };
 
         //수정
         comment.setContent(request.getContent());
@@ -81,20 +74,9 @@ public class SocialCommentService implements CommentService {
     @Override
     @Transactional
     public void deleteComment(Long commentId, CustomUser customUser) {
-        Comment comment = commentRepository.findById(commentId)
-            .orElseThrow(CMissingDataException::new);
-        Article article = comment.getArticle();
-        Long commentMemberId = comment.getMember().getId();
-        Long articleMemberId = article.getMember().getId();
-        Long userMemberId = Long.valueOf(customUser.getUsername());
-
-        if(commentMemberId == null || articleMemberId == null || userMemberId == null){
-            throw new CMissingDataException("존재 하지 않는 유저입니다.");
-        }
-
-        if(!userMemberId.equals(commentMemberId) && !userMemberId.equals(articleMemberId)){
+        if(!validateDelete(commentId, customUser)){
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
-        }
+        };
 
         commentRepository.deleteById(commentId);
     }
@@ -115,4 +97,26 @@ public class SocialCommentService implements CommentService {
         return commentRepository.findAllByArticle_Member(member, pageable)
             .map(CommentResponse::from);
     }
+
+    private boolean validateDelete(Long commentId, CustomUser customUser) {
+        Comment comment = commentRepository.findById(commentId)
+            .orElseThrow(CMissingDataException::new);
+        Article article = comment.getArticle();
+        Long commentMemberId = comment.getMember().getId();
+        Long articleMemberId = article.getMember().getId();
+        Long userMemberId = Long.valueOf(customUser.getUsername());
+
+        return userMemberId.equals(commentMemberId) || userMemberId.equals(articleMemberId);
+    }
+
+    private boolean validateUpdate(CustomUser customUser, Comment comment) {
+        Long commentMemberId = comment.getMember().getId();
+        Long userMemberId = memberRepository
+            .findById(Long.valueOf(customUser.getUsername()))
+            .orElseThrow(CMissingDataException::new)
+            .getId();
+
+        return commentMemberId.equals(userMemberId);
+    }
+
 }
