@@ -34,69 +34,39 @@ public class LocalCommentService implements CommentService {
     @Override
     @Transactional
     public void createComment(CommentCreateRequest request, CustomUser customUser) {
-        //게시글 아이디로 게시글 작성자 찾기
         Article article = articleRepository.findById(request.getArticleId())
             .orElseThrow(CMissingDataException::new);
 
-        //유저객체로 댓글 작성자 찾기
         Member member = memberRepository.findByEmail(customUser.getUsername())
             .orElseThrow(CMissingDataException::new);
 
-        //커맨트 객체 생성
-        Comment comment =  Comment.builder()
+        Comment comment = Comment.builder()
             .article(article)
             .member(member)
             .content(request.getContent())
             .parentId(request.getParentCommentId())
             .build();
 
-        //저장
         commentRepository.save(comment);
     }
 
     @Override
     @Transactional
     public void updateComment(CommentUpdateRequest request, Long commentId, CustomUser customUser) {
-        //댓글 객체불러오기
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(CMissingDataException::new);
 
-        //맴버 검증 validateUpdate
-        Long commentMemberId = comment.getMember().getId();
-        Long requestMemberId = memberRepository.findByEmail(customUser.getUsername())
-            .orElseThrow(CMissingDataException::new)
-            .getId();
-
-        if(commentMemberId == null || requestMemberId == null){
-            throw new CMissingDataException("존재하지 않는 유저입니다.");
-        }
-        if(!commentMemberId.equals(requestMemberId)){
+        if (!validateUpdate(customUser, comment)) {
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         }
 
-        //수정
         comment.setContent(request.getContent());
     }
 
     @Override
     @Transactional
     public void deleteComment(Long commentId, CustomUser customUser) {
-        Comment comment = commentRepository.findById(commentId)
-            .orElseThrow(CMissingDataException::new);
-        Article article = comment.getArticle();
-
-        //검증 validateDelete
-        Long commentMemberId = comment.getMember().getId();
-        Long articleMemberId = article.getMember().getId();
-        Long userMemberId = memberRepository.findByEmail(customUser.getUsername())
-            .orElseThrow(CMissingDataException::new)
-            .getId();
-
-        if(commentMemberId == null || articleMemberId == null || userMemberId == null){
-            throw new CMissingDataException("존재 하지 않는 유저입니다.");
-        }
-
-        if(!userMemberId.equals(commentMemberId) && !userMemberId.equals(articleMemberId)){
+        if (!validateDelete(commentId, customUser)) {
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         }
 
@@ -117,5 +87,28 @@ public class LocalCommentService implements CommentService {
             .orElseThrow(CMissingDataException::new);
         return commentRepository.findAllByArticle_Member(member, pageable)
             .map(CommentResponse::from);
+    }
+
+    private boolean validateUpdate(CustomUser customUser, Comment comment) {
+        Long commentMemberId = comment.getMember().getId();
+        Long requestMemberId = memberRepository.findByEmail(customUser.getUsername())
+            .orElseThrow(CMissingDataException::new)
+            .getId();
+
+        return commentMemberId.equals(requestMemberId);
+    }
+
+    private boolean validateDelete(Long commentId, CustomUser customUser) {
+        Comment comment = commentRepository.findById(commentId)
+            .orElseThrow(CMissingDataException::new);
+        Article article = comment.getArticle();
+
+        Long commentMemberId = comment.getMember().getId();
+        Long articleMemberId = article.getMember().getId();
+        Long userMemberId = memberRepository.findByEmail(customUser.getUsername())
+            .orElseThrow(CMissingDataException::new)
+            .getId();
+
+        return userMemberId.equals(commentMemberId) || userMemberId.equals(articleMemberId);
     }
 }
