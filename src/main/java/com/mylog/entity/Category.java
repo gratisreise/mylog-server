@@ -1,5 +1,6 @@
 package com.mylog.entity;
 
+import com.mylog.dto.category.CategoryUpdateRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -44,4 +45,8 @@ public class Category {
 
     @LastModifiedDate
     private LocalDate updatedAt;
+
+    public void update(CategoryUpdateRequest request) {
+        this.categoryName = request.getCategoryName();
+    }
 }

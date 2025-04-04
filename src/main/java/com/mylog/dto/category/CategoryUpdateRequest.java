@@ -6,5 +6,6 @@ import org.springframework.stereotype.Service;
 @Getter
 @Service
 public class CategoryUpdateRequest {
+    private Long id;
     private String categoryName;
 }

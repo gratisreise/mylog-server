@@ -9,6 +9,7 @@ import com.mylog.entity.Category;
 import com.mylog.entity.Member;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
+import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
 import java.util.List;
@@ -44,8 +45,17 @@ public class LocalCategoryService implements CategoryService {
     @Override
     @Transactional
     public void updateCategory(CategoryUpdateRequest request, CustomUser customUser) {
+        //유저 검증
+        if(!validateUpdate(request, customUser)){
+            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
+        };
 
+        //카테고리 수정
+        categoryRepository.findById(request.getId())
+            .orElseThrow(CMissingDataException::new)
+            .update(request);
     }
+
 
     @Override
     @Transactional
@@ -65,5 +75,10 @@ public class LocalCategoryService implements CategoryService {
     private Member generateMember(CustomUser customUser) {
         return memberRepository.findByEmail(customUser.getUsername())
             .orElseThrow(CMissingDataException::new);
+    }
+
+    private boolean validateUpdate(CategoryUpdateRequest request, CustomUser customUser) {
+        Long userMemberId = generateMember(customUser).getId();
+        return userMemberId.equals(request.getId());
     }
 }

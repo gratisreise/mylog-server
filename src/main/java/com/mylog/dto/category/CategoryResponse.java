@@ -14,11 +14,13 @@ import org.springframework.stereotype.Service;
 public class CategoryResponse {
     private Long id;
     private String categoryName;
+    private Long memberId;
 
     public static CategoryResponse from(Category category) {
         return CategoryResponse.builder()
             .id(category.getId())
             .categoryName(category.getCategoryName())
+            .memberId(category.getMember().getId())
             .build();
     }
 }
