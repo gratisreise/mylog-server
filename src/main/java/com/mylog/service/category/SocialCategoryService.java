@@ -55,7 +55,11 @@ public class SocialCategoryService implements CategoryService {
 
     @Override
     public List<CategoryResponse> getCategories(CustomUser customUser) {
-        return List.of();
+        Member member = generateMember(customUser);
+        return categoryRepository.findByMember(member)
+            .stream()
+            .map(CategoryResponse::from)
+            .toList();
     }
 
     private Member generateMember(CustomUser customUser) {

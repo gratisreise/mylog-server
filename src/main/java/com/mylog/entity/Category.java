@@ -32,7 +32,7 @@ public class Category {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 12, unique = true)
+    @Column(length = 12)
     private String categoryName;
 
     @ManyToOne(fetch = FetchType.LAZY)
