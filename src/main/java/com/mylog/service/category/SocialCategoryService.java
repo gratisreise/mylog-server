@@ -58,9 +58,15 @@ public class SocialCategoryService implements CategoryService {
 
     @Override
     @Transactional
-    public void deleteCategory(CustomUser customUser) {
+    public void deleteCategory(CustomUser customUser, Long categoryId) {
+        //검증
+        if(!validateDelete(customUser, categoryId)){
+            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
+        };
 
+        categoryRepository.deleteById(categoryId);
     }
+
 
     @Override
     public List<CategoryResponse> getCategories(CustomUser customUser) {
@@ -79,5 +85,14 @@ public class SocialCategoryService implements CategoryService {
     private boolean validateUpdate(CategoryUpdateRequest request, CustomUser customUser) {
         Long userMemberId = Long.valueOf(customUser.getUsername());
         return userMemberId.equals(request.getId());
+    }
+
+    private boolean validateDelete(CustomUser customUser, Long categoryId) {
+        long userMemberId = Long.valueOf(customUser.getUsername());
+        long categoryMemberId = categoryRepository
+            .findById(categoryId)
+            .orElseThrow(CMissingDataException::new)
+            .getId();
+        return userMemberId == categoryMemberId;
     }
 }

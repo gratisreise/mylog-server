@@ -10,6 +10,6 @@ import java.util.List;
 public interface CategoryService {
     void createCategory(CategoryCreateRequest request, CustomUser customUser);
     void updateCategory(CategoryUpdateRequest request, CustomUser customUser);
-    void deleteCategory(CustomUser customUser);
+    void deleteCategory(CustomUser customUser, Long commentId);
     List<CategoryResponse> getCategories(CustomUser customUser);
 }
