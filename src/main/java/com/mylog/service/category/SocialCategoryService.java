@@ -29,10 +29,8 @@ public class SocialCategoryService implements CategoryService {
     @Override
     @Transactional
     public void createCategory(CategoryCreateRequest request, CustomUser customUser) {
-        //사용자 id 가져오기
         Member member = generateMember(customUser);
 
-        //카테고리 객체 생성
         Category category = Category.builder()
             .categoryName(request.getCategoryName())
             .member(member)
@@ -45,12 +43,10 @@ public class SocialCategoryService implements CategoryService {
     @Override
     @Transactional
     public void updateCategory(CategoryUpdateRequest request, CustomUser customUser) {
-        //유저 검증
         if(!validateUpdate(request, customUser)){
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         };
 
-        //카테고리 수정
         categoryRepository.findById(request.getId())
             .orElseThrow(CMissingDataException::new)
             .update(request);
@@ -59,7 +55,6 @@ public class SocialCategoryService implements CategoryService {
     @Override
     @Transactional
     public void deleteCategory(CustomUser customUser, Long categoryId) {
-        //검증
         if(!validateDelete(customUser, categoryId)){
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         };
