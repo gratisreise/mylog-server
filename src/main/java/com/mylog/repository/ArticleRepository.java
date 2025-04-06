@@ -10,8 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
 
-
-
     //게시글 제목검색
     Page<Article> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
 
