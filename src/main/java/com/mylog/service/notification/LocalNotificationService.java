@@ -3,7 +3,10 @@ package com.mylog.service.notification;
 import com.mylog.annotations.ServiceType;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.dto.notification.NotificationResponse;
+import com.mylog.entity.Member;
+import com.mylog.entity.Notification;
 import com.mylog.enums.OauthProvider;
+import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
 import com.mylog.repository.NotificationRepository;
 import com.mylog.repository.NotificationSettingRepository;
@@ -22,20 +25,8 @@ public class LocalNotificationService implements NotificationService {
     private final MemberRepository memberRepository;
 
     @Override
-    @Transactional
-    public void sendNotification(CustomUser customUser, Long RelateId) {
-
-    }
-
-    @Override
     public Page<NotificationResponse> receiveNotification(CustomUser customUser) {
         return null;
-    }
-
-    @Override
-    @Transactional
-    public void readNotification(Long notificationId) {
-
     }
 
     @Override

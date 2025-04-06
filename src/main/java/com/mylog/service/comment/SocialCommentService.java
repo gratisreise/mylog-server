@@ -14,6 +14,7 @@ import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CommentRepository;
 import com.mylog.repository.MemberRepository;
+import com.mylog.service.notification.CommonNotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,20 +31,18 @@ public class SocialCommentService implements CommentService {
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
     private final ArticleRepository articleRepository;
+    private final CommonNotificationService notificationService;
 
     @Override
     @Transactional
     public void createComment(CommentCreateRequest request, CustomUser customUser) {
-        //게시글 아이디로 게시글 작성자 찾기
         Article article = articleRepository.findById(request.getArticleId())
             .orElseThrow(CMissingDataException::new);
 
-        //유저객체로 댓글 작성자 찾기
         Member member = memberRepository
             .findById(Long.valueOf(customUser.getUsername()))
             .orElseThrow(CMissingDataException::new);
 
-        //커맨트 객체 생성
         Comment comment =  Comment.builder()
             .article(article)
             .member(member)
@@ -51,8 +50,10 @@ public class SocialCommentService implements CommentService {
             .parentId(request.getParentCommentId())
             .build();
 
-        //저장
         commentRepository.save(comment);
+
+        notificationService.sendNotification(
+            article.getMember().getId(), comment.getId(), "comment");
     }
 
     @Override

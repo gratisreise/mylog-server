@@ -1,39 +1,37 @@
 package com.mylog.service.notification;
 
-import com.mylog.annotations.ServiceType;
-import com.mylog.dto.classes.CustomUser;
-import com.mylog.dto.notification.NotificationResponse;
 import com.mylog.entity.Member;
 import com.mylog.entity.Notification;
-import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
 import com.mylog.repository.NotificationRepository;
 import com.mylog.repository.NotificationSettingRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@ServiceType(OauthProvider.SOCIAL)
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
-public class SocialNotificationService implements NotificationService {
-
+public class CommonNotificationService {
     private final NotificationRepository notificationRepository;
-    private final NotificationSettingRepository notificationSettingRepository;
     private final MemberRepository memberRepository;
 
-    @Override
     @Transactional
-    public Page<NotificationResponse> receiveNotification(CustomUser customUser) {
-        return null;
+    public void sendNotification(Long memberId, Long relatedId, String type) {
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(CMissingDataException::new);
+
+        Notification notification = Notification.builder()
+            .member(member)
+            .type(type)
+            .relatedId(relatedId)
+            .build();
+
+        notificationRepository.save(notification);
     }
 
-    @Override
     @Transactional
-    public void toggleNotification(CustomUser customUser, String type) {
+    public void readNotification(Long notificationId){
 
-    }
+    };
 }

@@ -15,6 +15,8 @@ import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CommentRepository;
 import com.mylog.repository.MemberRepository;
 
+import com.mylog.service.notification.CommonNotificationService;
+import com.mylog.service.notification.LocalNotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +32,7 @@ public class LocalCommentService implements CommentService {
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
     private final ArticleRepository articleRepository;
+    private final CommonNotificationService notificationService;
 
     @Override
     @Transactional
@@ -48,6 +51,9 @@ public class LocalCommentService implements CommentService {
             .build();
 
         commentRepository.save(comment);
+
+        notificationService.sendNotification(
+            article.getMember().getId(), comment.getId(), "comment");
     }
 
     @Override
