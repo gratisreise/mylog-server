@@ -12,7 +12,9 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -22,6 +24,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EntityListeners(AuditingEntityListener.class)
 @Builder
 @AllArgsConstructor
+@Getter
+@Setter
 public class Notification {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,12 +41,12 @@ public class Notification {
     private Long relatedId;
 
     @Column(nullable = false)
-    private boolean isRead;
+    private boolean read;
 
     @CreatedDate
     private LocalDateTime createdAt;
 
     public void makeRead() {
-        this.isRead = true;
+        this.read = true;
     }
 }

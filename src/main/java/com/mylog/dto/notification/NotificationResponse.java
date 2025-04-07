@@ -1,12 +1,27 @@
 package com.mylog.dto.notification;
 
+import com.mylog.entity.Comment;
+import com.mylog.entity.Notification;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 @Getter
-@Service
+@Setter
+@Builder
 public class NotificationResponse {
-    private String notificationId;
-    private String articleId;
-    private String message;
+    private Long notificationId;
+    private Long articleId;
+    private String type;
+
+    public static NotificationResponse from(
+        Notification notification
+    ) {
+        return NotificationResponse.builder()
+            .notificationId(notification.getId())
+            .articleId(notification.getId())
+            .type(notification.getType())
+            .build();
+    }
 }

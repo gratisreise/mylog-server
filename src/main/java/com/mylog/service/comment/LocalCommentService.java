@@ -53,7 +53,7 @@ public class LocalCommentService implements CommentService {
         commentRepository.save(comment);
 
         notificationService.sendNotification(
-            article.getMember().getId(), comment.getId(), "comment");
+            article.getMember().getId(), article.getId(), "comment");
     }
 
     @Override

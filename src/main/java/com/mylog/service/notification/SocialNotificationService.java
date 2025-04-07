@@ -12,6 +12,7 @@ import com.mylog.repository.NotificationRepository;
 import com.mylog.repository.NotificationSettingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,13 +28,25 @@ public class SocialNotificationService implements NotificationService {
 
     @Override
     @Transactional
-    public Page<NotificationResponse> receiveNotification(CustomUser customUser) {
-        return null;
+    public Page<NotificationResponse> receiveNotification(
+        CustomUser customUser, Pageable pageable) {
+            Member member = generateMember(customUser);
+
+            return notificationRepository
+                .findAllByMemberAndReadFalse(member, pageable)
+                .map(NotificationResponse::from);
     }
+
 
     @Override
     @Transactional
     public void toggleNotification(CustomUser customUser, String type) {
 
+    }
+
+    private Member generateMember(CustomUser customUser) {
+        return memberRepository
+            .findById(Long.valueOf(customUser.getUsername()))
+            .orElseThrow(CMissingDataException::new);
     }
 }

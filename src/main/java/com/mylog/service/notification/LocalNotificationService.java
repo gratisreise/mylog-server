@@ -12,6 +12,7 @@ import com.mylog.repository.NotificationRepository;
 import com.mylog.repository.NotificationSettingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,10 +30,18 @@ public class LocalNotificationService implements NotificationService {
      * 메세지: 해당 내용
      */
     @Override
-    public Page<NotificationResponse> receiveNotification(CustomUser customUser) {
+    public Page<NotificationResponse> receiveNotification(
+        CustomUser customUser, Pageable pageable) {
+        Member member = generateMember(customUser);
 
+        return notificationRepository
+            .findAllByMemberAndReadFalse(member, pageable)
+            .map(NotificationResponse::from);
+    }
 
-        return null;
+    private Member generateMember(CustomUser customUser) {
+        return memberRepository.findByEmail(customUser.getUsername())
+            .orElseThrow(CMissingDataException::new);
     }
 
     @Override
