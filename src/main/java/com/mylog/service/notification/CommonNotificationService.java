@@ -32,6 +32,8 @@ public class CommonNotificationService {
 
     @Transactional
     public void readNotification(Long notificationId){
-
+        Notification notification = notificationRepository.findById(notificationId)
+            .orElseThrow(CMissingDataException::new);
+        notification.makeRead();
     };
 }

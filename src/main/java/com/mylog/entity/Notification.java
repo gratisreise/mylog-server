@@ -41,4 +41,8 @@ public class Notification {
 
     @CreatedDate
     private LocalDateTime createdAt;
+
+    public void makeRead() {
+        this.isRead = true;
+    }
 }

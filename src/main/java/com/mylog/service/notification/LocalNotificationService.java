@@ -24,8 +24,14 @@ public class LocalNotificationService implements NotificationService {
     private final NotificationSettingRepository notificationSettingRepository;
     private final MemberRepository memberRepository;
 
+    /**알림 가져오기
+     * 안 읽은 것
+     * 메세지: 해당 내용
+     */
     @Override
     public Page<NotificationResponse> receiveNotification(CustomUser customUser) {
+
+
         return null;
     }
 
