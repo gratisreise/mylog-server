@@ -41,7 +41,11 @@ public class SocialNotificationService implements NotificationService {
     @Override
     @Transactional
     public void toggleNotification(CustomUser customUser, String type) {
-
+        Member member = generateMember(customUser);
+        notificationSettingRepository
+            .findByMemberAndType(member, type)
+            .orElseThrow(CMissingDataException::new)
+            .toggle();
     }
 
     private Member generateMember(CustomUser customUser) {

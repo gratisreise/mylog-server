@@ -11,7 +11,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -19,6 +23,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @Entity
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
 public class NotificationSetting {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,8 +38,13 @@ public class NotificationSetting {
     @Column(length = 20, nullable = false)
     private String type;
 
-    private boolean isDisabled;
+
+    private boolean disabled;
 
     @CreatedDate
     private LocalDateTime createdAt;
+
+    public void toggle(){
+        this.disabled = !this.disabled;
+    }
 }

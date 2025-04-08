@@ -48,5 +48,14 @@ public class NotificationController {
 
 
     //알림 끄기/켜기
+    @PutMapping("/set/{type}")
+    public CommonResult toggleNotification(
+        @AuthenticationPrincipal CustomUser customUser,
+        @PathVariable String type
+    ){
+        NotificationService service = factory.getNotificationService(customUser.getProvider());
+        service.toggleNotification(customUser, type);
+        return ResponseService.getSuccessResult();
+    }
 
 }

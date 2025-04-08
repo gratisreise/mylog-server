@@ -52,23 +52,22 @@ public class SocialCommentService implements CommentService {
 
         commentRepository.save(comment);
 
+        notificationService.createNotificationSetting(article.getMember(), "comment");
+
         notificationService.sendNotification(
-            article.getMember().getId(), article.getId(), "comment");
+            article.getMember(), article.getId(), "comment");
     }
 
     @Override
     @Transactional
     public void updateComment(CommentUpdateRequest request, Long commentId, CustomUser customUser) {
-        //댓글 객체불러오기
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(CMissingDataException::new);
 
-        //맴버 검증
         if(!validateUpdate(customUser, comment)){
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         };
 
-        //수정
         comment.setContent(request.getContent());
     }
 

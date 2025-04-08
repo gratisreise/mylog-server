@@ -2,10 +2,12 @@ package com.mylog.service.notification;
 
 import com.mylog.entity.Member;
 import com.mylog.entity.Notification;
+import com.mylog.entity.NotificationSetting;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
 import com.mylog.repository.NotificationRepository;
 import com.mylog.repository.NotificationSettingRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,20 +16,29 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CommonNotificationService {
     private final NotificationRepository notificationRepository;
+    private final NotificationSettingRepository notificationSettingRepository;
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void sendNotification(Long memberId, Long relatedId, String type) {
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(CMissingDataException::new);
+    public void sendNotification(Member member, Long relatedId, String type) {
+        //알림이 켜져 있는지 확인
+         if(notificationIsDisabled(member, type)) return;
 
+        //알림생성
         Notification notification = Notification.builder()
             .member(member)
             .type(type)
             .relatedId(relatedId)
             .build();
 
+
         notificationRepository.save(notification);
+    }
+
+    private boolean notificationIsDisabled(Member member, String type) {
+        return notificationSettingRepository.findByMemberAndType(member, type)
+            .orElseThrow(CMissingDataException::new)
+            .isDisabled();
     }
 
     @Transactional
@@ -36,4 +47,21 @@ public class CommonNotificationService {
             .orElseThrow(CMissingDataException::new);
         notification.makeRead();
     };
+
+    @Transactional
+    public void createNotificationSetting(Member member, String type){
+        Optional<NotificationSetting> set = notificationSettingRepository
+            .findByMemberAndType(member, type);
+
+        if(set.isPresent()) return;
+
+        NotificationSetting settting = NotificationSetting.builder()
+            .member(member)
+            .type(type)
+            .build();
+
+        notificationSettingRepository.save(settting);
+    }
+
+
 }
