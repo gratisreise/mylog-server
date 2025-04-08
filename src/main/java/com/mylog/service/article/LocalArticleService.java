@@ -15,6 +15,8 @@ import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
+import com.mylog.service.TagService;
+import com.mylog.service.notification.CommonNotificationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class LocalArticleService implements ArticleService{
     private final ArticleRepository articleRepository;
     private final CategoryRepository categoryRepository;
     private final MemberRepository memberRepository;
+    private final TagService tagService;
 
     @Override
     @Transactional
@@ -40,6 +43,8 @@ public class LocalArticleService implements ArticleService{
         Member member = memberRepository.findByEmail(customUser.getUsername())
             .orElseThrow(CMissingDataException::new);
 
+
+
         Article article = Article.builder()
             .title(request.getTitle())
             .content(request.getContent())
@@ -47,7 +52,9 @@ public class LocalArticleService implements ArticleService{
             .member(member)
             .build();
 
-        articleRepository.save(article);
+        Article savedArticle = articleRepository.save(article);
+
+        tagService.saveTag(request.getTags(), savedArticle);
     }
 
 

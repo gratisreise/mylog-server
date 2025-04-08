@@ -7,11 +7,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
 @IdClass(ArticleTagId.class)
+@AllArgsConstructor
 public class ArticleTag {
 
     @Id

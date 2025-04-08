@@ -24,4 +24,8 @@ public class Tag {
 
     @CreatedDate
     private LocalDate createdAt;
+
+    public Tag(String tagName) {
+        this.tagName = tagName;
+    }
 }
