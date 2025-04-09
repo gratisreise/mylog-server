@@ -3,6 +3,7 @@ package com.mylog.dto.classes;
 import com.mylog.entity.Member;
 import com.mylog.enums.OauthProvider;
 import java.util.Collection;
+import java.util.List;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -20,4 +21,5 @@ public class CustomUser extends User {
         super(id.toString(), "", authorities);
         this.provider = OauthProvider.SOCIAL;
     }
+
 }

@@ -116,7 +116,7 @@ public class ArticleController {
     @GetMapping("/tag/{tagName}")
     public SingleResult<Page<ArticleResponse>> serchArticlesByTag(
         @PathVariable String tagName,
-        @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable,
+        @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable
     ){
         return ResponseService.getSingleResult(
             articleService.getArticlesByTagName(tagName, pageable));

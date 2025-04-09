@@ -24,7 +24,7 @@ public class CommonArticleService{
             .orElseThrow(CMissingDataException::new);
         String category = article.getCategory().getCategoryName();
         String author = article.getMember().getNickname();
-        return new ArticleResponse(article, category, author);
+        return new ArticleResponse(article, author, category);
     };
 
     //전체 게시글 조회
