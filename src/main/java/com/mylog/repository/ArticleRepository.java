@@ -5,6 +5,7 @@ import java.nio.channels.FileChannel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -22,5 +23,17 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
         String keyword,
         Pageable pageable
     );
+
+
+    //태그검색
+    @Query("""
+    SELECT a FROM Article a
+    JOIN ArticleTag at ON a.id = at.article.id
+    JOIN Tag t ON at.tag.id = t.id
+    WHERE t.tagName = :tagName
+    """)
+    Page<Article> findAllByTagName(String tagName, Pageable pageable);
+
+
 
 }

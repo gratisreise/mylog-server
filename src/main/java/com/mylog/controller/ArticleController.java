@@ -13,6 +13,7 @@ import com.mylog.service.article.ArticleService;
 import com.mylog.service.article.ArticleServiceFactory;
 import com.mylog.service.article.CommonArticleService;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
@@ -110,5 +111,14 @@ public class ArticleController {
     ){
         ArticleService service = factory.getMemberService(customUser.getProvider());
         return ResponseService.getSingleResult(service.getArticles(pageable, customUser, keyword));
+    }
+
+    @GetMapping("/tag/{tagName}")
+    public SingleResult<Page<ArticleResponse>> serchArticlesByTag(
+        @PathVariable String tagName,
+        @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable,
+    ){
+        return ResponseService.getSingleResult(
+            articleService.getArticlesByTagName(tagName, pageable));
     }
 }

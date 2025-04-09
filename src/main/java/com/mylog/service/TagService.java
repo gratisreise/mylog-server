@@ -5,8 +5,10 @@ import com.mylog.entity.Article;
 import com.mylog.entity.ArticleTag;
 import com.mylog.entity.Tag;
 import com.mylog.exception.CMissingDataException;
+import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.ArticleTagRepository;
 import com.mylog.repository.TagRepository;
+import com.mylog.service.article.ArticleService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,10 +31,6 @@ public class TagService {
 
             articleTagRepository.save(new ArticleTag(article, savedTag));
         }
-    }
-
-    public void searhTag(String tagName){
-
     }
 
 }

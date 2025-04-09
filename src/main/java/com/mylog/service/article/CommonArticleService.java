@@ -38,4 +38,10 @@ public class CommonArticleService{
         return articleRepository.findByTitleContainingIgnoreCase(keyword, pageable)
             .map(ArticleResponse::from);
     };
+
+    //태그 검색
+    public Page<ArticleResponse> getArticlesByTagName(String tagName, Pageable pageable){
+        return articleRepository.findAllByTagName(tagName, pageable)
+            .map(ArticleResponse::from);
+    }
 }
