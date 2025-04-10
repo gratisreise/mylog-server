@@ -4,7 +4,6 @@ import com.mylog.entity.Member;
 import com.mylog.entity.Notification;
 import com.mylog.entity.NotificationSetting;
 import com.mylog.exception.CMissingDataException;
-import com.mylog.repository.MemberRepository;
 import com.mylog.repository.NotificationRepository;
 import com.mylog.repository.NotificationSettingRepository;
 import java.util.Optional;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommonNotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationSettingRepository notificationSettingRepository;
-    private final MemberRepository memberRepository;
 
     @Transactional
     public void sendNotification(Member member, Long relatedId, String type) {
