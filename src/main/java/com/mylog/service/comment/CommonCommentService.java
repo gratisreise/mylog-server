@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 public class CommonCommentService {
 
     private final CommentRepository commentRepository;
-    private final MemberRepository memberRepository;
-    private final ArticleRepository articleRepository;
 
     //게시글 댓글목록 조회
     public Page<CommentResponse> getComments(Long articleId, Pageable pageable){
