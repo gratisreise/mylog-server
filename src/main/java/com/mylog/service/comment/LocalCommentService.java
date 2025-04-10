@@ -109,10 +109,11 @@ public class LocalCommentService implements CommentService {
     private boolean validateDelete(Long commentId, CustomUser customUser) {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(CMissingDataException::new);
-        Article article = comment.getArticle();
+        Article article = comment.getArticle();// 1L
 
-        Long commentMemberId = comment.getMember().getId();
-        Long articleMemberId = article.getMember().getId();
+        Long commentMemberId = comment.getMember().getId(); //댓글 작성자
+        Long articleMemberId = article.getMember().getId(); // 게시글 작성자
+        //로직을 요청한자
         Long userMemberId = memberRepository.findByEmail(customUser.getUsername())
             .orElseThrow(CMissingDataException::new)
             .getId();
