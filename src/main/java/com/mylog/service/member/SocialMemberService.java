@@ -49,4 +49,5 @@ public class SocialMemberService implements MemberService{
     public void deleteMember(CustomUser customUser) {
         memberRepository.deleteById(Long.valueOf(customUser.getUsername()));
     }
+
 }

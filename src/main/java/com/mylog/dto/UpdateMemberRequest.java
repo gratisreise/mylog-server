@@ -1,12 +1,18 @@
 package com.mylog.dto;
 
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 @Getter
+@Setter
+@NoArgsConstructor
 @Builder
+@AllArgsConstructor
 public class UpdateMemberRequest {
     @Length(min = 8, max = 30)
     private String email;
