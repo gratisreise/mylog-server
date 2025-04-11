@@ -33,6 +33,7 @@ public class ArticleResponse {
             .title(article.getTitle())
             .content(article.getContent())
             .author(article.getMember().getNickname())
+            .category(article.getCategory().getCategoryName())
             .createdAt(article.getCreatedAt())
             .build();
     }
