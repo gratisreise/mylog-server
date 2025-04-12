@@ -27,7 +27,7 @@ public class TagService {
             }
 
             Tag savedTag = tagRepository.findByTagName(tag)
-                    .orElseThrow(CMissingDataException::new);
+                .orElseThrow(CMissingDataException::new);
 
             articleTagRepository.save(new ArticleTag(article, savedTag));
         }
