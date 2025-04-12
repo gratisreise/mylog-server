@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,32 +26,27 @@ public class AuthService {
 
     //로그인
     public LoginResponse login(LoginRequest request) {
-        //비밀번호 검증
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
         Member member = createMember(request);
 
-        //리프레쉬 토큰저장
         String refreshToken = jwtUtil.createRefreshToken(member.getId());
         String accessToken = jwtUtil.createAccessToken(member.getId(), member.getProvider());
         refreshTokenService.saveRefreshToken(member.getId().toString(), refreshToken);
 
-        //로그인 응답반환
         return new LoginResponse(accessToken, refreshToken);
     }
 
-    //액세스 리프레쉬
+    //리프레쉬
     public RefreshResponse refresh(RefreshRequest request) {
         String memberId = jwtUtil.getId(request.getRefreshToken());
 
-        //토큰 검증
         if (!refreshTokenService.validateRefreshToken(memberId, request.getRefreshToken())) {
             throw new CInvalidDataException("유요하지 않은 토큰입니다.");
         }
 
-        //액세스 토큰 발급
         String accessToken = jwtUtil.createAccessToken(Long.valueOf(memberId), request.getProvider());
         return new RefreshResponse(accessToken);
     }

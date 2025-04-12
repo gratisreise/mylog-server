@@ -1,9 +1,7 @@
 package com.mylog.service;
 
-import com.mylog.config.JwtUtil;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 

@@ -7,6 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class RefreshRequest {
     private String refreshToken;
     private OauthProvider provider;
