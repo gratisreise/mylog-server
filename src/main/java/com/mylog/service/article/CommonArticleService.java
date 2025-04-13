@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CommonArticleService{
     private final ArticleRepository articleRepository;
-    private final CategoryRepository categoryRepository;
 
     //게시글 조회
     public ArticleResponse getArticle(Long id){
@@ -44,6 +43,4 @@ public class CommonArticleService{
         return articleRepository.findAllByTagName(tagName, pageable)
             .map(ArticleResponse::from);
     }
-
-
 }

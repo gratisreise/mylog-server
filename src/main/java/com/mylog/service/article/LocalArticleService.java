@@ -43,8 +43,6 @@ public class LocalArticleService implements ArticleService{
         Member member = memberRepository.findByEmail(customUser.getUsername())
             .orElseThrow(CMissingDataException::new);
 
-
-
         Article article = Article.builder()
             .title(request.getTitle())
             .content(request.getContent())

@@ -5,6 +5,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.Jwts.SIG;
 import io.jsonwebtoken.security.Keys;
 import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
@@ -77,13 +78,13 @@ public class JwtUtil {
             .get("member_id", Long.class);
     }
 
-    public OauthProvider getProvider(String token) {
+    public String getProvider(String token) {
         return Jwts.parser()
             .verifyWith(accessKey)
             .build()
             .parseSignedClaims(token)
             .getPayload()
-            .get("provider", OauthProvider.class);
+            .get("provider", String.class);
     }
 
     public boolean validateAccessToken(String token) {
