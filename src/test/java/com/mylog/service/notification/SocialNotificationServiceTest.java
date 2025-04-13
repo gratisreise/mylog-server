@@ -70,7 +70,7 @@ class SocialNotificationServiceTest {
             .read(false)
             .build();
 
-        customUser = new CustomUser(1L, Collections.emptyList());
+        customUser = new CustomUser("1", Collections.emptyList());
         pageable = PageRequest.of(0, 10);
     }
 

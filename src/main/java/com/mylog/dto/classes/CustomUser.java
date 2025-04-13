@@ -17,8 +17,8 @@ public class CustomUser extends User {
         this.provider = member.getProvider();
     }
 
-    public CustomUser(Long id, Collection<? extends GrantedAuthority> authorities) {
-        super(id.toString(), "", authorities);
+    public CustomUser(String id, Collection<? extends GrantedAuthority> authorities) {
+        super(id, "", authorities);
         this.provider = OauthProvider.SOCIAL;
     }
 

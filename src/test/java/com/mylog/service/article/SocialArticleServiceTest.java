@@ -72,7 +72,7 @@ class SocialArticleServiceTest {
             .categoryName("테스트카테고리")
             .build();
 
-        customUser = new CustomUser(1L, Collections.emptyList());
+        customUser = new CustomUser("1", Collections.emptyList());
 
         testArticle = Article.builder()
             .id(1L)

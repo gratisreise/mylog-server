@@ -3,6 +3,7 @@ package com.mylog.service;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.entity.Member;
 import com.mylog.enums.OauthProvider;
+import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
@@ -22,32 +23,20 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-        Member member = memberRepository.findById(Long.valueOf(id)).orElseThrow();
-        UserDetails userDetails;
+        Member member = memberRepository.findById(Long.valueOf(id))
+            .orElseThrow(CMissingDataException::new);
 
         return member.getProvider() == OauthProvider.LOCAL ?
-            loadUserByEmail(member.getEmail()) :
-            loadUserById(member.getId());
+            createLocalUserDetails(member) :
+            createSocialUserDetails(id);
     }
 
-    private UserDetails loadUserById(Long id) throws UsernameNotFoundException {
-        if(!memberRepository.existsById(id))
-            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.");
-        return createUserDetails(id);
-    }
-
-    private UserDetails loadUserByEmail(String email) {
-        if(!memberRepository.existsByEmail(email))
-            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.");
-        return createUserDetails(memberRepository.findByEmail(email).orElseThrow());
-    }
-
-    private UserDetails createUserDetails(Long id) {
+    private UserDetails createSocialUserDetails(String id) {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");
         return new CustomUser(id, Collections.singleton(authority));
     }
 
-    private UserDetails createUserDetails(Member member) {
+    private UserDetails createLocalUserDetails(Member member) {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");
         return new CustomUser(member, Collections.singleton(authority));
     }
