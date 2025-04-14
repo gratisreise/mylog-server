@@ -233,8 +233,7 @@ class LocalCommentServiceTest {
         // given
         Long commentId = 1L;
 
-        when(commentRepository.findById(commentId))
-            .thenReturn(Optional.of(testComment));
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(testComment));
         when(memberRepository.findByEmail(customUser.getUsername()))
             .thenReturn(Optional.of(testMember));
 
