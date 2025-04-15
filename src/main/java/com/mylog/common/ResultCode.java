@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
 @Getter
 public enum ResultCode {
+
     //성공
     SUCCESS(200, "success"),
 

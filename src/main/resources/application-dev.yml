@@ -51,11 +51,13 @@ oauth2:
 #sentry:
 #  dsn: ${SENTRY_DSN_DEV}
 #  environment: development
-#
-#aws:
-#  s3:
-#    bucket: ${AWS_S3_BUCKET_DEV}
-#    region: ${AWS_REGION:us-east-1}
-#    credentials:
-#      access-key: ${AWS_ACCESS_KEY_DEV}
-#      secret-key: ${AWS_SECRET_KEY_DEV}
+# aws.s3.bucket
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: mylog-imgsource
