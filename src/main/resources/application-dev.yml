@@ -61,3 +61,4 @@ cloud:
       static: ap-northeast-2
     s3:
       bucket: mylog-imgsource
+      basic: s3://mylog-imgsource/basic-e5ed3fb29dfb594e9628219c94e3d288a09797886ea8247ce512476e5cd6734e.png

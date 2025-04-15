@@ -19,7 +19,9 @@ import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
+import com.mylog.service.S3Service;
 import com.mylog.service.TagService;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +36,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 class LocalArticleServiceTest {
@@ -53,11 +56,15 @@ class LocalArticleServiceTest {
     @Mock
     private TagService tagService;
 
+    @Mock
+    private S3Service s3Service;
+
     private Member testMember;
     private Category testCategory;
     private CustomUser customUser;
     private Article testArticle;
     private ArticleCreateRequest request;
+    private MultipartFile file;
 
     @BeforeEach
     void setUp() {
@@ -94,52 +101,58 @@ class LocalArticleServiceTest {
         request.setContent("테스트내용");
         request.setCategory("테스트카테고리");
         request.setTags(Arrays.asList("태그1", "태그2"));
+
+        //테스트용 multipart
+        file = mock(MultipartFile.class);
     }
 
     @Test
-    void 게시글_생성_성공() {
+    void 게시글_생성_성공() throws IOException {
         // given
         mockSuccessfulDependencies();
 
         // when & then
-        assertThatCode(() -> localArticleService.createArticle(request, customUser))
+        assertThatCode(() -> localArticleService.createArticle(request, customUser, file))
             .doesNotThrowAnyException();
 
         verify(categoryRepository).findByCategoryName(request.getCategory());
         verify(memberRepository).findByEmail(customUser.getUsername());
         verify(articleRepository).save(any(Article.class));
         verify(tagService).saveTag(eq(request.getTags()), any(Article.class));
+        verify(s3Service).upload(eq(file));
     }
 
     @Test
-    void 게시글_생성_실패_카테고리없음() {
+    void 게시글_생성_실패_카테고리없음() throws IOException {
         // given
         mockCategoryNotFound();
 
         // when & then
-        assertThatThrownBy(() -> localArticleService.createArticle(request, customUser))
+        assertThatThrownBy(() -> localArticleService.createArticle(request, customUser, file))
             .isInstanceOf(CMissingDataException.class);
 
         verify(categoryRepository).findByCategoryName(request.getCategory());
         verify(memberRepository, never()).findByEmail(any());
         verify(articleRepository, never()).save(any());
         verify(tagService, never()).saveTag(any(), any());
+        verify(s3Service, never()).upload(any());
     }
 
     @Test
-    void 게시글_생성_실패_회원정보없음() {
+    void 게시글_생성_실패_회원정보없음() throws IOException {
         // given
         when(categoryRepository.findByCategoryName(request.getCategory()))
             .thenReturn(Optional.of(testCategory));
         mockMemberNotFound();
 
         // when & then
-        assertThatThrownBy(() -> localArticleService.createArticle(request, customUser))
+        assertThatThrownBy(() -> localArticleService.createArticle(request, customUser, file))
             .isInstanceOf(CMissingDataException.class);
 
         verify(categoryRepository).findByCategoryName(request.getCategory());
         verify(memberRepository).findByEmail(customUser.getUsername());
         verify(articleRepository, never()).save(any());
+        verify(s3Service, never()).upload(any());
         verify(tagService, never()).saveTag(any(), any());
     }
 

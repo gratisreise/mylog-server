@@ -15,13 +15,16 @@ import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
+import com.mylog.service.S3Service;
 import com.mylog.service.TagService;
 import com.mylog.service.notification.CommonNotificationService;
+import java.io.IOException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @ServiceType(OauthProvider.LOCAL)
@@ -33,14 +36,19 @@ public class LocalArticleService implements ArticleService{
     private final CategoryRepository categoryRepository;
     private final MemberRepository memberRepository;
     private final TagService tagService;
+    private final S3Service s3Service;
 
     @Override
     @Transactional
-    public void createArticle(ArticleCreateRequest request, CustomUser customUser) {
+    public void createArticle(ArticleCreateRequest request, CustomUser customUser, MultipartFile file)
+        throws IOException {
         Category category = categoryRepository.findByCategoryName(request.getCategory())
             .orElseThrow(CMissingDataException::new);
 
         Member member = memberRepository.findByEmail(customUser.getUsername())
+            .orElseThrow(CMissingDataException::new);
+
+        String imageUrl = s3Service.upload(file)
             .orElseThrow(CMissingDataException::new);
 
         Article article = Article.builder()
@@ -48,6 +56,7 @@ public class LocalArticleService implements ArticleService{
             .content(request.getContent())
             .category(category)
             .member(member)
+            .articleImg(imageUrl)
             .build();
 
         Article savedArticle = articleRepository.save(article);

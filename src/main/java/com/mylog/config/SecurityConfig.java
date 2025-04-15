@@ -32,8 +32,7 @@ public class SecurityConfig {
         "/swagger-ui/**",
         "/v3/api-docs/**",
         "/h2-console/**",
-        "/actuator/**",
-        "/upload"
+        "/actuator/**"
     };
 
     @Bean
@@ -56,10 +55,11 @@ public class SecurityConfig {
             .httpBasic(AbstractHttpConfigurer::disable)  // HTTP Basic 인증 비활성화
 
             // 요청 정책
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(PUBLIC_MATCHERS).permitAll() // 해당 url 허용
-                .anyRequest().authenticated() // 나머지 접근 방지
-            )
+//            .authorizeHttpRequests(auth -> auth
+//                .requestMatchers(PUBLIC_MATCHERS).permitAll() // 해당 url 허용
+//                .anyRequest().authenticated() // 나머지 접근 방지
+//            )
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
 
             //h2 콘솔 프레임 표시 허용
             .headers(headers -> headers

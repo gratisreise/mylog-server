@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @ServiceType(OauthProvider.SOCIAL)
@@ -34,7 +35,7 @@ public class SocialArticleService implements ArticleService {
 
     @Override
     @Transactional
-    public void createArticle(ArticleCreateRequest request, CustomUser customUser) {
+    public void createArticle(ArticleCreateRequest request, CustomUser customUser, MultipartFile file) {
         Category category = categoryRepository.findByCategoryName(request.getCategory())
             .orElseThrow(CMissingDataException::new);
 

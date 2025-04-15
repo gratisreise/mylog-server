@@ -9,10 +9,12 @@ import com.mylog.dto.article.ArticleDeleteRequest;
 import com.mylog.dto.article.ArticleResponse;
 import com.mylog.dto.article.ArticleUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
+import com.mylog.service.S3Service;
 import com.mylog.service.article.ArticleService;
 import com.mylog.service.article.ArticleServiceFactory;
 import com.mylog.service.article.CommonArticleService;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +30,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,11 +44,12 @@ public class ArticleController {
     //게시글 생성
     @PostMapping
     public CommonResult createArticle(
-        @RequestBody ArticleCreateRequest request,
+        @RequestPart(value = "file") MultipartFile file,
+        @RequestPart(value = "request") @Valid ArticleCreateRequest request,
         @AuthenticationPrincipal CustomUser customUser
-    ){
+    ) throws IOException {
         ArticleService service = factory.getMemberService(customUser.getProvider());
-        service.createArticle(request, customUser);
+        service.createArticle(request, customUser, file);
         return ResponseService.getSuccessResult();
     }
 

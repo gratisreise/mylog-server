@@ -19,7 +19,9 @@ import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
+import com.mylog.service.S3Service;
 import com.mylog.service.TagService;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
@@ -33,6 +35,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 class SocialArticleServiceTest {
@@ -52,10 +55,14 @@ class SocialArticleServiceTest {
     @Mock
     private TagService tagService;
 
+    @Mock
+    private S3Service s3Service;
+
     private Member testMember;
     private Category testCategory;
     private CustomUser customUser;
     private Article testArticle;
+    private MultipartFile file;
 
     @BeforeEach
     void setUp() {
@@ -81,10 +88,12 @@ class SocialArticleServiceTest {
             .member(testMember)
             .category(testCategory)
             .build();
+
+        file = mock(MultipartFile.class);
     }
 
     @Test
-    void 게시글_생성_성공() {
+    void 게시글_생성_성공() throws IOException {
         // given
         ArticleCreateRequest request = new ArticleCreateRequest();
         request.setTitle("테스트제목");
@@ -97,11 +106,13 @@ class SocialArticleServiceTest {
         when(articleRepository.save(any(Article.class))).thenReturn(testArticle);
 
         // when & then
-        assertThatCode(() -> socialArticleService.createArticle(request, customUser))
+        assertThatCode(() -> socialArticleService.createArticle(request, customUser, file))
             .doesNotThrowAnyException();
 
         verify(articleRepository).save(any(Article.class));
+        verify(s3Service).upload(file);
         verify(tagService).saveTag(eq(request.getTags()), any(Article.class));
+
     }
 
     @Test
@@ -149,7 +160,7 @@ class SocialArticleServiceTest {
     }
 
     @Test
-    void 게시글_생성_실패_회원정보없음() {
+    void 게시글_생성_실패_회원정보없음() throws IOException {
         // given
         ArticleCreateRequest request = new ArticleCreateRequest();
         request.setCategory("테스트카테고리");
@@ -157,17 +168,18 @@ class SocialArticleServiceTest {
         when(memberRepository.findById(1L)).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> socialArticleService.createArticle(request, customUser))
+        assertThatThrownBy(() -> socialArticleService.createArticle(request, customUser, file))
             .isInstanceOf(CMissingDataException.class);
 
         verify(categoryRepository).findByCategoryName(any(String.class));
         verify(memberRepository).findById(1L);
         verify(articleRepository, never()).save(any());
+        verify(s3Service, never()).upload(any());
         verify(tagService, never()).saveTag(any(), any());
     }
 
     @Test
-    void 게시글_생성_실패_카테고리없음() {
+    void 게시글_생성_실패_카테고리없음() throws IOException {
         // given
         ArticleCreateRequest request = new ArticleCreateRequest();
         request.setCategory("없는카테고리");
@@ -176,12 +188,13 @@ class SocialArticleServiceTest {
             .thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> socialArticleService.createArticle(request, customUser))
+        assertThatThrownBy(() -> socialArticleService.createArticle(request, customUser,file))
             .isInstanceOf(CMissingDataException.class);
 
         verify(categoryRepository).findByCategoryName(request.getCategory());
         verify(memberRepository, never()).findById(any());
         verify(articleRepository, never()).save(any());
+        verify(s3Service, never()).upload(any());
         verify(tagService, never()).saveTag(any(), any());
     }
 
