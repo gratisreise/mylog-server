@@ -67,6 +67,10 @@ public class SocialMemberService implements MemberService{
     @Override
     @Transactional
     public void deleteMember(CustomUser customUser) {
+        long memberId = Long.valueOf(customUser.getUsername());
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(CMissingDataException::new);
+        s3Service.deleteImage(member.getProfileImg());
         memberRepository.deleteById(Long.valueOf(customUser.getUsername()));
     }
 

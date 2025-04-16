@@ -102,6 +102,11 @@ public class SocialArticleService implements ArticleService {
             throw new CUnAuthorizedException("허용 되지 않는 유저입니다.");
         }
 
+        Article article = articleRepository.findById(request.getId())
+            .orElseThrow(CMissingDataException::new);
+
+        s3Service.deleteImage(article.getArticleImg());
+
         articleRepository.deleteById(request.getId());
     }
 

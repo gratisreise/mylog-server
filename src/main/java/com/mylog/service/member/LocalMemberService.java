@@ -10,6 +10,7 @@ import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
 
 
+import com.mylog.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class LocalMemberService implements MemberService{
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final S3Service s3Service;
 
     @Value("aws.s3.basic")
     private String basicImageUrl;
@@ -89,6 +91,9 @@ public class LocalMemberService implements MemberService{
     @Override
     @Transactional
     public void deleteMember(CustomUser customUser) {
+        Member member = memberRepository.findByEmail(customUser.getUsername())
+            .orElseThrow(CMissingDataException::new);
+        s3Service.deleteImage(member.getProfileImg());
         memberRepository.deleteByEmail(customUser.getUsername());
     }
 
