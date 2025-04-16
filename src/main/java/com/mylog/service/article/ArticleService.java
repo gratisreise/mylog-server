@@ -18,7 +18,8 @@ public interface ArticleService {
         throws IOException;
 
     //게시글 수정
-    void updateArticle(ArticleUpdateRequest request, CustomUser customUser);
+    void updateArticle(ArticleUpdateRequest request, CustomUser customUser, MultipartFile file)
+        throws IOException;
 
     //게시글 삭제
     void deleteArticle(ArticleDeleteRequest request, CustomUser customUser);

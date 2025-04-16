@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/members")
@@ -44,11 +46,12 @@ public class MemberController {
 
     @PutMapping("/me")
     public CommonResult updateMember(
-        @RequestBody @Valid UpdateMemberRequest request,
+        @RequestPart(value="request") @Valid UpdateMemberRequest request,
+        @RequestPart(value="file") MultipartFile file,
         @AuthenticationPrincipal CustomUser customUser
     ){
         MemberService service = factory.getMemberService(customUser.getProvider());
-        service.updateMember(request, customUser);
+        service.updateMember(request, customUser, file);
         return ResponseService.getSuccessResult();
     }
 

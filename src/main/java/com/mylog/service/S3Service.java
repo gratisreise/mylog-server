@@ -2,6 +2,9 @@ package com.mylog.service;
 
 import com.mylog.config.S3Config;
 import com.mylog.controller.TestRequest;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -9,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import org.springframework.beans.factory.annotation.Value;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
@@ -21,28 +25,32 @@ public class S3Service {
     private String bucketName;
 
     //이미지 업로드
-    public void upload(MultipartFile file){
+    public Optional<String> upload(MultipartFile file) throws IOException {
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        String contentType = file.getContentType();
+        log.info("fileName: {}, contentType: {}", fileName, contentType);
 
-        try {
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+            .bucket(bucketName)
+            .key(fileName)
+            .contentType(contentType)
+            .build();
 
-            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(file.getOriginalFilename())
-                .build();
+        s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(
+            file.getInputStream(), file.getSize()
+        ));
 
-            s3Client.putObject(
-                putObjectRequest,
-                RequestBody.fromInputStream(file.getInputStream(), file.getSize())
-            );
-            log.info("File uploaded successfully: " + file.getOriginalFilename());
-        } catch (Exception e) {
-            log.error("File upload failed: " + file.getOriginalFilename());
-            log.error(e.getMessage());
-        }
+        return Optional.of(String.format("https://%s.s3.amazonaws.com/%s", bucketName, fileName));
     }
 
-    //이미지 삭제
+    // 이미지 삭제
+    public void deleteImage(String fileKey) {
+        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+            .bucket(bucketName)
+            .key(fileKey)
+            .build();
 
-    //해당 url 이미지 수정
+        s3Client.deleteObject(deleteObjectRequest);
+    }
 
 }

@@ -62,11 +62,12 @@ public class ArticleController {
     //게시글 수정
     @PutMapping
     public CommonResult updateArticle(
-        @RequestBody @Valid ArticleUpdateRequest request,
+        @RequestPart(value = "request") @Valid ArticleUpdateRequest request,
+        @RequestPart(value = "file") MultipartFile file,
         @AuthenticationPrincipal CustomUser customUser
     ){
         ArticleService service = factory.getMemberService(customUser.getProvider());
-        service.updateArticle(request, customUser);
+        service.updateArticle(request, customUser, file);
         return ResponseService.getSuccessResult();
     }
 

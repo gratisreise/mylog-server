@@ -51,7 +51,7 @@ public class Member {
     @Column(length = 100, unique = true)
     private String nickname;
 
-    @Column(length = 300)
+    @Column(length = 300, nullable = false)
     private String profileImg;
 
     @Column(length = 200)
@@ -74,7 +74,14 @@ public class Member {
         this.password = request.getPassword();
         this.memberName = request.getMemberName();
         this.nickname = request.getNickname();
-        this.profileImg = request.getProfileImage();
         this.bio = request.getBio();
+    }
+
+    public void update(UpdateMemberRequest request, String profileImg) {
+        this.password = request.getPassword();
+        this.memberName = request.getMemberName();
+        this.nickname = request.getNickname();
+        this.bio = request.getBio();
+        this.profileImg = profileImg;
     }
 }

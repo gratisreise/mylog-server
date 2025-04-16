@@ -26,8 +26,6 @@ public class UpdateMemberRequest {
     @Length(min = 3, max = 30)
     private String nickname;
 
-    private String profileImage;
-
     @Length(max = 200)
     private String bio;
 }

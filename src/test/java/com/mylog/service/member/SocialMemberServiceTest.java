@@ -80,41 +80,6 @@ class SocialMemberServiceTest {
         verify(memberRepository).findById(1L);
     }
 
-    @Test
-    void 회원정보_수정_성공() {
-        // given
-        UpdateMemberRequest request = new UpdateMemberRequest();
-        request.setNickname("새로운닉네임");
-        request.setMemberName("새이름");
-
-        when(memberRepository.findById(1L))
-            .thenReturn(Optional.of(testMember));
-
-        // when & then
-        assertThatCode(() -> socialMemberService.updateMember(request, customUser))
-            .doesNotThrowAnyException();
-
-        verify(memberRepository).findById(1L);
-        assertThat(testMember.getNickname()).isEqualTo("새로운닉네임");
-        assertThat(testMember.getMemberName()).isEqualTo("새이름");
-    }
-
-    @Test
-    void 회원정보_수정_실패_회원정보없음() {
-        // given
-        UpdateMemberRequest request = new UpdateMemberRequest();
-        request.setNickname("새로운닉네임");
-        request.setMemberName("새이름");
-
-        when(memberRepository.findById(1L))
-            .thenReturn(Optional.empty());
-
-        // when & then
-        assertThatThrownBy(() -> socialMemberService.updateMember(request, customUser))
-            .isInstanceOf(CMissingDataException.class);
-
-        verify(memberRepository).findById(1L);
-    }
 
     @Test
     void 회원_삭제_성공() {

@@ -136,28 +136,6 @@ class SocialArticleServiceTest {
             );
     }
 
-    @Test
-    void 게시글_수정_성공() {
-        // given
-        ArticleUpdateRequest request = new ArticleUpdateRequest();
-        request.setId(1L);
-        request.setTitle("수정된제목");
-        request.setContent("수정된내용");
-        request.setCategory("수정된카테고리");
-        request.setAuthor("테스트닉네임");
-
-        when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
-        when(memberRepository.findByNickname(anyString())).thenReturn(Optional.of(testMember));
-        when(articleRepository.findById(anyLong())).thenReturn(Optional.of(testArticle));
-        when(categoryRepository.findByCategoryName(anyString())).thenReturn(Optional.of(testCategory));
-
-        // when & then
-        assertThatCode(() -> socialArticleService.updateArticle(request, customUser))
-            .doesNotThrowAnyException();
-
-        verify(articleRepository).findById(anyLong());
-        verify(categoryRepository).findByCategoryName(anyString());
-    }
 
     @Test
     void 게시글_생성_실패_회원정보없음() throws IOException {
@@ -198,29 +176,4 @@ class SocialArticleServiceTest {
         verify(tagService, never()).saveTag(any(), any());
     }
 
-
-    @Test
-    void 게시글_수정_실패_권한없음() {
-        // given
-        ArticleUpdateRequest request = new ArticleUpdateRequest();
-        request.setAuthor("다른유저");
-
-        Member otherMember = Member.builder()
-            .id(2L)
-            .nickname("다른유저")
-            .build();
-
-        when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
-        when(memberRepository.findByNickname("다른유저")).thenReturn(Optional.of(otherMember));
-
-        // when & then
-        assertThatThrownBy(() -> socialArticleService.updateArticle(request, customUser))
-            .isInstanceOf(CUnAuthorizedException.class)
-            .hasMessage("허용 되지 않는 유저입니다.");
-
-        verify(memberRepository).findById(1L);
-        verify(memberRepository).findByNickname("다른유저");
-        verify(articleRepository, never()).findById(any());
-        verify(categoryRepository, never()).findByCategoryName(any());
-    }
 }

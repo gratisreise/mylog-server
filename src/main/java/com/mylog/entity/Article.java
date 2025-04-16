@@ -63,4 +63,11 @@ public class Article {
         this.category = category;
     }
 
+    public void update(ArticleUpdateRequest request, Category category, String articleImg) {
+        this.title = request.getTitle();
+        this.content = request.getContent();
+        this.category = category;
+        this.articleImg = articleImg;
+    }
+
 }

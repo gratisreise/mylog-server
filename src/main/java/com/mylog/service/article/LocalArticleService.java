@@ -17,7 +17,6 @@ import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
 import com.mylog.service.S3Service;
 import com.mylog.service.TagService;
-import com.mylog.service.notification.CommonNotificationService;
 import java.io.IOException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -67,7 +66,8 @@ public class LocalArticleService implements ArticleService{
 
     @Override
     @Transactional
-    public void updateArticle(ArticleUpdateRequest request, CustomUser customUser) {
+    public void updateArticle(ArticleUpdateRequest request, CustomUser customUser, MultipartFile file)
+        throws IOException {
         Member requestMember = memberRepository.findByNickname(request.getAuthor())
             .orElseThrow(CMissingDataException::new);
         Member userMember = memberRepository.findByEmail(customUser.getUsername())
@@ -82,7 +82,20 @@ public class LocalArticleService implements ArticleService{
         Category category = categoryRepository.findByCategoryName(request.getCategory())
             .orElseThrow(CMissingDataException::new);
 
-        article.update(request, category);
+        // 같은지 확인 -> 같으면 문자열 생성 아니면 기존꺼 사용
+        String articleImg;
+        if(!isSameImg(article.getArticleImg(), file.getOriginalFilename())){
+            articleImg = s3Service.upload(file)
+                .orElseThrow(CMissingDataException::new);
+        } else {
+            articleImg = article.getArticleImg();
+        }
+
+        article.update(request, category, articleImg);
+    }
+
+    private boolean isSameImg(String origin, String another) {
+        return origin.substring(57).equals(another);
     }
 
     @Override

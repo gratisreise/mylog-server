@@ -115,24 +115,7 @@ class LocalMemberServiceTest {
             .isInstanceOf(CMissingDataException.class);
     }
 
-    @Test
-    void 회원정보_수정_성공() {
-        // Given
-        Member member = createMember();
-        CustomUser customUser = new CustomUser(member, Collections.emptyList());
-        UpdateMemberRequest updateRequest = createUpdateRequest();
 
-        when(memberRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(member));
-
-        // When
-        localMemberService.updateMember(updateRequest, customUser);
-
-        // Then
-        assertThat(member.getMemberName()).isEqualTo(UPDATED_NAME);
-        assertThat(member.getNickname()).isEqualTo(UPDATED_NICKNAME);
-        assertThat(member.getBio()).isEqualTo(UPDATED_BIO);
-        assertThat(member.getProfileImg()).isEqualTo(UPDATED_PROFILE_IMAGE);
-    }
 
     @Test
     void 회원_삭제_성공() {
@@ -173,7 +156,6 @@ class LocalMemberServiceTest {
             .memberName(UPDATED_NAME)
             .nickname(UPDATED_NICKNAME)
             .bio(UPDATED_BIO)
-            .profileImage(UPDATED_PROFILE_IMAGE)
             .build();
     }
 

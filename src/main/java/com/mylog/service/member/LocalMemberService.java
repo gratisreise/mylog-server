@@ -12,9 +12,11 @@ import com.mylog.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class LocalMemberService implements MemberService{
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Value("aws.s3.basic")
+    private String basicImageUrl;
 
     //회원가입
     @Transactional
@@ -35,9 +40,11 @@ public class LocalMemberService implements MemberService{
 
         String cryptedPassword = passwordEncoder.encode(request.getPassword());
         log.info("cryptedPassword: {}", cryptedPassword);
+
         if (cryptedPassword == null) {
             throw new CMissingDataException("비밀번호 암호화를 실패했습니다.");
         }
+
         Member member = Member.builder()
             .email(request.getEmail())
             .memberName(request.getMemberName())
@@ -45,7 +52,9 @@ public class LocalMemberService implements MemberService{
             .nickname(request.getEmail())
             .provider(OauthProvider.LOCAL)
             .providerId(request.getEmail())
+            .profileImg(basicImageUrl)
             .build();
+
         log.info("member: {}", member.toString());
         memberRepository.save(member);
     }
@@ -60,17 +69,31 @@ public class LocalMemberService implements MemberService{
 
     @Override
     @Transactional
-    public void updateMember(UpdateMemberRequest request, CustomUser customUser) {
+    public void updateMember(
+        UpdateMemberRequest request,
+        CustomUser customUser,
+        MultipartFile file
+    ) {
         String email = customUser.getUsername();
+        String profileImg = file.getOriginalFilename();
+
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(CMissingDataException::new);
-        member.update(request);
+        if(isSame(member.getProfileImg(), profileImg)){
+            member.update(request);
+        } else {
+            member.update(request, profileImg);
+        }
     }
 
     @Override
     @Transactional
     public void deleteMember(CustomUser customUser) {
         memberRepository.deleteByEmail(customUser.getUsername());
+    }
+
+    private boolean isSame(String origin, String update) {
+        return origin.substring(57).equals(update);
     }
 }
 
