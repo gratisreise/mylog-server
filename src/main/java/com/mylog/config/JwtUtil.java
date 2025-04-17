@@ -1,11 +1,8 @@
 package com.mylog.config;
 
-import com.mylog.enums.OauthProvider;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.Jwts.SIG;
 import io.jsonwebtoken.security.Keys;
-import java.time.LocalDateTime;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
@@ -34,33 +31,32 @@ public class JwtUtil {
     }
 
 
-    public String createAccessToken(Long member_id, OauthProvider provider) {
+    public String createAccessToken(String subject, long member_id) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + accessValidity);
 
         return Jwts.builder()
-            .subject(member_id.toString())
+            .subject(subject)
             .claim("member_id", member_id)
-            .claim("provider", provider.name())
             .issuedAt(now)
             .expiration(validity)
             .signWith(accessKey, Jwts.SIG.HS512) // 0.12.x 버전의 새로운 서명 방식
             .compact();
     }
 
-    public String createRefreshToken(Long id) {
+    public String createRefreshToken(String subject) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + refreshValidity);
 
         return Jwts.builder()
-            .subject(id.toString())
+            .subject(subject)
             .issuedAt(now)
             .expiration(validity)
             .signWith(refreshKey, SIG.HS512)
             .compact();
     }
 
-    public String getId(String token) {
+    public String getUsername(String token) {
         return Jwts.parser()
             .verifyWith(accessKey)  // 0.12.x 버전의 새로운 검증 방식, 유요한지?, 만료되었는지
             .build()
@@ -69,7 +65,7 @@ public class JwtUtil {
             .getSubject();
     }
 
-    public Long getIdNumber(String token){
+    public Long getMemberId(String token){
         return Jwts.parser()
             .verifyWith(accessKey)
             .build()
@@ -78,14 +74,6 @@ public class JwtUtil {
             .get("member_id", Long.class);
     }
 
-    public String getProvider(String token) {
-        return Jwts.parser()
-            .verifyWith(accessKey)
-            .build()
-            .parseSignedClaims(token)
-            .getPayload()
-            .get("provider", String.class);
-    }
 
     public boolean validateAccessToken(String token) {
         try {
@@ -98,7 +86,5 @@ public class JwtUtil {
             return false;
         }
     }
-
-
 
 }

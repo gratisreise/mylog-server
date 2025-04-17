@@ -27,34 +27,40 @@ public class AuthService {
 
     //로그인
     public LoginResponse login(LoginRequest request) {
+        loginAuthenticate(request);
 
-        //검증
-        //맴버 존재하는지 확인
-        //authentication 객체 생성
+        Member member = createMember(request);
+
+        String subject = member.getEmail();
+        long memberId = member.getId();
+
+        String refreshToken = jwtUtil.createRefreshToken(subject);
+        String accessToken = jwtUtil.createAccessToken(subject, memberId);
+        refreshTokenService.saveRefreshToken(subject, refreshToken);
+
+        return new LoginResponse(accessToken, refreshToken);
+    }
+
+
+    private void loginAuthenticate(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        Member member = createMember(request);
-
-        String refreshToken = jwtUtil.createRefreshToken(member.getId());
-        String accessToken = jwtUtil.createAccessToken(member.getId(), member.getProvider());
-        refreshTokenService.saveRefreshToken(member.getId().toString(), refreshToken);
-
-        return new LoginResponse(accessToken, refreshToken);
     }
 
     //리프레쉬
     public RefreshResponse refresh(RefreshRequest request) {
-        String memberId = jwtUtil.getId(request.getRefreshToken());
+        String username = jwtUtil.getUsername(request.getRefreshToken());
+        long memberId = jwtUtil.getMemberId(request.getRefreshToken());
 
-        if (!refreshTokenService.validateRefreshToken(memberId, request.getRefreshToken())) {
+
+        if (!refreshTokenService.validateRefreshToken(username, request.getRefreshToken())) {
             throw new CInvalidDataException("유요하지 않은 토큰입니다.");
         }
 
-        String accessToken = jwtUtil.createAccessToken(Long.valueOf(memberId), request.getProvider());
+        String accessToken = jwtUtil.createAccessToken(username, memberId);
         return new RefreshResponse(accessToken);
     }
 

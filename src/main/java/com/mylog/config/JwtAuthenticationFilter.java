@@ -1,8 +1,6 @@
 package com.mylog.config;
 
-import com.mylog.enums.OauthProvider;
 import com.mylog.repository.MemberRepository;
-import com.mylog.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,8 +29,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt = resolveToken(request);
 
         if (StringUtils.hasText(jwt) && tokenProvider.validateAccessToken(jwt)) {
-            String memberId = tokenProvider.getId(jwt);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(memberId);
+            String username = tokenProvider.getUsername(jwt);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             //검증
             UsernamePasswordAuthenticationToken authentication =
