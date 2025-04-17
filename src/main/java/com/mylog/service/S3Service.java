@@ -1,7 +1,5 @@
 package com.mylog.service;
 
-import com.mylog.config.S3Config;
-import com.mylog.controller.TestRequest;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;

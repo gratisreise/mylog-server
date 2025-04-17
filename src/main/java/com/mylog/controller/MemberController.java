@@ -10,6 +10,7 @@ import com.mylog.entity.Member;
 import com.mylog.service.member.MemberService;
 import com.mylog.service.member.MemberServiceFactory;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -49,7 +50,7 @@ public class MemberController {
         @RequestPart(value="request") @Valid UpdateMemberRequest request,
         @RequestPart(value="file") MultipartFile file,
         @AuthenticationPrincipal CustomUser customUser
-    ){
+    ) throws IOException {
         MemberService service = factory.getMemberService(customUser.getProvider());
         service.updateMember(request, customUser, file);
         return ResponseService.getSuccessResult();

@@ -10,7 +10,9 @@ import org.springframework.security.core.userdetails.User;
 
 @Getter
 public class CustomUser extends User {
+
     private final OauthProvider provider;
+
 
     public CustomUser(Member member, Collection<? extends GrantedAuthority> authorities) {
         super(member.getEmail(), member.getPassword(), authorities);

@@ -65,7 +65,7 @@ public class ArticleController {
         @RequestPart(value = "request") @Valid ArticleUpdateRequest request,
         @RequestPart(value = "file") MultipartFile file,
         @AuthenticationPrincipal CustomUser customUser
-    ){
+    ) throws IOException {
         ArticleService service = factory.getMemberService(customUser.getProvider());
         service.updateArticle(request, customUser, file);
         return ResponseService.getSuccessResult();
