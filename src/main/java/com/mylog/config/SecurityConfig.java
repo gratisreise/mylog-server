@@ -1,7 +1,6 @@
 package com.mylog.config;
 
 import com.mylog.repository.MemberRepository;
-import com.mylog.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +25,7 @@ public class SecurityConfig {
     private final JwtUtil token;
     private final MemberRepository memberRepository;
 
-    private static final String[] PUBLIC_MATCHERS = {
+    private static final String[] WHITELISTED_URLS = {
         "/api/auth/**",
         "/api/members/sign-up",
         "/swagger-ui/**",
@@ -50,13 +49,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, UserDetailsService userDetailsService) throws Exception {
         return http
-            .csrf(AbstractHttpConfigurer::disable)  // CSRF 보호 비활성화
+            .csrf(AbstractHttpConfigurer::disable)  // CSRF 비활성화
             .formLogin(AbstractHttpConfigurer::disable)  // 폼 로그인 비활성화
             .httpBasic(AbstractHttpConfigurer::disable)  // HTTP Basic 인증 비활성화
 
             // 요청 정책
 //            .authorizeHttpRequests(auth -> auth
-//                .requestMatchers(PUBLIC_MATCHERS).permitAll() // 해당 url 허용
+//                .requestMatchers(WHITELISTED_URLS).permitAll() // 해당 url 허용
 //                .anyRequest().authenticated() // 나머지 접근 방지
 //            )
             .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())

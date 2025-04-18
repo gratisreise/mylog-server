@@ -21,10 +21,7 @@ public class KakoOAuth2UserInfo implements OAuth2UserInfo {
         return null;
     }
 
-    @Override
-    public String getEmail() {
-        return null;
-    }
+
 
     @Override
     public String getImageUrl() {

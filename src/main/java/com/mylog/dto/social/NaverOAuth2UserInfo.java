@@ -19,10 +19,6 @@ public class NaverOAuth2UserInfo implements OAuth2UserInfo {
         return naverUserInfo.getName();
     }
 
-    @Override
-    public String getEmail() {
-        return null;
-    }
 
     @Override
     public String getImageUrl() {

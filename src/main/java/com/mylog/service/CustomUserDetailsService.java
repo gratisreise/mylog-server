@@ -2,7 +2,6 @@ package com.mylog.service;
 
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.entity.Member;
-import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
 import java.util.Collections;
@@ -26,11 +25,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         Member member = memberRepository.findByNickname(username)
             .orElseThrow(CMissingDataException::new);
 
-        return createLocalUserDetails(member);
+        return createUserDetails(member);
     }
 
 
-    private UserDetails createLocalUserDetails(Member member) {
+    private UserDetails createUserDetails(Member member) {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");
         return new CustomUser(member, Collections.singleton(authority));
     }

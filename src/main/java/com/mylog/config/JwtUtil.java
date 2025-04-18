@@ -31,13 +31,13 @@ public class JwtUtil {
     }
 
 
-    public String createAccessToken(String subject, long member_id) {
+    public String createAccessToken(String subject, long memberId) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + accessValidity);
 
         return Jwts.builder()
             .subject(subject)
-            .claim("member_id", member_id)
+            .claim("memberId", memberId)
             .issuedAt(now)
             .expiration(validity)
             .signWith(accessKey, Jwts.SIG.HS512) // 0.12.x 버전의 새로운 서명 방식
@@ -71,7 +71,7 @@ public class JwtUtil {
             .build()
             .parseSignedClaims(token)
             .getPayload()
-            .get("member_id", Long.class);
+            .get("memberId", Long.class);
     }
 
 

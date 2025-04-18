@@ -12,11 +12,13 @@ import org.springframework.security.core.userdetails.User;
 public class CustomUser extends User {
 
     private final Long memberId;
+    private final OauthProvider provider;
 
 
     public CustomUser(Member member, Collection<? extends GrantedAuthority> authorities) {
         super(member.getEmail(), member.getPassword(), authorities);
         this.memberId = member.getId();
+        this.provider = member.getProvider();
     }
 
 

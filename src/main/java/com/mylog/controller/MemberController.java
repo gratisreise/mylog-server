@@ -7,6 +7,7 @@ import com.mylog.dto.SignUpRequest;
 import com.mylog.dto.UpdateMemberRequest;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.entity.Member;
+import com.mylog.service.member.CommonMemberService;
 import com.mylog.service.member.MemberService;
 import com.mylog.service.member.MemberServiceFactory;
 import jakarta.validation.Valid;
@@ -30,11 +31,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class MemberController {
 
     private final MemberServiceFactory factory;
+    private final CommonMemberService memberService;
 
     @PostMapping("/sign-up")
     public CommonResult signUp(@RequestBody @Valid SignUpRequest request){
-        MemberService service = factory.getMemberService(request.getProvider());
-        service.saveMember(request);
+        memberService.saveMember(request);
         return ResponseService.getSuccessResult();
     }
 
