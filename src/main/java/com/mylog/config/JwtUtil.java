@@ -44,12 +44,12 @@ public class JwtUtil {
             .compact();
     }
 
-    public String createRefreshToken(String subject) {
+    public String createRefreshToken(String username) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + refreshValidity);
 
         return Jwts.builder()
-            .subject(subject)
+            .subject(username)
             .issuedAt(now)
             .expiration(validity)
             .signWith(refreshKey, SIG.HS512)

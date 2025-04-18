@@ -13,9 +13,9 @@ public class RefreshTokenService {
 
     private final ValueOperations<String, String> valueOperations;
 
-    public void saveRefreshToken(String email, String refreshToken) {
+    public void saveRefreshToken(String username, String refreshToken) {
         valueOperations.set(
-            generateKey(email),
+            generateKey(username),
             refreshToken,
             REFRESH_TOKEN_EXPIRE_TIME,
             TimeUnit.DAYS
@@ -27,8 +27,8 @@ public class RefreshTokenService {
         return storedToken != null && storedToken.equals(refreshToken);
     }
 
-    private String generateKey(String email) {
-        return KEY_PREFIX + email;
+    private String generateKey(String username) {
+        return KEY_PREFIX + username;
     }
 
 

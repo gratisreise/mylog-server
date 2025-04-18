@@ -22,19 +22,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-        Member member = memberRepository.findById(Long.valueOf(id))
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Member member = memberRepository.findByNickname(username)
             .orElseThrow(CMissingDataException::new);
 
-        return member.getProvider() == OauthProvider.LOCAL ?
-            createLocalUserDetails(member) :
-            createSocialUserDetails(id);
+        return createLocalUserDetails(member);
     }
 
-    private UserDetails createSocialUserDetails(String id) {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");
-        return new CustomUser(id, Collections.singleton(authority));
-    }
 
     private UserDetails createLocalUserDetails(Member member) {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");

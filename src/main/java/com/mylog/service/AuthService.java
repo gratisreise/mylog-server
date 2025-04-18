@@ -14,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +23,7 @@ public class AuthService {
 
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
+    private final UserDetailsService userDetailsService;
     private final MemberRepository memberRepository;
     private final RefreshTokenService refreshTokenService;
 
@@ -31,12 +33,12 @@ public class AuthService {
 
         Member member = createMember(request);
 
-        String subject = member.getEmail();
+        String username = member.getNickname();
         long memberId = member.getId();
 
-        String refreshToken = jwtUtil.createRefreshToken(subject);
-        String accessToken = jwtUtil.createAccessToken(subject, memberId);
-        refreshTokenService.saveRefreshToken(subject, refreshToken);
+        String refreshToken = jwtUtil.createRefreshToken(username);
+        String accessToken = jwtUtil.createAccessToken(username, memberId);
+        refreshTokenService.saveRefreshToken(username, refreshToken);
 
         return new LoginResponse(accessToken, refreshToken);
     }
@@ -46,8 +48,6 @@ public class AuthService {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     //리프레쉬

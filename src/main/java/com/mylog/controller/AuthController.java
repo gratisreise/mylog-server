@@ -39,17 +39,9 @@ public class AuthController {
         return ResponseService.getSingleResult(authService.refresh(request));
     }
 
-
     @PostMapping("/oauth/login")
     public SingleResult<LoginResponse> socialLogin(@RequestBody OAuthRequest request){
         OAuth2UserService service = oAuth2UserServiceFactory.getOAuth2UserService(request.getProvider());
-        return ResponseService.getSingleResult(service.login(request));
-    }
-
-    @PostMapping("/oauth/kakao/login")
-    public SingleResult<LoginResponse> tokenTest(@RequestBody OAuthRequest request){
-        OAuth2UserService service = oAuth2UserServiceFactory.getOAuth2UserService(request.getProvider());
-
         return ResponseService.getSingleResult(service.login(request));
     }
 
