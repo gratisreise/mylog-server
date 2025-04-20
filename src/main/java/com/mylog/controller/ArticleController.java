@@ -75,8 +75,7 @@ public class ArticleController {
         @AuthenticationPrincipal CustomUser customUser,
         @RequestBody ArticleDeleteRequest request
     ){
-        ArticleService service = factory.getMemberService(customUser.getProvider());
-        service.deleteArticle(request, customUser);
+        articleService.deleteArticle(request, customUser);
         return ResponseService.getSuccessResult();
     }
 
