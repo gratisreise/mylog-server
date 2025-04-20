@@ -48,8 +48,7 @@ public class ArticleController {
         @RequestPart(value = "request") @Valid ArticleCreateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ) throws IOException {
-        ArticleService service = factory.getMemberService(customUser.getProvider());
-        service.createArticle(request, customUser, file);
+        articleService.createArticle(request, customUser, file);
         return ResponseService.getSuccessResult();
     }
 
@@ -66,8 +65,8 @@ public class ArticleController {
         @RequestPart(value = "file") MultipartFile file,
         @AuthenticationPrincipal CustomUser customUser
     ) throws IOException {
-        ArticleService service = factory.getMemberService(customUser.getProvider());
-        service.updateArticle(request, customUser, file);
+
+        articleService.updateArticle(request, customUser, file);
         return ResponseService.getSuccessResult();
     }
 

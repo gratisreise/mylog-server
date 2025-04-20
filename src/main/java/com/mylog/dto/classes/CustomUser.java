@@ -21,5 +21,4 @@ public class CustomUser extends User {
         this.provider = member.getProvider();
     }
 
-
 }
