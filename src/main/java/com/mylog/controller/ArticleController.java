@@ -65,8 +65,7 @@ public class ArticleController {
         @RequestPart(value = "file") MultipartFile file,
         @AuthenticationPrincipal CustomUser customUser
     ) throws IOException {
-
-//        articleService.updateArticle(request, customUser, file);
+        articleService.updateArticle(request, customUser, file);
         return ResponseService.getSuccessResult();
     }
 

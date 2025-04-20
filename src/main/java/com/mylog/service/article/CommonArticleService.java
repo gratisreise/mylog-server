@@ -9,6 +9,7 @@ import com.mylog.entity.Article;
 import com.mylog.entity.Category;
 import com.mylog.entity.Member;
 import com.mylog.exception.CMissingDataException;
+import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
@@ -57,7 +58,38 @@ public class CommonArticleService{
     }
 
     //게시글 수정
+    @Transactional
+    public void updateArticle(ArticleUpdateRequest request, CustomUser customUser,
+        MultipartFile file) throws IOException {
+        Member requestMember = memberRepository.findByNickname(request.getAuthor())
+            .orElseThrow(CMissingDataException::new);
+        Member userMember = memberRepository.findByEmail(customUser.getUsername())
+            .orElseThrow(CMissingDataException::new);
 
+        if(!requestMember.getId().equals(userMember.getId())){
+            throw new CUnAuthorizedException("허용 되지 않는 유저입니다.");
+        }
+
+        Article article = articleRepository.findById(request.getId())
+            .orElseThrow(CMissingDataException::new);
+        Category category = categoryRepository.findByCategoryName(request.getCategory())
+            .orElseThrow(CMissingDataException::new);
+
+        // 같은지 확인 -> 같으면 문자열 생성 아니면 기존꺼 사용
+        String articleImg;
+        if(!isSameImg(article.getArticleImg(), file.getOriginalFilename())){
+            articleImg = s3Service.upload(file)
+                .orElseThrow(CMissingDataException::new);
+        } else {
+            articleImg = article.getArticleImg();
+        }
+
+        article.update(request, category, articleImg);
+    }
+
+    private boolean isSameImg(String origin, String another) {
+        return origin.substring(57).equals(another);
+    }
 
 
     //게시글 삭제
