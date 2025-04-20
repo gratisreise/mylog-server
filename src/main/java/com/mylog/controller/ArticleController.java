@@ -66,7 +66,7 @@ public class ArticleController {
         @AuthenticationPrincipal CustomUser customUser
     ) throws IOException {
 
-        articleService.updateArticle(request, customUser, file);
+//        articleService.updateArticle(request, customUser, file);
         return ResponseService.getSuccessResult();
     }
 
