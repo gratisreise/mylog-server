@@ -91,8 +91,25 @@ public class CommonArticleService{
         return origin.substring(57).equals(another);
     }
 
-
     //게시글 삭제
+    @Transactional
+    public void deleteArticle(ArticleDeleteRequest request, CustomUser customUser) {
+        Member requestMember = memberRepository.findByNickname(request.getAuthor())
+            .orElseThrow(CMissingDataException::new);
+        Member userMember = memberRepository.findById(customUser.getMemberId())
+            .orElseThrow(CMissingDataException::new);
+
+        if(!requestMember.getId().equals(userMember.getId())){
+            throw new CUnAuthorizedException("허용 되지 않는 유저입니다.");
+        }
+
+        Article article = articleRepository.findById(request.getId())
+            .orElseThrow(CMissingDataException::new);
+
+        s3Service.deleteImage(article.getArticleImg());
+
+        articleRepository.deleteById(request.getId());
+    }
 
     //내 게시글 목록
 

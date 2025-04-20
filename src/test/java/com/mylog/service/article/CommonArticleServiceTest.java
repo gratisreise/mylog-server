@@ -1,6 +1,7 @@
 package com.mylog.service.article;
 
 import com.mylog.dto.article.ArticleCreateRequest;
+import com.mylog.dto.article.ArticleUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.entity.Article;
 import com.mylog.entity.Category;
@@ -56,6 +57,7 @@ class CommonArticleServiceTest {
     private S3Service s3Service;
 
     private ArticleCreateRequest request;
+    private ArticleUpdateRequest updateRequest;
     private CustomUser customUser;
     private MockMultipartFile file;
     private Category category;
@@ -67,6 +69,15 @@ class CommonArticleServiceTest {
     private String title = "Test Title";
     private String content = "Test Content";
     private List<String> tags = List.of("tag1", "tag2");
+    private Member requestMember;
+    private Member userMember;
+    private String newImageUrl = "https://s3.example.com/image/123456789012345678901234567890123456789012345678901234567/new.jpg";
+    private Long articleId = 1L;
+    private String author = "testUser";
+    private String email = "test@example.com";
+    private String updatedTitle = "Updated Title";
+    private String updatedContent = "Updated Content";
+    private MockMultipartFile updateFile;
 
     @BeforeEach
     void setUp() {
@@ -98,6 +109,19 @@ class CommonArticleServiceTest {
             .member(member)
             .articleImg(imageUrl)
             .build();
+
+        updateRequest = new ArticleUpdateRequest();
+        updateRequest.setId(articleId);
+        updateRequest.setAuthor(author);
+        updateRequest.setCategory(categoryName);
+        updateRequest.setTitle(updatedTitle);
+        updateRequest.setContent(updatedContent);
+
+        userMember = new Member();
+        userMember.setId(memberId);
+        userMember.setEmail(email);
+
+        updateFile = new MockMultipartFile("file", "new.jpg", "image/jpeg", "new image content".getBytes());
     }
 
     @Test
