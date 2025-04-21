@@ -39,8 +39,7 @@ public class CommentController {
         @RequestBody @Valid CommentCreateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        CommentService service = factory.getCommentService(customUser.getProvider());
-        service.createComment(request, customUser);
+        commentService.createComment(request, customUser);
         return ResponseService.getSuccessResult();
     }
 
