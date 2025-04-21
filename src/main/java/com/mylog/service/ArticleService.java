@@ -1,4 +1,4 @@
-package com.mylog.service.article;
+package com.mylog.service;
 
 import com.mylog.dto.article.ArticleCreateRequest;
 import com.mylog.dto.article.ArticleDeleteRequest;
@@ -13,8 +13,6 @@ import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
-import com.mylog.service.S3Service;
-import com.mylog.service.TagService;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class CommonArticleService{
+public class ArticleService {
     private final ArticleRepository articleRepository;
     private final CategoryRepository categoryRepository;
     private final MemberRepository memberRepository;
@@ -63,7 +61,7 @@ public class CommonArticleService{
         MultipartFile file) throws IOException {
         Member requestMember = memberRepository.findByNickname(request.getAuthor())
             .orElseThrow(CMissingDataException::new);
-        Member userMember = memberRepository.findByEmail(customUser.getUsername())
+        Member userMember = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);
 
         if(!requestMember.getId().equals(userMember.getId())){
@@ -78,11 +76,12 @@ public class CommonArticleService{
         // 같은지 확인 -> 같으면 문자열 생성 아니면 기존꺼 사용
         String articleImg;
         if(!isSameImg(article.getArticleImg(), file.getOriginalFilename())){
-            articleImg = s3Service.upload(file)
-                .orElseThrow(CMissingDataException::new);
+            articleImg = s3Service.upload(file).orElseThrow(CMissingDataException::new);
         } else {
             articleImg = article.getArticleImg();
         }
+
+        tagService.saveTag(request.getTags(), article);
 
         article.update(request, category, articleImg);
     }
@@ -124,7 +123,7 @@ public class CommonArticleService{
     //내 게시글 검색
     public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser,
         String keyword) {
-        Long memberId = memberRepository.findByEmail(customUser.getUsername())
+        Long memberId = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new)
             .getId();
         return articleRepository

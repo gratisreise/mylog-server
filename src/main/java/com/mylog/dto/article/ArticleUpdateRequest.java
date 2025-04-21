@@ -1,6 +1,7 @@
 package com.mylog.dto.article;
 
 import jakarta.validation.constraints.NotBlank;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -26,4 +27,7 @@ public class ArticleUpdateRequest {
 
     @NotBlank
     private String author;
+
+    private List<String> tags;
+
 }

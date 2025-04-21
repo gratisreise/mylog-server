@@ -9,13 +9,9 @@ import com.mylog.dto.article.ArticleDeleteRequest;
 import com.mylog.dto.article.ArticleResponse;
 import com.mylog.dto.article.ArticleUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
-import com.mylog.service.S3Service;
-import com.mylog.service.article.ArticleService;
-import com.mylog.service.article.ArticleServiceFactory;
-import com.mylog.service.article.CommonArticleService;
+import com.mylog.service.ArticleService;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import lombok.Getter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RequestMapping("/api/articles")
 public class ArticleController {
-    private final ArticleServiceFactory factory;
-    private final CommonArticleService articleService;
+    private final ArticleService articleService;
 
     //게시글 생성
     @PostMapping
@@ -93,8 +88,7 @@ public class ArticleController {
         @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        ArticleService service = factory.getMemberService(customUser.getProvider());
-        return ResponseService.getSingleResult(service.getArticles(pageable, customUser));
+        return ResponseService.getSingleResult(articleService.getArticles(pageable, customUser));
     }
 
     //전체 게시글 검색

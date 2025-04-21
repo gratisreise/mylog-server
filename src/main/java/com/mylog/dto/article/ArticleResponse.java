@@ -6,11 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
+@ToString
 public class ArticleResponse {
     private Long id;
     private String title;
@@ -20,6 +22,7 @@ public class ArticleResponse {
     private LocalDateTime createdAt;
 
     public ArticleResponse(Article article, String author, String category) {
+        this.id = article.getId();
         this.title = article.getTitle();
         this.content = article.getContent();
         this.author = author;
