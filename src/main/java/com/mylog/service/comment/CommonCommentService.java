@@ -35,7 +35,7 @@ public class CommonCommentService {
         Article article = articleRepository.findById(request.getArticleId())
             .orElseThrow(CMissingDataException::new);
 
-        Member member = memberRepository.findByEmail(customUser.getUsername())
+        Member member = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);
 
         Comment comment = Comment.builder()
@@ -68,7 +68,7 @@ public class CommonCommentService {
 
     private boolean validateUpdate(CustomUser customUser, Comment comment) {
         Long commentMemberId = comment.getMember().getId();
-        Long requestMemberId = memberRepository.findByEmail(customUser.getUsername())
+        Long requestMemberId = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new)
             .getId();
 
@@ -77,6 +77,14 @@ public class CommonCommentService {
 
 
     //댓글 삭제
+    public void deleteComment(Long commentId, CustomUser customUser){
+        if (!validateDelete(commentId, customUser)) {
+            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
+        }
+
+        commentRepository.deleteById(commentId);
+    }
+
 
 
     //나의 댓글 조회
@@ -97,5 +105,21 @@ public class CommonCommentService {
         return commentRepository.findByArticleIdAndParentId(articleId, parentId, pageable)
             .map(CommentResponse::from);
     };
+
+    private boolean validateDelete(Long commentId, CustomUser customUser) {
+        Comment comment = commentRepository.findById(commentId)
+            .orElseThrow(CMissingDataException::new);
+        Article article = comment.getArticle();
+
+        Long commentMemberId = comment.getMember().getId(); //댓글 작성자
+        Long articleMemberId = article.getMember().getId(); // 게시글 작성자
+
+        //로직을 요청한 사람
+        Long userMemberId = memberRepository.findById(customUser.getMemberId())
+            .orElseThrow(CMissingDataException::new)
+            .getId();
+
+        return userMemberId.equals(commentMemberId) || userMemberId.equals(articleMemberId);
+    }
 
 }

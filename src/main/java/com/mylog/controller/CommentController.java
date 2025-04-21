@@ -83,8 +83,8 @@ public class CommentController {
         @PathVariable Long commentId,
         @AuthenticationPrincipal CustomUser customUser
     ) {
-        CommentService service = factory.getCommentService(customUser.getProvider());
-        service.deleteComment(commentId, customUser);
+
+        commentService.deleteComment(commentId, customUser);
         return ResponseService.getSuccessResult();
     }
 
@@ -110,6 +110,8 @@ public class CommentController {
         CommentService service = factory.getCommentService(customUser.getProvider());
         return ResponseService.getSingleResult(service.getComments(customUser, pageable));
     }
+
+
 
 
 }
