@@ -8,6 +8,7 @@ import com.mylog.entity.Article;
 import com.mylog.entity.Comment;
 import com.mylog.entity.Member;
 import com.mylog.exception.CMissingDataException;
+import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CommentRepository;
 import com.mylog.repository.MemberRepository;
@@ -53,6 +54,26 @@ public class CommonCommentService {
     }
 
     //댓글 수정
+    @Transactional
+    public void updateComment(CommentUpdateRequest request, Long commentId, CustomUser customUser) {
+        Comment comment = commentRepository.findById(commentId)
+            .orElseThrow(CMissingDataException::new);
+
+        if (!validateUpdate(customUser, comment)) {
+            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
+        }
+
+        comment.setContent(request.getContent());
+    }
+
+    private boolean validateUpdate(CustomUser customUser, Comment comment) {
+        Long commentMemberId = comment.getMember().getId();
+        Long requestMemberId = memberRepository.findByEmail(customUser.getUsername())
+            .orElseThrow(CMissingDataException::new)
+            .getId();
+
+        return commentMemberId.equals(requestMemberId);
+    }
 
 
     //댓글 삭제

@@ -73,8 +73,7 @@ public class CommentController {
         @PathVariable Long commentId,
         @AuthenticationPrincipal CustomUser customUser
     ) {
-        CommentService service = factory.getCommentService(customUser.getProvider());
-        service.updateComment(request, commentId, customUser);
+        commentService.updateComment(request, commentId,customUser);
         return ResponseService.getSuccessResult();
     }
 
