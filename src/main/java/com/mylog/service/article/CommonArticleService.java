@@ -122,6 +122,15 @@ public class CommonArticleService{
     }
 
     //내 게시글 검색
+    public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser,
+        String keyword) {
+        Long memberId = memberRepository.findByEmail(customUser.getUsername())
+            .orElseThrow(CMissingDataException::new)
+            .getId();
+        return articleRepository
+            .findByMemberIdAndTitleContainingIgnoreCase(memberId, keyword, pageable)
+            .map(ArticleResponse::from);
+    }
 
 
     //게시글 조회
