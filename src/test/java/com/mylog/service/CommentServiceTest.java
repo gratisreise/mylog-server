@@ -375,6 +375,7 @@ class CommentServiceTest {
         List<Comment> comments = List.of(comment);
         Page<Comment> commentPage = new PageImpl<>(comments, pageable, comments.size());
 
+        when(articleRepository.existsById(articleId)).thenReturn(true);
         when(commentRepository.findByArticle_Id(articleId, pageable)).thenReturn(commentPage);
 
         // when

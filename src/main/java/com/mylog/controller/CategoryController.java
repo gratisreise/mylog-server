@@ -7,7 +7,7 @@ import com.mylog.dto.category.CategoryCreateRequest;
 import com.mylog.dto.category.CategoryResponse;
 import com.mylog.dto.category.CategoryUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
-import com.mylog.service.category.CategoryService;
+import com.mylog.service.CategoryService;
 import com.mylog.service.category.CategoryServiceFactory;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/categories")
 public class CategoryController {
-    private final CategoryServiceFactory factory;
+    private final CategoryService categoryService;
 
     //카테고리 생성
     @PostMapping
@@ -33,8 +33,7 @@ public class CategoryController {
         @RequestBody @Valid CategoryCreateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        CategoryService service = factory.getCategoryService(customUser.getProvider());
-        service.createCategory(request, customUser);
+        categoryService.createCategory(request, customUser);
         return ResponseService.getSuccessResult();
     }
 
@@ -43,8 +42,7 @@ public class CategoryController {
     public ListResult<CategoryResponse> getCategories(
         @AuthenticationPrincipal CustomUser customUser
     ){
-        CategoryService service = factory.getCategoryService(customUser.getProvider());
-        return ResponseService.getListResult(service.getCategories(customUser));
+        return ResponseService.getListResult(categoryService.getCategories(customUser));
     }
 
     //카테고리 수정
@@ -53,8 +51,7 @@ public class CategoryController {
         @RequestBody @Valid CategoryUpdateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        CategoryService service = factory.getCategoryService(customUser.getProvider());
-        service.updateCategory(request, customUser);
+        categoryService.updateCategory(request, customUser);
         return ResponseService.getSuccessResult();
     }
 
@@ -64,8 +61,7 @@ public class CategoryController {
         @PathVariable Long id,
         @AuthenticationPrincipal CustomUser customUser
     ) {
-        CategoryService service = factory.getCategoryService(customUser.getProvider());
-        service.deleteCategory(customUser, id);
+        categoryService.deleteCategory(customUser, id);
         return ResponseService.getSuccessResult();
     }
 
