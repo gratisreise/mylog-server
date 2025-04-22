@@ -1,4 +1,4 @@
-package com.mylog.service.comment;
+package com.mylog.service;
 
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.dto.comment.CommentCreateRequest;
@@ -66,16 +66,6 @@ public class CommonCommentService {
         comment.setContent(request.getContent());
     }
 
-    private boolean validateUpdate(CustomUser customUser, Comment comment) {
-        Long commentMemberId = comment.getMember().getId();
-        Long requestMemberId = memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new)
-            .getId();
-
-        return commentMemberId.equals(requestMemberId);
-    }
-
-
     //댓글 삭제
     public void deleteComment(Long commentId, CustomUser customUser){
         if (!validateDelete(commentId, customUser)) {
@@ -93,9 +83,13 @@ public class CommonCommentService {
             .map(CommentResponse::from);
     }
 
-
     //나의 게시글 댓글 조회
-
+    public Page<CommentResponse> getComments(CustomUser customUser, Pageable pageable) {
+        Member member = memberRepository.findByEmail(customUser.getUsername())
+            .orElseThrow(CMissingDataException::new);
+        return commentRepository.findAllByArticle_Member(member, pageable)
+            .map(CommentResponse::from);
+    }
 
 
     //게시글 댓글목록 조회
@@ -124,6 +118,15 @@ public class CommonCommentService {
             .getId();
 
         return userMemberId.equals(commentMemberId) || userMemberId.equals(articleMemberId);
+    }
+
+    private boolean validateUpdate(CustomUser customUser, Comment comment) {
+        Long commentMemberId = comment.getMember().getId();
+        Long requestMemberId = memberRepository.findById(customUser.getMemberId())
+            .orElseThrow(CMissingDataException::new)
+            .getId();
+
+        return commentMemberId.equals(requestMemberId);
     }
 
 }

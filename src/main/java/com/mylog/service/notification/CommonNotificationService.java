@@ -29,7 +29,6 @@ public class CommonNotificationService {
             .relatedId(relatedId)
             .build();
 
-
         notificationRepository.save(notification);
     }
 
@@ -48,17 +47,16 @@ public class CommonNotificationService {
 
     @Transactional
     public void createNotificationSetting(Member member, String type){
-        Optional<NotificationSetting> set = notificationSettingRepository
-            .findByMemberAndType(member, type);
+        if(notificationSettingRepository.existsByMemberAndType(member, type)){
+            return;
+        }
 
-        if(set.isPresent()) return;
-
-        NotificationSetting settting = NotificationSetting.builder()
+        NotificationSetting setting = NotificationSetting.builder()
             .member(member)
             .type(type)
             .build();
 
-        notificationSettingRepository.save(settting);
+        notificationSettingRepository.save(setting);
     }
 
 
