@@ -1,5 +1,6 @@
 package com.mylog.dto.comment;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,10 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 public class CommentCreateRequest {
     @Length(min=2, max=200)
+    @NotBlank
     private String content;
+    @NotBlank
     private Long articleId;
+    @NotBlank
     private long parentCommentId;
 }

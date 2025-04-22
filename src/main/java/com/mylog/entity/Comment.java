@@ -40,7 +40,7 @@ public class Comment {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    private Long parentId;
+    private long parentId;
 
     @Column(length = 200)
     private String content;

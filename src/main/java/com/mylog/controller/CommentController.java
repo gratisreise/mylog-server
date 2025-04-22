@@ -7,7 +7,7 @@ import com.mylog.dto.classes.CustomUser;
 import com.mylog.dto.comment.CommentCreateRequest;
 import com.mylog.dto.comment.CommentResponse;
 import com.mylog.dto.comment.CommentUpdateRequest;
-import com.mylog.service.CommonCommentService;
+import com.mylog.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/comments")
 public class CommentController {
-    private final CommonCommentService commentService;
+    private final CommentService commentService;
 
     //댓글 생성
     @PostMapping
@@ -64,13 +64,12 @@ public class CommentController {
     }
 
     //댓글 수정
-    @PutMapping("/{commentId}")
+    @PutMapping()
     public CommonResult updateComments(
         @RequestBody @Valid CommentUpdateRequest request,
-        @PathVariable Long commentId,
         @AuthenticationPrincipal CustomUser customUser
     ) {
-        commentService.updateComment(request, commentId,customUser);
+        commentService.updateComment(request, customUser);
         return ResponseService.getSuccessResult();
     }
 

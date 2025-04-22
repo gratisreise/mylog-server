@@ -21,13 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class CommonCommentService {
+public class CommentService {
 
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
     private final ArticleRepository articleRepository;
     private final CommonNotificationService notificationService;
-
 
     //댓글 생성
     @Transactional
@@ -55,8 +54,8 @@ public class CommonCommentService {
 
     //댓글 수정
     @Transactional
-    public void updateComment(CommentUpdateRequest request, Long commentId, CustomUser customUser) {
-        Comment comment = commentRepository.findById(commentId)
+    public void updateComment(CommentUpdateRequest request, CustomUser customUser) {
+        Comment comment = commentRepository.findById(request.getCommentId())
             .orElseThrow(CMissingDataException::new);
 
         if (!validateUpdate(customUser, comment)) {
@@ -85,7 +84,7 @@ public class CommonCommentService {
 
     //나의 게시글 댓글 조회
     public Page<CommentResponse> getComments(CustomUser customUser, Pageable pageable) {
-        Member member = memberRepository.findByEmail(customUser.getUsername())
+        Member member = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);
         return commentRepository.findAllByArticle_Member(member, pageable)
             .map(CommentResponse::from);
@@ -94,13 +93,22 @@ public class CommonCommentService {
 
     //게시글 댓글목록 조회
     public Page<CommentResponse> getComments(Long articleId, Pageable pageable){
-        return commentRepository.findByArticleId(articleId, pageable)
+        if(!articleRepository.existsById(articleId)){
+            throw new CMissingDataException("존재하지 않는 게시글 입니다.");
+        }
+        return commentRepository.findByArticle_Id(articleId, pageable)
             .map(CommentResponse::from);
     };
 
     //대댓글 목록 조회
     public Page<CommentResponse> getChildComments(Long articleId, Long parentId, Pageable pageable){
-        return commentRepository.findByArticleIdAndParentId(articleId, parentId, pageable)
+        if(!articleRepository.existsById(articleId)){
+            throw new CMissingDataException("존재하지 않는 게시글입니다.");
+        }
+        if(!commentRepository.existsById(parentId)){
+            throw new CMissingDataException("존재하지 않는 댓글입니다.");
+        }
+        return commentRepository.findByArticle_IdAndParentId(articleId, parentId, pageable)
             .map(CommentResponse::from);
     };
 
