@@ -83,7 +83,6 @@ public class CommentController {
         @PathVariable Long commentId,
         @AuthenticationPrincipal CustomUser customUser
     ) {
-
         commentService.deleteComment(commentId, customUser);
         return ResponseService.getSuccessResult();
     }
@@ -95,8 +94,7 @@ public class CommentController {
         @PageableDefault(size = 20, sort="createdAt", direction = Direction.DESC)
         Pageable pageable
     ) {
-        CommentService service = factory.getCommentService(customUser.getProvider());
-        return ResponseService.getSingleResult(service.getMyComments(customUser, pageable));
+        return ResponseService.getSingleResult(commentService.getMyComments(customUser, pageable));
     }
 
 

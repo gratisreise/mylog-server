@@ -85,9 +85,13 @@ public class CommonCommentService {
         commentRepository.deleteById(commentId);
     }
 
-
-
     //나의 댓글 조회
+    public Page<CommentResponse> getMyComments(CustomUser customUser, Pageable pageable) {
+        Member member = memberRepository.findById(customUser.getMemberId())
+            .orElseThrow(CMissingDataException::new);
+        return commentRepository.findAllByMember(member, pageable)
+            .map(CommentResponse::from);
+    }
 
 
     //나의 게시글 댓글 조회
