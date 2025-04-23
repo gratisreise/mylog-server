@@ -1,13 +1,14 @@
 package com.mylog.service;
 
 import com.mylog.dto.category.CategoryCreateRequest;
+import com.mylog.dto.category.CategoryDeleteRequest;
 import com.mylog.dto.category.CategoryResponse;
 import com.mylog.dto.category.CategoryUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.entity.Category;
 import com.mylog.entity.Member;
-import com.mylog.exception.CReachedLimitException;
 import com.mylog.exception.CMissingDataException;
+import com.mylog.exception.CReachedLimitException;
 import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
@@ -56,7 +57,6 @@ public class CategoryService {
     //카테고리 수정
     @Transactional
     public void updateCategory(CategoryUpdateRequest request, CustomUser customUser){
-
         if(!validateUpdate(request, customUser)){
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         };
@@ -68,12 +68,12 @@ public class CategoryService {
 
     //카테고리 삭제
     @Transactional
-    public void deleteCategory(CustomUser customUser, Long categoryId){
-        if(!validateDelete(customUser, categoryId)){
+    public void deleteCategory(CategoryDeleteRequest request, CustomUser customUser){
+        if(!validateDelete(request, customUser)){
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         };
 
-        categoryRepository.deleteById(categoryId);
+        categoryRepository.deleteById(request.getCategoryId());
     };
 
 
@@ -83,19 +83,11 @@ public class CategoryService {
     }
 
     private boolean validateUpdate(CategoryUpdateRequest request, CustomUser customUser) {
-        Long userMemberId = generateMember(customUser).getId();
-        Long categoryMemberId = categoryRepository.findById(request.getCategoryId())
-            .orElseThrow(CMissingDataException::new)
-            .getMember().getId();
-        return userMemberId.equals(categoryMemberId);
+        return request.getMemberId().equals(customUser.getMemberId());
     }
 
-    private boolean validateDelete(CustomUser customUser, Long commentId) {
-        long userMemberId = generateMember(customUser).getId();
-        long categoryMemberId = categoryRepository.findById(commentId)
-            .orElseThrow(CMissingDataException::new)
-            .getMember().getId();
-        return userMemberId == categoryMemberId;
+    private boolean validateDelete(CategoryDeleteRequest request, CustomUser customUser) {
+        return request.getMemberId().equals(customUser.getMemberId());
     }
 
 }

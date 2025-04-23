@@ -4,6 +4,7 @@ import com.mylog.common.CommonResult;
 import com.mylog.common.ListResult;
 import com.mylog.common.ResponseService;
 import com.mylog.dto.category.CategoryCreateRequest;
+import com.mylog.dto.category.CategoryDeleteRequest;
 import com.mylog.dto.category.CategoryResponse;
 import com.mylog.dto.category.CategoryUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
@@ -56,12 +57,12 @@ public class CategoryController {
     }
 
     //카테고리 삭제
-    @DeleteMapping("/{id}")
+    @DeleteMapping
     public CommonResult deleteCategory(
-        @PathVariable Long id,
+        @RequestBody @Valid CategoryDeleteRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ) {
-        categoryService.deleteCategory(customUser, id);
+        categoryService.deleteCategory(request, customUser);
         return ResponseService.getSuccessResult();
     }
 
