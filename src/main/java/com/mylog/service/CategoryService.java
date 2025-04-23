@@ -7,6 +7,7 @@ import com.mylog.dto.category.CategoryUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.entity.Category;
 import com.mylog.entity.Member;
+import com.mylog.exception.CInvalidDataException;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.exception.CReachedLimitException;
 import com.mylog.exception.CUnAuthorizedException;
@@ -72,6 +73,9 @@ public class CategoryService {
         if(!validateDelete(request, customUser)){
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         };
+        if(!categoryRepository.existsById(request.getCategoryId())){
+            throw new CInvalidDataException("존재하지 않는 카테고리입니다.");
+        }
 
         categoryRepository.deleteById(request.getCategoryId());
     };
