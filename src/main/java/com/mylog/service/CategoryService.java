@@ -8,6 +8,7 @@ import com.mylog.entity.Category;
 import com.mylog.entity.Member;
 import com.mylog.exception.CReachedLimitException;
 import com.mylog.exception.CMissingDataException;
+import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
 import java.util.List;
@@ -56,6 +57,13 @@ public class CategoryService {
     @Transactional
     public void updateCategory(CategoryUpdateRequest request, CustomUser customUser){
 
+        if(!validateUpdate(request, customUser)){
+            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
+        };
+
+        categoryRepository.findById(request.getId())
+            .orElseThrow(CMissingDataException::new)
+            .update(request);
     };
 
     //카테고리 삭제
@@ -68,6 +76,14 @@ public class CategoryService {
     private Member generateMember(CustomUser customUser) {
         return memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);
+    }
+
+    private boolean validateUpdate(CategoryUpdateRequest request, CustomUser customUser) {
+        Long userMemberId = generateMember(customUser).getId();
+        Long categoryMemberId = categoryRepository.findById(request.getId())
+            .orElseThrow(CMissingDataException::new)
+            .getMember().getId();
+        return userMemberId.equals(categoryMemberId);
     }
 
 }
