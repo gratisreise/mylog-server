@@ -1,5 +1,6 @@
 package com.mylog.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,17 +16,22 @@ import org.hibernate.validator.constraints.Length;
 @AllArgsConstructor
 public class UpdateMemberRequest {
     @Length(min = 8, max = 30)
+    @NotBlank
     private String email;
 
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$")
+    @NotBlank
     private String password;
 
     @Length(min = 3, max = 30)
+    @NotBlank
     private String memberName;
 
     @Length(min = 3, max = 30)
+    @NotBlank
     private String nickname;
 
     @Length(max = 200)
+    @NotBlank
     private String bio;
 }

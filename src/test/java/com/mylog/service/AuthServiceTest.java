@@ -41,8 +41,6 @@ class AuthServiceTest {
     @Mock
     private AuthenticationManager authenticationManager;
 
-    @Mock
-    private UserDetailsService userDetailsService;
 
     @Mock
     private MemberRepository memberRepository;

@@ -30,40 +30,40 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class MemberController {
 
-    private final MemberServiceFactory factory;
     private final CommonMemberService memberService;
 
+
+    //회원가입
     @PostMapping("/sign-up")
     public CommonResult signUp(@RequestBody @Valid SignUpRequest request){
         memberService.saveMember(request);
         return ResponseService.getSuccessResult();
     }
 
+    //개인정보조회
     @GetMapping("/me")
     public SingleResult<Member> getMember(@AuthenticationPrincipal CustomUser customUser){
-        MemberService service = factory.getMemberService(customUser.getProvider());
-        return ResponseService.getSingleResult(service.getMember(customUser));
+        return ResponseService.getSingleResult(memberService.getMember(customUser));
     }
 
 
+    //개인정보 수정
     @PutMapping("/me")
     public CommonResult updateMember(
         @RequestPart(value="request") @Valid UpdateMemberRequest request,
         @RequestPart(value="file") MultipartFile file,
         @AuthenticationPrincipal CustomUser customUser
     ) throws IOException {
-        MemberService service = factory.getMemberService(customUser.getProvider());
-        service.updateMember(request, customUser, file);
+        memberService.updateMember(request, customUser, file);
         return ResponseService.getSuccessResult();
     }
 
+
+    //개인정보 삭제
     @DeleteMapping("/me")
     public CommonResult deleteMember(@AuthenticationPrincipal CustomUser customUser){
-        MemberService service = factory.getMemberService(customUser.getProvider());
-        service.deleteMember(customUser);
+        memberService.deleteMember(customUser);
         return ResponseService.getSuccessResult();
     }
-
-
 
 }
