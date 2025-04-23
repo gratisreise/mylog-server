@@ -61,15 +61,19 @@ public class CategoryService {
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         };
 
-        categoryRepository.findById(request.getId())
+        categoryRepository.findById(request.getCategoryId())
             .orElseThrow(CMissingDataException::new)
             .update(request);
     };
 
     //카테고리 삭제
     @Transactional
-    public void deleteCategory(CustomUser customUser, Long commentId){
+    public void deleteCategory(CustomUser customUser, Long categoryId){
+        if(!validateDelete(customUser, categoryId)){
+            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
+        };
 
+        categoryRepository.deleteById(categoryId);
     };
 
 
@@ -80,10 +84,18 @@ public class CategoryService {
 
     private boolean validateUpdate(CategoryUpdateRequest request, CustomUser customUser) {
         Long userMemberId = generateMember(customUser).getId();
-        Long categoryMemberId = categoryRepository.findById(request.getId())
+        Long categoryMemberId = categoryRepository.findById(request.getCategoryId())
             .orElseThrow(CMissingDataException::new)
             .getMember().getId();
         return userMemberId.equals(categoryMemberId);
+    }
+
+    private boolean validateDelete(CustomUser customUser, Long commentId) {
+        long userMemberId = generateMember(customUser).getId();
+        long categoryMemberId = categoryRepository.findById(commentId)
+            .orElseThrow(CMissingDataException::new)
+            .getMember().getId();
+        return userMemberId == categoryMemberId;
     }
 
 }

@@ -47,7 +47,7 @@ public class SocialCategoryService implements CategoryService {
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         };
 
-        categoryRepository.findById(request.getId())
+        categoryRepository.findById(request.getCategoryId())
             .orElseThrow(CMissingDataException::new)
             .update(request);
     }
@@ -79,7 +79,7 @@ public class SocialCategoryService implements CategoryService {
 
     private boolean validateUpdate(CategoryUpdateRequest request, CustomUser customUser) {
         Long userMemberId = Long.valueOf(customUser.getUsername());
-        return userMemberId.equals(request.getId());
+        return userMemberId.equals(request.getCategoryId());
     }
 
     private boolean validateDelete(CustomUser customUser, Long categoryId) {
