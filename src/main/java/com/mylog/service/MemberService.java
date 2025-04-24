@@ -1,16 +1,14 @@
-package com.mylog.service.member;
+package com.mylog.service;
 
-import com.mylog.annotations.ServiceType;
 import com.mylog.dto.SignUpRequest;
 import com.mylog.dto.UpdateMemberRequest;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.entity.Member;
 import com.mylog.enums.OauthProvider;
+import com.mylog.exception.CInvalidDataException;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
-
-
-import com.mylog.service.S3Service;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,9 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@ServiceType(OauthProvider.LOCAL)
 @Transactional(readOnly = true)
-public class LocalMemberService implements MemberService{
+public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
@@ -32,10 +29,8 @@ public class LocalMemberService implements MemberService{
     @Value("aws.s3.basic")
     private String basicImageUrl;
 
-    //회원가입
-    @Transactional
-    public void saveMember(SignUpRequest request) {
-
+    // 회원가입
+    public void saveMember(SignUpRequest request){
         if(memberRepository.existsByEmail(request.getEmail())){
             throw new CMissingDataException("이미 존재하는 이메일입니다.");
         }
@@ -53,7 +48,7 @@ public class LocalMemberService implements MemberService{
             .password(cryptedPassword)
             .nickname(request.getEmail())
             .provider(OauthProvider.LOCAL)
-            .providerId(request.getEmail())
+            .providerId(request.getEmail() + OauthProvider.LOCAL)
             .profileImg(basicImageUrl)
             .build();
 
@@ -61,44 +56,42 @@ public class LocalMemberService implements MemberService{
         memberRepository.save(member);
     }
 
-    @Override
-    //사용자 정보 조회
-    public Member getMember(CustomUser customUser) {
-        String email = customUser.getUsername();
-        return memberRepository.findByEmail(email)
+
+    //회원정보조회
+    public Member getMember(CustomUser customUser){
+        return memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);
-    }
+    };
 
-    @Override
-    @Transactional
-    public void updateMember(
-        UpdateMemberRequest request,
-        CustomUser customUser,
-        MultipartFile file
-    ) {
-        String email = customUser.getUsername();
+    //회원정보수정
+    public void updateMember(UpdateMemberRequest request, CustomUser customUser, MultipartFile file)
+        throws IOException{
+        //닉네임 중복확인
+        if(memberRepository.existsByNickname(request.getNickname())){
+            throw new CInvalidDataException("중복되는 닉네임 입니다.");
+        }
+
         String profileImg = file.getOriginalFilename();
-
-        Member member = memberRepository.findByEmail(email)
+        Member member = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);
         if(isSame(member.getProfileImg(), profileImg)){
             member.update(request);
         } else {
+            profileImg = s3Service.upload(file).orElseThrow(CMissingDataException::new);
             member.update(request, profileImg);
         }
-    }
+    };
 
-    @Override
-    @Transactional
-    public void deleteMember(CustomUser customUser) {
-        Member member = memberRepository.findByEmail(customUser.getUsername())
-            .orElseThrow(CMissingDataException::new);
-        s3Service.deleteImage(member.getProfileImg());
-        memberRepository.deleteByEmail(customUser.getUsername());
-    }
+    // 사용자 정보삭제
+    public void deleteMember(CustomUser customUser){
+        if(!memberRepository.existsById(customUser.getMemberId())){
+            throw new CInvalidDataException("존재하지 않는 회원입니다.");
+        }
+        memberRepository.deleteById(customUser.getMemberId());
+    };
 
     private boolean isSame(String origin, String update) {
-        return origin.substring(57).equals(update);
+        return origin.substring(66).equals(update);
     }
-}
 
+}

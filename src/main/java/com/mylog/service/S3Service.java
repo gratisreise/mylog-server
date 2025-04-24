@@ -24,7 +24,7 @@ public class S3Service {
 
     //이미지 업로드
     public Optional<String> upload(MultipartFile file) throws IOException {
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        String fileName = UUID.randomUUID() + "/" + file.getOriginalFilename();
         String contentType = file.getContentType();
         log.info("fileName: {}, contentType: {}", fileName, contentType);
 

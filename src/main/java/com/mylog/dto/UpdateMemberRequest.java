@@ -15,9 +15,6 @@ import org.hibernate.validator.constraints.Length;
 @Builder
 @AllArgsConstructor
 public class UpdateMemberRequest {
-    @Length(min = 8, max = 30)
-    @NotBlank
-    private String email;
 
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$")
     @NotBlank
@@ -34,4 +31,6 @@ public class UpdateMemberRequest {
     @Length(max = 200)
     @NotBlank
     private String bio;
+
+
 }

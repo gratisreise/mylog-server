@@ -7,14 +7,11 @@ import com.mylog.dto.SignUpRequest;
 import com.mylog.dto.UpdateMemberRequest;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.entity.Member;
-import com.mylog.service.member.CommonMemberService;
-import com.mylog.service.member.MemberService;
-import com.mylog.service.member.MemberServiceFactory;
+import com.mylog.service.MemberService;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class MemberController {
 
-    private final CommonMemberService memberService;
+    private final MemberService memberService;
 
 
     //회원가입

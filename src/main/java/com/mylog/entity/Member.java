@@ -61,7 +61,7 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private OauthProvider provider;
 
-    @Column(length = 200, nullable = false)
+    @Column(length = 200)
     private String providerId;
 
     @CreatedDate
