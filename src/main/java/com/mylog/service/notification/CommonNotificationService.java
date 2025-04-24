@@ -76,7 +76,11 @@ public class CommonNotificationService {
 
     //알림끄기
     public void toggleNotification(CustomUser customUser, String type){
-
+        Member member = generateMember(customUser);
+        notificationSettingRepository
+            .findByMemberAndType(member, type)
+            .orElseThrow(CMissingDataException::new)
+            .toggle();
     };
 
     private Member generateMember(CustomUser customUser) {
