@@ -1,13 +1,18 @@
 package com.mylog.service.notification;
 
+import com.mylog.dto.classes.CustomUser;
+import com.mylog.dto.notification.NotificationResponse;
 import com.mylog.entity.Member;
 import com.mylog.entity.Notification;
 import com.mylog.entity.NotificationSetting;
 import com.mylog.exception.CMissingDataException;
+import com.mylog.repository.MemberRepository;
 import com.mylog.repository.NotificationRepository;
 import com.mylog.repository.NotificationSettingRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommonNotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationSettingRepository notificationSettingRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public void sendNotification(Member member, Long relatedId, String type) {
@@ -59,5 +65,22 @@ public class CommonNotificationService {
         notificationSettingRepository.save(setting);
     }
 
+    //알람받기
+    public Page<NotificationResponse> receiveNotification(CustomUser customUser, Pageable pageable){
+        Member member = generateMember(customUser);
 
+        return notificationRepository
+            .findAllByMemberAndReadFalse(member, pageable)
+            .map(NotificationResponse::from);
+    };
+
+    //알림끄기
+    public void toggleNotification(CustomUser customUser, String type){
+
+    };
+
+    private Member generateMember(CustomUser customUser) {
+        return memberRepository.findById(customUser.getMemberId())
+            .orElseThrow(CMissingDataException::new);
+    }
 }

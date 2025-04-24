@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
-    private final NotificationServiceFactory factory;
     private final CommonNotificationService notificationService;
 
     //알림 조회
@@ -35,8 +34,7 @@ public class NotificationController {
         @PageableDefault(sort="createdAt", direction = Direction.DESC)
         Pageable pageable
     ){
-        NotificationService service = factory.getNotificationService(customUser.getProvider());
-        return ResponseService.getSingleResult(service.receiveNotification(customUser, pageable));
+        return ResponseService.getSingleResult(notificationService.receiveNotification(customUser, pageable));
     }
 
     //알림 읽기
@@ -53,8 +51,7 @@ public class NotificationController {
         @AuthenticationPrincipal CustomUser customUser,
         @PathVariable String type
     ){
-        NotificationService service = factory.getNotificationService(customUser.getProvider());
-        service.toggleNotification(customUser, type);
+        notificationService.toggleNotification(customUser, type);
         return ResponseService.getSuccessResult();
     }
 
