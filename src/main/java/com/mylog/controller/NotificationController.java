@@ -5,10 +5,7 @@ import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.dto.notification.NotificationResponse;
-import com.mylog.entity.Notification;
-import com.mylog.service.notification.CommonNotificationService;
-import com.mylog.service.notification.NotificationService;
-import com.mylog.service.notification.NotificationServiceFactory;
+import com.mylog.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
-    private final CommonNotificationService notificationService;
+    private final NotificationService notificationService;
 
     //알림 조회
     @GetMapping

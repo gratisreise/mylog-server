@@ -20,9 +20,7 @@ import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CommentRepository;
 import com.mylog.repository.MemberRepository;
-import com.mylog.service.notification.CommonNotificationService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -52,7 +50,7 @@ class CommentServiceTest {
     private ArticleRepository articleRepository;
 
     @Mock
-    private CommonNotificationService notificationService;
+    private NotificationService notificationService;
 
     @InjectMocks
     private CommentService commentService;

@@ -12,7 +12,6 @@ import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CommentRepository;
 import com.mylog.repository.MemberRepository;
-import com.mylog.service.notification.CommonNotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +25,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
     private final ArticleRepository articleRepository;
-    private final CommonNotificationService notificationService;
+    private final NotificationService notificationService;
 
     //댓글 생성
     @Transactional

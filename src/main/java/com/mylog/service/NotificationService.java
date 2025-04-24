@@ -1,4 +1,4 @@
-package com.mylog.service.notification;
+package com.mylog.service;
 
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.dto.notification.NotificationResponse;
@@ -9,7 +9,6 @@ import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
 import com.mylog.repository.NotificationRepository;
 import com.mylog.repository.NotificationSettingRepository;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class CommonNotificationService {
+public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationSettingRepository notificationSettingRepository;
     private final MemberRepository memberRepository;
