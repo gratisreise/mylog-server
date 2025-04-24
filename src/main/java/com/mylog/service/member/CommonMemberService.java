@@ -69,7 +69,7 @@ public class CommonMemberService {
         throws IOException{
         //닉네임 중복확인
         if(memberRepository.existsByNickname(request.getNickname())){
-            throw new CInvalidDataException("중복되는 닉네임 입니다.")
+            throw new CInvalidDataException("중복되는 닉네임 입니다.");
         }
 
         //프로파일 이미지 확인
@@ -86,7 +86,10 @@ public class CommonMemberService {
 
     // 사용자 정보삭제
     public void deleteMember(CustomUser customUser){
-
+        if(!memberRepository.existsById(customUser.getMemberId())){
+            throw new CInvalidDataException("존재하지 않는 회원입니다.");
+        }
+        memberRepository.deleteById(customUser.getMemberId());
     };
 
     private boolean isSame(String origin, String update) {
