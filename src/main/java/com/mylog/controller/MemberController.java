@@ -8,6 +8,7 @@ import com.mylog.dto.UpdateMemberRequest;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.entity.Member;
 import com.mylog.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class MemberController {
 
     //회원가입
     @PostMapping("/sign-up")
+    @Operation(summary = "회원가입")
     public CommonResult signUp(@RequestBody @Valid SignUpRequest request){
         memberService.saveMember(request);
         return ResponseService.getSuccessResult();
@@ -39,6 +41,7 @@ public class MemberController {
 
     //개인정보조회
     @GetMapping("/me")
+    @Operation(summary = "개인정보조회")
     public SingleResult<Member> getMember(@AuthenticationPrincipal CustomUser customUser){
         return ResponseService.getSingleResult(memberService.getMember(customUser));
     }
@@ -46,6 +49,7 @@ public class MemberController {
 
     //개인정보 수정
     @PutMapping("/me")
+    @Operation(summary = "개인정보수정")
     public CommonResult updateMember(
         @RequestPart(value="request") @Valid UpdateMemberRequest request,
         @RequestPart(value="file") MultipartFile file,
@@ -58,6 +62,7 @@ public class MemberController {
 
     //개인정보 삭제
     @DeleteMapping("/me")
+    @Operation(summary = "개인정보삭제")
     public CommonResult deleteMember(@AuthenticationPrincipal CustomUser customUser){
         memberService.deleteMember(customUser);
         return ResponseService.getSuccessResult();

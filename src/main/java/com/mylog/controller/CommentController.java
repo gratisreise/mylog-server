@@ -8,6 +8,7 @@ import com.mylog.dto.comment.CommentCreateRequest;
 import com.mylog.dto.comment.CommentResponse;
 import com.mylog.dto.comment.CommentUpdateRequest;
 import com.mylog.service.CommentService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,7 @@ public class CommentController {
 
     //댓글 생성
     @PostMapping
+    @Operation(summary = "댓글 생성")
     public CommonResult createComment(
         @RequestBody @Valid CommentCreateRequest request,
         @AuthenticationPrincipal CustomUser customUser
@@ -42,6 +44,7 @@ public class CommentController {
 
     //게시글 댓글목록 조회
     @GetMapping("/{articleId}")
+    @Operation(summary = "댓글 목록 조회")
     public SingleResult<Page<CommentResponse>> getComments(
         @PathVariable Long articleId,
         @PageableDefault(sort="createdAt", direction = Direction.DESC)
@@ -52,6 +55,7 @@ public class CommentController {
 
     //대댓글 목록 조회
     @GetMapping("/{articleId}/{parentId}")
+    @Operation(summary = "대댓글 목록 조회")
     public SingleResult<Page<CommentResponse>> getChildComments(
         @PathVariable Long articleId,
         @PathVariable Long parentId,
@@ -64,7 +68,8 @@ public class CommentController {
     }
 
     //댓글 수정
-    @PutMapping()
+    @PutMapping
+    @Operation(summary = "댓글 수정")
     public CommonResult updateComments(
         @RequestBody @Valid CommentUpdateRequest request,
         @AuthenticationPrincipal CustomUser customUser
@@ -75,6 +80,7 @@ public class CommentController {
 
     //댓글 삭제
     @DeleteMapping("/{commentId}")
+    @Operation(summary = "댓글 삭제")
     public CommonResult deleteComments(
         @PathVariable Long commentId,
         @AuthenticationPrincipal CustomUser customUser
@@ -85,6 +91,7 @@ public class CommentController {
 
     //나의 댓글 조회
     @GetMapping("/me")
+    @Operation(summary = "나의 댓글 조회")
     public SingleResult<Page<CommentResponse>> getComments(
         @AuthenticationPrincipal CustomUser customUser,
         @PageableDefault(size = 20, sort="createdAt", direction = Direction.DESC)
@@ -93,8 +100,9 @@ public class CommentController {
         return ResponseService.getSingleResult(commentService.getMyComments(customUser, pageable));
     }
 
-    //나의 게시글 댓글 조회
+    //내가 작성한 댓글 조회
     @GetMapping("/me/articles")
+    @Operation(summary = "내가 작성한 댓글 조회")
     public SingleResult<Page<CommentResponse>> getMyArticlesComments(
         @AuthenticationPrincipal CustomUser customUser,
         @PageableDefault(size = 20, sort="createdAt", direction = Direction.DESC)

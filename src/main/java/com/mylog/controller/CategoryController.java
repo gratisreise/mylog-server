@@ -9,6 +9,7 @@ import com.mylog.dto.category.CategoryResponse;
 import com.mylog.dto.category.CategoryUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.service.CategoryService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,6 +29,7 @@ public class CategoryController {
 
     //카테고리 생성
     @PostMapping
+    @Operation(summary = "카테고리 생성")
     public CommonResult createCategory(
         @RequestBody @Valid CategoryCreateRequest request,
         @AuthenticationPrincipal CustomUser customUser
@@ -38,6 +40,7 @@ public class CategoryController {
 
     //카테고리 조회
     @GetMapping
+    @Operation(summary = "카테고리 목록 조회")
     public ListResult<CategoryResponse> getCategories(
         @AuthenticationPrincipal CustomUser customUser
     ){
@@ -46,6 +49,7 @@ public class CategoryController {
 
     //카테고리 수정
     @PutMapping
+    @Operation(summary = "카테고리 수정")
     public CommonResult updateCategory(
         @RequestBody @Valid CategoryUpdateRequest request,
         @AuthenticationPrincipal CustomUser customUser
@@ -56,6 +60,7 @@ public class CategoryController {
 
     //카테고리 삭제
     @DeleteMapping
+    @Operation(summary = "카테고리 삭제")
     public CommonResult deleteCategory(
         @RequestBody @Valid CategoryDeleteRequest request,
         @AuthenticationPrincipal CustomUser customUser

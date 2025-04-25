@@ -10,6 +10,7 @@ import com.mylog.dto.article.ArticleResponse;
 import com.mylog.dto.article.ArticleUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.service.ArticleService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import org.springframework.data.domain.Page;
@@ -38,6 +39,7 @@ public class ArticleController {
 
     //게시글 생성
     @PostMapping
+    @Operation(summary = "게시글 생성")
     public CommonResult createArticle(
         @RequestPart(value = "file") MultipartFile file,
         @RequestPart(value = "request") @Valid ArticleCreateRequest request,
@@ -49,12 +51,14 @@ public class ArticleController {
 
     //게시글 조회
     @GetMapping("/{id}")
+    @Operation(summary = "게시글 조회")
     public SingleResult<ArticleResponse> getArticle(@PathVariable Long id){
         return ResponseService.getSingleResult(articleService.getArticle(id));
     }
 
     //게시글 수정
     @PutMapping
+    @Operation(summary = "게시글 수정")
     public CommonResult updateArticle(
         @RequestPart(value = "request") @Valid ArticleUpdateRequest request,
         @RequestPart(value = "file") MultipartFile file,
@@ -66,6 +70,7 @@ public class ArticleController {
 
     //게시글 삭제
     @DeleteMapping
+    @Operation(summary = "게시글 삭제")
     public CommonResult deleteArticle(
         @AuthenticationPrincipal CustomUser customUser,
         @RequestBody ArticleDeleteRequest request
@@ -76,6 +81,7 @@ public class ArticleController {
 
     //전체 게시글 목록 조회
     @GetMapping
+    @Operation(summary = "전체 게시글 목록 조회")
     public SingleResult<Page<ArticleResponse>> getArticles(
         @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable
     ){
@@ -84,6 +90,7 @@ public class ArticleController {
 
     //내 게시글 목록 조회
     @GetMapping("/me")
+    @Operation(summary = "내 게시글 목록 조회")
     public SingleResult<Page<ArticleResponse>> getArticles(
         @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable,
         @AuthenticationPrincipal CustomUser customUser
@@ -93,6 +100,7 @@ public class ArticleController {
 
     //전체 게시글 검색
     @GetMapping("/search")
+    @Operation(summary = "전체 게시글 검색")
     public SingleResult<Page<ArticleResponse>> searchArticles(
         @RequestParam String keyword,
         @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable
@@ -102,6 +110,7 @@ public class ArticleController {
 
     //내 게시글 검색
     @GetMapping("/me/search")
+    @Operation(summary = "내 게시글 목록 검색")
     public SingleResult<Page<ArticleResponse>> searchArticles(
         @RequestParam String keyword,
         @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable,
@@ -111,6 +120,7 @@ public class ArticleController {
     }
 
     @GetMapping("/tag/{tagName}")
+    @Operation(summary = "태그 검색")
     public SingleResult<Page<ArticleResponse>> serchArticlesByTag(
         @PathVariable String tagName,
         @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable
