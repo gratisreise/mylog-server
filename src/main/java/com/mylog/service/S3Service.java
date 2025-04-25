@@ -1,5 +1,6 @@
 package com.mylog.service;
 
+import com.mylog.exception.CMissingDataException;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,9 +25,9 @@ public class S3Service {
 
     //이미지 업로드
     public Optional<String> upload(MultipartFile file) throws IOException {
-        String fileName = UUID.randomUUID() + "/" + file.getOriginalFilename();
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
         String contentType = file.getContentType();
-        log.info("fileName: {}, contentType: {}", fileName, contentType);
+        String region = "ap-northeast-2";
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
             .bucket(bucketName)
@@ -34,15 +35,23 @@ public class S3Service {
             .contentType(contentType)
             .build();
 
-        s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(
-            file.getInputStream(), file.getSize()
-        ));
+        try{
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(
+                file.getInputStream(), file.getSize()
+            ));
+        } catch (RuntimeException e) {
+            throw new CMissingDataException("s3 이미지 업로드에 실패했습니다.");
+        }
 
-        return Optional.of(String.format("https://%s.s3.amazonaws.com/%s", bucketName, fileName));
+        String result = String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, fileName);
+        log.info("result: {}", result);
+        return Optional.of(result);
     }
 
     // 이미지 삭제
-    public void deleteImage(String fileKey) {
+    public void deleteImage(String url) {
+        String fileKey = url.substring(url.lastIndexOf("/") + 1);
+        log.info("fileKey: {}", fileKey);
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
             .bucket(bucketName)
             .key(fileKey)
