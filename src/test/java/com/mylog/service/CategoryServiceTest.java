@@ -199,12 +199,14 @@ class CategoryServiceTest {
     @Test
     void 카테고리_삭제_성공_삭제완료() {
         // Given
+        when(categoryRepository.existsById(categoryId)).thenReturn(true);
         doNothing().when(categoryRepository).deleteById(categoryId);
 
         // When
         categoryService.deleteCategory(deleteRequest, customUser);
 
         // Then
+        verify(categoryRepository).existsById(categoryId);
         verify(categoryRepository).deleteById(categoryId);
     }
 

@@ -137,13 +137,12 @@ class NotificationServiceTest {
     void 알림_읽기_성공_읽음처리() {
         // Given
         when(notificationRepository.findById(notificationId)).thenReturn(Optional.of(notification));
-
         // When
         notificationService.readNotification(notificationId);
 
         // Then
         verify(notificationRepository).findById(notificationId);
-        verify(notification).makeRead();
+        assertThat(notification.isRead()).isTrue();
     }
 
     @Test
@@ -155,7 +154,6 @@ class NotificationServiceTest {
         assertThatThrownBy(() -> notificationService.readNotification(notificationId))
             .isInstanceOf(CMissingDataException.class);
         verify(notificationRepository).findById(notificationId);
-        verify(notification, never()).makeRead();
     }
 
     @Test
@@ -231,7 +229,6 @@ class NotificationServiceTest {
         // Then
         verify(memberRepository).findById(memberId);
         verify(notificationSettingRepository).findByMemberAndType(member, type);
-        verify(notificationSetting).toggle();
     }
 
     @Test

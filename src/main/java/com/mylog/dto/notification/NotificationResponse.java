@@ -20,7 +20,7 @@ public class NotificationResponse {
     ) {
         return NotificationResponse.builder()
             .notificationId(notification.getId())
-            .articleId(notification.getId())
+            .articleId(notification.getRelatedId())
             .type(notification.getType())
             .build();
     }
