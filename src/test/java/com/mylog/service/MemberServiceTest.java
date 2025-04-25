@@ -60,14 +60,13 @@ class MemberServiceTest {
     private String password = "password123";
     private String nickname = "testNickname";
     private String cryptedPassword = "encodedPassword";
-    private String profileImg = "https://s3.example.com/image/f47ac10b-58cc-4372-a567-0e02b2c3d479/test.jpg";
-    private String newProfileImg = "https://s3.example.com/image/f47ac10b-58cc-4372-a567-0e02b2c3d479/new.jpg";
+    private String profileImg = "https://mylog-imgsource.s3.ap-northeast-2.amazonaws.com/f47ac10b-58cc-4372-a567-0e02b2c3d479_test.jpg";
+    private String newProfileImg = "https://mylog-imgsource.s3.ap-northeast-2.amazonaws.com/f47ac10b-58cc-4372-a567-0e02b2c3d479_new.jpg";
+    private String basicImageUrl = "https://mylog-imgsource.s3.ap-northeast-2.amazonaws.com/f47ac10b-58cc-4372-a567-0e02b2c3d479_basic.jpg";
 
-    @Value("${basic.image.url}")
-    private String basicImageUrl;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NoSuchFieldException, IllegalAccessException {
         // 테스트용 객체 초기화
         signUpRequest = new SignUpRequest();
         signUpRequest.setEmail(email);
@@ -97,6 +96,10 @@ class MemberServiceTest {
 
         file = new MockMultipartFile("file", "new.jpg", "image/jpeg", "new image content".getBytes());
 
+        //@Value 모킹
+        var bucketNameField = MemberService.class.getDeclaredField("basicImageUrl");
+        bucketNameField.setAccessible(true);
+        bucketNameField.set(memberService, basicImageUrl);
     }
 
     @Test
@@ -181,11 +184,12 @@ class MemberServiceTest {
     }
 
     @Test
-    void 사용자_정보수정_성공_새프로파일이미지업로드() throws IOException {
+    void 사용자_정보수정_성공_다른이미지() throws IOException {
         // Given
         when(memberRepository.existsByNickname(updateRequest.getNickname())).thenReturn(false);
         when(memberRepository.findById(customUser.getMemberId())).thenReturn(Optional.of(member));
         when(s3Service.upload(file)).thenReturn(Optional.of(newProfileImg));
+        doNothing().when(s3Service).deleteImage(profileImg);
 
         // When
         memberService.updateMember(updateRequest, customUser, file);
@@ -194,10 +198,32 @@ class MemberServiceTest {
         verify(memberRepository).existsByNickname(updateRequest.getNickname());
         verify(memberRepository).findById(customUser.getMemberId());
         verify(s3Service).upload(file);
+        verify(s3Service).deleteImage(profileImg);
+        assertThat(member.getProfileImg()).isEqualTo(newProfileImg);
+    }
+
+
+
+    @Test
+    void 사용자_정보수정_성공_동일이미지() throws IOException {
+        // Given
+        file = new MockMultipartFile("file", "test.jpg", "image/jpeg", "same image content".getBytes());
+        when(memberRepository.existsByNickname(updateRequest.getNickname())).thenReturn(false);
+        when(memberRepository.findById(customUser.getMemberId())).thenReturn(Optional.of(member));
+
+        //test.jpg
+
+        // When
+        memberService.updateMember(updateRequest, customUser, file);
+
+        // Then
+        verify(memberRepository).existsByNickname(updateRequest.getNickname());
+        verify(memberRepository).findById(customUser.getMemberId());
+        verify(s3Service, never()).upload(any());
     }
 
     @Test
-    void 사용자_정보수정_성공_기존프로파일이미지유지() throws IOException {
+    void 사용자_정보수정_성공_기본이미지_삭제방지() throws IOException {
         // Given
         file = new MockMultipartFile("file", "test.jpg", "image/jpeg", "same image content".getBytes());
         when(memberRepository.existsByNickname(updateRequest.getNickname())).thenReturn(false);
@@ -273,29 +299,50 @@ class MemberServiceTest {
     }
 
     @Test
-    void 사용자_정보삭제_성공_삭제완료() {
+    void 사용자_정보삭제_커스텀이미지_성공() {
         // Given
-        when(memberRepository.existsById(memberId)).thenReturn(true);
+
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+        doNothing().when(s3Service).deleteImage(member.getProfileImg());
         doNothing().when(memberRepository).deleteById(memberId);
 
         // When
         memberService.deleteMember(customUser);
 
         // Then
-        verify(memberRepository).existsById(memberId);
+        verify(memberRepository).findById(memberId);
+        verify(s3Service).deleteImage(member.getProfileImg());
         verify(memberRepository).deleteById(memberId);
     }
 
     @Test
+    void 사용자_정보삭제_기본이미지_성공() {
+        // Given
+        member.setProfileImg(basicImageUrl);
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+        doNothing().when(memberRepository).deleteById(memberId);
+
+        // When
+        memberService.deleteMember(customUser);
+
+        // Then
+        verify(memberRepository).findById(memberId);
+        verify(s3Service, never()).deleteImage(member.getProfileImg());
+        verify(memberRepository).deleteById(memberId);
+    }
+
+
+
+    @Test
     void 사용자_정보삭제_멤버없음_예외발생() {
         // Given
-        when(memberRepository.existsById(memberId)).thenReturn(false);
+        when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
 
         // When & Then
         assertThatThrownBy(() -> memberService.deleteMember(customUser))
-            .isInstanceOf(CInvalidDataException.class)
-            .hasMessage("존재하지 않는 회원입니다.");
-        verify(memberRepository).existsById(memberId);
+            .isInstanceOf(CMissingDataException.class);
+        verify(memberRepository).findById(memberId);
+        verify(s3Service, never()).deleteImage(anyString());
         verify(memberRepository, never()).deleteById(anyLong());
     }
 }

@@ -71,27 +71,38 @@ public class MemberService {
             throw new CInvalidDataException("중복되는 닉네임 입니다.");
         }
 
-        String profileImg = file.getOriginalFilename();
         Member member = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);
-        if(isSame(member.getProfileImg(), profileImg)){
+
+        //새사진
+        String profileImg = file.getOriginalFilename();
+        //기존사진
+        String memberImg = member.getProfileImg();
+        log.info("memberImg: {}, profileImg: {}", memberImg, profileImg);
+        if(isSame(memberImg, profileImg)){
             member.update(request);
         } else {
             profileImg = s3Service.upload(file).orElseThrow(CMissingDataException::new);
+            if(!memberImg.equals(basicImageUrl)) s3Service.deleteImage(memberImg);
             member.update(request, profileImg);
         }
+        log.info("memberImg: {}, profileImg: {}", memberImg, profileImg);
     };
 
     // 사용자 정보삭제
     public void deleteMember(CustomUser customUser){
-        if(!memberRepository.existsById(customUser.getMemberId())){
-            throw new CInvalidDataException("존재하지 않는 회원입니다.");
+        Member member = memberRepository.findById(customUser.getMemberId())
+            .orElseThrow(CMissingDataException::new);
+
+        if(!member.getProfileImg().equals(basicImageUrl)) {
+            s3Service.deleteImage(member.getProfileImg());
         }
+
         memberRepository.deleteById(customUser.getMemberId());
     };
 
     private boolean isSame(String origin, String update) {
-        return origin.substring(66).equals(update);
+        return origin.substring(93).equals(update);
     }
 
 }
