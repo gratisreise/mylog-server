@@ -35,7 +35,6 @@ sentry:
   dsn: ${SENTRY_DSN_DEV}
   environment: development
 
-
 cloud:
   aws:
     credentials:
@@ -45,4 +44,4 @@ cloud:
       static: ap-northeast-2
     s3:
       bucket: mylog-imgsource
-      basic: s3://mylog-imgsource/basic-e5ed3fb29dfb594e9628219c94e3d288a09797886ea8247ce512476e5cd6734e.png
+      basic: https://mylog-imgsource.s3.ap-northeast-2.amazonaws.com/5162d5b3-266b-4aae-bc16-d7f10fc4b2f1_basic.png

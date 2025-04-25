@@ -412,7 +412,7 @@ class ArticleServiceTest {
     }
 
     @Test
-    void 태그_검새_성공() {
+    void 태그_검색_성공() {
         // given
         String tagName = "태그1";
         Pageable pageable = PageRequest.of(0, 10);

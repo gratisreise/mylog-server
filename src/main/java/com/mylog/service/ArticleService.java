@@ -75,7 +75,7 @@ public class ArticleService {
 
         // 같은지 확인 -> 같으면 문자열 생성 아니면 기존꺼 사용
         String articleImg;
-        if(!isSameImg(article.getArticleImg(), file.getOriginalFilename())){
+        if(!isSame(article.getArticleImg(), file.getOriginalFilename())){
             articleImg = s3Service.upload(file).orElseThrow(CMissingDataException::new);
         } else {
             articleImg = article.getArticleImg();
@@ -86,8 +86,8 @@ public class ArticleService {
         article.update(request, category, articleImg);
     }
 
-    private boolean isSameImg(String origin, String another) {
-        return origin.substring(57).equals(another);
+    private boolean isSame(String origin, String another) {
+        return origin.substring(93).equals(another);
     }
 
     //게시글 삭제
