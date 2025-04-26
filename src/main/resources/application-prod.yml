@@ -45,3 +45,9 @@ cloud:
     s3:
       bucket: mylog-imgsource
       basic: https://mylog-imgsource.s3.ap-northeast-2.amazonaws.com/5162d5b3-266b-4aae-bc16-d7f10fc4b2f1_basic.png
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics"

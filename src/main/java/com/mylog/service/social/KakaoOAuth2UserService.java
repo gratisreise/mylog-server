@@ -2,7 +2,6 @@ package com.mylog.service.social;
 
 import com.mylog.annotations.OAuth2ServiceType;
 import com.mylog.config.JwtUtil;
-import com.mylog.dto.social.GoogleTokenResponse;
 import com.mylog.dto.social.KakaoTokenResponse;
 import com.mylog.dto.social.KakaoUserInfo;
 import com.mylog.dto.social.KakoOAuth2UserInfo;

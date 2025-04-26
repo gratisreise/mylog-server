@@ -19,7 +19,5 @@ public class TestController {
 
     @PostMapping("/delete")
     public void delete(){
-        String url = "https://mylog-imgsource.s3.ap-northeast-2.amazonaws.com/b5d98eb4-5e5f-401c-bf3c-251ef55feb9c_basic.png";
-        s3Service.deleteImage(url);
     }
 }

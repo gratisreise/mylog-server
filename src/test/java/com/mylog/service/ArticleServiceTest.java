@@ -1,5 +1,18 @@
 package com.mylog.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.mylog.dto.article.ArticleCreateRequest;
 import com.mylog.dto.article.ArticleDeleteRequest;
 import com.mylog.dto.article.ArticleResponse;
@@ -14,7 +27,11 @@ import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,15 +47,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ArticleServiceTest {

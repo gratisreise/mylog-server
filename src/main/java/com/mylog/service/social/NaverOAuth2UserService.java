@@ -6,7 +6,6 @@ import com.mylog.config.JwtUtil;
 import com.mylog.dto.UserNaverInfoResponse;
 import com.mylog.dto.social.NaverOAuth2UserInfo;
 import com.mylog.dto.social.NaverTokenResponse;
-import com.mylog.dto.social.NaverUserInfo;
 import com.mylog.dto.social.OAuthRequest;
 import com.mylog.entity.Member;
 import com.mylog.enums.OauthProvider;
@@ -14,8 +13,6 @@ import com.mylog.exception.CMissingDataException;
 import com.mylog.interfaces.OAuth2UserInfo;
 import com.mylog.repository.MemberRepository;
 import com.mylog.service.RefreshTokenService;
-
-
 import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
