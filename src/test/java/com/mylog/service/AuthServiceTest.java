@@ -118,7 +118,7 @@ class AuthServiceTest {
     void 리프레시_성공_새로운액세스토큰반환() {
         // Given
         when(jwtUtil.getUsername(refreshToken)).thenReturn(username);
-        when(jwtUtil.getMemberId(refreshToken)).thenReturn(memberId);
+        when(memberRepository.findByNickname(username)).thenReturn(Optional.of(member));
         when(refreshTokenService.validateRefreshToken(username, refreshToken)).thenReturn(true);
         when(jwtUtil.createAccessToken(username, memberId)).thenReturn(accessToken);
 
@@ -129,7 +129,7 @@ class AuthServiceTest {
         assertThat(response).isNotNull();
         assertThat(response.getAccessToken()).isEqualTo(accessToken);
         verify(jwtUtil).getUsername(refreshToken);
-        verify(jwtUtil).getMemberId(refreshToken);
+        verify(memberRepository).findByNickname(username);
         verify(refreshTokenService).validateRefreshToken(username, refreshToken);
         verify(jwtUtil).createAccessToken(username, memberId);
     }
@@ -138,7 +138,7 @@ class AuthServiceTest {
     void 리프레시_유효하지않은리프레시토큰_예외발생() {
         // Given
         when(jwtUtil.getUsername(refreshToken)).thenReturn(username);
-        when(jwtUtil.getMemberId(refreshToken)).thenReturn(memberId);
+        when(memberRepository.findByNickname(username)).thenReturn(Optional.of(member));
         when(refreshTokenService.validateRefreshToken(username, refreshToken)).thenReturn(false);
 
         // When & Then

@@ -3,7 +3,7 @@ package com.mylog.dto.social;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class KakoOAuth2UserInfo implements OAuth2UserInfo {
+public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
     private final KakaoUserInfo kakaoUserInfo;
 
     @Override

@@ -53,10 +53,11 @@ public class AuthService {
         long memberId = memberRepository.findByNickname(username)
             .orElseThrow(CMissingDataException::new).getId();
 
-
         if (!refreshTokenService.validateRefreshToken(username, request.getRefreshToken())) {
             throw new CInvalidDataException("유요하지 않은 토큰입니다.");
         }
+
+
 
         String accessToken = jwtUtil.createAccessToken(username, memberId);
         return new RefreshResponse(accessToken);

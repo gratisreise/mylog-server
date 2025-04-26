@@ -4,7 +4,7 @@ import com.mylog.annotations.OAuth2ServiceType;
 import com.mylog.config.JwtUtil;
 import com.mylog.dto.social.KakaoTokenResponse;
 import com.mylog.dto.social.KakaoUserInfo;
-import com.mylog.dto.social.KakoOAuth2UserInfo;
+import com.mylog.dto.social.KakaoOAuth2UserInfo;
 import com.mylog.dto.social.OAuthRequest;
 import com.mylog.entity.Member;
 import com.mylog.enums.OauthProvider;
@@ -97,7 +97,7 @@ public class KakaoOAuth2UserService extends AbstractOAuth2UserService{
             throw new CMissingDataException("카카오 유저정보가 비어있습니다.");
         }
 
-        return new KakoOAuth2UserInfo(response.getBody());
+        return new KakaoOAuth2UserInfo(response.getBody());
     }
 
     @Override
@@ -112,6 +112,6 @@ public class KakaoOAuth2UserService extends AbstractOAuth2UserService{
         member.setProfileImg(userInfo.getImageUrl());
         member.setNickname(userInfo.getId() + OauthProvider.KAKAO);
 
-        return member;
+        return memberRepository.save(member);
     }
 }
