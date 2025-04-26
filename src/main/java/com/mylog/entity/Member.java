@@ -1,6 +1,6 @@
 package com.mylog.entity;
 
-import com.mylog.dto.UpdateMemberRequest;
+import com.mylog.dto.member.UpdateMemberRequest;
 import com.mylog.enums.OauthProvider;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,7 +22,6 @@ import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)

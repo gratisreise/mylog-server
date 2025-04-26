@@ -1,6 +1,5 @@
 package com.mylog.dto.social;
 
-import com.mylog.interfaces.OAuth2UserInfo;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

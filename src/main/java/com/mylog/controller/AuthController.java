@@ -7,7 +7,7 @@ import com.mylog.dto.LoginResponse;
 import com.mylog.dto.RefreshRequest;
 import com.mylog.dto.RefreshResponse;
 import com.mylog.dto.social.OAuthRequest;
-import com.mylog.interfaces.OAuth2UserService;
+import com.mylog.service.social.OAuth2UserService;
 import com.mylog.service.AuthService;
 import com.mylog.service.social.OAuth2UserServiceFactory;
 import io.swagger.v3.oas.annotations.Operation;

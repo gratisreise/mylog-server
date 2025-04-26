@@ -2,7 +2,6 @@ package com.mylog.service.social;
 
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CInvalidDataException;
-import com.mylog.interfaces.OAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

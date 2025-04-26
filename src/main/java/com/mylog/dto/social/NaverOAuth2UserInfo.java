@@ -1,9 +1,6 @@
 package com.mylog.dto.social;
 
-import com.mylog.interfaces.OAuth2UserInfo;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @AllArgsConstructor
 public class NaverOAuth2UserInfo implements OAuth2UserInfo {

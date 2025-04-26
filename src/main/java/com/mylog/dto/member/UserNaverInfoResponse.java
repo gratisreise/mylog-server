@@ -1,4 +1,4 @@
-package com.mylog.dto;
+package com.mylog.dto.member;
 
 import com.mylog.dto.social.NaverUserInfo;
 import lombok.Getter;

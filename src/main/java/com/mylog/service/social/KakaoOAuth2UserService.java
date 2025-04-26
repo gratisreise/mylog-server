@@ -9,7 +9,7 @@ import com.mylog.dto.social.OAuthRequest;
 import com.mylog.entity.Member;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
-import com.mylog.interfaces.OAuth2UserInfo;
+import com.mylog.dto.social.OAuth2UserInfo;
 import com.mylog.repository.MemberRepository;
 import com.mylog.service.RefreshTokenService;
 import lombok.extern.slf4j.Slf4j;
