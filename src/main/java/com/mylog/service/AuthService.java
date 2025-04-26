@@ -50,7 +50,8 @@ public class AuthService {
     //리프레쉬
     public RefreshResponse refresh(RefreshRequest request) {
         String username = jwtUtil.getUsername(request.getRefreshToken());
-        long memberId = jwtUtil.getMemberId(request.getRefreshToken());
+        long memberId = memberRepository.findByNickname(username)
+            .orElseThrow(CMissingDataException::new).getId();
 
 
         if (!refreshTokenService.validateRefreshToken(username, request.getRefreshToken())) {
