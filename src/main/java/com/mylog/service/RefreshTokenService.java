@@ -2,7 +2,6 @@ package com.mylog.service;
 
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 

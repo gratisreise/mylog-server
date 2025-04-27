@@ -1,12 +1,9 @@
 package com.mylog.entity.compositekey;
 
-import com.mylog.entity.Article;
-import com.mylog.entity.Tag;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.EqualsAndHashCode;
-
 import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor

@@ -2,9 +2,9 @@ package com.mylog.service.social;
 
 import com.mylog.config.JwtUtil;
 import com.mylog.dto.LoginResponse;
+import com.mylog.dto.social.OAuth2UserInfo;
 import com.mylog.dto.social.OAuthRequest;
 import com.mylog.entity.Member;
-import com.mylog.dto.social.OAuth2UserInfo;
 import com.mylog.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.client.RestTemplate;

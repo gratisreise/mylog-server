@@ -1,8 +1,8 @@
 package com.mylog.service;
 
+import com.mylog.dto.classes.CustomUser;
 import com.mylog.dto.member.SignUpRequest;
 import com.mylog.dto.member.UpdateMemberRequest;
-import com.mylog.dto.classes.CustomUser;
 import com.mylog.entity.Member;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CInvalidDataException;
