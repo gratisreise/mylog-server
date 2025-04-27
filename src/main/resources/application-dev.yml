@@ -47,7 +47,7 @@ oauth2:
       redirect-uri: http://localhost:3000
 
 sentry:
-  dsn: ${SENTRY_DSN_DEV}
+  dsn: ${SENTRY_DSN}
   environment: development
 
 # aws.s3.bucket

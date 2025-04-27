@@ -10,6 +10,13 @@ spring:
       ddl-auto: validate
     show-sql: false
 
+  data:
+    redis:
+      host: localhost      # Redis 서버 주소
+      port: 6379          # Redis 포트
+      database: 0         # Redis DB 번호 (0~15)
+
+
 jwt:
   access_secret: ${ACCESS_TOKEN_SECRET}
   access_expiration: 30  # 1hours
@@ -32,7 +39,7 @@ oauth2:
       redirect-uri: ${REDIRECT_URI}
 
 sentry:
-  dsn: ${SENTRY_DSN_DEV}
+  dsn: ${SENTRY_DSN}
   environment: development
 
 cloud:
