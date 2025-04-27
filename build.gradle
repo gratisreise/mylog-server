@@ -65,9 +65,11 @@ jacocoTestReport {
         csv.required = false
     }
 
-     getClassDirectories().setFrom(files(classDirectories.files.collect {
-         fileTree(dir: it, exclude: ['**/dto/**', '**/entity/**'])
-     }))
+    getClassDirectories().setFrom(files(classDirectories.files.collect {
+        fileTree(dir: it, exclude: ['**/dto/**', '**/entity/**',
+                                    '**/MylogApplication',
+                                    '**/config/**', '**/enums/**', '**/common/**'])
+    }))
 }
 
 jacocoTestCoverageVerification {
