@@ -9,7 +9,7 @@ on:
 env:
   REGISTRY: docker.io
   IMAGE_NAME: mylog
-  NGINX_CONFIG: /etc/nginx/sites-available/my.mylogging.click
+  NGINX_CONFIG: /etc/nginx/sites-available/default
 
 jobs:
   test:
@@ -95,6 +95,7 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           port: ${{ secrets.EC2_PORT || 22 }}
           script: |
+            set -x  # Enable command tracing
             # Ensure log file is writable
             sudo touch /var/log/deployment.log
             sudo chown $USER:$USER /var/log/deployment.log
@@ -110,6 +111,14 @@ jobs:
             # Ensure Docker is running
             sudo systemctl start docker || true
             docker network create nginx-network || true
+
+            # Log system status
+            echo "System status:"
+            docker ps -a
+            free -m
+            df -h
+            echo "Nginx config:"
+            cat ${{ env.NGINX_CONFIG }}
 
             # Ensure existing mylog container on 8080
             if ! docker ps -q -f name=mylog; then
@@ -283,4 +292,3 @@ jobs:
             # Clean up old images
             docker image prune -f
             docker images ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }} --format "table {{.Repository}}:{{.Tag}}\t{{.CreatedAt}}" | tail -n +2 | sort -k2 -r | tail -n +4 | awk '{print $1}' | xargs -r docker rmi || true
-            
