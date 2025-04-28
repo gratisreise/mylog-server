@@ -283,3 +283,4 @@ jobs:
             # Clean up old images
             docker image prune -f
             docker images ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }} --format "table {{.Repository}}:{{.Tag}}\t{{.CreatedAt}}" | tail -n +2 | sort -k2 -r | tail -n +4 | awk '{print $1}' | xargs -r docker rmi || true
+            
