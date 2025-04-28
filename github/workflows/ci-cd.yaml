@@ -9,7 +9,7 @@ on:
 env:
   REGISTRY: docker.io
   IMAGE_NAME: mylog
-  NGINX_CONFIG: /etc/nginx/sites-available/my.mylogging.click
+  NGINX_CONFIG: /etc/nginx/sites-available/default
 
 jobs:
   test:
@@ -147,12 +147,11 @@ jobs:
               -e DB_URL="${{ secrets.DB_URL }}" \
               -e DB_USER_NAME="${{ secrets.DB_USER_NAME }}" \
               -e DB_USER_PASSWORD="${{ secrets.DB_USER_PASSWORD }}" \
-              -e REDIS_HOST="${{ secrets.REDIS_HOST }}" \
-              -e REDIS_PORT="${{ secrets.REDIS_PORT }}" \
-              -e AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}" \
-              -e AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
+              -e AWS_ACCESS_KEY="${{ secrets.AWS_ACCESS_KEY }}" \
+              -e AWS_SECRET_KEY="${{ secrets.AWS_SECRET_KEY }}" \
               -e ACCESS_TOKEN_SECRET="${{ secrets.ACCESS_TOKEN_SECRET }}" \
               -e REFRESH_TOKEN_SECRET="${{ secrets.REFRESH_TOKEN_SECRET }}" \
+              -e REDIRECT_URI="${{ secrets.REDIRECT_URI }}" \
               -e GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}" \
               -e GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}" \
               -e NAVER_CLIENT_ID="${{ secrets.NAVER_CLIENT_ID }}" \
@@ -197,10 +196,9 @@ jobs:
                     -e DB_URL="${{ secrets.DB_URL }}" \
                     -e DB_USER_NAME="${{ secrets.DB_USER_NAME }}" \
                     -e DB_USER_PASSWORD="${{ secrets.DB_USER_PASSWORD }}" \
-                    -e REDIS_HOST="${{ secrets.REDIS_HOST }}" \
-                    -e REDIS_PORT="${{ secrets.REDIS_PORT }}" \
-                    -e AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}" \
-                    -e AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
+                    -e AWS_ACCESS_KEY="${{ secrets.AWS_ACCESS_KEY }}" \
+                    -e AWS_SECRET_KEY="${{ secrets.AWS_SECRET_KEY }}" \
+                    -e REDIRECT_URI="${{ secrets.REDIRECT_URI }}" \
                     -e ACCESS_TOKEN_SECRET="${{ secrets.ACCESS_TOKEN_SECRET }}" \
                     -e REFRESH_TOKEN_SECRET="${{ secrets.REFRESH_TOKEN_SECRET }}" \
                     -e GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}" \

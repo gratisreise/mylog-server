@@ -40,7 +40,7 @@ oauth2:
 
 sentry:
   dsn: ${SENTRY_DSN}
-  environment: development
+  environment: production
 
 cloud:
   aws:
