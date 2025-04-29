@@ -97,9 +97,6 @@ jobs:
           script: |
             set -x  # Enable command tracing
             # Ensure log file is writable
-            sudo touch /var/log/deployment.log
-            sudo chown $USER:$USER /var/log/deployment.log
-            sudo chmod 644 /var/log/deployment.log
             exec &> /var/log/deployment.log
 
             # Fix containerd conflict
