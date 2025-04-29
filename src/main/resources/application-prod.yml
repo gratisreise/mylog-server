@@ -12,7 +12,7 @@ spring:
 
   data:
     redis:
-      host: localhost      # Redis 서버 주소
+      host: redis      # Redis 서버 주소
       port: 6379          # Redis 포트
       database: 0         # Redis DB 번호 (0~15)
 
