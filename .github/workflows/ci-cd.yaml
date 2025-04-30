@@ -1,6 +1,7 @@
 
 name: CI/CD for MyLog with Docker Compose
 
+# 주석 해제하면 활성화
 #on:
 #  push:
 #    branches: [ main ]
