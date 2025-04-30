@@ -151,7 +151,7 @@ jobs:
             
             # Redis 실행 확인
             if [ -z "$(docker ps -q -f name=redis)" ]; then
-              docker compose up -d redis:8.0.2-alpine
+              docker compose up -d redis
               echo "Redis started"
             fi
             
