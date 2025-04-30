@@ -61,6 +61,22 @@ jobs:
           docker compose push springboot-app
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+          REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+          KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          DB_USER_NAME: ${{ secrets.DB_USER_NAME }}
+          DB_USER_PASSWORD: ${{ secrets.DB_USER_PASSWORD }}
+          DB_URL: ${{ secrets.DB_URL }}
+          REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
+
       - name: Output image digest
         run: |
           #!/bin/bash
