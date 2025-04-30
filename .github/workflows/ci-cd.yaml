@@ -109,7 +109,7 @@ jobs:
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
 
       - name: Check files before copy
-        run:
+        run: |
             pwd
             ls -al
             cat .env
