@@ -62,7 +62,10 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       - name: Output image digest
-        run: echo "Image digest: $(docker inspect --format='{{index .RepoDigests 0}}' ${{ secrets.DOCKER_USERNAME }}/mylog:latest)"
+        run: |
+          #!/bin/bash
+          digest=$(docker inspect --format='{{index .RepoDigests 0}}' ${{ secrets.DOCKER_USERNAME }}/mylog:latest)
+          echo "Image digest: $digest"
 
   deploy:
     runs-on: ubuntu-latest
