@@ -109,7 +109,11 @@ jobs:
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
 
       - name: Check files before copy
-        run: pwd
+        run:
+            pwd
+            ls -al
+            cat .env
+            cat docker-compose.yaml
 
       - name: Copy .env and docker-compose.yaml to EC2
         uses: appleboy/scp-action@v0.1.4
