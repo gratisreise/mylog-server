@@ -57,8 +57,8 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and push Docker image
         run: |
-          docker-compose build springboot-app
-          docker-compose push springboot-app
+          docker compose build springboot-app
+          docker compose push springboot-app
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       - name: Output image digest
@@ -128,13 +128,13 @@ jobs:
             
             # Redis 실행 확인
             if [ -z "$(docker ps -q -f name=redis)" ]; then
-              docker-compose up -d redis:8.0.2-alpine
+              docker compose up -d redis:8.0.2-alpine
               echo "Redis started"
             fi
             
             # 초기 배포 확인
             if [ -z "$(docker ps -q -f name=springboot-app)" ]; then
-              docker-compose up -d
+              docker compose up -d
               sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
               sudo nginx -t && sudo systemctl reload nginx
               echo "Initial deployment completed"
@@ -162,10 +162,10 @@ jobs:
             }
             
             # 블루 배포
-            docker-compose up -d --scale springboot-app-blue=1
+            docker compose up -d --scale springboot-app-blue=1
             if ! wait_for_health 8081; then
               echo "Blue container health check failed"
-              docker-compose rm -f springboot-app-blue
+              docker compose rm -f springboot-app-blue
               exit 1
             fi
             
@@ -177,14 +177,14 @@ jobs:
               echo "Nginx health check failed"
               sudo mv /etc/nginx/sites-available/default.bak /etc/nginx/sites-available/default
               sudo nginx -t && sudo systemctl reload nginx
-              docker-compose rm -f springboot-app-blue
+              docker compose rm -f springboot-app-blue
               exit 1
             fi
             
             # 그린 컨테이너 교체
-            docker-compose stop springboot-app
-            docker-compose rm -f springboot-app
-            docker-compose up -d springboot-app
+            docker compose stop springboot-app
+            docker compose rm -f springboot-app
+            docker compose up -d springboot-app
             sudo sed -i 's/server 127.0.0.1:[0-9]\+/server 127.0.0.1:8080/' /etc/nginx/sites-available/default
             sudo nginx -t && sudo systemctl reload nginx
             
