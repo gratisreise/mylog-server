@@ -34,4 +34,11 @@ public class MemberService {
 
         memberRepository.save(member);
     }
+
+    public long getMemberId(String email){
+        return memberRepository.findByEmail(email)
+            .orElseThrow().getId();
+    }
+
+
 }

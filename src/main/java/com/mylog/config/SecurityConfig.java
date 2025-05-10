@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtTokenProvider token;
+    private final JwtUtil token;
 
     private static final String[] PUBLIC_MATCHERS = {
         "/api/auth/**",
@@ -66,10 +66,13 @@ public class SecurityConfig {
                 session -> session
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
+            //jwt 커스텀필터 넣기
             .addFilterBefore(
                 new JwtAuthenticationFilter(token, userDetailsService),
                 UsernamePasswordAuthenticationFilter.class
             )
+
+            //빌드
             .build();
     }
 }

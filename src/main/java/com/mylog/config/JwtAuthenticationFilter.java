@@ -16,7 +16,7 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtTokenProvider tokenProvider;
+    private final JwtUtil tokenProvider;
     private final UserDetailsService userDetailsService;
 
     @Override
@@ -25,7 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                   FilterChain filterChain) throws ServletException, IOException {
         String jwt = resolveToken(request);
         
-        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+        if (StringUtils.hasText(jwt) && tokenProvider.validateAccessToken(jwt)) {
             String email = tokenProvider.getEmail(jwt);
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
             

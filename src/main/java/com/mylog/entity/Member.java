@@ -44,6 +44,9 @@ public class Member {
     @Column(length = 200)
     private String bio;
 
+
+
+
     @CreatedDate
     private LocalDateTime createdAt;
 
