@@ -50,6 +50,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, UserDetailsService userDetailsService) throws Exception {
         return http
+
             .csrf(AbstractHttpConfigurer::disable)  // CSRF 보호 비활성화
             .formLogin(AbstractHttpConfigurer::disable)  // 폼 로그인 비활성화
             .httpBasic(AbstractHttpConfigurer::disable)  // HTTP Basic 인증 비활성화
@@ -64,16 +65,14 @@ public class SecurityConfig {
             .headers(headers -> headers
                 .frameOptions(FrameOptionsConfig::disable))
 
-            // 세션 설정
+            // 세션 stateless
             .sessionManagement(
                 session -> session
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             //jwt 커스텀필터 넣기
             .addFilterBefore(
-                new JwtAuthenticationFilter(token,
-                    userDetailsService,
-                    memberRepository),
+                new JwtAuthenticationFilter(token, userDetailsService),
                 UsernamePasswordAuthenticationFilter.class
             )
 

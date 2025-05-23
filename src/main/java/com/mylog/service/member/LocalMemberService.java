@@ -30,28 +30,20 @@ public class LocalMemberService implements MemberService{
     public void saveMember(SignUpRequest request) {
 
         if(memberRepository.existsByEmail(request.getEmail())){
-            throw new CMissingDataException("이미 존재하는 이메일입니다.");
+            throw new CMissingDataException("가입된 사용자입니다.");
         }
 
         String cryptedPassword = passwordEncoder.encode(request.getPassword());
-        log.info("cryptedPassword: {}", cryptedPassword);
         if (cryptedPassword == null) {
             throw new CMissingDataException("비밀번호 암호화를 실패했습니다.");
         }
-        Member member = Member.builder()
-            .email(request.getEmail())
-            .memberName(request.getMemberName())
-            .password(cryptedPassword)
-            .nickname(request.getEmail())
-            .provider(OauthProvider.LOCAL)
-            .providerId(request.getEmail())
-            .build();
-        log.info("member: {}", member.toString());
+
+        Member member = generateMember(request, cryptedPassword);
         memberRepository.save(member);
     }
 
+
     @Override
-    //사용자 정보 조회
     public Member getMember(CustomUser customUser) {
         String email = customUser.getUsername();
         return memberRepository.findByEmail(email)
@@ -71,6 +63,17 @@ public class LocalMemberService implements MemberService{
     @Transactional
     public void deleteMember(CustomUser customUser) {
         memberRepository.deleteByEmail(customUser.getUsername());
+    }
+
+    private Member generateMember(SignUpRequest request, String cryptedPassword) {
+        return Member.builder()
+            .email(request.getEmail())
+            .memberName(request.getMemberName())
+            .password(cryptedPassword)
+            .nickname(request.getEmail())
+            .provider(OauthProvider.LOCAL)
+            .providerId(request.getEmail())
+            .build();
     }
 }
 

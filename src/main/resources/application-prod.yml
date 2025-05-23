@@ -10,10 +10,30 @@ spring:
       ddl-auto: validate
     show-sql: false
 
-#jwt:
-#  secret: ${JWT_SECRET_PROD}
-#  expiration: 86400000 # 24 hours in milliseconds
-#
+jwt:
+  access_secret: ${ACCESS_TOKEN_SECRET}
+  access_expiration: 30  # 1hours
+  refresh_secret: ${REFRESH_TOKEN_SECRET}
+  refresh_expiration: 7 #1주
+
+
+oauth2:
+  client:
+    google:
+      client-id: ${GOOGLE_CLIENT_ID}
+      client-secret: ${GOOGLE_CLIENT_SECRET}
+      redirect-uri: http://localhost:3000
+    naver:
+      client-id: ${NAVER_CLIENT_ID}
+      client-secret: ${NAVER_CLIENT_SECRET}
+      redirect-uri: http://localhost:3000
+    kakao:
+      client-id: ${KAKAO_CLIENT_ID}
+      client-secret: ${KAKAO_CLIENT_SECRET}
+      redirect-uri: http://localhost:3000
+
+
+
 #oauth2:
 #  client:
 #    google:

@@ -5,6 +5,7 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
@@ -13,6 +14,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
   h2:
     console:
       enabled: true
@@ -51,7 +53,7 @@ oauth2:
 #sentry:
 #  dsn: ${SENTRY_DSN_DEV}
 #  environment: development
-#
+
 #aws:
 #  s3:
 #    bucket: ${AWS_S3_BUCKET_DEV}
