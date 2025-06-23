@@ -72,8 +72,7 @@ public class SecurityConfig {
             //jwt 커스텀필터 넣기
             .addFilterBefore(
                 new JwtAuthenticationFilter(token,
-                    userDetailsService,
-                    memberRepository),
+                    userDetailsService),
                 UsernamePasswordAuthenticationFilter.class
             )
 

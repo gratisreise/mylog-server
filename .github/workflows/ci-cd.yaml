@@ -1,12 +1,11 @@
-
 name: CI/CD for MyLog with Docker Compose
 
 # 주석 해제하면 활성화
-#on:
-#  push:
-#    branches: [ main ]
-#  pull_request:
-#    branches: [ main ]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 env:
   REGISTRY: docker.io
@@ -83,6 +82,7 @@ jobs:
           #!/bin/bash
           digest=$(docker inspect --format='{{index .RepoDigests 0}}' ${{ secrets.DOCKER_USERNAME }}/mylog:latest)
           echo "Image digest: $digest"
+  
 
   deploy:
     runs-on: ubuntu-latest
@@ -90,6 +90,22 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
+
+      ## 🔹 GitHub Actions 러너 IP 동적 등록
+      - name: Get GitHub Actions runner public IP
+        id: get_ip
+        run: echo "MY_IP=$(curl -s checkip.amazonaws.com)/32" >> $GITHUB_ENV
+
+      - name: Authorize SSH ingress for runner IP
+        run: |
+          aws ec2 authorize-security-group-ingress \
+            --group-id ${{ secrets.AWS_SG_ID }} \
+            --protocol tcp --port 22 --cidr $MY_IP
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_DEFAULT_REGION: ap-northeast-2
+
       - name: Create .env file
         run: |
           echo "DB_URL=${{ secrets.DB_URL }}" >> .env
@@ -114,16 +130,17 @@ jobs:
             pwd
             ls -al
             cat .env
-            cat docker-compose.yaml
+            cat compose.yaml
 
-      - name: Copy .env and docker-compose.yaml to EC2
+      # compose.yaml과 환경변수 이동
+      - name: Copy .env and compose.yaml to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           port: ${{ secrets.EC2_PORT }}
-          source: ".env,docker-compose.yaml"
+          source: ".env,compose.yaml"
           target: "~/"
 
       - name: Deploy to EC2
@@ -168,7 +185,7 @@ jobs:
 
             wait_for_nginx_health() {
               for i in {1..15}; do
-                if curl -f https://mylogging.click/actuator/health; then
+                if curl -f https://mylog.fyi/actuator/health; then
                   return 0
                 fi
                 sleep 5
@@ -207,5 +224,17 @@ jobs:
             # 정리
             docker image prune -f
             rm -f .env
-            rm -f docker-compose.yaml
+            rm -f compose.yaml
             echo "Deployment completed at $(date)"
+
+      ## 🔹 보안 그룹 규칙 제거
+      - name: Revoke SSH ingress for runner IP
+        if: always()
+        run: |
+          aws ec2 revoke-security-group-ingress \
+            --group-id ${{ secrets.AWS_SG_ID }} \
+            --protocol tcp --port 22 --cidr $MY_IP
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_DEFAULT_REGION: ap-northeast-2

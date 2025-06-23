@@ -59,7 +59,7 @@ public class JwtUtil {
 
     public String getUsername(String token) {
         return Jwts.parser()
-            .verifyWith(accessKey)  // 0.12.x 버전의 새로운 검증 방식, 유요한지?, 만료되었는지
+            .verifyWith(accessKey)   // 0.12.x 버전의 새로운 검증 방식, 유요한지?, 만료되었는지
             .build()
             .parseSignedClaims(token)
             .getPayload()
