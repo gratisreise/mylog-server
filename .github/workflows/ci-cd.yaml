@@ -76,6 +76,7 @@ jobs:
           DB_USER_PASSWORD: ${{ secrets.DB_USER_PASSWORD }}
           DB_URL: ${{ secrets.DB_URL }}
           REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
 
       - name: Output image digest
         run: |
@@ -124,6 +125,7 @@ jobs:
           echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> .env
           echo "REDIRECT_URI=${{ secrets.REDIRECT_URI }}" >> .env
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
+          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
 
       - name: Check files before copy
         run: |
