@@ -102,8 +102,8 @@ jobs:
             --group-id ${{ secrets.AWS_SG_ID }} \
             --protocol tcp --port 22 --cidr $MY_IP
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.EC2_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.EC2_SECRET_KEY }}
           AWS_DEFAULT_REGION: ap-northeast-2
 
       - name: Create .env file
@@ -235,6 +235,6 @@ jobs:
             --group-id ${{ secrets.AWS_SG_ID }} \
             --protocol tcp --port 22 --cidr $MY_IP
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.EC2_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.EC2_SECRET_KEY }}
           AWS_DEFAULT_REGION: ap-northeast-2
