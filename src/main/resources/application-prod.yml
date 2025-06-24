@@ -7,14 +7,15 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update #
-    show-sql: false
+      ddl-auto: validate #
+    show-sql: true
 
   data:
     redis:
       host: redis      # Redis 서버 주소
       port: 6379          # Redis 포트
       database: 0         # Redis DB 번호 (0~15)
+      password: ${REDIS_PASSWORD}
 
 
 jwt:

@@ -177,6 +177,7 @@ jobs:
 
             # 초기 배포 확인
             if [ -z "$(docker ps -q -f name=mylog-app)" ]; then
+              docker compose pull
               docker compose up -d redis mylog-app
               sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
               sudo nginx -t && sudo systemctl reload nginx
