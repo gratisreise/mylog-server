@@ -165,10 +165,12 @@ jobs:
             # Docker 서비스 시작
             sudo systemctl start docker
             sudo systemctl enable docker
+            
 
             # Docker Hub 로그인
             echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
+            docker compose pull 
+            
             # Redis 실행 확인
             if [ -z "$(docker ps -q -f name=redis)" ]; then
               docker compose up -d redis
@@ -177,7 +179,6 @@ jobs:
 
             # 초기 배포 확인
             if [ -z "$(docker ps -q -f name=mylog-app)" ]; then
-              docker compose pull
               docker compose up -d redis mylog-app
               sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
               sudo nginx -t && sudo systemctl reload nginx
@@ -195,9 +196,29 @@ jobs:
               done
               return 1
             }
+            wait_for_health() {
+              local port=$1
+              local retries=30      # 최대 재시도 횟수 (약 30번 = 30초)
+              local delay=1         # 각 재시도 사이 대기(초)
+            
+              echo "Waiting for service health check on port $port..."
+            
+              for ((i=1; i<=retries; i++)); do
+              # HTTP 요청 시도 (응답 코드 200이면 성공)
+              if curl -s "http://localhost:${port}/health" | grep -q "UP"; then
+              echo "✅ Health check passed on port $port"
+              return 0
+              fi
+              
+              echo "⏳ Attempt $i/$retries: Service not healthy yet..."
+              sleep $delay
+              done
+            
+              echo "❌ Health check failed after $retries attempts"
+              return 1
+            }
 
-
-            # 블루 배포
+             # 블루 배포
             docker compose up -d --scale mylog-app-blue=1
             if ! wait_for_health 8081; then
               echo "Blue container health check failed"
