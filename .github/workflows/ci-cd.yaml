@@ -9,7 +9,7 @@ on:
 env:
   REGISTRY: docker.io
   IMAGE_NAME: mylog
-  NGINX_CONFIG_PATH: /etc/nginx/conf.d/mylog.conf
+  NGINX_CONFIG_PATH: /etc/nginx/conf.d/mylog.fyi.conf
 
 jobs:
   test:
