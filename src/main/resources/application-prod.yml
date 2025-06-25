@@ -10,13 +10,10 @@ spring:
       ddl-auto: validate #
     show-sql: true
 
-  data:
-    redis:
-      host: redis      # Redis 서버 주소
-      port: 6379          # Redis 포트
-      database: 0         # Redis DB 번호 (0~15)
-      password: ${REDIS_PASSWORD}
 
+redis:
+  host: redis      # Redis 서버 주소
+  port: 6379          # Redis 포트
 
 jwt:
   access_secret: ${ACCESS_TOKEN_SECRET}
@@ -55,6 +52,9 @@ cloud:
       basic: https://mylog-imgsource.s3.ap-northeast-2.amazonaws.com/5162d5b3-266b-4aae-bc16-d7f10fc4b2f1_basic.png
 
 management:
+  endpoint:
+    health:
+      show-details: always
   endpoints:
     web:
       exposure:

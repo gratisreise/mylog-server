@@ -1,3 +1,7 @@
+# docker buildx build --platform=linux/amd64 -t nooaahh/mylog --push .
+# docker buildx build --platform=linux/amd64,linux/arm64 -t nooaahh/mylog --push .
+# docker build -t nooaahh/mylog .
+
 # 1. Gradle 빌드 이미지 (빌드 전용)
 FROM gradle:8.2.1-jdk17 AS builder
 
@@ -13,7 +17,7 @@ COPY . .
 RUN gradle bootJar -x test --no-daemon
 
 # 2. 실행용 경량 이미지
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
