@@ -126,10 +126,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           port: 22
-        env: # `with`와 같은 레벨로 들여쓰기 수정
-          NGINX_CONFIG_PATH: ${{ env.NGINX_CONFIG_PATH }}
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          # 💡 이 부분이 수정되었습니다. script를 with 블록 안으로 옮겼습니다.
           script: |
             set -e
             LOG_FILE="/var/log/deployment.log"
@@ -153,7 +150,7 @@ jobs:
               echo "❌ Health check failed after $retries attempts"
               return 1
             }
-  
+            
             # Nginx 헬스 체크 함수 정의
             wait_for_nginx_health() {
               for i in {1..15}; do
@@ -168,15 +165,15 @@ jobs:
             # Docker 로그인
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
             echo "Logged into Docker Hub."
-  
+            
             docker compose pull
             echo "Pulled latest Docker images."
-  
+            
             # 현재 Nginx가 바라보는 포트 확인
             CURRENT_PORT=$(sudo grep -oP 'proxy_pass http:\/\/127.0.0.1:\K[0-9]+' "$NGINX_CONFIG_PATH" | head -1)
             GREEN_PORT=8080
             BLUE_PORT=8081
-  
+            
             # 첫 배포 시 CURRENT_PORT가 비어있을 경우 기본 포트로 설정
             if [ -z "$CURRENT_PORT" ]; then
               TARGET_PORT=$GREEN_PORT
@@ -191,7 +188,7 @@ jobs:
               CURRENT_CONTAINER_NAME=mylog-app-blue
               NEW_CONTAINER_NAME=mylog-app
             fi
-  
+            
             # 새로운 컨테이너 배포
             echo "Deploying new version on port $TARGET_PORT..."
             docker compose up -d $NEW_CONTAINER_NAME
@@ -200,7 +197,7 @@ jobs:
               docker compose rm -f $NEW_CONTAINER_NAME
               exit 1
             fi
-  
+            
             # Nginx 포트 전환
             echo "Switching Nginx traffic to new container on port $TARGET_PORT..."
             sudo cp "$NGINX_CONFIG_PATH" "$NGINX_CONFIG_PATH.bak"
@@ -222,14 +219,14 @@ jobs:
               docker compose rm -f $NEW_CONTAINER_NAME
               exit 1
             fi
-  
+            
             # 기존 컨테이너 정리 (첫 배포가 아닌 경우에만 실행)
             if [ -n "$CURRENT_CONTAINER_NAME" ]; then
               echo "Stopping and removing old container: $CURRENT_CONTAINER_NAME"
               docker compose stop $CURRENT_CONTAINER_NAME
               docker compose rm -f $CURRENT_CONTAINER_NAME
             fi
-  
+            
             # Nginx 백업 파일 삭제
             sudo rm -f "$NGINX_CONFIG_PATH.bak"
             
@@ -237,6 +234,10 @@ jobs:
             docker image prune -f
             rm -f .env compose.yaml
             echo "Deployment completed at $(date)"
+        env: # env 블록은 with와 동일한 레벨에 위치해야 합니다.
+          NGINX_CONFIG_PATH: ${{ env.NGINX_CONFIG_PATH }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
       # 🔹 배포 완료 후 보안 그룹 규칙 제거
       - name: Revoke SSH ingress for runner IP
