@@ -121,8 +121,6 @@ jobs:
 
       - name: Deploy and manage application on EC2
         uses: appleboy/ssh-action@v1.0.3
-        env: # env 블록은 with와 동일한 레벨에 위치해야 합니다.
-          NGINX_CONFIG_PATH: ${{ env.NGINX_CONFIG_PATH }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
@@ -177,6 +175,7 @@ jobs:
             echo "Pulled latest Docker images."
             
             # 현재 Nginx가 바라보는 포트 확인
+            NGINX_CONFIG_PATH="/etc/nginx/conf.d/mylog.fyi.conf"
             CURRENT_PORT=$(sudo grep -oP 'proxy_pass http:\/\/127.0.0.1:\K[0-9]+' "$NGINX_CONFIG_PATH" | head -1)
             GREEN_PORT=8080
             BLUE_PORT=8081
