@@ -123,8 +123,6 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         env: # env 블록은 with와 동일한 레벨에 위치해야 합니다.
           NGINX_CONFIG_PATH: ${{ env.NGINX_CONFIG_PATH }}
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
@@ -167,7 +165,12 @@ jobs:
             }
             
             # Docker 로그인
-            echo "$DOCKER_PASSWORD" | sudo docker login -u "$DOCKER_USERNAME" --password-stdin
+            # Docker 서비스 시작
+            sudo systemctl start docker
+            sudo systemctl enable docker
+            
+            # Docker Hub 로그인
+            echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
             echo "Logged into Docker Hub."
             
             docker compose pull
