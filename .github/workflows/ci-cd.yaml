@@ -137,7 +137,7 @@ jobs:
             wait_for_health() {
               local port=$1
               local retries=30
-              local delay=1
+              local delay=5
               echo "Waiting for service health check on port $port..."
               for ((i=1; i<=retries; i++)); do
                 if curl -s "http://localhost:${port}/actuator/health" | grep -q "UP"; then
