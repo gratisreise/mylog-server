@@ -30,6 +30,7 @@ public class MemberService {
     private String basicImageUrl;
 
     // 회원가입
+    @Transactional
     public void saveMember(SignUpRequest request){
         if(memberRepository.existsByEmail(request.getEmail())){
             throw new CMissingDataException("이미 존재하는 이메일입니다.");
@@ -64,6 +65,7 @@ public class MemberService {
     };
 
     //회원정보수정
+    @Transactional
     public void updateMember(UpdateMemberRequest request, CustomUser customUser, MultipartFile file)
         throws IOException{
         //닉네임 중복확인
@@ -90,6 +92,7 @@ public class MemberService {
     };
 
     // 사용자 정보삭제
+    @Transactional
     public void deleteMember(CustomUser customUser){
         Member member = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);

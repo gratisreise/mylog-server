@@ -74,6 +74,7 @@ public class NotificationService {
     };
 
     //알림끄기
+    @Transactional
     public void toggleNotification(CustomUser customUser, String type){
         Member member = generateMember(customUser);
         notificationSettingRepository

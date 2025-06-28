@@ -65,6 +65,7 @@ public class CommentService {
     }
 
     //댓글 삭제
+    @Transactional
     public void deleteComment(Long commentId, CustomUser customUser){
         if (!validateDelete(commentId, customUser)) {
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
