@@ -126,7 +126,6 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           port: 22
-          # 💡 이 부분이 수정되었습니다. script를 with 블록 안으로 옮겼습니다.
           script: |
             set -e
             LOG_FILE="/var/log/deployment.log"
@@ -151,18 +150,6 @@ jobs:
               return 1
             }
             
-            # Nginx 헬스 체크 함수 정의
-            wait_for_nginx_health() {
-              for i in {1..15}; do
-                if curl -f https://mylog.fyi/actuator/health; then
-                  return 0
-                fi
-                sleep 5
-              done
-              return 1
-            }
-            
-            # Docker 로그인
             # Docker 서비스 시작
             sudo systemctl start docker
             sudo systemctl enable docker
@@ -171,89 +158,30 @@ jobs:
             echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
             echo "Logged into Docker Hub."
             
+            # 🔹 Step 1: 최신 이미지 다운로드
             docker compose pull
             echo "Pulled latest Docker images."
             
-            # 현재 Nginx가 바라보는 포트 확인
-            NGINX_CONFIG_PATH="/etc/nginx/conf.d/mylog.fyi.conf"
-            CURRENT_PORT=$(sudo grep -oP 'proxy_pass http:\/\/127.0.0.1:\K[0-9]+' "$NGINX_CONFIG_PATH" | head -1)
-            GREEN_PORT=8080
-            BLUE_PORT=8081
+            # 🔹 Step 2: 기존 컨테이너 중단 및 삭제
+            echo "Stopping and removing old containers..."
+            docker compose down || true
             
-            # 첫 배포 시 CURRENT_PORT가 비어있을 경우 기본 포트로 설정
-            if [ -z "$CURRENT_PORT" ]; then
-              TARGET_PORT=$GREEN_PORT
-              CURRENT_CONTAINER_NAME=""
-              NEW_CONTAINER_NAME=mylog-app
-            elif [ "$CURRENT_PORT" -eq "$GREEN_PORT" ]; then
-              TARGET_PORT=$BLUE_PORT
-              CURRENT_CONTAINER_NAME=mylog-app
-              NEW_CONTAINER_NAME=mylog-app-blue
-            else
-              TARGET_PORT=$GREEN_PORT
-              CURRENT_CONTAINER_NAME=mylog-app-blue
-              NEW_CONTAINER_NAME=mylog-app
-            fi
+            # 🔹 Step 3: 새 컨테이너 시작
+            echo "Starting new container..."
+            docker compose up -d
             
-            # 새로운 컨테이너 배포
-            echo "Deploying new version on port $TARGET_PORT..."
-            docker compose up -d $NEW_CONTAINER_NAME
-            if ! wait_for_health $TARGET_PORT; then
+            # 🔹 Step 4: 배포 완료 후 헬스 체크
+            echo "Checking health of newly deployed container..."
+            if ! wait_for_health 8080; then
               echo "New container health check failed. Deployment aborted."
-              docker compose rm -f $NEW_CONTAINER_NAME
               exit 1
             fi
-            
-            # Nginx 포트 전환
-            echo "Switching Nginx traffic to new container on port $TARGET_PORT..."
-            sudo cp "$NGINX_CONFIG_PATH" "$NGINX_CONFIG_PATH.bak"
-            sudo sed -i "s/\(proxy_pass http:\/\/127.0.0.1:\)[0-9]\+/\1$TARGET_PORT/" "$NGINX_CONFIG_PATH"
-            
-            echo "Testing NGINX configuration..."
-            if sudo nginx -t; then
-              echo "NGINX configuration test successful. Reloading NGINX..."
-              # 테스트 성공 시에만 리로드 시도
-              if ! sudo systemctl reload nginx; then
-                echo "NGINX reload failed. Reverting to backup configuration."
-                sudo mv "$NGINX_CONFIG_PATH.bak" "$NGINX_CONFIG_PATH"
-                sudo nginx -t && sudo systemctl reload nginx
-                docker compose rm -f $NEW_CONTAINER_NAME
-                exit 1
-              fi
-            else
-            # 테스트 실패 시 바로 복구
-              echo "NGINX configuration test failed. Reverting to backup configuration."
-              sudo mv "$NGINX_CONFIG_PATH.bak" "$NGINX_CONFIG_PATH"
-              sudo nginx -t && sudo systemctl reload nginx
-              docker compose rm -f $NEW_CONTAINER_NAME
-              exit 1
-            fi
-            echo "NGINX reloaded successfully."
-            
-            echo "Nginx switch successful. Checking application health via Nginx..."
-            if ! wait_for_nginx_health; then
-              echo "NGINX health check failed after switch. Reverting to backup."
-              sudo mv "$NGINX_CONFIG_PATH.bak" "$NGINX_CONFIG_PATH"
-              sudo nginx -t && sudo systemctl reload nginx
-              docker compose rm -f $NEW_CONTAINER_NAME
-              exit 1
-            fi
-            
-            # 기존 컨테이너 정리 (첫 배포가 아닌 경우에만 실행)
-            if [ -n "$CURRENT_CONTAINER_NAME" ]; then
-              echo "Stopping and removing old container: $CURRENT_CONTAINER_NAME"
-              docker compose stop $CURRENT_CONTAINER_NAME
-              docker compose rm -f $CURRENT_CONTAINER_NAME
-            fi
-            
-            # Nginx 백업 파일 삭제
-            sudo rm -f "$NGINX_CONFIG_PATH.bak"
             
             # 정리 작업
             docker image prune -f
             rm -f .env compose.yaml
             echo "Deployment completed at $(date)"
-        
+      
 
       # 🔹 배포 완료 후 보안 그룹 규칙 제거
       - name: Revoke SSH ingress for runner IP
