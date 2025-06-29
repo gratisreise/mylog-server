@@ -56,10 +56,18 @@ public class JwtUtil {
             .signWith(refreshKey, SIG.HS512)
             .compact();
     }
+    public String getRefreshUsername(String token) {
+        return Jwts.parser()
+            .verifyWith(refreshKey)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload()
+            .getSubject();
+    }
 
     public String getUsername(String token) {
         return Jwts.parser()
-            .verifyWith(accessKey)   // 0.12.x 버전의 새로운 검증 방식, 유요한지?, 만료되었는지
+            .verifyWith(accessKey)
             .build()
             .parseSignedClaims(token)
             .getPayload()

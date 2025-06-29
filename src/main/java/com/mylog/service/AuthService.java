@@ -10,6 +10,7 @@ import com.mylog.exception.CInvalidDataException;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
     private final JwtUtil jwtUtil;
@@ -50,7 +52,8 @@ public class AuthService {
 
     //리프레쉬
     public RefreshResponse refresh(RefreshRequest request) {
-        String username = jwtUtil.getUsername(request.getRefreshToken());
+        String username = jwtUtil.getRefreshUsername(request.getRefreshToken());
+        log.info("{}", username);
         long memberId = memberRepository.findByNickname(username)
             .orElseThrow(CMissingDataException::new).getId();
 
