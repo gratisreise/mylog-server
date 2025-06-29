@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/members")
 @RequiredArgsConstructor
+@Slf4j
 public class MemberController {
 
     private final MemberService memberService;
@@ -55,6 +57,7 @@ public class MemberController {
         @RequestPart(value="file") MultipartFile file,
         @AuthenticationPrincipal CustomUser customUser
     ) throws IOException {
+        log.info("{}", customUser);
         memberService.updateMember(request, customUser, file);
         return ResponseService.getSuccessResult();
     }
@@ -64,6 +67,7 @@ public class MemberController {
     @DeleteMapping("/me")
     @Operation(summary = "개인정보삭제")
     public CommonResult deleteMember(@AuthenticationPrincipal CustomUser customUser){
+        log.info("{}", customUser);
         memberService.deleteMember(customUser);
         return ResponseService.getSuccessResult();
     }

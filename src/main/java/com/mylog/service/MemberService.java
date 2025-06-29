@@ -1,5 +1,6 @@
 package com.mylog.service;
 
+import com.mylog.dto.category.CategoryCreateRequest;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.dto.member.SignUpRequest;
 import com.mylog.dto.member.UpdateMemberRequest;
@@ -24,8 +25,9 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
+    private final CategoryService categoryService;
 
-    @Value("aws.s3.basic")
+    @Value("${cloud.aws.s3.basic}")
     private String basicImageUrl;
 
     // 회원가입
@@ -54,6 +56,8 @@ public class MemberService {
 
         log.info("member: {}", member.toString());
         memberRepository.save(member);
+
+        categoryService.createCategory(request.getEmail());
     }
 
 
@@ -80,9 +84,9 @@ public class MemberService {
         //기존사진
         String memberImg = member.getProfileImg();
         log.info("memberImg: {}, profileImg: {}", memberImg, profileImg);
-        if(isSame(memberImg, profileImg)){
+        if(isSame(memberImg, profileImg)){ // 이미지가 같을 때
             member.update(request);
-        } else {
+        } else { //이미지가 다를 때
             profileImg = s3Service.upload(file).orElseThrow(CMissingDataException::new);
             if(!memberImg.equals(basicImageUrl)) s3Service.deleteImage(memberImg);
             member.update(request, profileImg);

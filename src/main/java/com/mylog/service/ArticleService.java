@@ -33,8 +33,15 @@ public class ArticleService {
     //게시글 생성
     @Transactional
     public void createArticle(ArticleCreateRequest request, CustomUser customUser, MultipartFile file) throws IOException{
-        Category category = categoryRepository.findByCategoryName(request.getCategory())
-            .orElseThrow(CMissingDataException::new);
+
+        Category category =
+            (request.getCategory().equals(CategoryService.originCategory))
+            ?
+            categoryRepository.findByCategoryName(CategoryService.originCategory)
+                .orElseThrow(CMissingDataException::new)
+            :
+            categoryRepository.findByCategoryName(request.getCategory())
+                .orElseThrow(CMissingDataException::new);
 
         Member member = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);

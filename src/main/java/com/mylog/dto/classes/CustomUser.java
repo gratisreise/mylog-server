@@ -4,6 +4,7 @@ import com.mylog.entity.Member;
 import com.mylog.enums.OauthProvider;
 import java.util.Collection;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -20,5 +21,4 @@ public class CustomUser extends User {
         this.memberId = member.getId();
         this.provider = member.getProvider();
     }
-
 }

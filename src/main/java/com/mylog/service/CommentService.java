@@ -74,7 +74,7 @@ public class CommentService {
         commentRepository.deleteById(commentId);
     }
 
-    //나의 댓글 조회
+    //내가 작성한 댓글 조회
     public Page<CommentResponse> getMyComments(CustomUser customUser, Pageable pageable) {
         Member member = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);
@@ -82,7 +82,7 @@ public class CommentService {
             .map(CommentResponse::from);
     }
 
-    //나의 게시글 댓글 조회
+    //내게시글의 댓글 조회
     public Page<CommentResponse> getComments(CustomUser customUser, Pageable pageable) {
         Member member = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);

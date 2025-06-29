@@ -26,7 +26,7 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     private final int limit = 20;
-
+    public static String originCategory = "없음";
     //카테고리 생성
     @Transactional
     public void createCategory(CategoryCreateRequest request, CustomUser customUser){
@@ -42,6 +42,17 @@ public class CategoryService {
 
         categoryRepository.save(category);
     };
+
+    @Transactional
+    public void createCategory(String email){
+        Member member = memberRepository.findByEmail(email).orElseThrow(CMissingDataException::new);
+
+        Category category = Category.builder()
+            .member(member)
+            .categoryName(originCategory)
+            .build();
+        categoryRepository.save(category);
+    }
 
 
     //카테고리 목록 조회

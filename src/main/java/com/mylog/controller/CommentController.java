@@ -91,7 +91,7 @@ public class CommentController {
 
     //나의 댓글 조회
     @GetMapping("/me")
-    @Operation(summary = "나의 댓글 조회")
+    @Operation(summary = "내가 작성한 댓글 조회")
     public SingleResult<Page<CommentResponse>> getComments(
         @AuthenticationPrincipal CustomUser customUser,
         @PageableDefault(size = 20, sort="createdAt", direction = Direction.DESC)
@@ -102,7 +102,7 @@ public class CommentController {
 
     //내가 작성한 댓글 조회
     @GetMapping("/me/articles")
-    @Operation(summary = "내가 작성한 댓글 조회")
+    @Operation(summary = "내게시글에 닥성된 댓글 조회")
     public SingleResult<Page<CommentResponse>> getMyArticlesComments(
         @AuthenticationPrincipal CustomUser customUser,
         @PageableDefault(size = 20, sort="createdAt", direction = Direction.DESC)
