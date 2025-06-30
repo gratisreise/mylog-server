@@ -80,7 +80,7 @@ public class GoogleOAuth2UserService extends AbstractOAuth2UserService {
 
     @Override
     public OAuth2UserInfo getUserInfo(String accessToken) {
-        String userInfoUrl = "https://www.googleapis.com/oauth2/v2/userinfo";
+        String userInfoUrl = "https://www.googleapis.com/oauth2/v3/userinfo";
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
 

@@ -11,9 +11,6 @@ import org.hibernate.validator.constraints.Length;
 @Setter
 public class ArticleUpdateRequest {
 
-    @NotNull
-    private Long id;
-
     @NotBlank
     @Length(min = 2, max = 30)
     private String title;

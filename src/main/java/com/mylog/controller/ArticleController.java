@@ -51,32 +51,33 @@ public class ArticleController {
     }
 
     //게시글 조회
-    @GetMapping("/{id}")
+    @GetMapping("/{articleId}")
     @Operation(summary = "게시글 조회")
-    public SingleResult<ArticleResponse> getArticle(@PathVariable Long id){
-        return ResponseService.getSingleResult(articleService.getArticle(id));
+    public SingleResult<ArticleResponse> getArticle(@PathVariable Long articleId){
+        return ResponseService.getSingleResult(articleService.getArticle(articleId));
     }
 
     //게시글 수정
-    @PutMapping
+    @PutMapping("/{articleId}")
     @Operation(summary = "게시글 수정")
     public CommonResult updateArticle(
         @RequestPart(value = "request") @Valid ArticleUpdateRequest request,
         @RequestPart(value = "file") MultipartFile file,
-        @AuthenticationPrincipal CustomUser customUser
+        @AuthenticationPrincipal CustomUser customUser,
+        @PathVariable Long articleId
     ) throws IOException {
-        articleService.updateArticle(request, customUser, file);
+        articleService.updateArticle(request, customUser, file, articleId);
         return ResponseService.getSuccessResult();
     }
 
     //게시글 삭제
-    @DeleteMapping
+    @DeleteMapping("/{articleId}")
     @Operation(summary = "게시글 삭제")
     public CommonResult deleteArticle(
         @AuthenticationPrincipal CustomUser customUser,
-        @RequestBody ArticleDeleteRequest request
+        @PathVariable Long articleId
     ){
-        articleService.deleteArticle(request, customUser);
+        articleService.deleteArticle(articleId, customUser);
         return ResponseService.getSuccessResult();
     }
 
@@ -104,9 +105,10 @@ public class ArticleController {
     @Operation(summary = "전체 게시글 검색")
     public SingleResult<Page<ArticleResponse>> searchArticles(
         @RequestParam String keyword,
+        @RequestParam String tag,
         @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable
     ){
-        return ResponseService.getSingleResult(articleService.getArticles(keyword, pageable));
+        return ResponseService.getSingleResult(articleService.getArticles(keyword, tag, pageable));
     }
 
     //내 게시글 검색
@@ -120,13 +122,4 @@ public class ArticleController {
         return ResponseService.getSingleResult(articleService.getArticles(pageable, customUser, keyword));
     }
 
-    @GetMapping("/tag/{tagName}")
-    @Operation(summary = "태그 검색")
-    public SingleResult<Page<ArticleResponse>> serchArticlesByTag(
-        @PathVariable String tagName,
-        @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable
-    ){
-        return ResponseService.getSingleResult(
-            articleService.getArticlesByTagName(tagName, pageable));
-    }
 }

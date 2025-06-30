@@ -130,7 +130,6 @@ class ArticleServiceTest {
 
         // 게시글 수정 요청 설정
         updateRequest = new ArticleUpdateRequest();
-        updateRequest.setId(articleId);
         updateRequest.setTitle("수정된 제목");
         updateRequest.setContent("수정된 내용");
         updateRequest.setCategory(categoryName);
@@ -138,7 +137,6 @@ class ArticleServiceTest {
 
         // 게시글 삭제 요청 설정
         deleteRequest = new ArticleDeleteRequest();
-        deleteRequest.setId(articleId);
         deleteRequest.setAuthor(member.getNickname());
     }
 
@@ -225,7 +223,7 @@ class ArticleServiceTest {
         doNothing().when(tagService).saveTag(anyList(), any(Article.class));
 
         // when
-        articleService.updateArticle(updateRequest, customUser, file);
+        articleService.updateArticle(updateRequest, customUser, file, articleId);
 
         // then
         verify(memberRepository, times(1)).findByNickname(updateRequest.getAuthor());
@@ -257,7 +255,7 @@ class ArticleServiceTest {
         when(memberRepository.findByNickname(updateRequest.getAuthor())).thenReturn(Optional.of(member));
 
         // when & then
-        assertThatThrownBy(() -> articleService.updateArticle(updateRequest, otherUser, file))
+        assertThatThrownBy(() -> articleService.updateArticle(updateRequest, otherUser, file, articleId))
             .isInstanceOf(CUnAuthorizedException.class);
 
         verify(memberRepository, times(1)).findById(otherUser.getMemberId());
@@ -271,7 +269,6 @@ class ArticleServiceTest {
     @Test
     void 게시글_삭제_성공() {
         // given
-        when(memberRepository.findByNickname(deleteRequest.getAuthor())).thenReturn(Optional.of(member));
         when(memberRepository.findById(customUser.getMemberId())).thenReturn(Optional.of(member));
         when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
         doNothing().when(s3Service).deleteImage(article.getArticleImg());
@@ -279,10 +276,9 @@ class ArticleServiceTest {
         doNothing().when(articleTagRepository).deleteByArticle(article);
 
         // when
-        articleService.deleteArticle(deleteRequest, customUser);
+        articleService.deleteArticle(articleId, customUser);
 
         // then
-        verify(memberRepository, times(1)).findByNickname(deleteRequest.getAuthor());
         verify(memberRepository, times(1)).findById(customUser.getMemberId());
         verify(articleRepository, times(1)).findById(articleId);
         verify(s3Service, times(1)).deleteImage(article.getArticleImg());
@@ -302,17 +298,16 @@ class ArticleServiceTest {
         CustomUser otherUser = new CustomUser(otherMember, Collections.singletonList(authority));
 
         when(memberRepository.findById(otherUser.getMemberId())).thenReturn(Optional.of(otherMember));
-        when(memberRepository.findByNickname(deleteRequest.getAuthor())).thenReturn(Optional.of(member));
+        when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
 
         // when & then
-        assertThatThrownBy(() -> articleService.deleteArticle(deleteRequest, otherUser))
+        assertThatThrownBy(() -> articleService.deleteArticle(articleId, otherUser))
             .isInstanceOf(CUnAuthorizedException.class);
 
         verify(memberRepository, times(1)).findById(otherUser.getMemberId());
-        verify(memberRepository, times(1)).findByNickname(deleteRequest.getAuthor());
+        verify(articleRepository, times(1)).findById(articleId);
         verify(s3Service, never()).deleteImage(anyString());
-        verify(articleRepository, never()).findById(articleId);
-        verify(articleRepository, never()).deleteById(deleteRequest.getId());
+        verify(articleRepository, never()).deleteById(articleId);
     }
 
     @Test

@@ -1,12 +1,10 @@
 package com.mylog.service;
 
 import com.mylog.dto.article.ArticleCreateRequest;
-import com.mylog.dto.article.ArticleDeleteRequest;
 import com.mylog.dto.article.ArticleResponse;
 import com.mylog.dto.article.ArticleUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.entity.Article;
-import com.mylog.entity.ArticleTag;
 import com.mylog.entity.Category;
 import com.mylog.entity.Member;
 import com.mylog.exception.CMissingDataException;
@@ -16,7 +14,6 @@ import com.mylog.repository.ArticleTagRepository;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
 import java.io.IOException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -68,7 +65,7 @@ public class ArticleService {
     //게시글 수정
     @Transactional
     public void updateArticle(ArticleUpdateRequest request, CustomUser customUser,
-        MultipartFile file) throws IOException {
+        MultipartFile file, Long articleId) throws IOException {
         Member requestMember = memberRepository.findByNickname(request.getAuthor())
             .orElseThrow(CMissingDataException::new);
         Member userMember = memberRepository.findById(customUser.getMemberId())
@@ -78,7 +75,7 @@ public class ArticleService {
             throw new CUnAuthorizedException("허용 되지 않는 유저입니다.");
         }
 
-        Article article = articleRepository.findById(request.getId())
+        Article article = articleRepository.findById(articleId)
             .orElseThrow(CMissingDataException::new);
         Category category = categoryRepository.findByCategoryName(request.getCategory())
             .orElseThrow(CMissingDataException::new);
@@ -102,25 +99,22 @@ public class ArticleService {
 
     //게시글 삭제
     @Transactional
-    public void deleteArticle(ArticleDeleteRequest request, CustomUser customUser) {
-        Member requestMember = memberRepository.findByNickname(request.getAuthor())
+    public void deleteArticle(Long articleId, CustomUser customUser) {
+        Article article = articleRepository.findById(articleId)
             .orElseThrow(CMissingDataException::new);
-        Member userMember = memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new);
+        long requestMember = memberRepository.findById(customUser.getMemberId())
+            .orElseThrow(CMissingDataException::new).getId();
+        long userMember = article.getMember().getId();
 
-        if(!requestMember.getId().equals(userMember.getId())){
+        if(requestMember != userMember){
             throw new CUnAuthorizedException("허용 되지 않는 유저입니다.");
         }
-
-
-        Article article = articleRepository.findById(request.getId())
-            .orElseThrow(CMissingDataException::new);
 
         articleTagRepository.deleteByArticle(article);
 
         s3Service.deleteImage(article.getArticleImg());
 
-        articleRepository.deleteById(request.getId());
+        articleRepository.deleteById(articleId);
     }
 
     //내 게시글 목록
@@ -161,14 +155,16 @@ public class ArticleService {
     };
 
     //전체 게시글 검색
-    public Page<ArticleResponse> getArticles(String keyword, Pageable pageable){
-        return articleRepository.findByTitleContainingIgnoreCase(keyword, pageable)
-            .map(ArticleResponse::from);
+    public Page<ArticleResponse> getArticles(String keyword, String tag, Pageable pageable){
+        return !isClear(keyword) ?
+            articleRepository.findByTitleContainingIgnoreCase(keyword, pageable)
+            .map(ArticleResponse::from) :
+            articleRepository.findAllByTagName(tag, pageable)
+                .map(ArticleResponse::from);
     };
 
-    //태그 검색
-    public Page<ArticleResponse> getArticlesByTagName(String tagName, Pageable pageable){
-        return articleRepository.findAllByTagName(tagName, pageable)
-            .map(ArticleResponse::from);
+
+    private boolean isClear(String s){
+        return s == null || s.isEmpty();
     }
 }
