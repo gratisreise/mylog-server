@@ -25,6 +25,7 @@ import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
+import com.mylog.repository.ArticleTagRepository;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
 import java.io.IOException;
@@ -53,6 +54,8 @@ class ArticleServiceTest {
 
     @Mock
     private ArticleRepository articleRepository;
+    @Mock
+    private ArticleTagRepository articleTagRepository;
 
     @Mock
     private CategoryRepository categoryRepository;
@@ -273,6 +276,7 @@ class ArticleServiceTest {
         when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
         doNothing().when(s3Service).deleteImage(article.getArticleImg());
         doNothing().when(articleRepository).deleteById(article.getId());
+        doNothing().when(articleTagRepository).deleteByArticle(article);
 
         // when
         articleService.deleteArticle(deleteRequest, customUser);

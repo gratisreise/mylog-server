@@ -17,6 +17,7 @@ import com.mylog.entity.Member;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CInvalidDataException;
 import com.mylog.exception.CMissingDataException;
+import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
 import java.io.IOException;
 import java.util.Collection;
@@ -41,6 +42,9 @@ class MemberServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
+
+    @Mock
+    private CategoryService categoryService;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -107,7 +111,7 @@ class MemberServiceTest {
         when(memberRepository.existsByEmail(email)).thenReturn(false);
         when(passwordEncoder.encode(password)).thenReturn(cryptedPassword);
         when(memberRepository.save(any(Member.class))).thenReturn(member);
-
+        doNothing().when(categoryService).createCategory(email);
         // When
         memberService.saveMember(signUpRequest);
 
