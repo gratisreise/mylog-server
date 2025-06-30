@@ -111,7 +111,7 @@ public class ArticleController {
 
     //내 게시글 검색
     @GetMapping("/me/search")
-    @Operation(summary = "내 게시글 목록 검색")
+    @Operation(summary = "내 게시글 검색")
     public SingleResult<Page<ArticleResponse>> searchArticles(
         @RequestParam String keyword,
         @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable,

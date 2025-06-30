@@ -6,14 +6,17 @@ import com.mylog.dto.article.ArticleResponse;
 import com.mylog.dto.article.ArticleUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
 import com.mylog.entity.Article;
+import com.mylog.entity.ArticleTag;
 import com.mylog.entity.Category;
 import com.mylog.entity.Member;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
+import com.mylog.repository.ArticleTagRepository;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ArticleService {
     private final ArticleRepository articleRepository;
+    private final ArticleTagRepository articleTagRepository;
     private final CategoryRepository categoryRepository;
     private final MemberRepository memberRepository;
     private final TagService tagService;
@@ -108,8 +112,11 @@ public class ArticleService {
             throw new CUnAuthorizedException("허용 되지 않는 유저입니다.");
         }
 
+
         Article article = articleRepository.findById(request.getId())
             .orElseThrow(CMissingDataException::new);
+
+        articleTagRepository.deleteByArticle(article);
 
         s3Service.deleteImage(article.getArticleImg());
 
