@@ -17,6 +17,4 @@ public class CommentUpdateRequest {
     @NotBlank
     private String content;
 
-    @NotBlank
-    private Long commentId;
 }

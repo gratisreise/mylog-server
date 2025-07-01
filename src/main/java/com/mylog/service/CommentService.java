@@ -53,8 +53,8 @@ public class CommentService {
 
     //댓글 수정
     @Transactional
-    public void updateComment(CommentUpdateRequest request, CustomUser customUser) {
-        Comment comment = commentRepository.findById(request.getCommentId())
+    public void updateComment(CommentUpdateRequest request, CustomUser customUser, Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
             .orElseThrow(CMissingDataException::new);
 
         if (!validateUpdate(customUser, comment)) {

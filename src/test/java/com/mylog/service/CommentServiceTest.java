@@ -57,10 +57,13 @@ class CommentServiceTest {
     private CommentService commentService;
 
     private Member member;
+    private Member otherMember;
     private Article article;
+    private Article otherArticle;
     private Comment comment;
     private Comment childComment;
     private CustomUser customUser;
+    private CustomUser otherUser;
     private CommentCreateRequest createRequest;
     private CommentUpdateRequest updateRequest;
     private Pageable pageable;
@@ -76,6 +79,13 @@ class CommentServiceTest {
             .provider(OauthProvider.LOCAL)
             .build();
 
+        otherMember = Member.builder()
+            .id(2L)
+            .nickname("다른사용자")
+            .password("otherPassword")
+            .provider(OauthProvider.LOCAL)
+            .build();
+
         // 게시글 설정
         article = Article.builder()
             .id(1L)
@@ -84,12 +94,29 @@ class CommentServiceTest {
             .member(member)
             .build();
 
+        // 다른 사용자의 게시글 설정
+        otherArticle = Article.builder()
+            .id(2L)
+            .title("다른 사용자 게시글")
+            .content("다른 사용자 내용")
+            .member(otherMember)
+            .build();
+
         // 댓글 설정
         comment = Comment.builder()
             .id(1L)
             .content("테스트 댓글")
             .article(article)
             .member(member)
+            .createdAt(LocalDateTime.now())
+            .build();
+
+        // 다른 사용자의 댓글 설정
+        Comment otherComment = Comment.builder()
+            .id(3L)
+            .content("다른사용자 댓글")
+            .article(article)
+            .member(otherMember)
             .createdAt(LocalDateTime.now())
             .build();
 
@@ -105,6 +132,7 @@ class CommentServiceTest {
 
         // 사용자 정보 설정
         customUser = new CustomUser(member, new ArrayList<>());
+        otherUser = new CustomUser(otherMember, new ArrayList<>());
 
         // 댓글 생성 요청 설정
         createRequest = new CommentCreateRequest();
@@ -115,7 +143,6 @@ class CommentServiceTest {
         // 댓글 수정 요청 설정
         updateRequest = new CommentUpdateRequest();
         updateRequest.setContent("수정된 댓글");
-        updateRequest.setCommentId(1L);
 
         // 페이징 설정
         pageable = PageRequest.of(0, 10);
@@ -182,7 +209,6 @@ class CommentServiceTest {
         verify(notificationService, never()).sendNotification(any(), any(), any());
     }
 
-    //
     @Test
     void 대댓글_생성_성공() {
         // given
@@ -220,65 +246,55 @@ class CommentServiceTest {
     @Test
     void 댓글_수정_성공() {
         // given
-        when(commentRepository.findById(updateRequest.getCommentId()))
-            .thenReturn(Optional.of(comment));
+        Long commentId = 1L;
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
         when(memberRepository.findById(customUser.getMemberId())).thenReturn(Optional.of(member));
 
         // when
-        commentService.updateComment(updateRequest, customUser);
+        commentService.updateComment(updateRequest, customUser, commentId);
 
         // then
         assertThat(comment.getContent()).isEqualTo(updateRequest.getContent());
-        verify(commentRepository).findById(updateRequest.getCommentId());
+        verify(commentRepository).findById(commentId);
         verify(memberRepository).findById(customUser.getMemberId());
     }
 
     @Test
     void 댓글_수정_댓글없음_예외발생() {
         // given
-        when(commentRepository.findById(updateRequest.getCommentId())).thenReturn(Optional.empty());
+        Long commentId = 1L;
+        when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> commentService.updateComment(updateRequest, customUser))
+        assertThatThrownBy(() -> commentService.updateComment(updateRequest, customUser, commentId))
             .isInstanceOf(CMissingDataException.class);
 
-        verify(commentRepository).findById(updateRequest.getCommentId());
+        verify(commentRepository).findById(commentId);
         verify(memberRepository, never()).findById(customUser.getMemberId());
     }
 
     @Test
     void 댓글_수정_권한없음_예외발생() {
         // given
-        Member otherMember = Member.builder()
-            .id(2L)
-            .nickname("다른사용자")
-            .password("otherPassword")
-            .provider(OauthProvider.LOCAL)
-            .build();
-
-        CustomUser otherUser = new CustomUser(otherMember, new ArrayList<>());
-
-        when(commentRepository.findById(updateRequest.getCommentId())).thenReturn(
-            Optional.of(comment));
-        when(memberRepository.findById(otherUser.getMemberId())).thenReturn(
-            Optional.of(otherMember));
+        Long commentId = 1L;
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
+        when(memberRepository.findById(otherUser.getMemberId())).thenReturn(Optional.of(otherMember));
 
         // when & then
-        assertThatThrownBy(() -> commentService.updateComment(updateRequest, otherUser))
+        assertThatThrownBy(() -> commentService.updateComment(updateRequest, otherUser, commentId))
             .isInstanceOf(CUnAuthorizedException.class);
 
-        verify(commentRepository).findById(updateRequest.getCommentId());
+        verify(commentRepository).findById(commentId);
         verify(memberRepository).findById(otherUser.getMemberId());
 
     }
 
     @Test
-    void 댓글_삭제_성공() {
+    void 댓글_삭제_성공_작성자() {
         // given
         Long commentId = 1L;
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
         when(memberRepository.findById(customUser.getMemberId())).thenReturn(Optional.of(member));
-        doNothing().when(commentRepository).deleteById(commentId);
 
         // when
         commentService.deleteComment(commentId, customUser);
@@ -286,6 +302,22 @@ class CommentServiceTest {
         // then
         verify(commentRepository).findById(commentId);
         verify(memberRepository).findById(customUser.getMemberId());
+        verify(commentRepository).deleteById(commentId);
+    }
+
+    @Test
+    void 댓글_삭제_성공_게시글작성자() {
+        // given
+        Long commentId = 1L;
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
+        when(memberRepository.findById(article.getMember().getId())).thenReturn(Optional.of(member));
+
+        // when
+        commentService.deleteComment(commentId, customUser);
+
+        // then
+        verify(commentRepository).findById(commentId);
+        verify(memberRepository).findById(article.getMember().getId());
         verify(commentRepository).deleteById(commentId);
     }
 
@@ -308,17 +340,8 @@ class CommentServiceTest {
     void 댓글_삭제_권한없음_예외발생() {
         // given
         Long commentId = 1L;
-        Member otherMember = Member.builder()
-            .id(2L)
-            .nickname("otherUser")
-            .password("otherPassword")
-            .provider(OauthProvider.LOCAL)
-            .build();
-        CustomUser otherUser = new CustomUser(otherMember, new ArrayList<>());
-
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
-        when(memberRepository.findById(otherUser.getMemberId())).thenReturn(
-            Optional.of(otherMember));
+        when(memberRepository.findById(otherUser.getMemberId())).thenReturn(Optional.of(otherMember));
 
         // when & then
         assertThatThrownBy(() -> commentService.deleteComment(commentId, otherUser))
@@ -366,6 +389,7 @@ class CommentServiceTest {
         verify(memberRepository).findById(customUser.getMemberId());
         verify(commentRepository).findAllByArticle_Member(member, pageable);
     }
+
 
     @Test
     void 게시글_댓글_조회_성공() {

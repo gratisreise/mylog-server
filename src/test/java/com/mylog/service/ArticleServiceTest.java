@@ -374,6 +374,7 @@ class ArticleServiceTest {
     void 전체_키워드_검색_성공() {
         // given
         String keyword = "테스트";
+        String tag = "";
         Pageable pageable = PageRequest.of(0, 10);
         List<Article> articles = Arrays.asList(article);
         Page<Article> articlePage = new PageImpl<>(articles, pageable, articles.size());
@@ -381,7 +382,7 @@ class ArticleServiceTest {
         when(articleRepository.findByTitleContainingIgnoreCase(keyword, pageable)).thenReturn(articlePage);
 
         // when
-        Page<ArticleResponse> responses = articleService.getArticles(keyword, pageable);
+        Page<ArticleResponse> responses = articleService.getArticles(keyword, tag, pageable);
 
         // then
         assertThat(responses).isNotNull();
@@ -421,15 +422,16 @@ class ArticleServiceTest {
     @Test
     void 태그_검색_성공() {
         // given
-        String tagName = "태그1";
+        String keyword = "";
+        String tag = "태그1";
         Pageable pageable = PageRequest.of(0, 10);
         List<Article> articles = Arrays.asList(article);
         Page<Article> articlePage = new PageImpl<>(articles, pageable, articles.size());
 
-        when(articleRepository.findAllByTagName(tagName, pageable)).thenReturn(articlePage);
+        when(articleRepository.findAllByTagName(tag, pageable)).thenReturn(articlePage);
 
         // when
-        Page<ArticleResponse> responses = articleService.getArticlesByTagName(tagName, pageable);
+        Page<ArticleResponse> responses = articleService.getArticles(keyword, tag, pageable);
 
         // then
         assertThat(responses).isNotNull();
@@ -437,6 +439,6 @@ class ArticleServiceTest {
         assertThat(responses.getContent().get(0).getId()).isEqualTo(articleId);
         assertThat(responses.getContent().get(0).getTitle()).isEqualTo("테스트 제목");
 
-        verify(articleRepository, times(1)).findAllByTagName(tagName, pageable);
+        verify(articleRepository, times(1)).findAllByTagName(tag, pageable);
     }
 }

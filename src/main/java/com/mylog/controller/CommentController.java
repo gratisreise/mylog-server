@@ -27,12 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/comments")
+@RequestMapping("/api")
 public class CommentController {
     private final CommentService commentService;
 
-    //댓글 생성
-    @PostMapping
+    @PostMapping("/articles/{articleId}/comments")
     @Operation(summary = "댓글 생성")
     public CommonResult createComment(
         @RequestBody @Valid CommentCreateRequest request,
@@ -42,8 +41,7 @@ public class CommentController {
         return ResponseService.getSuccessResult();
     }
 
-    //게시글 댓글목록 조회
-    @GetMapping("/{articleId}")
+    @GetMapping("/articles/{articleId}/comments")
     @Operation(summary = "댓글 목록 조회")
     public SingleResult<Page<CommentResponse>> getComments(
         @PathVariable Long articleId,
@@ -53,8 +51,7 @@ public class CommentController {
         return ResponseService.getSingleResult(commentService.getComments(articleId, pageable));
     }
 
-    //대댓글 목록 조회
-    @GetMapping("/{articleId}/{parentId}")
+    @GetMapping("/articles/{articleId}/comments/{parentId}")
     @Operation(summary = "대댓글 목록 조회")
     public SingleResult<Page<CommentResponse>> getChildComments(
         @PathVariable Long articleId,
@@ -67,19 +64,18 @@ public class CommentController {
         );
     }
 
-    //댓글 수정
-    @PutMapping
+    @PutMapping("/comments/{commentId}")
     @Operation(summary = "댓글 수정")
     public CommonResult updateComments(
         @RequestBody @Valid CommentUpdateRequest request,
+        @PathVariable Long commentId,
         @AuthenticationPrincipal CustomUser customUser
     ) {
-        commentService.updateComment(request, customUser);
+        commentService.updateComment(request, customUser, commentId);
         return ResponseService.getSuccessResult();
     }
 
-    //댓글 삭제
-    @DeleteMapping("/{commentId}")
+    @DeleteMapping("/comments/{commentId}")
     @Operation(summary = "댓글 삭제")
     public CommonResult deleteComments(
         @PathVariable Long commentId,
@@ -89,8 +85,7 @@ public class CommentController {
         return ResponseService.getSuccessResult();
     }
 
-    //나의 댓글 조회
-    @GetMapping("/me")
+    @GetMapping("/comments/me")
     @Operation(summary = "내가 작성한 댓글 조회")
     public SingleResult<Page<CommentResponse>> getComments(
         @AuthenticationPrincipal CustomUser customUser,
@@ -100,8 +95,7 @@ public class CommentController {
         return ResponseService.getSingleResult(commentService.getMyComments(customUser, pageable));
     }
 
-    //내가 작성한 댓글 조회
-    @GetMapping("/me/articles")
+    @GetMapping("/articles/me/comments")
     @Operation(summary = "내게시글에 닥성된 댓글 조회")
     public SingleResult<Page<CommentResponse>> getMyArticlesComments(
         @AuthenticationPrincipal CustomUser customUser,
