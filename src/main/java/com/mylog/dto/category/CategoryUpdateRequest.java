@@ -12,7 +12,5 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryUpdateRequest {
-    private Long categoryId;
     private String categoryName;
-    private Long memberId;
 }

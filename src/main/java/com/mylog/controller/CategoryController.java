@@ -4,7 +4,6 @@ import com.mylog.common.CommonResult;
 import com.mylog.common.ListResult;
 import com.mylog.common.ResponseService;
 import com.mylog.dto.category.CategoryCreateRequest;
-import com.mylog.dto.category.CategoryDeleteRequest;
 import com.mylog.dto.category.CategoryResponse;
 import com.mylog.dto.category.CategoryUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
@@ -15,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,24 +48,25 @@ public class CategoryController {
     }
 
     //카테고리 수정
-    @PutMapping
+    @PutMapping("/{categoryId}")
     @Operation(summary = "카테고리 수정")
     public CommonResult updateCategory(
+        @PathVariable Long categoryId,
         @RequestBody @Valid CategoryUpdateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        categoryService.updateCategory(request, customUser);
+        categoryService.updateCategory(request,categoryId, customUser);
         return ResponseService.getSuccessResult();
     }
 
     //카테고리 삭제
-    @DeleteMapping
+    @DeleteMapping("/{categoryId}")
     @Operation(summary = "카테고리 삭제")
     public CommonResult deleteCategory(
-        @RequestBody @Valid CategoryDeleteRequest request,
+        @PathVariable Long categoryId,
         @AuthenticationPrincipal CustomUser customUser
     ) {
-        categoryService.deleteCategory(request, customUser);
+        categoryService.deleteCategory(categoryId, customUser);
         return ResponseService.getSuccessResult();
     }
 

@@ -1,7 +1,6 @@
 package com.mylog.service;
 
 import com.mylog.dto.category.CategoryCreateRequest;
-import com.mylog.dto.category.CategoryDeleteRequest;
 import com.mylog.dto.category.CategoryResponse;
 import com.mylog.dto.category.CategoryUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
@@ -67,27 +66,28 @@ public class CategoryService {
 
     //카테고리 수정
     @Transactional
-    public void updateCategory(CategoryUpdateRequest request, CustomUser customUser){
-        if(!validateUpdate(request, customUser)){
+    public void updateCategory(CategoryUpdateRequest request,Long categoryId, CustomUser customUser){
+        Category category = categoryRepository.findById(categoryId)
+            .orElseThrow(CMissingDataException::new);
+
+        if(!isHaveAuth(category, customUser)){
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         };
 
-        categoryRepository.findById(request.getCategoryId())
-            .orElseThrow(CMissingDataException::new)
-            .update(request);
+        category.update(request);
     };
 
     //카테고리 삭제
     @Transactional
-    public void deleteCategory(CategoryDeleteRequest request, CustomUser customUser){
-        if(!validateDelete(request, customUser)){
+    public void deleteCategory(Long categoryId, CustomUser customUser){
+        Category category = categoryRepository.findById(categoryId)
+            .orElseThrow(CMissingDataException::new);
+
+        if(!isHaveAuth(category, customUser)){
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         };
-        if(!categoryRepository.existsById(request.getCategoryId())){
-            throw new CInvalidDataException("존재하지 않는 카테고리입니다.");
-        }
 
-        categoryRepository.deleteById(request.getCategoryId());
+        categoryRepository.deleteById(categoryId);
     };
 
 
@@ -96,12 +96,10 @@ public class CategoryService {
             .orElseThrow(CMissingDataException::new);
     }
 
-    private boolean validateUpdate(CategoryUpdateRequest request, CustomUser customUser) {
-        return request.getMemberId().equals(customUser.getMemberId());
-    }
-
-    private boolean validateDelete(CategoryDeleteRequest request, CustomUser customUser) {
-        return request.getMemberId().equals(customUser.getMemberId());
+    private boolean isHaveAuth(Category category, CustomUser customUser) {
+        long categoryMemberId = category.getMember().getId();
+        long userMemberId = customUser.getMemberId();
+        return categoryMemberId == userMemberId;
     }
 
 }
