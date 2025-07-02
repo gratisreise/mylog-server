@@ -24,7 +24,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
-    private final CategoryService categoryService;
+    private final CategoryWriteService categoryWriteService;
 
     @Value("${cloud.aws.s3.basic}")
     private String basicImageUrl;
@@ -56,7 +56,7 @@ public class MemberService {
         log.info("member: {}", member.toString());
         memberRepository.save(member);
 
-        categoryService.createCategory(request.getEmail());
+        categoryWriteService.createCategory(request.getEmail());
     }
 
 
@@ -64,7 +64,7 @@ public class MemberService {
     public Member getMember(CustomUser customUser){
         return memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);
-    };
+    }
 
     //회원정보수정
     @Transactional
@@ -91,7 +91,7 @@ public class MemberService {
             member.update(request, profileImg);
         }
         log.info("memberImg: {}, profileImg: {}", memberImg, profileImg);
-    };
+    }
 
     // 사용자 정보삭제
     @Transactional
@@ -104,7 +104,7 @@ public class MemberService {
         }
 
         memberRepository.deleteById(customUser.getMemberId());
-    };
+    }
 
     private boolean isSame(String origin, String update) {
         return origin.substring(93).equals(update);
