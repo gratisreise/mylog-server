@@ -7,7 +7,8 @@ import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.comment.CommentCreateRequest;
 import com.mylog.model.dto.comment.CommentResponse;
 import com.mylog.model.dto.comment.CommentUpdateRequest;
-import com.mylog.service.CommentService;
+import com.mylog.service.CommentReadService;
+import com.mylog.service.CommentWriteService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class CommentController {
-    private final CommentService commentService;
+    private final CommentReadService commentReadService;
+    private final CommentWriteService commentWriteService;
 
     @PostMapping("/articles/{articleId}/comments")
     @Operation(summary = "댓글 생성")
@@ -37,7 +39,7 @@ public class CommentController {
         @RequestBody @Valid CommentCreateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        commentService.createComment(request, customUser);
+        commentWriteService.createComment(request, customUser);
         return ResponseService.getSuccessResult();
     }
 
@@ -48,7 +50,7 @@ public class CommentController {
         @PageableDefault(sort="createdAt", direction = Direction.DESC)
         Pageable pageable
     ) {
-        return ResponseService.getSingleResult(commentService.getComments(articleId, pageable));
+        return ResponseService.getSingleResult(commentReadService.getComments(articleId, pageable));
     }
 
     @GetMapping("/articles/{articleId}/comments/{parentId}")
@@ -60,7 +62,7 @@ public class CommentController {
         Pageable pageable
     ) {
         return ResponseService.getSingleResult(
-            commentService.getChildComments(articleId, parentId, pageable)
+            commentReadService.getChildComments(articleId, parentId, pageable)
         );
     }
 
@@ -71,7 +73,7 @@ public class CommentController {
         @PathVariable Long commentId,
         @AuthenticationPrincipal CustomUser customUser
     ) {
-        commentService.updateComment(request, customUser, commentId);
+        commentWriteService.updateComment(request, customUser, commentId);
         return ResponseService.getSuccessResult();
     }
 
@@ -81,7 +83,7 @@ public class CommentController {
         @PathVariable Long commentId,
         @AuthenticationPrincipal CustomUser customUser
     ) {
-        commentService.deleteComment(commentId, customUser);
+        commentWriteService.deleteComment(commentId, customUser);
         return ResponseService.getSuccessResult();
     }
 
@@ -92,7 +94,7 @@ public class CommentController {
         @PageableDefault(size = 20, sort="createdAt", direction = Direction.DESC)
         Pageable pageable
     ) {
-        return ResponseService.getSingleResult(commentService.getMyComments(customUser, pageable));
+        return ResponseService.getSingleResult(commentReadService.getMyComments(customUser, pageable));
     }
 
     @GetMapping("/articles/me/comments")
@@ -102,7 +104,7 @@ public class CommentController {
         @PageableDefault(size = 20, sort="createdAt", direction = Direction.DESC)
         Pageable pageable
     ){
-        return ResponseService.getSingleResult(commentService.getComments(customUser, pageable));
+        return ResponseService.getSingleResult(commentReadService.getComments(customUser, pageable));
     }
 
 }

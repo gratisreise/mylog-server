@@ -2,7 +2,6 @@ package com.mylog.service;
 
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.comment.CommentCreateRequest;
-import com.mylog.model.dto.comment.CommentResponse;
 import com.mylog.model.dto.comment.CommentUpdateRequest;
 import com.mylog.model.entity.Article;
 import com.mylog.model.entity.Comment;
@@ -13,22 +12,19 @@ import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CommentRepository;
 import com.mylog.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class CommentService {
+@Transactional
+public class CommentWriteService {
 
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
     private final ArticleRepository articleRepository;
     private final NotificationService notificationService;
 
-    //댓글 생성
-    @Transactional
     public void createComment(CommentCreateRequest request, CustomUser customUser) {
         Article article = articleRepository.findById(request.getArticleId())
             .orElseThrow(CMissingDataException::new);
@@ -51,8 +47,6 @@ public class CommentService {
             article.getMember(), article.getId(), "comment");
     }
 
-    //댓글 수정
-    @Transactional
     public void updateComment(CommentUpdateRequest request, CustomUser customUser, Long commentId) {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(CMissingDataException::new);
@@ -64,8 +58,6 @@ public class CommentService {
         comment.setContent(request.getContent());
     }
 
-    //댓글 삭제
-    @Transactional
     public void deleteComment(Long commentId, CustomUser customUser){
         if (!validateDelete(commentId, customUser)) {
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
@@ -73,44 +65,6 @@ public class CommentService {
 
         commentRepository.deleteById(commentId);
     }
-
-    //내가 작성한 댓글 조회
-    public Page<CommentResponse> getMyComments(CustomUser customUser, Pageable pageable) {
-        Member member = memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new);
-        return commentRepository.findAllByMember(member, pageable)
-            .map(CommentResponse::from);
-    }
-
-    //내게시글의 댓글 조회
-    public Page<CommentResponse> getComments(CustomUser customUser, Pageable pageable) {
-        Member member = memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new);
-        return commentRepository.findAllByArticle_Member(member, pageable)
-            .map(CommentResponse::from);
-    }
-
-
-    //게시글 댓글목록 조회
-    public Page<CommentResponse> getComments(Long articleId, Pageable pageable){
-        if(!articleRepository.existsById(articleId)){
-            throw new CMissingDataException("존재하지 않는 게시글 입니다.");
-        }
-        return commentRepository.findByArticle_Id(articleId, pageable)
-            .map(CommentResponse::from);
-    };
-
-    //대댓글 목록 조회
-    public Page<CommentResponse> getChildComments(Long articleId, Long parentId, Pageable pageable){
-        if(!articleRepository.existsById(articleId)){
-            throw new CMissingDataException("존재하지 않는 게시글입니다.");
-        }
-        if(!commentRepository.existsById(parentId)){
-            throw new CMissingDataException("존재하지 않는 댓글입니다.");
-        }
-        return commentRepository.findByArticle_IdAndParentId(articleId, parentId, pageable)
-            .map(CommentResponse::from);
-    };
 
     private boolean validateDelete(Long commentId, CustomUser customUser) {
         Comment comment = commentRepository.findById(commentId)
@@ -120,7 +74,6 @@ public class CommentService {
         Long commentMemberId = comment.getMember().getId(); //댓글 작성자
         Long articleMemberId = article.getMember().getId(); // 게시글 작성자
 
-        //로직을 요청한 사람
         Long userMemberId = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new)
             .getId();
@@ -136,5 +89,4 @@ public class CommentService {
 
         return commentMemberId.equals(requestMemberId);
     }
-
 }
