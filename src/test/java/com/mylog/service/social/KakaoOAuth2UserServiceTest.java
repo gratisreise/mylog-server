@@ -1,16 +1,24 @@
 package com.mylog.service.social;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.mylog.config.JwtUtil;
+import com.mylog.dto.social.KakaoOAuth2UserInfo;
 import com.mylog.dto.social.KakaoProperties;
 import com.mylog.dto.social.KakaoTokenResponse;
 import com.mylog.dto.social.KakaoUserInfo;
-import com.mylog.dto.social.KakaoOAuth2UserInfo; // 오타 수정: KakoOAuth2UserInfo -> KakaoOAuth2UserInfo
 import com.mylog.dto.social.OAuthRequest;
 import com.mylog.entity.Member;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
 import com.mylog.service.RefreshTokenService;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,14 +30,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class KakaoOAuth2UserServiceTest {

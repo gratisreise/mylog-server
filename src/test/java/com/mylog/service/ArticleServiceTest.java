@@ -14,7 +14,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.mylog.dto.article.ArticleCreateRequest;
-import com.mylog.dto.article.ArticleDeleteRequest;
 import com.mylog.dto.article.ArticleResponse;
 import com.mylog.dto.article.ArticleUpdateRequest;
 import com.mylog.dto.classes.CustomUser;
@@ -79,7 +78,6 @@ class ArticleServiceTest {
     private MultipartFile file;
     private ArticleCreateRequest createRequest;
     private ArticleUpdateRequest updateRequest;
-    private ArticleDeleteRequest deleteRequest;
     private final String categoryName = "테스트 카테고리";
     private final Long articleId = 1L;
 
@@ -135,9 +133,6 @@ class ArticleServiceTest {
         updateRequest.setCategory(categoryName);
         updateRequest.setTags(List.of("태그1", "태그3"));
 
-        // 게시글 삭제 요청 설정
-        deleteRequest = new ArticleDeleteRequest();
-        deleteRequest.setAuthor(member.getNickname());
     }
 
     @Test

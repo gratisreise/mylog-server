@@ -1,6 +1,5 @@
 package com.mylog.dto.comment;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
