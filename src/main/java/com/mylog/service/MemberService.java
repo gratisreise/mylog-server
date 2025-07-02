@@ -1,10 +1,9 @@
 package com.mylog.service;
 
-import com.mylog.dto.category.CategoryCreateRequest;
-import com.mylog.dto.classes.CustomUser;
-import com.mylog.dto.member.SignUpRequest;
-import com.mylog.dto.member.UpdateMemberRequest;
-import com.mylog.entity.Member;
+import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.model.dto.member.SignUpRequest;
+import com.mylog.model.dto.member.UpdateMemberRequest;
+import com.mylog.model.entity.Member;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CInvalidDataException;
 import com.mylog.exception.CMissingDataException;

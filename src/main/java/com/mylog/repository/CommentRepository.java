@@ -1,7 +1,7 @@
 package com.mylog.repository;
 
-import com.mylog.entity.Comment;
-import com.mylog.entity.Member;
+import com.mylog.model.entity.Comment;
+import com.mylog.model.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;

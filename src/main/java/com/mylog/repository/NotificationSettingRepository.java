@@ -1,7 +1,7 @@
 package com.mylog.repository;
 
-import com.mylog.entity.Member;
-import com.mylog.entity.NotificationSetting;
+import com.mylog.model.entity.Member;
+import com.mylog.model.entity.NotificationSetting;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -2,11 +2,11 @@ package com.mylog.controller;
 
 import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;
-import com.mylog.dto.LoginRequest;
-import com.mylog.dto.LoginResponse;
-import com.mylog.dto.RefreshRequest;
-import com.mylog.dto.RefreshResponse;
-import com.mylog.dto.social.OAuthRequest;
+import com.mylog.model.dto.auth.LoginRequest;
+import com.mylog.model.dto.auth.LoginResponse;
+import com.mylog.model.dto.auth.RefreshRequest;
+import com.mylog.model.dto.auth.RefreshResponse;
+import com.mylog.model.dto.social.OAuthRequest;
 import com.mylog.service.social.OAuth2UserService;
 import com.mylog.service.AuthService;
 import com.mylog.service.social.OAuth2UserServiceFactory;

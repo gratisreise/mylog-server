@@ -8,9 +8,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.mylog.entity.Article;
-import com.mylog.entity.ArticleTag;
-import com.mylog.entity.Tag;
+import com.mylog.model.entity.Article;
+import com.mylog.model.entity.ArticleTag;
+import com.mylog.model.entity.Tag;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.ArticleTagRepository;
 import com.mylog.repository.TagRepository;

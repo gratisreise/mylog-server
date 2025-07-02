@@ -2,12 +2,12 @@ package com.mylog.service.social;
 
 import com.mylog.annotations.OAuth2ServiceType;
 import com.mylog.config.JwtUtil;
-import com.mylog.dto.social.GoogleOAuth2UserInfo;
-import com.mylog.dto.social.GoogleTokenResponse;
-import com.mylog.dto.social.GoogleUserInfo;
-import com.mylog.dto.social.OAuth2UserInfo;
-import com.mylog.dto.social.OAuthRequest;
-import com.mylog.entity.Member;
+import com.mylog.model.dto.social.GoogleOAuth2UserInfo;
+import com.mylog.model.dto.social.GoogleTokenResponse;
+import com.mylog.model.dto.social.GoogleUserInfo;
+import com.mylog.model.dto.social.OAuth2UserInfo;
+import com.mylog.model.dto.social.OAuthRequest;
+import com.mylog.model.entity.Member;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;

@@ -4,11 +4,12 @@ package com.mylog.controller;
 import com.mylog.common.CommonResult;
 import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;
-import com.mylog.dto.article.ArticleCreateRequest;
-import com.mylog.dto.article.ArticleResponse;
-import com.mylog.dto.article.ArticleUpdateRequest;
-import com.mylog.dto.classes.CustomUser;
-import com.mylog.service.ArticleService;
+import com.mylog.model.dto.article.ArticleCreateRequest;
+import com.mylog.model.dto.article.ArticleResponse;
+import com.mylog.model.dto.article.ArticleUpdateRequest;
+import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.service.ArticleReadService;
+import com.mylog.service.ArticleWriteService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -34,7 +35,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RequestMapping("/api/articles")
 public class ArticleController {
-    private final ArticleService articleService;
+    private final ArticleReadService articleReadService;
+    private final ArticleWriteService articleWriteService;
 
     //게시글 생성
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -44,7 +46,7 @@ public class ArticleController {
         @RequestPart(value = "request") @Valid ArticleCreateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ) throws IOException {
-        articleService.createArticle(request, customUser, file);
+        articleWriteService.createArticle(request, customUser, file);
         return ResponseService.getSuccessResult();
     }
 
@@ -52,7 +54,7 @@ public class ArticleController {
     @GetMapping("/{articleId}")
     @Operation(summary = "게시글 조회")
     public SingleResult<ArticleResponse> getArticle(@PathVariable Long articleId){
-        return ResponseService.getSingleResult(articleService.getArticle(articleId));
+        return ResponseService.getSingleResult(articleReadService.getArticle(articleId));
     }
 
     //게시글 수정
@@ -64,7 +66,7 @@ public class ArticleController {
         @AuthenticationPrincipal CustomUser customUser,
         @PathVariable Long articleId
     ) throws IOException {
-        articleService.updateArticle(request, customUser, file, articleId);
+        articleWriteService.updateArticle(request, customUser, file, articleId);
         return ResponseService.getSuccessResult();
     }
 
@@ -75,7 +77,7 @@ public class ArticleController {
         @AuthenticationPrincipal CustomUser customUser,
         @PathVariable Long articleId
     ){
-        articleService.deleteArticle(articleId, customUser);
+        articleWriteService.deleteArticle(articleId, customUser);
         return ResponseService.getSuccessResult();
     }
 
@@ -85,7 +87,7 @@ public class ArticleController {
     public SingleResult<Page<ArticleResponse>> getArticles(
         @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable
     ){
-        return ResponseService.getSingleResult(articleService.getArticles(pageable));
+        return ResponseService.getSingleResult(articleReadService.getArticles(pageable));
     }
 
     //내 게시글 목록 조회
@@ -95,7 +97,7 @@ public class ArticleController {
         @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        return ResponseService.getSingleResult(articleService.getArticles(pageable, customUser));
+        return ResponseService.getSingleResult(articleReadService.getArticles(pageable, customUser));
     }
 
     //전체 게시글 검색
@@ -106,7 +108,7 @@ public class ArticleController {
         @RequestParam String tag,
         @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable
     ){
-        return ResponseService.getSingleResult(articleService.getArticles(keyword, tag, pageable));
+        return ResponseService.getSingleResult(articleReadService.getArticles(keyword, tag, pageable));
     }
 
     //내 게시글 검색
@@ -117,7 +119,7 @@ public class ArticleController {
         @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        return ResponseService.getSingleResult(articleService.getArticles(pageable, customUser, keyword));
+        return ResponseService.getSingleResult(articleReadService.getArticles(pageable, customUser, keyword));
     }
 
 }

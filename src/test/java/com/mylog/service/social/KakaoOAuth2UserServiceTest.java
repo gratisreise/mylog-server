@@ -8,12 +8,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.mylog.config.JwtUtil;
-import com.mylog.dto.social.KakaoOAuth2UserInfo;
-import com.mylog.dto.social.KakaoProperties;
-import com.mylog.dto.social.KakaoTokenResponse;
-import com.mylog.dto.social.KakaoUserInfo;
-import com.mylog.dto.social.OAuthRequest;
-import com.mylog.entity.Member;
+import com.mylog.model.dto.social.KakaoOAuth2UserInfo;
+import com.mylog.model.dto.social.KakaoProperties;
+import com.mylog.model.dto.social.KakaoTokenResponse;
+import com.mylog.model.dto.social.KakaoUserInfo;
+import com.mylog.model.dto.social.OAuthRequest;
+import com.mylog.model.entity.Member;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;

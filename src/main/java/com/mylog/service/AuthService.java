@@ -1,11 +1,11 @@
 package com.mylog.service;
 
 import com.mylog.config.JwtUtil;
-import com.mylog.dto.LoginRequest;
-import com.mylog.dto.LoginResponse;
-import com.mylog.dto.RefreshRequest;
-import com.mylog.dto.RefreshResponse;
-import com.mylog.entity.Member;
+import com.mylog.model.dto.auth.LoginRequest;
+import com.mylog.model.dto.auth.LoginResponse;
+import com.mylog.model.dto.auth.RefreshRequest;
+import com.mylog.model.dto.auth.RefreshResponse;
+import com.mylog.model.entity.Member;
 import com.mylog.exception.CInvalidDataException;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
@@ -15,7 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor

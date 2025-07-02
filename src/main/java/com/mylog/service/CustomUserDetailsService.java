@@ -1,7 +1,7 @@
 package com.mylog.service;
 
-import com.mylog.dto.classes.CustomUser;
-import com.mylog.entity.Member;
+import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.model.entity.Member;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
 import java.util.Collections;
@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor

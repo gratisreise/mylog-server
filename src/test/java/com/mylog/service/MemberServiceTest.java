@@ -10,14 +10,13 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.mylog.dto.member.SignUpRequest;
-import com.mylog.dto.member.UpdateMemberRequest;
-import com.mylog.dto.classes.CustomUser;
-import com.mylog.entity.Member;
+import com.mylog.model.dto.member.SignUpRequest;
+import com.mylog.model.dto.member.UpdateMemberRequest;
+import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.model.entity.Member;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CInvalidDataException;
 import com.mylog.exception.CMissingDataException;
-import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
 import java.io.IOException;
 import java.util.Collection;

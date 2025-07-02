@@ -8,12 +8,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.mylog.config.JwtUtil;
-import com.mylog.dto.member.UserNaverInfoResponse;
-import com.mylog.dto.social.NaverOAuth2UserInfo;
-import com.mylog.dto.social.NaverTokenResponse;
-import com.mylog.dto.social.NaverUserInfo;
-import com.mylog.dto.social.OAuthRequest;
-import com.mylog.entity.Member;
+import com.mylog.model.dto.member.UserNaverInfoResponse;
+import com.mylog.model.dto.social.NaverOAuth2UserInfo;
+import com.mylog.model.dto.social.NaverTokenResponse;
+import com.mylog.model.dto.social.NaverUserInfo;
+import com.mylog.model.dto.social.OAuthRequest;
+import com.mylog.model.entity.Member;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;

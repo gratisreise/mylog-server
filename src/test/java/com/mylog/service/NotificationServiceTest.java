@@ -7,11 +7,11 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.mylog.dto.classes.CustomUser;
-import com.mylog.dto.notification.NotificationResponse;
-import com.mylog.entity.Member;
-import com.mylog.entity.Notification;
-import com.mylog.entity.NotificationSetting;
+import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.model.dto.notification.NotificationResponse;
+import com.mylog.model.entity.Member;
+import com.mylog.model.entity.Notification;
+import com.mylog.model.entity.NotificationSetting;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;

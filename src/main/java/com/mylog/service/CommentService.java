@@ -1,12 +1,12 @@
 package com.mylog.service;
 
-import com.mylog.dto.classes.CustomUser;
-import com.mylog.dto.comment.CommentCreateRequest;
-import com.mylog.dto.comment.CommentResponse;
-import com.mylog.dto.comment.CommentUpdateRequest;
-import com.mylog.entity.Article;
-import com.mylog.entity.Comment;
-import com.mylog.entity.Member;
+import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.model.dto.comment.CommentCreateRequest;
+import com.mylog.model.dto.comment.CommentResponse;
+import com.mylog.model.dto.comment.CommentUpdateRequest;
+import com.mylog.model.entity.Article;
+import com.mylog.model.entity.Comment;
+import com.mylog.model.entity.Member;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;

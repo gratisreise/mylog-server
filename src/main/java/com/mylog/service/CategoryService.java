@@ -1,12 +1,11 @@
 package com.mylog.service;
 
-import com.mylog.dto.category.CategoryCreateRequest;
-import com.mylog.dto.category.CategoryResponse;
-import com.mylog.dto.category.CategoryUpdateRequest;
-import com.mylog.dto.classes.CustomUser;
-import com.mylog.entity.Category;
-import com.mylog.entity.Member;
-import com.mylog.exception.CInvalidDataException;
+import com.mylog.model.dto.category.CategoryCreateRequest;
+import com.mylog.model.dto.category.CategoryResponse;
+import com.mylog.model.dto.category.CategoryUpdateRequest;
+import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.model.entity.Category;
+import com.mylog.model.entity.Member;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.exception.CReachedLimitException;
 import com.mylog.exception.CUnAuthorizedException;

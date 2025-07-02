@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import com.mylog.dto.classes.CustomUser;
-import com.mylog.entity.Member;
+import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.model.entity.Member;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
 import java.util.Optional;

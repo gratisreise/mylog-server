@@ -1,7 +1,7 @@
 package com.mylog.repository;
 
-import com.mylog.entity.Member;
-import com.mylog.entity.Notification;
+import com.mylog.model.entity.Member;
+import com.mylog.model.entity.Notification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
