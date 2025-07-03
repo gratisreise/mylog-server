@@ -1,8 +1,8 @@
 package com.mylog.service;
 
-import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.member.SignUpRequest;
 import com.mylog.model.dto.member.UpdateMemberRequest;
+import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Member;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CInvalidDataException;
@@ -20,7 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class MemberService {
+@Transactional
+public class MemberWriteService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
@@ -29,8 +30,6 @@ public class MemberService {
     @Value("${cloud.aws.s3.basic}")
     private String basicImageUrl;
 
-    // 회원가입
-    @Transactional
     public void saveMember(SignUpRequest request){
         if(memberRepository.existsByEmail(request.getEmail())){
             throw new CMissingDataException("이미 존재하는 이메일입니다.");
@@ -59,18 +58,8 @@ public class MemberService {
         categoryWriteService.createCategory(request.getEmail());
     }
 
-
-    //회원정보조회
-    public Member getMember(CustomUser customUser){
-        return memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new);
-    }
-
-    //회원정보수정
-    @Transactional
     public void updateMember(UpdateMemberRequest request, CustomUser customUser, MultipartFile file)
         throws IOException{
-        //닉네임 중복확인
         if(memberRepository.existsByNickname(request.getNickname())){
             throw new CInvalidDataException("중복되는 닉네임 입니다.");
         }
@@ -78,14 +67,12 @@ public class MemberService {
         Member member = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);
 
-        //새사진
         String profileImg = file.getOriginalFilename();
-        //기존사진
         String memberImg = member.getProfileImg();
         log.info("memberImg: {}, profileImg: {}", memberImg, profileImg);
-        if(isSame(memberImg, profileImg)){ // 이미지가 같을 때
+        if(isSame(memberImg, profileImg)){
             member.update(request);
-        } else { //이미지가 다를 때
+        } else {
             profileImg = s3Service.upload(file).orElseThrow(CMissingDataException::new);
             if(!memberImg.equals(basicImageUrl)) s3Service.deleteImage(memberImg);
             member.update(request, profileImg);
@@ -93,8 +80,6 @@ public class MemberService {
         log.info("memberImg: {}, profileImg: {}", memberImg, profileImg);
     }
 
-    // 사용자 정보삭제
-    @Transactional
     public void deleteMember(CustomUser customUser){
         Member member = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);
@@ -109,5 +94,4 @@ public class MemberService {
     private boolean isSame(String origin, String update) {
         return origin.substring(93).equals(update);
     }
-
 }

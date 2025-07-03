@@ -7,7 +7,8 @@ import com.mylog.model.dto.member.SignUpRequest;
 import com.mylog.model.dto.member.UpdateMemberRequest;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Member;
-import com.mylog.service.MemberService;
+import com.mylog.service.MemberReadService;
+import com.mylog.service.MemberWriteService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -30,14 +31,15 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class MemberController {
 
-    private final MemberService memberService;
+    private final MemberReadService memberReadService;
+    private final MemberWriteService memberWriteService;
 
 
     //회원가입
     @PostMapping("/sign-up")
     @Operation(summary = "회원가입")
     public CommonResult signUp(@RequestBody @Valid SignUpRequest request){
-        memberService.saveMember(request);
+        memberWriteService.saveMember(request);
         return ResponseService.getSuccessResult();
     }
 
@@ -45,7 +47,7 @@ public class MemberController {
     @GetMapping("/me")
     @Operation(summary = "개인정보조회")
     public SingleResult<Member> getMember(@AuthenticationPrincipal CustomUser customUser){
-        return ResponseService.getSingleResult(memberService.getMember(customUser));
+        return ResponseService.getSingleResult(memberReadService.getMember(customUser));
     }
 
 
@@ -58,7 +60,7 @@ public class MemberController {
         @AuthenticationPrincipal CustomUser customUser
     ) throws IOException {
         log.info("{}", customUser);
-        memberService.updateMember(request, customUser, file);
+        memberWriteService.updateMember(request, customUser, file);
         return ResponseService.getSuccessResult();
     }
 
@@ -68,7 +70,7 @@ public class MemberController {
     @Operation(summary = "개인정보삭제")
     public CommonResult deleteMember(@AuthenticationPrincipal CustomUser customUser){
         log.info("{}", customUser);
-        memberService.deleteMember(customUser);
+        memberWriteService.deleteMember(customUser);
         return ResponseService.getSuccessResult();
     }
 
