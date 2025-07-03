@@ -1,6 +1,7 @@
 package com.mylog.model.entity;
 
 
+import com.mylog.model.dto.article.ArticleCreateRequest;
 import com.mylog.model.dto.article.ArticleUpdateRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -57,6 +58,15 @@ public class Article {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public Article(ArticleCreateRequest request, Category category, Member member,
+        String imageUrl) {
+        this.title = request.getTitle();
+        this.content = request.getContent();
+        this.category = category;
+        this.member = member;
+        this.articleImg = imageUrl;
+    }
 
     public void update(ArticleUpdateRequest request, Category category) {
         this.title = request.getTitle();

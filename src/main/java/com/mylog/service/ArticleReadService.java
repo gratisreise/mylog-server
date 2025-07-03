@@ -64,4 +64,9 @@ public class ArticleReadService {
     private boolean isClear(String s){
         return s == null || s.isEmpty();
     }
+
+    public Article getArticleById(Long articleId) {
+        return articleRepository.findById(articleId)
+            .orElseThrow(CMissingDataException::new);
+    }
 }

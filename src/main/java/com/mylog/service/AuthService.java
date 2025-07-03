@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AuthWriteService {
+public class AuthService {
 
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;

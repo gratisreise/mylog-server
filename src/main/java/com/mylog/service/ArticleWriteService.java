@@ -24,29 +24,20 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 public class ArticleWriteService {
     private final ArticleRepository articleRepository;
+    private final ArticleReadService articleReadService;
+    private final CategoryReadService categoryReadService;
+    private final MemberReadService memberReadService;
     private final ArticleTagRepository articleTagRepository;
-    private final CategoryRepository categoryRepository;
-    private final MemberRepository memberRepository;
     private final TagService tagService;
     private final S3Service s3Service;
 
     public void createArticle(ArticleCreateRequest request, CustomUser customUser, MultipartFile file) throws IOException{
 
-        Category category = categoryRepository.findByCategoryName(request.getCategory())
-            .orElseThrow(CMissingDataException::new);
-
-        Member member = memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new);
-
+        Category category = categoryReadService.getByCategoryName(request.getCategory());
+        Member member =  memberReadService.getById(customUser.getMemberId());
         String imageUrl = s3Service.upload(file).orElseThrow(CMissingDataException::new);
 
-        Article article = Article.builder()
-            .title(request.getTitle())
-            .content(request.getContent())
-            .category(category)
-            .member(member)
-            .articleImg(imageUrl)
-            .build();
+        Article article = new Article(request, category, member, imageUrl);
 
         Article savedArticle = articleRepository.save(article);
 
@@ -55,19 +46,15 @@ public class ArticleWriteService {
 
     public void updateArticle(ArticleUpdateRequest request, CustomUser customUser,
         MultipartFile file, Long articleId) throws IOException {
-        Member requestMember = memberRepository.findByNickname(request.getAuthor())
-            .orElseThrow(CMissingDataException::new);
-        Member userMember = memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new);
+        long requestMemberId = customUser.getMemberId();
+        long articleMemberId = memberReadService.getByNickname(request.getAuthor()).getId();
 
-        if(!requestMember.getId().equals(userMember.getId())){
+        if(requestMemberId != articleMemberId){
             throw new CUnAuthorizedException("허용 되지 않는 유저입니다.");
         }
 
-        Article article = articleRepository.findById(articleId)
-            .orElseThrow(CMissingDataException::new);
-        Category category = categoryRepository.findByCategoryName(request.getCategory())
-            .orElseThrow(CMissingDataException::new);
+        Article article = articleReadService.getArticleById(articleId);
+        Category category = categoryReadService.getByCategoryName(request.getCategory());
 
         String articleImg;
         if(!isSame(article.getArticleImg(), file.getOriginalFilename())){
@@ -86,13 +73,11 @@ public class ArticleWriteService {
     }
 
     public void deleteArticle(Long articleId, CustomUser customUser) {
-        Article article = articleRepository.findById(articleId)
-            .orElseThrow(CMissingDataException::new);
-        long requestMember = memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new).getId();
-        long userMember = article.getMember().getId();
+        Article article = articleReadService.getArticleById(articleId);
+        long articleMemberId = article.getMember().getId();
+        long requestMemberId = memberReadService.getById(customUser.getMemberId()).getId();
 
-        if(requestMember != userMember){
+        if(articleMemberId != requestMemberId){
             throw new CUnAuthorizedException("허용 되지 않는 유저입니다.");
         }
 
