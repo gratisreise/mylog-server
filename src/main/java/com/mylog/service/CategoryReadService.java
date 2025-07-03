@@ -38,4 +38,13 @@ public class CategoryReadService {
         return categoryRepository.findByCategoryName(categoryName)
             .orElseThrow(CMissingDataException::new);
     }
+
+    public int getCategorySize(Member member) {
+        return categoryRepository.findByMember(member).size();
+    }
+
+    public Category getById(Long categoryId) {
+        return categoryRepository.findById(categoryId)
+            .orElseThrow(CMissingDataException::new);
+    }
 }

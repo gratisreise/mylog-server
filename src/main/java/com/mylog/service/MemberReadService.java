@@ -31,4 +31,8 @@ public class MemberReadService {
         return memberRepository.findByNickname(author)
             .orElseThrow(CMissingDataException::new);
     }
+
+    public Member getByEmail(String email) {
+        return memberRepository.findByEmail(email).orElseThrow(CMissingDataException::new);
+    }
 }

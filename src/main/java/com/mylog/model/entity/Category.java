@@ -10,12 +10,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -43,6 +45,11 @@ public class Category {
 
     @LastModifiedDate
     private LocalDate updatedAt;
+
+    public Category(Member member, String categoryName) {
+        this.member = member;
+        this.categoryName = categoryName;
+    }
 
     public void update(CategoryUpdateRequest request) {
         this.categoryName = request.getCategoryName();

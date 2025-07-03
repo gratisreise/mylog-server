@@ -60,8 +60,6 @@ public class AuthService {
             throw new CInvalidDataException("유요하지 않은 토큰입니다.");
         }
 
-
-
         String accessToken = jwtUtil.createAccessToken(username, memberId);
         return new RefreshResponse(accessToken);
     }

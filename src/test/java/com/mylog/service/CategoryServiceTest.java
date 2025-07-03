@@ -131,7 +131,7 @@ class CategoryServiceTest {
         // Given
         List<Category> categories = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
-            categories.add(new Category());
+            categories.add(new Category(member, request.getCategoryName()));
         }
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
         when(categoryRepository.findByMember(member)).thenReturn(categories);

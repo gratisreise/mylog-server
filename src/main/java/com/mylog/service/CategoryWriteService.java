@@ -19,39 +19,34 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CategoryWriteService {
 
-    private final MemberRepository memberRepository;
+    private final MemberReadService  memberReadService;
     private final CategoryRepository categoryRepository;
+    private final CategoryReadService categoryReadService;
 
     private final int limit = 20;
     public static String originCategory = "없음";
 
     public void createCategory(CategoryCreateRequest request, CustomUser customUser){
-        Member member = generateMember(customUser);
-        int categorySize = categoryRepository.findByMember(member).size();
+        Member member = memberReadService.getById(customUser.getMemberId());
+        int categorySize = categoryReadService.getCategorySize(member);
+
         if(categorySize == limit){
             throw new CReachedLimitException("카테고리 갯수가 한도에 도달했습니다.");
         }
-        Category category = Category.builder()
-            .member(member)
-            .categoryName(request.getCategoryName())
-            .build();
+
+        Category category = new Category(member, request.getCategoryName());
 
         categoryRepository.save(category);
     }
 
     public void createCategory(String email){
-        Member member = memberRepository.findByEmail(email).orElseThrow(CMissingDataException::new);
-
-        Category category = Category.builder()
-            .member(member)
-            .categoryName(originCategory)
-            .build();
+        Member member = memberReadService.getByEmail(email);
+        Category category = new Category(member, originCategory);
         categoryRepository.save(category);
     }
 
     public void updateCategory(CategoryUpdateRequest request,Long categoryId, CustomUser customUser){
-        Category category = categoryRepository.findById(categoryId)
-            .orElseThrow(CMissingDataException::new);
+        Category category = categoryReadService.getById(categoryId);
 
         if(!isHaveAuth(category, customUser)){
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
@@ -61,20 +56,13 @@ public class CategoryWriteService {
     }
 
     public void deleteCategory(Long categoryId, CustomUser customUser){
-        Category category = categoryRepository.findById(categoryId)
-            .orElseThrow(CMissingDataException::new);
+        Category category = categoryReadService.getById(categoryId);
 
         if(!isHaveAuth(category, customUser)){
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         }
 
         categoryRepository.deleteById(categoryId);
-    }
-
-
-    private Member generateMember(CustomUser customUser) {
-        return memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new);
     }
 
     private boolean isHaveAuth(Category category, CustomUser customUser) {
