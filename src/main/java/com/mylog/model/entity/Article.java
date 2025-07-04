@@ -61,22 +61,22 @@ public class Article {
 
     public Article(ArticleCreateRequest request, Category category, Member member,
         String imageUrl) {
-        this.title = request.getTitle();
-        this.content = request.getContent();
+        this.title = request.title();
+        this.content = request.content();
         this.category = category;
         this.member = member;
         this.articleImg = imageUrl;
     }
 
     public void update(ArticleUpdateRequest request, Category category) {
-        this.title = request.getTitle();
-        this.content = request.getContent();
+        this.title = request.title();
+        this.content = request.content();
         this.category = category;
     }
 
     public void update(ArticleUpdateRequest request, Category category, String articleImg) {
-        this.title = request.getTitle();
-        this.content = request.getContent();
+        this.title = request.title();
+        this.content = request.content();
         this.category = category;
         this.articleImg = articleImg;
     }

@@ -25,7 +25,7 @@ public class ArticleReadService {
             .getId();
 
         return articleRepository.findAllByMemberId(memberId, pageable)
-            .map(ArticleResponse::from);
+            .map(ArticleResponse::new);
     }
 
     public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser,
@@ -35,7 +35,7 @@ public class ArticleReadService {
             .getId();
         return articleRepository
             .findByMemberIdAndTitleContainingIgnoreCase(memberId, keyword, pageable)
-            .map(ArticleResponse::from);
+            .map(ArticleResponse::new);
     }
 
 
@@ -49,15 +49,15 @@ public class ArticleReadService {
 
     public Page<ArticleResponse> getArticles(Pageable pageable){
         return articleRepository.findAll(pageable)
-            .map(ArticleResponse::from);
+            .map(ArticleResponse::new);
     }
 
     public Page<ArticleResponse> getArticles(String keyword, String tag, Pageable pageable){
         return !isClear(keyword) ?
             articleRepository.findByTitleContainingIgnoreCase(keyword, pageable)
-            .map(ArticleResponse::from) :
+            .map(ArticleResponse::new) :
             articleRepository.findAllByTagName(tag, pageable)
-                .map(ArticleResponse::from);
+                .map(ArticleResponse::new);
     }
 
 

@@ -8,36 +8,26 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@ToString
-public class ArticleResponse {
-    private Long id;
-    private String title;
-    private String content;
-    private String author;
-    private String category;
-    private LocalDateTime createdAt;
+public record ArticleResponse(
+    Long id,
+    String title,
+    String content,
+    String author,
+    String category,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt) {
+
 
     public ArticleResponse(Article article, String author, String category) {
-        this.id = article.getId();
-        this.title = article.getTitle();
-        this.content = article.getContent();
-        this.author = author;
-        this.category = category;
-        this.createdAt = article.getCreatedAt();
+        this(article.getId(), article.getTitle(),
+            article.getContent(), author, category,
+            article.getCreatedAt(), article.getUpdatedAt());
     }
 
-    public static ArticleResponse from(Article article) {
-        return ArticleResponse.builder()
-            .id(article.getId())
-            .title(article.getTitle())
-            .content(article.getContent())
-            .author(article.getMember().getNickname())
-            .category(article.getCategory().getCategoryName())
-            .createdAt(article.getCreatedAt())
-            .build();
+    public ArticleResponse(Article article) {
+        this(article.getId(), article.getTitle(),
+            article.getContent(), article.getMember().getNickname(),
+            article.getCategory().getCategoryName(),
+            article.getCreatedAt(), article.getUpdatedAt());
     }
 }

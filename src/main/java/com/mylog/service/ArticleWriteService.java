@@ -33,7 +33,7 @@ public class ArticleWriteService {
 
     public void createArticle(ArticleCreateRequest request, CustomUser customUser, MultipartFile file) throws IOException{
 
-        Category category = categoryReadService.getByCategoryName(request.getCategory());
+        Category category = categoryReadService.getByCategoryName(request.category());
         Member member =  memberReadService.getByCustomUser(customUser);
         String imageUrl = s3Service.upload(file).orElseThrow(CMissingDataException::new);
 
@@ -41,20 +41,20 @@ public class ArticleWriteService {
 
         Article savedArticle = articleRepository.save(article);
 
-        tagService.saveTag(request.getTags(), savedArticle);
+        tagService.saveTag(request.tags(), savedArticle);
     }
 
     public void updateArticle(ArticleUpdateRequest request, CustomUser customUser,
         MultipartFile file, Long articleId) throws IOException {
         long requestMemberId = customUser.getMemberId();
-        long articleMemberId = memberReadService.getByNickname(request.getAuthor()).getId();
+        long articleMemberId = memberReadService.getByNickname(request.author()).getId();
 
         if(requestMemberId != articleMemberId){
             throw new CUnAuthorizedException("허용 되지 않는 유저입니다.");
         }
 
         Article article = articleReadService.getArticleById(articleId);
-        Category category = categoryReadService.getByCategoryName(request.getCategory());
+        Category category = categoryReadService.getByCategoryName(request.category());
 
         String articleImg;
         if(!isSame(article.getArticleImg(), file.getOriginalFilename())){
@@ -63,7 +63,7 @@ public class ArticleWriteService {
             articleImg = article.getArticleImg();
         }
 
-        tagService.saveTag(request.getTags(), article);
+        tagService.saveTag(request.tags(), article);
 
         article.update(request, category, articleImg);
     }
