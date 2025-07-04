@@ -34,7 +34,7 @@ public class ArticleWriteService {
     public void createArticle(ArticleCreateRequest request, CustomUser customUser, MultipartFile file) throws IOException{
 
         Category category = categoryReadService.getByCategoryName(request.getCategory());
-        Member member =  memberReadService.getById(customUser.getMemberId());
+        Member member =  memberReadService.getByCustomUser(customUser);
         String imageUrl = s3Service.upload(file).orElseThrow(CMissingDataException::new);
 
         Article article = new Article(request, category, member, imageUrl);
@@ -75,7 +75,7 @@ public class ArticleWriteService {
     public void deleteArticle(Long articleId, CustomUser customUser) {
         Article article = articleReadService.getArticleById(articleId);
         long articleMemberId = article.getMember().getId();
-        long requestMemberId = memberReadService.getById(customUser.getMemberId()).getId();
+        long requestMemberId = memberReadService.getByCustomUser(customUser).getId();
 
         if(articleMemberId != requestMemberId){
             throw new CUnAuthorizedException("허용 되지 않는 유저입니다.");

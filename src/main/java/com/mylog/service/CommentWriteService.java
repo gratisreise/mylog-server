@@ -55,8 +55,7 @@ public class CommentWriteService {
     }
 
     private boolean validateDelete(Long commentId, CustomUser customUser) {
-        Comment comment = commentRepository.findById(commentId)
-            .orElseThrow(CMissingDataException::new);
+        Comment comment = commentReadService.getById(commentId);
         Article article = comment.getArticle();
 
         long commentMemberId = comment.getMember().getId(); //댓글 작성자

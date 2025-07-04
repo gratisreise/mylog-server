@@ -3,6 +3,7 @@ package com.mylog.controller;
 import com.mylog.common.CommonResult;
 import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;
+import com.mylog.model.dto.member.MemberResponse;
 import com.mylog.model.dto.member.SignUpRequest;
 import com.mylog.model.dto.member.UpdateMemberRequest;
 import com.mylog.model.dto.classes.CustomUser;
@@ -46,7 +47,7 @@ public class MemberController {
     //개인정보조회
     @GetMapping("/me")
     @Operation(summary = "개인정보조회")
-    public SingleResult<Member> getMember(@AuthenticationPrincipal CustomUser customUser){
+    public SingleResult<MemberResponse> getMember(@AuthenticationPrincipal CustomUser customUser){
         return ResponseService.getSingleResult(memberReadService.getMember(customUser));
     }
 

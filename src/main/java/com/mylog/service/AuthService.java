@@ -23,14 +23,17 @@ public class AuthService {
 
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
-    private final MemberRepository memberRepository;
+    private final MemberReadService memberReadService;
     private final RefreshTokenService refreshTokenService;
 
     //로그인
     public LoginResponse login(LoginRequest request) {
-        loginAuthenticate(request);
 
-        Member member = createMember(request);
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        );
+
+        Member member = memberReadService.getByEmail(request.getEmail());
 
         String username = member.getNickname();
         long memberId = member.getId();
@@ -43,18 +46,11 @@ public class AuthService {
     }
 
 
-    private void loginAuthenticate(LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
-    }
-
     //리프레쉬
     public RefreshResponse refresh(RefreshRequest request) {
         String username = jwtUtil.getRefreshUsername(request.getRefreshToken());
         log.info("{}", username);
-        long memberId = memberRepository.findByNickname(username)
-            .orElseThrow(CMissingDataException::new).getId();
+        long memberId = memberReadService.getByNickname(username).getId();
 
         if (!refreshTokenService.validateRefreshToken(username, request.getRefreshToken())) {
             throw new CInvalidDataException("유요하지 않은 토큰입니다.");
@@ -64,10 +60,5 @@ public class AuthService {
         return new RefreshResponse(accessToken);
     }
 
-
-    private Member createMember(LoginRequest request) {
-        return memberRepository.findByEmail(request.getEmail())
-            .orElseThrow(CMissingDataException::new);
-    }
 
 }

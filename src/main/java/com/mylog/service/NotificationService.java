@@ -6,7 +6,6 @@ import com.mylog.model.entity.Member;
 import com.mylog.model.entity.Notification;
 import com.mylog.model.entity.NotificationSetting;
 import com.mylog.exception.CMissingDataException;
-import com.mylog.repository.MemberRepository;
 import com.mylog.repository.NotificationRepository;
 import com.mylog.repository.NotificationSettingRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationSettingRepository notificationSettingRepository;
-    private final MemberRepository memberRepository;
+    private final MemberReadService memberReadService;
 
     @Transactional
     public void sendNotification(Member member, Long relatedId, String type) {
@@ -28,11 +27,7 @@ public class NotificationService {
          if(notificationIsDisabled(member, type)) return;
 
         //알림생성
-        Notification notification = Notification.builder()
-            .member(member)
-            .type(type)
-            .relatedId(relatedId)
-            .build();
+        Notification notification = new Notification(member, relatedId, type);
 
         notificationRepository.save(notification);
     }
@@ -66,7 +61,7 @@ public class NotificationService {
 
     //알람받기
     public Page<NotificationResponse> receiveNotification(CustomUser customUser, Pageable pageable){
-        Member member = generateMember(customUser);
+        Member member = memberReadService.getByCustomUser(customUser);
 
         return notificationRepository
             .findAllByMemberAndReadFalse(member, pageable)
@@ -76,15 +71,11 @@ public class NotificationService {
     //알림끄기
     @Transactional
     public void toggleNotification(CustomUser customUser, String type){
-        Member member = generateMember(customUser);
+        Member member = memberReadService.getByCustomUser(customUser);
         notificationSettingRepository
             .findByMemberAndType(member, type)
             .orElseThrow(CMissingDataException::new)
             .toggle();
     };
 
-    private Member generateMember(CustomUser customUser) {
-        return memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new);
-    }
 }

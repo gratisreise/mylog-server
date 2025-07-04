@@ -45,6 +45,12 @@ public class Notification {
     @CreatedDate
     private LocalDateTime createdAt;
 
+    public Notification(Member member, Long relatedId, String type) {
+        this.member = member;
+        this.type = type;
+        this.relatedId = relatedId;
+    }
+
     public void makeRead() {
         this.read = true;
     }

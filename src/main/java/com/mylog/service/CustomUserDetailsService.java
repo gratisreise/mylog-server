@@ -16,12 +16,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final MemberRepository memberRepository;
+    private final MemberReadService memberReadService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByNickname(username)
-            .orElseThrow(CMissingDataException::new);
+        Member member = memberReadService.getByNickname(username);
 
         return createUserDetails(member);
     }
