@@ -1,14 +1,12 @@
 package com.mylog.service;
 
 import com.mylog.config.JwtUtil;
+import com.mylog.exception.CInvalidDataException;
 import com.mylog.model.dto.auth.LoginRequest;
 import com.mylog.model.dto.auth.LoginResponse;
 import com.mylog.model.dto.auth.RefreshRequest;
 import com.mylog.model.dto.auth.RefreshResponse;
 import com.mylog.model.entity.Member;
-import com.mylog.exception.CInvalidDataException;
-import com.mylog.exception.CMissingDataException;
-import com.mylog.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,10 +28,10 @@ public class AuthService {
     public LoginResponse login(LoginRequest request) {
 
         Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+            new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
 
-        Member member = memberReadService.getByEmail(request.getEmail());
+        Member member = memberReadService.getByEmail(request.email());
 
         String username = member.getNickname();
         long memberId = member.getId();
@@ -48,11 +46,11 @@ public class AuthService {
 
     //리프레쉬
     public RefreshResponse refresh(RefreshRequest request) {
-        String username = jwtUtil.getRefreshUsername(request.getRefreshToken());
+        String username = jwtUtil.getRefreshUsername(request.refreshToken());
         log.info("{}", username);
         long memberId = memberReadService.getByNickname(username).getId();
 
-        if (!refreshTokenService.validateRefreshToken(username, request.getRefreshToken())) {
+        if (!refreshTokenService.validateRefreshToken(username, request.refreshToken())) {
             throw new CInvalidDataException("유요하지 않은 토큰입니다.");
         }
 
