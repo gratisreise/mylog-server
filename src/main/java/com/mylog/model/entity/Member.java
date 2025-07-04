@@ -1,5 +1,6 @@
 package com.mylog.model.entity;
 
+import com.mylog.model.dto.member.SignUpRequest;
 import com.mylog.model.dto.member.UpdateMemberRequest;
 import com.mylog.enums.OauthProvider;
 import jakarta.persistence.Column;
@@ -68,6 +69,16 @@ public class Member {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public Member(SignUpRequest request, String cryptedPassword, String basicImageUrl) {
+        this.email = request.getEmail();
+        this.memberName = request.getMemberName();
+        this.nickname = request.getEmail();
+        this.providerId = request.getEmail() + OauthProvider.LOCAL;
+        this.provider = OauthProvider.LOCAL;
+        this.profileImg = basicImageUrl;
+        this.password = cryptedPassword;
+    }
 
     public void update(UpdateMemberRequest request) {
         this.password = request.getPassword();

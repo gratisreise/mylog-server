@@ -26,6 +26,7 @@ public class MemberWriteService {
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
     private final CategoryWriteService categoryWriteService;
+    private final MemberReadService memberReadService;
 
     @Value("${cloud.aws.s3.basic}")
     private String basicImageUrl;
@@ -42,19 +43,12 @@ public class MemberWriteService {
             throw new CMissingDataException("비밀번호 암호화를 실패했습니다.");
         }
 
-        Member member = Member.builder()
-            .email(request.getEmail())
-            .memberName(request.getMemberName())
-            .password(cryptedPassword)
-            .nickname(request.getEmail())
-            .provider(OauthProvider.LOCAL)
-            .providerId(request.getEmail() + OauthProvider.LOCAL)
-            .profileImg(basicImageUrl)
-            .build();
+        Member member = new Member(request, cryptedPassword, basicImageUrl);
 
         log.info("member: {}", member.toString());
         memberRepository.save(member);
 
+        //비동기 처리 ㄱㄱ
         categoryWriteService.createCategory(request.getEmail());
     }
 
@@ -64,8 +58,7 @@ public class MemberWriteService {
             throw new CInvalidDataException("중복되는 닉네임 입니다.");
         }
 
-        Member member = memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new);
+        Member member = memberReadService.getById(customUser.getMemberId());
 
         String profileImg = file.getOriginalFilename();
         String memberImg = member.getProfileImg();
@@ -81,8 +74,7 @@ public class MemberWriteService {
     }
 
     public void deleteMember(CustomUser customUser){
-        Member member = memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new);
+        Member member = memberReadService.getById(customUser.getMemberId());
 
         if(!member.getProfileImg().equals(basicImageUrl)) {
             s3Service.deleteImage(member.getProfileImg());
