@@ -1,5 +1,6 @@
 package com.mylog.model.entity;
 
+import com.mylog.model.dto.comment.CommentCreateRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -48,4 +49,11 @@ public class Comment {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public Comment(Article article, Member member, CommentCreateRequest request) {
+        this.article = article;
+        this.member = member;
+        this.content = request.getContent();
+        this.parentId = request.getParentCommentId();
+    }
 }

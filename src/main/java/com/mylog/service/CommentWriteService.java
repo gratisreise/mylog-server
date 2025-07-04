@@ -8,9 +8,7 @@ import com.mylog.model.entity.Comment;
 import com.mylog.model.entity.Member;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.exception.CUnAuthorizedException;
-import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CommentRepository;
-import com.mylog.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,40 +19,30 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentWriteService {
 
     private final CommentRepository commentRepository;
-    private final MemberRepository memberRepository;
-    private final ArticleRepository articleRepository;
+    private final CommentReadService commentReadService;
+    private final MemberReadService memberReadService;
+    private final ArticleReadService articleReadService;
     private final NotificationService notificationService;
 
-    public void createComment(CommentCreateRequest request, CustomUser customUser) {
-        Article article = articleRepository.findById(request.getArticleId())
-            .orElseThrow(CMissingDataException::new);
+    public void createComment(Long articleId, CommentCreateRequest request, CustomUser customUser) {
+        Article article = articleReadService.getArticleById(articleId);
+        Member member = memberReadService.getById(customUser.getMemberId());
 
-        Member member = memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new);
-
-        Comment comment = Comment.builder()
-            .article(article)
-            .member(member)
-            .content(request.getContent())
-            .parentId(request.getParentCommentId())
-            .build();
-
+        Comment comment = new Comment(article, member, request);
         commentRepository.save(comment);
 
+        //알림 보내기 완전 비동기 처리가능
         notificationService.createNotificationSetting(article.getMember(), "comment");
 
-        notificationService.sendNotification(
-            article.getMember(), article.getId(), "comment");
+        notificationService.sendNotification(article.getMember(), article.getId(), "comment");
     }
 
     public void updateComment(CommentUpdateRequest request, CustomUser customUser, Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
-            .orElseThrow(CMissingDataException::new);
+        Comment comment = commentReadService.getById(commentId);
 
         if (!validateUpdate(customUser, comment)) {
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         }
-
         comment.setContent(request.getContent());
     }
 
@@ -71,22 +59,18 @@ public class CommentWriteService {
             .orElseThrow(CMissingDataException::new);
         Article article = comment.getArticle();
 
-        Long commentMemberId = comment.getMember().getId(); //댓글 작성자
-        Long articleMemberId = article.getMember().getId(); // 게시글 작성자
+        long commentMemberId = comment.getMember().getId(); //댓글 작성자
+        long articleMemberId = article.getMember().getId(); // 게시글 작성자
 
-        Long userMemberId = memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new)
-            .getId();
+        long requestMemberId = memberReadService.getById(customUser.getMemberId()).getId();
 
-        return userMemberId.equals(commentMemberId) || userMemberId.equals(articleMemberId);
+        return requestMemberId == commentMemberId || requestMemberId == articleMemberId;
     }
 
     private boolean validateUpdate(CustomUser customUser, Comment comment) {
-        Long commentMemberId = comment.getMember().getId();
-        Long requestMemberId = memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new)
-            .getId();
+        long commentMemberId = comment.getMember().getId();
+        long requestMemberId = memberReadService.getById(customUser.getMemberId()).getId();
 
-        return commentMemberId.equals(requestMemberId);
+        return commentMemberId == requestMemberId;
     }
 }

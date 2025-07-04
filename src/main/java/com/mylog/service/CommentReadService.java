@@ -2,6 +2,7 @@ package com.mylog.service;
 
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.comment.CommentResponse;
+import com.mylog.model.entity.Comment;
 import com.mylog.model.entity.Member;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.ArticleRepository;
@@ -54,5 +55,9 @@ public class CommentReadService {
         }
         return commentRepository.findByArticle_IdAndParentId(articleId, parentId, pageable)
             .map(CommentResponse::from);
+    }
+
+    public Comment getById(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(CMissingDataException::new);
     }
 }

@@ -15,8 +15,7 @@ public class CommentCreateRequest {
     @Length(min=2, max=200)
     @NotBlank
     private String content;
-    @NotBlank
-    private Long articleId;
+
     @NotBlank
     private long parentCommentId;
 }
