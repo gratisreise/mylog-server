@@ -27,14 +27,14 @@ public class CommentReadService {
         Member member = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);
         return commentRepository.findAllByMember(member, pageable)
-            .map(CommentResponse::from);
+            .map(CommentResponse::new);
     }
 
     public Page<CommentResponse> getComments(CustomUser customUser, Pageable pageable) {
         Member member = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);
         return commentRepository.findAllByArticle_Member(member, pageable)
-            .map(CommentResponse::from);
+            .map(CommentResponse::new);
     }
 
 
@@ -43,7 +43,7 @@ public class CommentReadService {
             throw new CMissingDataException("존재하지 않는 게시글 입니다.");
         }
         return commentRepository.findByArticle_Id(articleId, pageable)
-            .map(CommentResponse::from);
+            .map(CommentResponse::new);
     }
 
     public Page<CommentResponse> getChildComments(Long articleId, Long parentId, Pageable pageable){
@@ -54,7 +54,7 @@ public class CommentReadService {
             throw new CMissingDataException("존재하지 않는 댓글입니다.");
         }
         return commentRepository.findByArticle_IdAndParentId(articleId, parentId, pageable)
-            .map(CommentResponse::from);
+            .map(CommentResponse::new);
     }
 
     public Comment getById(Long commentId) {

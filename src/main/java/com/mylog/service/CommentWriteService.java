@@ -43,7 +43,7 @@ public class CommentWriteService {
         if (!validateUpdate(customUser, comment)) {
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         }
-        comment.setContent(request.getContent());
+        comment.setContent(request.content());
     }
 
     public void deleteComment(Long commentId, CustomUser customUser){
