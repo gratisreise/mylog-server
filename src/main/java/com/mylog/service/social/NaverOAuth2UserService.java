@@ -3,7 +3,7 @@ package com.mylog.service.social;
 
 import com.mylog.annotations.OAuth2ServiceType;
 import com.mylog.config.JwtUtil;
-import com.mylog.model.dto.member.UserNaverInfoResponse;
+import com.mylog.model.dto.social.UserNaverInfoResponse;
 import com.mylog.model.dto.social.NaverOAuth2UserInfo;
 import com.mylog.model.dto.social.NaverTokenResponse;
 import com.mylog.model.dto.social.OAuth2UserInfo;

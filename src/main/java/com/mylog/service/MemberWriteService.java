@@ -32,11 +32,11 @@ public class MemberWriteService {
     private String basicImageUrl;
 
     public void saveMember(SignUpRequest request){
-        if(memberRepository.existsByEmail(request.getEmail())){
+        if(memberRepository.existsByEmail(request.email())){
             throw new CMissingDataException("이미 존재하는 이메일입니다.");
         }
 
-        String cryptedPassword = passwordEncoder.encode(request.getPassword());
+        String cryptedPassword = passwordEncoder.encode(request.password());
         log.info("cryptedPassword: {}", cryptedPassword);
 
         if (cryptedPassword == null) {
@@ -49,12 +49,12 @@ public class MemberWriteService {
         memberRepository.save(member);
 
         //비동기 처리 ㄱㄱ
-        categoryWriteService.createCategory(request.getEmail());
+        categoryWriteService.createCategory(request.email());
     }
 
     public void updateMember(UpdateMemberRequest request, CustomUser customUser, MultipartFile file)
         throws IOException{
-        if(memberRepository.existsByNickname(request.getNickname())){
+        if(memberRepository.existsByNickname(request.nickname())){
             throw new CInvalidDataException("중복되는 닉네임 입니다.");
         }
 

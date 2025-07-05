@@ -8,7 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.mylog.config.JwtUtil;
-import com.mylog.model.dto.member.UserNaverInfoResponse;
+import com.mylog.model.dto.social.UserNaverInfoResponse;
 import com.mylog.model.dto.social.NaverOAuth2UserInfo;
 import com.mylog.model.dto.social.NaverTokenResponse;
 import com.mylog.model.dto.social.NaverUserInfo;

@@ -52,7 +52,7 @@ public class Category {
     }
 
     public void update(CategoryUpdateRequest request) {
-        this.categoryName = request.getCategoryName();
+        this.categoryName = request.categoryName();
     }
 
 }

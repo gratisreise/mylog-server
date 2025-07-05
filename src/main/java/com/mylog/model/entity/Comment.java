@@ -53,7 +53,7 @@ public class Comment {
     public Comment(Article article, Member member, CommentCreateRequest request) {
         this.article = article;
         this.member = member;
-        this.content = request.getContent();
-        this.parentId = request.getParentCommentId();
+        this.content = request.content();
+        this.parentId = request.parentCommentId();
     }
 }

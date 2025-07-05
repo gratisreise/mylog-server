@@ -71,27 +71,27 @@ public class Member {
     private LocalDateTime updatedAt;
 
     public Member(SignUpRequest request, String cryptedPassword, String basicImageUrl) {
-        this.email = request.getEmail();
-        this.memberName = request.getMemberName();
-        this.nickname = request.getEmail();
-        this.providerId = request.getEmail() + OauthProvider.LOCAL;
+        this.email = request.email();
+        this.memberName = request.memberName();
+        this.nickname = request.email();
+        this.providerId = request.email() + OauthProvider.LOCAL;
         this.provider = OauthProvider.LOCAL;
         this.profileImg = basicImageUrl;
         this.password = cryptedPassword;
     }
 
     public void update(UpdateMemberRequest request) {
-        this.password = request.getPassword();
-        this.memberName = request.getMemberName();
-        this.nickname = request.getNickname();
-        this.bio = request.getBio();
+        this.password = request.password();
+        this.memberName = request.memberName();
+        this.nickname = request.nickname();
+        this.bio = request.bio();
     }
 
     public void update(UpdateMemberRequest request, String profileImg) {
-        this.password = request.getPassword();
-        this.memberName = request.getMemberName();
-        this.nickname = request.getNickname();
-        this.bio = request.getBio();
+        this.password = request.password();
+        this.memberName = request.memberName();
+        this.nickname = request.nickname();
+        this.bio = request.bio();
         this.profileImg = profileImg;
     }
 }

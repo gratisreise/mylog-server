@@ -65,7 +65,7 @@ public class NotificationService {
 
         return notificationRepository
             .findAllByMemberAndReadFalse(member, pageable)
-            .map(NotificationResponse::from);
+            .map(NotificationResponse::new);
     };
 
     //알림끄기

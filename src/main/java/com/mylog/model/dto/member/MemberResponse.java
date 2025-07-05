@@ -3,15 +3,7 @@ package com.mylog.model.dto.member;
 
 import com.mylog.enums.OauthProvider;
 import com.mylog.model.entity.Member;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import java.time.LocalDateTime;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 public record MemberResponse(
     Long id,
