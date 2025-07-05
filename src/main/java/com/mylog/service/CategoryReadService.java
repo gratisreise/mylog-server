@@ -1,13 +1,12 @@
 package com.mylog.service;
 
+import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.category.CategoryResponse;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
-import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.CategoryRepository;
 import com.mylog.repository.MemberRepository;
-import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,7 @@ public class CategoryReadService {
         Member member = generateMember(customUser);
         return categoryRepository.findByMember(member)
             .stream()
-            .map(CategoryResponse::from)
+            .map(CategoryResponse::new)
             .toList();
     }
 

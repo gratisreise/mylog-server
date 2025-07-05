@@ -1,15 +1,13 @@
 package com.mylog.service;
 
+import com.mylog.exception.CReachedLimitException;
+import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.model.dto.category.CategoryCreateRequest;
 import com.mylog.model.dto.category.CategoryUpdateRequest;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
-import com.mylog.exception.CMissingDataException;
-import com.mylog.exception.CReachedLimitException;
-import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.CategoryRepository;
-import com.mylog.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +32,7 @@ public class CategoryWriteService {
             throw new CReachedLimitException("카테고리 갯수가 한도에 도달했습니다.");
         }
 
-        Category category = new Category(member, request.getCategoryName());
+        Category category = new Category(member, request.categoryName());
 
         categoryRepository.save(category);
     }
