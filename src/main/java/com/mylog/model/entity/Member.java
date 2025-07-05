@@ -3,6 +3,7 @@ package com.mylog.model.entity;
 import com.mylog.model.dto.member.SignUpRequest;
 import com.mylog.model.dto.member.UpdateMemberRequest;
 import com.mylog.enums.OauthProvider;
+import com.mylog.model.dto.social.OAuth2UserInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -93,5 +94,13 @@ public class Member {
         this.nickname = request.nickname();
         this.bio = request.bio();
         this.profileImg = profileImg;
+    }
+
+    public void update(OAuth2UserInfo userInfo, OauthProvider oauthProvider) {
+        this.provider = oauthProvider;
+        this.providerId = userInfo.getId();
+        this.memberName = userInfo.getName();
+        this.nickname = userInfo.getId() + oauthProvider;
+        this.profileImg = userInfo.getImageUrl();
     }
 }

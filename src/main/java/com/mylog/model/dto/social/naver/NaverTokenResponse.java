@@ -1,4 +1,4 @@
-package com.mylog.model.dto.social;
+package com.mylog.model.dto.social.naver;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

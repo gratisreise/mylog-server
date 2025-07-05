@@ -8,16 +8,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.mylog.config.JwtUtil;
-import com.mylog.model.dto.social.UserNaverInfoResponse;
-import com.mylog.model.dto.social.NaverOAuth2UserInfo;
-import com.mylog.model.dto.social.NaverTokenResponse;
-import com.mylog.model.dto.social.NaverUserInfo;
+import com.mylog.model.dto.social.naver.UserNaverInfoResponse;
+import com.mylog.model.dto.social.naver.NaverOAuth2UserInfo;
+import com.mylog.model.dto.social.naver.NaverTokenResponse;
+import com.mylog.model.dto.social.naver.NaverUserInfo;
 import com.mylog.model.dto.social.OAuthRequest;
 import com.mylog.model.entity.Member;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
 import com.mylog.service.RefreshTokenService;
+import com.mylog.service.social.naver.NaverOAuth2UserService;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -96,7 +97,7 @@ class NaverOAuth2UserServiceTest {
         naverUserInfo.setName("Test User");
         naverUserInfo.setProfileImage("http://example.com/profile.jpg");
         userInfoResponse = new UserNaverInfoResponse();
-        userInfoResponse.setResponse(naverUserInfo);
+        userInfoResponse.setUserInfo(naverUserInfo);
         oAuth2UserInfo = new NaverOAuth2UserInfo(naverUserInfo);
 
 

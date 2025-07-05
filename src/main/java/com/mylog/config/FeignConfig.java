@@ -1,14 +1,14 @@
 package com.mylog.config;
 
+import feign.codec.Encoder;
+import feign.form.FormEncoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class OAuthConfig {
-
+public class FeignConfig {
     @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
+    public Encoder feignFormEncoder() {
+        return new FormEncoder();
     }
 }

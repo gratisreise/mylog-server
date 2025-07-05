@@ -41,6 +41,7 @@ public class AuthController {
     @Operation(summary = "소셜 로그인")
     @PostMapping("/oauth/login")
     public SingleResult<LoginResponse> socialLogin(@RequestBody OAuthRequest request){
+        log.info("{}", request);
         OAuth2UserService service = oAuth2UserServiceFactory.getOAuth2UserService(request.getProvider());
         return ResponseService.getSingleResult(service.login(request));
     }

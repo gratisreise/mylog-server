@@ -1,5 +1,6 @@
-package com.mylog.model.dto.social;
+package com.mylog.model.dto.social.kako;
 
+import com.mylog.model.dto.social.OAuth2UserInfo;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -8,16 +9,16 @@ public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
 
     @Override
     public String getId() {
-        return kakaoUserInfo.getId().toString();
+        return kakaoUserInfo.id().toString();
     }
 
     @Override
     public String getName() {
-        return null;
+        return "KAKAO"+kakaoUserInfo.id();
     }
 
     @Override
     public String getImageUrl() {
-        return kakaoUserInfo.getProperties().getProfileImage();
+        return kakaoUserInfo.properties().profileImage();
     }
 }

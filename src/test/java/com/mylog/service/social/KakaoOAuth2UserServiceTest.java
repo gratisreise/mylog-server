@@ -8,16 +8,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.mylog.config.JwtUtil;
-import com.mylog.model.dto.social.KakaoOAuth2UserInfo;
-import com.mylog.model.dto.social.KakaoProperties;
-import com.mylog.model.dto.social.KakaoTokenResponse;
-import com.mylog.model.dto.social.KakaoUserInfo;
+import com.mylog.model.dto.social.kako.KakaoOAuth2UserInfo;
+import com.mylog.model.dto.social.kako.Properties;
+import com.mylog.model.dto.social.kako.KakaoTokenResponse;
+import com.mylog.model.dto.social.kako.KakaoUserInfo;
 import com.mylog.model.dto.social.OAuthRequest;
 import com.mylog.model.entity.Member;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
 import com.mylog.service.RefreshTokenService;
+import com.mylog.service.social.kakao.KakaoOAuth2UserService;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -86,7 +87,7 @@ class KakaoOAuth2UserServiceTest {
         tokenResponse.setAccessToken(accessToken);
 
         // KakaoProperties설정
-        KakaoProperties properties = new KakaoProperties("http://example.com/profile.jpg");
+        Properties properties = new Properties("http://example.com/profile.jpg");
 
         // KakaoUserInfo 및 KakaoOAuth2UserInfo 설정
         userInfoResponse = new KakaoUserInfo();

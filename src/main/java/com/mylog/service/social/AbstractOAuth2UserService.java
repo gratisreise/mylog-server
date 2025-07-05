@@ -7,24 +7,34 @@ import com.mylog.model.dto.social.OAuthRequest;
 import com.mylog.model.entity.Member;
 import com.mylog.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestTemplate;
 
 @RequiredArgsConstructor
+@Slf4j
 public abstract class AbstractOAuth2UserService implements OAuth2UserService {
-    protected final RestTemplate restTemplate;
     protected final JwtUtil jwtUtil;
     protected final RefreshTokenService refreshTokenService;
 
     @Override
     public LoginResponse login(OAuthRequest request){
         String accessToken = getAccessToken(request);
+        log.info("{}", accessToken);
         OAuth2UserInfo userInfo = getUserInfo(accessToken);
+        log.info("{}", userInfo);
         Member member = createOrUpdateMember(userInfo);
+        log.info("{}", member);
 
         String refreshToken = jwtUtil.createRefreshToken(member.getNickname());
+        log.info("{}", refreshToken);
         refreshTokenService.saveRefreshToken(member.getNickname(), refreshToken);
 
         String jwtAccessToken = jwtUtil.createAccessToken(member.getNickname(), member.getId());
+        log.info("{}", accessToken);
         return new LoginResponse(jwtAccessToken, refreshToken);
+    }
+
+    protected String setBearerAuth(String accessToken){
+        return "Bearer " + accessToken;
     }
 }

@@ -1,5 +1,6 @@
-package com.mylog.model.dto.social;
+package com.mylog.model.dto.social.naver;
 
+import com.mylog.model.dto.social.OAuth2UserInfo;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -8,17 +9,16 @@ public class NaverOAuth2UserInfo implements OAuth2UserInfo {
 
     @Override
     public String getId() {
-        return naverUserInfo.getId();
+        return naverUserInfo.response().id();
     }
 
     @Override
     public String getName() {
-        return naverUserInfo.getName();
+        return naverUserInfo.response().name();
     }
-
 
     @Override
     public String getImageUrl() {
-        return naverUserInfo.getProfileImage();
+        return naverUserInfo.response().profileImage();
     }
 }
