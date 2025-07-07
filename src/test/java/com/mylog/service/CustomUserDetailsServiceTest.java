@@ -1,0 +1,373 @@
+package com.mylog.service;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.mylog.enums.OauthProvider;
+import com.mylog.exception.CMissingDataException;
+import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.model.entity.Member;
+import java.util.Collection;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+/**
+ * Comprehensive unit tests for CustomUserDetailsService
+ * Tests UserDetails loading, Spring Security integration, and authorization
+ */
+@ExtendWith(MockitoExtension.class)
+@DisplayName("CustomUserDetailsService Unit Tests")
+class CustomUserDetailsServiceTest {
+
+    @InjectMocks
+    private CustomUserDetailsService customUserDetailsService;
+
+    @Mock
+    private MemberReadService memberReadService;
+
+    private Member testMember;
+    private Member oauthMember;
+    private static final String TEST_NICKNAME = "testuser";
+    private static final String OAUTH_NICKNAME = "oauthuser";
+    private static final String DEFAULT_ENCRYPTED_PASSWORD = "$2a$10$encrypted.password.hash";
+    private static final String OAUTH_ENCRYPTED_PASSWORD = "$2a$10$encrypted.password.hash";
+
+    @BeforeEach
+    void setUp() {
+        testMember = Member.builder()
+                .id(1L)
+                .nickname(TEST_NICKNAME)
+                .email("test@example.com")
+                .password(DEFAULT_ENCRYPTED_PASSWORD)
+                .memberName("Test User")
+                .bio("Test bio")
+                .profileImg("https://example.com/profile.jpg")
+                .provider(OauthProvider.LOCAL)
+                .providerId("test@example.com" + OauthProvider.LOCAL)
+                .build();
+
+        oauthMember = Member.builder()
+                .id(2L)
+                .nickname(OAUTH_NICKNAME)
+                .email("oauth@example.com")
+                .password(OAUTH_ENCRYPTED_PASSWORD) // OAuth users don't have password
+                .memberName("OAuth User")
+                .bio("OAuth bio")
+                .profileImg("https://example.com/oauth-profile.jpg")
+                .provider(OauthProvider.GOOGLE)
+                .providerId("oauth@example.com" + OauthProvider.GOOGLE)
+                .build();
+    }
+
+    @Test
+    @DisplayName("사용자명으로 UserDetails 로딩 성공 - 로컬 사용자")
+    void loadUserByUsername_로컬_사용자_성공() {
+        // Given
+        when(memberReadService.getByNickname(TEST_NICKNAME)).thenReturn(testMember);
+
+        // When
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(TEST_NICKNAME);
+
+        // Then
+        assertThat(userDetails).isNotNull();
+        assertThat(userDetails).isInstanceOf(CustomUser.class);
+        
+        CustomUser customUser = (CustomUser) userDetails;
+        assertThat(customUser.getUsername()).isEqualTo(TEST_NICKNAME);
+        assertThat(customUser.getPassword()).isEqualTo(DEFAULT_ENCRYPTED_PASSWORD);
+        assertThat(customUser.getMemberId()).isEqualTo(1L);
+        assertThat(customUser.getProvider()).isEqualTo(OauthProvider.LOCAL);
+        
+        // Verify authorities
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+        assertThat(authorities).hasSize(1);
+        assertThat(authorities.iterator().next().getAuthority()).isEqualTo("ROLE_USER");
+        
+        verify(memberReadService).getByNickname(TEST_NICKNAME);
+    }
+
+    @Test
+    @DisplayName("사용자명으로 UserDetails 로딩 성공 - OAuth 사용자")
+    void loadUserByUsername_OAuth_사용자_성공() {
+        // Given
+        when(memberReadService.getByNickname(OAUTH_NICKNAME)).thenReturn(oauthMember);
+
+        // When
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(OAUTH_NICKNAME);
+
+        // Then
+        assertThat(userDetails).isNotNull();
+        assertThat(userDetails).isInstanceOf(CustomUser.class);
+        
+        CustomUser customUser = (CustomUser) userDetails;
+        assertThat(customUser.getUsername()).isEqualTo(OAUTH_NICKNAME);
+        assertThat(customUser.getMemberId()).isEqualTo(2L);
+        assertThat(customUser.getProvider()).isEqualTo(OauthProvider.GOOGLE);
+        
+        // OAuth users might have null password - this should be handled properly
+        // The password field in CustomUser should still work with Spring Security
+        
+        // Verify authorities
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+        assertThat(authorities).hasSize(1);
+        assertThat(authorities.iterator().next().getAuthority()).isEqualTo("ROLE_USER");
+        
+        verify(memberReadService).getByNickname(OAUTH_NICKNAME);
+    }
+
+    @Test
+    @DisplayName("사용자명으로 UserDetails 로딩 실패 - 존재하지 않는 사용자")
+    void loadUserByUsername_존재하지_않는_사용자_실패() {
+        // Given
+        String nonExistentUsername = "nonexistent";
+        when(memberReadService.getByNickname(nonExistentUsername))
+                .thenThrow(new CMissingDataException("사용자를 찾을 수 없습니다."));
+
+        // When & Then
+        assertThatThrownBy(() -> customUserDetailsService.loadUserByUsername(nonExistentUsername))
+                .isInstanceOf(CMissingDataException.class)
+                .hasMessage("사용자를 찾을 수 없습니다.");
+        
+        verify(memberReadService).getByNickname(nonExistentUsername);
+    }
+
+    @Test
+    @DisplayName("빈 사용자명으로 UserDetails 로딩 시도")
+    void loadUserByUsername_빈_사용자명() {
+        // Given
+        String emptyUsername = "";
+        when(memberReadService.getByNickname(emptyUsername))
+                .thenThrow(new CMissingDataException("사용자를 찾을 수 없습니다."));
+
+        // When & Then
+        assertThatThrownBy(() -> customUserDetailsService.loadUserByUsername(emptyUsername))
+                .isInstanceOf(CMissingDataException.class);
+        
+        verify(memberReadService).getByNickname(emptyUsername);
+    }
+
+    @Test
+    @DisplayName("null 사용자명으로 UserDetails 로딩 시도")
+    void loadUserByUsername_null_사용자명() {
+        // Given
+        when(memberReadService.getByNickname(null))
+                .thenThrow(new CMissingDataException("사용자를 찾을 수 없습니다."));
+
+        // When & Then
+        assertThatThrownBy(() -> customUserDetailsService.loadUserByUsername(null))
+                .isInstanceOf(CMissingDataException.class);
+        
+        verify(memberReadService).getByNickname(null);
+    }
+
+    @Test
+    @DisplayName("UserDetails 계정 상태 검증")
+    void loadUserByUsername_계정_상태_검증() {
+        // Given
+        when(memberReadService.getByNickname(TEST_NICKNAME)).thenReturn(testMember);
+
+        // When
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(TEST_NICKNAME);
+
+        // Then
+        assertThat(userDetails.isEnabled()).isTrue();
+        assertThat(userDetails.isAccountNonExpired()).isTrue();
+        assertThat(userDetails.isAccountNonLocked()).isTrue();
+        assertThat(userDetails.isCredentialsNonExpired()).isTrue();
+    }
+
+    @Test
+    @DisplayName("권한 설정 검증 - ROLE_USER 기본 권한")
+    void loadUserByUsername_권한_설정_검증() {
+        // Given
+        when(memberReadService.getByNickname(TEST_NICKNAME)).thenReturn(testMember);
+
+        // When
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(TEST_NICKNAME);
+
+        // Then
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+        assertThat(authorities).isNotNull();
+        assertThat(authorities).hasSize(1);
+        
+        GrantedAuthority authority = authorities.iterator().next();
+        assertThat(authority.getAuthority()).isEqualTo("ROLE_USER");
+        assertThat(authority).isInstanceOf(SimpleGrantedAuthority.class);
+    }
+
+    @Test
+    @DisplayName("CustomUser 객체 생성 검증")
+    void loadUserByUsername_CustomUser_객체_생성_검증() {
+        // Given
+        when(memberReadService.getByNickname(TEST_NICKNAME)).thenReturn(testMember);
+
+        // When
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(TEST_NICKNAME);
+
+        // Then
+        assertThat(userDetails).isInstanceOf(CustomUser.class);
+        
+        CustomUser customUser = (CustomUser) userDetails;
+        
+        // CustomUser 특화 필드 검증
+        assertThat(customUser.getMemberId()).isEqualTo(testMember.getId());
+        assertThat(customUser.getProvider()).isEqualTo(testMember.getProvider());
+        
+        // UserDetails 인터페이스 구현 검증
+        assertThat(customUser.getUsername()).isEqualTo(testMember.getNickname());
+        assertThat(customUser.getPassword()).isEqualTo(testMember.getPassword());
+    }
+
+    @Test
+    @DisplayName("다양한 OAuth 제공자 사용자 로딩")
+    void loadUserByUsername_다양한_OAuth_제공자() {
+        // Given - KAKAO 사용자
+        Member kakaoMember = Member.builder()
+                .id(3L)
+                .nickname("kakaouser")
+                .email("kakao@example.com")
+                .password("kakohash")
+                .memberName("Kakao User")
+                .bio("Kakao bio")
+                .profileImg("https://example.com/kakao-profile.jpg")
+                .provider(OauthProvider.KAKAO)
+                .providerId("kakao@example.com" + OauthProvider.KAKAO)
+                .build();
+
+        // Given - NAVER 사용자
+        Member naverMember = Member.builder()
+                .id(4L)
+                .nickname("naveruser")
+                .email("naver@example.com")
+                .password("naver.hash")
+                .memberName("Naver User")
+                .bio("Naver bio")
+                .profileImg("https://example.com/naver-profile.jpg")
+                .provider(OauthProvider.NAVER)
+                .providerId("naver@example.com" + OauthProvider.NAVER)
+                .build();
+
+        when(memberReadService.getByNickname("kakaouser")).thenReturn(kakaoMember);
+        when(memberReadService.getByNickname("naveruser")).thenReturn(naverMember);
+
+        // When
+        UserDetails kakaoUserDetails = customUserDetailsService.loadUserByUsername("kakaouser");
+        UserDetails naverUserDetails = customUserDetailsService.loadUserByUsername("naveruser");
+
+        // Then
+        CustomUser kakaoCustomUser = (CustomUser) kakaoUserDetails;
+        CustomUser naverCustomUser = (CustomUser) naverUserDetails;
+        
+        assertThat(kakaoCustomUser.getProvider()).isEqualTo(OauthProvider.KAKAO);
+        assertThat(naverCustomUser.getProvider()).isEqualTo(OauthProvider.NAVER);
+        
+        // 모든 OAuth 사용자는 동일한 권한을 가져야 함
+        assertThat(kakaoUserDetails.getAuthorities()).hasSize(1);
+        assertThat(naverUserDetails.getAuthorities()).hasSize(1);
+        
+        verify(memberReadService).getByNickname("kakaouser");
+        verify(memberReadService).getByNickname("naveruser");
+    }
+
+    @Test
+    @DisplayName("멤버 서비스 호출 실패 시 예외 전파")
+    void loadUserByUsername_멤버_서비스_예외_전파() {
+        // Given
+        when(memberReadService.getByNickname(TEST_NICKNAME))
+                .thenThrow(new RuntimeException("Database connection failed"));
+
+        // When & Then
+        assertThatThrownBy(() -> customUserDetailsService.loadUserByUsername(TEST_NICKNAME))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("Database connection failed");
+        
+        verify(memberReadService).getByNickname(TEST_NICKNAME);
+    }
+
+    @Test
+    @DisplayName("대소문자 구분 사용자명 처리")
+    void loadUserByUsername_대소문자_구분() {
+        // Given
+        String upperCaseUsername = TEST_NICKNAME.toUpperCase();
+        when(memberReadService.getByNickname(upperCaseUsername))
+                .thenThrow(new CMissingDataException("사용자를 찾을 수 없습니다."));
+
+        // When & Then
+        assertThatThrownBy(() -> customUserDetailsService.loadUserByUsername(upperCaseUsername))
+                .isInstanceOf(CMissingDataException.class);
+        
+        // 대소문자를 구분하여 정확한 사용자명이 전달되는지 확인
+        verify(memberReadService).getByNickname(upperCaseUsername);
+        verify(memberReadService, never()).getByNickname(TEST_NICKNAME);
+    }
+
+    @Test
+    @DisplayName("연속된 사용자 조회 요청 처리")
+    void loadUserByUsername_연속_요청_처리() {
+        // Given
+        when(memberReadService.getByNickname(TEST_NICKNAME)).thenReturn(testMember);
+
+        // When
+        UserDetails firstCall = customUserDetailsService.loadUserByUsername(TEST_NICKNAME);
+        UserDetails secondCall = customUserDetailsService.loadUserByUsername(TEST_NICKNAME);
+
+        // Then
+        assertThat(firstCall).isNotNull();
+        assertThat(secondCall).isNotNull();
+        
+        // 각 호출은 새로운 CustomUser 인스턴스를 생성해야 함
+        assertThat(firstCall).isNotSameAs(secondCall);
+        
+        // 하지만 내용은 동일해야 함
+        CustomUser firstCustomUser = (CustomUser) firstCall;
+        CustomUser secondCustomUser = (CustomUser) secondCall;
+        
+        assertThat(firstCustomUser.getMemberId()).isEqualTo(secondCustomUser.getMemberId());
+        assertThat(firstCustomUser.getUsername()).isEqualTo(secondCustomUser.getUsername());
+        assertThat(firstCustomUser.getProvider()).isEqualTo(secondCustomUser.getProvider());
+        
+        // 멤버 서비스는 두 번 호출되어야 함
+        verify(memberReadService, times(2)).getByNickname(TEST_NICKNAME);
+    }
+
+    @Test
+    @DisplayName("특수문자 포함 사용자명 처리")
+    void loadUserByUsername_특수문자_사용자명() {
+        // Given
+        String specialUsername = "user@#$%";
+        Member specialMember = Member.builder()
+                .id(5L)
+                .nickname(specialUsername)
+                .email("special@example.com")
+                .password(DEFAULT_ENCRYPTED_PASSWORD)
+                .memberName("Special User")
+                .bio("Special bio")
+                .profileImg("https://example.com/special-profile.jpg")
+                .provider(OauthProvider.LOCAL)
+                .providerId("special@example.com" + OauthProvider.LOCAL)
+                .build();
+        
+        when(memberReadService.getByNickname(specialUsername)).thenReturn(specialMember);
+
+        // When
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(specialUsername);
+
+        // Then
+        assertThat(userDetails).isNotNull();
+        assertThat(userDetails.getUsername()).isEqualTo(specialUsername);
+        
+        verify(memberReadService).getByNickname(specialUsername);
+    }
+}
