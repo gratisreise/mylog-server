@@ -55,7 +55,7 @@ class MemberWriteServiceTest {
 
     private Member member;
     private CustomUser customUser;
-    private final String BASIC_IMAGE_URL = "http://example.com/basic.jpg";
+    private final String BASIC_IMAGE_URL = "https://mylog-imgsource.s3.ap-northeast-2.amazonaws.com/5162d5b3-266b-4aae-bc16-d7f10fc4b2f1_basic.png";
 
     @BeforeEach
     void setUp() {
@@ -64,7 +64,7 @@ class MemberWriteServiceTest {
                 .email("test@example.com")
                 .nickname("testuser")
                 .password("encodedPassword")
-                .profileImg("http://example.com/default.jpg")
+                .profileImg("https://mylog-imgsource.s3.ap-northeast-2.amazonaws.com/5162d5b3-266b-4aae-bc16-d7f10fc4b2f1_default.jpg")
                 .build();
         customUser = new CustomUser(member, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
         ReflectionTestUtils.setField(memberWriteService, "basicImageUrl", BASIC_IMAGE_URL);

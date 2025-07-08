@@ -51,7 +51,7 @@ public class AuthService {
         long memberId = memberReadService.getByNickname(username).getId();
 
         if (!refreshTokenService.validateRefreshToken(username, request.refreshToken())) {
-            throw new CInvalidDataException("유요하지 않은 토큰입니다.");
+            throw new CInvalidDataException("유효하지 않은 토큰입니다.");
         }
 
         String accessToken = jwtUtil.createAccessToken(username, memberId);
