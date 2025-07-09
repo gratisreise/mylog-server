@@ -84,7 +84,7 @@ public class OAuth2UserServiceFactoryTest {
             // When & Then
             assertThatThrownBy(() -> oAuth2UserServiceFactory.getOAuth2UserService(OauthProvider.LOCAL))
                 .isInstanceOf(CInvalidDataException.class)
-                .hasMessage("지원 하지 않는 OAuth 제공자입니다." + OauthProvider.LOCAL);
+                .hasMessage("지원하지 않는 OAuth 제공자입니다." + OauthProvider.LOCAL);
         }
 
         @Test
@@ -93,7 +93,7 @@ public class OAuth2UserServiceFactoryTest {
             // When & Then
             assertThatThrownBy(() -> oAuth2UserServiceFactory.getOAuth2UserService(OauthProvider.SOCIAL))
                 .isInstanceOf(CInvalidDataException.class)
-                .hasMessage("지원 하지 않는 OAuth 제공자입니다." + OauthProvider.SOCIAL);
+                .hasMessage("지원하지 않는 OAuth 제공자입니다." + OauthProvider.SOCIAL);
         }
 
         @Test
@@ -153,13 +153,13 @@ public class OAuth2UserServiceFactoryTest {
             // LOCAL 제공자 테스트
             assertThatThrownBy(() -> oAuth2UserServiceFactory.getOAuth2UserService(OauthProvider.LOCAL))
                 .isInstanceOf(CInvalidDataException.class)
-                .hasMessage("지원 하지 않는 OAuth 제공자입니다." + OauthProvider.LOCAL)
+                .hasMessage("지원하지 않는 OAuth 제공자입니다." + OauthProvider.LOCAL)
                 .hasMessageContaining(OauthProvider.LOCAL.toString());
 
             // SOCIAL 제공자 테스트  
             assertThatThrownBy(() -> oAuth2UserServiceFactory.getOAuth2UserService(OauthProvider.SOCIAL))
                 .isInstanceOf(CInvalidDataException.class)
-                .hasMessage("지원 하지 않는 OAuth 제공자입니다." + OauthProvider.SOCIAL)
+                .hasMessage("지원하지 않는 OAuth 제공자입니다." + OauthProvider.SOCIAL)
                 .hasMessageContaining(OauthProvider.SOCIAL.toString());
         }
 

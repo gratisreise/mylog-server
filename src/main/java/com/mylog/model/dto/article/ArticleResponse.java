@@ -2,11 +2,6 @@ package com.mylog.model.dto.article;
 
 import com.mylog.model.entity.Article;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 public record ArticleResponse(
     Long id,

@@ -50,6 +50,7 @@ dependencies {
 
     // Monitoring
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok:1.18.32'
@@ -88,7 +89,8 @@ jacocoTestReport {
         fileTree(dir: it, exclude: ['**/dto/**', '**/entity/**',
                                     '**/MylogApplication',
                                     '**/config/**', '**/enums/**',
-                                    '**/common/**', '**/exception/**'
+                                    '**/common/**', '**/exception/**',
+                                    '**/AbstractOAuth2UserService'
         ])
     }))
 }

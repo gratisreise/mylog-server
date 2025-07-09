@@ -24,7 +24,7 @@ public class OAuth2UserServiceFactory {
             case KAKAO:
                 return kakaoOAuth2UserService;
             default:
-                throw new CInvalidDataException("지원 하지 않는 OAuth 제공자입니다." + provider);
+                throw new CInvalidDataException("지원하지 않는 OAuth 제공자입니다." + provider);
         }
     }
 }

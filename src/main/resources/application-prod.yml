@@ -10,7 +10,6 @@ spring:
       ddl-auto: validate #
     show-sql: true
 
-
 redis:
   host: redis      # Redis 서버 주소
   port: 6379          # Redis 포트
