@@ -39,3 +39,4 @@ out/
 ## env ###
 .env
 CLAUDE.md
+.claude
