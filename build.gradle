@@ -87,7 +87,9 @@ jacocoTestReport {
     getClassDirectories().setFrom(files(classDirectories.files.collect {
         fileTree(dir: it, exclude: ['**/dto/**', '**/entity/**',
                                     '**/MylogApplication',
-                                    '**/config/**', '**/enums/**', '**/common/**'])
+                                    '**/config/**', '**/enums/**',
+                                    '**/common/**', '**/exception/**'
+        ])
     }))
 }
 

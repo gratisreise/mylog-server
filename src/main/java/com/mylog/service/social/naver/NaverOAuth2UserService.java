@@ -86,7 +86,7 @@ public class NaverOAuth2UserService extends AbstractOAuth2UserService {
             userInfo.getId())
             .orElseGet(Member::new);
 
-        member.update(userInfo, OauthProvider.KAKAO);
+        member.update(userInfo, OauthProvider.NAVER);
 
         return memberRepository.save(member);
     }
