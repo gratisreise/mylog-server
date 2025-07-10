@@ -11,8 +11,6 @@ import com.mylog.exception.CMissingDataException;
 import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.ArticleTagRepository;
-import com.mylog.repository.CategoryRepository;
-import com.mylog.repository.MemberRepository;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,8 +31,8 @@ public class ArticleWriteService {
 
     public void createArticle(ArticleCreateRequest request, CustomUser customUser, MultipartFile file) throws IOException{
 
-        Category category = categoryReadService.getByCategoryName(request.category());
         Member member =  memberReadService.getByCustomUser(customUser);
+        Category category = categoryReadService.getByMemberAndCategoryName(member, request.category());
         String imageUrl = s3Service.upload(file).orElseThrow(CMissingDataException::new);
 
         Article article = new Article(request, category, member, imageUrl);
@@ -46,15 +44,16 @@ public class ArticleWriteService {
 
     public void updateArticle(ArticleUpdateRequest request, CustomUser customUser,
         MultipartFile file, Long articleId) throws IOException {
+        Member articleMember = memberReadService.getByNickname(request.author());
         long requestMemberId = customUser.getMemberId();
-        long articleMemberId = memberReadService.getByNickname(request.author()).getId();
+        long articleMemberId = articleMember.getId();
 
         if(requestMemberId != articleMemberId){
             throw new CUnAuthorizedException("허용 되지 않는 유저입니다.");
         }
 
         Article article = articleReadService.getArticleById(articleId);
-        Category category = categoryReadService.getByCategoryName(request.category());
+        Category category = categoryReadService.getByMemberAndCategoryName(articleMember, request.category());
 
         String articleImg;
         if(!isSame(article.getArticleImg(), file.getOriginalFilename())){

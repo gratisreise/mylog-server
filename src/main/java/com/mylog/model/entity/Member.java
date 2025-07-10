@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -100,6 +101,7 @@ public class Member {
         this.provider = oauthProvider;
         this.providerId = userInfo.getId();
         this.memberName = userInfo.getName();
+        this.password = userInfo.getId() + UUID.randomUUID();
         this.nickname = userInfo.getId() + oauthProvider;
         this.profileImg = userInfo.getImageUrl();
     }

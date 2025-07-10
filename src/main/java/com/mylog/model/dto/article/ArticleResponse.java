@@ -9,20 +9,22 @@ public record ArticleResponse(
     String content,
     String author,
     String category,
+    String articleImg,
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {
 
-
     public ArticleResponse(Article article, String author, String category) {
         this(article.getId(), article.getTitle(),
-            article.getContent(), author, category,
+            article.getContent(), author, category, article.getArticleImg(),
             article.getCreatedAt(), article.getUpdatedAt());
     }
-
     public ArticleResponse(Article article) {
-        this(article.getId(), article.getTitle(),
-            article.getContent(), article.getMember().getNickname(),
+        this(article.getId(),
+            article.getTitle(),
+            article.getContent(),
+            article.getMember().getNickname(),
             article.getCategory().getCategoryName(),
+            article.getArticleImg(),
             article.getCreatedAt(), article.getUpdatedAt());
     }
 }

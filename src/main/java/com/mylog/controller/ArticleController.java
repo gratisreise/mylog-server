@@ -84,9 +84,7 @@ public class ArticleController {
     //전체 게시글 목록 조회
     @GetMapping
     @Operation(summary = "전체 게시글 목록 조회")
-    public SingleResult<Page<ArticleResponse>> getArticles(
-        @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable
-    ){
+    public SingleResult<Page<ArticleResponse>> getArticles(@PageableDefault Pageable pageable){
         return ResponseService.getSingleResult(articleReadService.getArticles(pageable));
     }
 
@@ -106,7 +104,7 @@ public class ArticleController {
     public SingleResult<Page<ArticleResponse>> searchArticles(
         @RequestParam String keyword,
         @RequestParam String tag,
-        @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable
+        @PageableDefault Pageable pageable
     ){
         return ResponseService.getSingleResult(articleReadService.getArticles(keyword, tag, pageable));
     }
@@ -116,7 +114,7 @@ public class ArticleController {
     @Operation(summary = "내 게시글 검색")
     public SingleResult<Page<ArticleResponse>> searchArticles(
         @RequestParam String keyword,
-        @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable,
+        @PageableDefault Pageable pageable,
         @AuthenticationPrincipal CustomUser customUser
     ){
         return ResponseService.getSingleResult(articleReadService.getArticles(pageable, customUser, keyword));

@@ -169,9 +169,10 @@ class ArticleWriteServiceTest {
     void createArticle_성공() throws IOException {
         // Given
         String expectedImageUrl = "https://s3.amazonaws.com/bucket/uploaded-file.jpg";
-        
-        when(categoryReadService.getByCategoryName("Test Category")).thenReturn(testCategory);
+
         when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
+        when(categoryReadService.getByMemberAndCategoryName(testMember,"Test Category"))
+            .thenReturn(testCategory);
         when(s3Service.upload(mockFile)).thenReturn(Optional.of(expectedImageUrl));
         when(articleRepository.save(any(Article.class))).thenReturn(testArticle);
         doNothing().when(tagService).saveTag(anyList(), any(Article.class));
@@ -182,7 +183,7 @@ class ArticleWriteServiceTest {
         );
 
         // Then
-        verify(categoryReadService).getByCategoryName("Test Category");
+        verify(categoryReadService).getByMemberAndCategoryName(testMember,"Test Category");
         verify(memberReadService).getByCustomUser(customUser);
         verify(s3Service).upload(mockFile);
         verify(articleRepository).save(any(Article.class));
@@ -193,7 +194,8 @@ class ArticleWriteServiceTest {
     @DisplayName("아티클 생성 - 카테고리 없음 예외")
     void createArticle_categoryNotFound_예외발생() throws IOException {
         // Given
-        when(categoryReadService.getByCategoryName("Test Category"))
+        when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
+        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category"))
             .thenThrow(new CMissingDataException());
 
         // When & Then
@@ -201,8 +203,8 @@ class ArticleWriteServiceTest {
             articleWriteService.createArticle(createRequest, customUser, mockFile)
         );
 
-        verify(categoryReadService).getByCategoryName("Test Category");
-        verify(memberReadService, never()).getByCustomUser(any());
+        verify(memberReadService).getByCustomUser(customUser);
+        verify(categoryReadService).getByMemberAndCategoryName(testMember, "Test Category");
         verify(s3Service, never()).upload(any());
         verify(articleRepository, never()).save(any());
         verify(tagService, never()).saveTag(any(List.class), any(Article.class));
@@ -212,17 +214,15 @@ class ArticleWriteServiceTest {
     @DisplayName("아티클 생성 - 멤버 조회 실패 예외")
     void createArticle_memberNotFound_예외발생() throws IOException {
         // Given
-        when(categoryReadService.getByCategoryName("Test Category")).thenReturn(testCategory);
-        when(memberReadService.getByCustomUser(customUser))
-            .thenThrow(new CMissingDataException());
+        when(memberReadService.getByCustomUser(customUser)).thenThrow(new CMissingDataException());
 
         // When & Then
         assertThrows(CMissingDataException.class, () ->
             articleWriteService.createArticle(createRequest, customUser, mockFile)
         );
 
-        verify(categoryReadService).getByCategoryName("Test Category");
         verify(memberReadService).getByCustomUser(customUser);
+        verify(categoryReadService, never()).getByMemberAndCategoryName(testMember, "Test Category");
         verify(s3Service, never()).upload(any());
         verify(articleRepository, never()).save(any());
         verify(tagService, never()).saveTag(any(List.class), any(Article.class));
@@ -232,7 +232,7 @@ class ArticleWriteServiceTest {
     @DisplayName("아티클 생성 - S3 업로드 실패 예외")
     void createArticle_s3UploadFailed_예외발생() throws IOException {
         // Given
-        when(categoryReadService.getByCategoryName("Test Category")).thenReturn(testCategory);
+        when(categoryReadService.getByMemberAndCategoryName(testMember,"Test Category")).thenReturn(testCategory);
         when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
         when(s3Service.upload(mockFile)).thenReturn(Optional.empty());
 
@@ -241,7 +241,7 @@ class ArticleWriteServiceTest {
             articleWriteService.createArticle(createRequest, customUser, mockFile)
         );
 
-        verify(categoryReadService).getByCategoryName("Test Category");
+        verify(categoryReadService).getByMemberAndCategoryName(testMember, "Test Category");
         verify(memberReadService).getByCustomUser(customUser);
         verify(s3Service).upload(mockFile);
         verify(articleRepository, never()).save(any());
@@ -252,7 +252,7 @@ class ArticleWriteServiceTest {
     @DisplayName("아티클 생성 - S3 업로드 IOException 예외")
     void createArticle_s3IOException_예외발생() throws IOException {
         // Given
-        when(categoryReadService.getByCategoryName("Test Category")).thenReturn(testCategory);
+        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
         when(s3Service.upload(mockFile)).thenThrow(new IOException("S3 upload failed"));
 
@@ -261,7 +261,7 @@ class ArticleWriteServiceTest {
             articleWriteService.createArticle(createRequest, customUser, mockFile)
         );
 
-        verify(categoryReadService).getByCategoryName("Test Category");
+        verify(categoryReadService).getByMemberAndCategoryName(testMember, "Test Category");
         verify(memberReadService).getByCustomUser(customUser);
         verify(s3Service).upload(mockFile);
         verify(articleRepository, never()).save(any());
@@ -280,7 +280,7 @@ class ArticleWriteServiceTest {
         );
         String expectedImageUrl = "https://s3.amazonaws.com/bucket/uploaded-file.jpg";
         
-        when(categoryReadService.getByCategoryName("Test Category")).thenReturn(testCategory);
+        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
         when(s3Service.upload(mockFile)).thenReturn(Optional.of(expectedImageUrl));
         when(articleRepository.save(any(Article.class))).thenReturn(testArticle);
@@ -310,7 +310,7 @@ class ArticleWriteServiceTest {
 
         when(memberReadService.getByNickname("testuser")).thenReturn(testMember);
         when(articleReadService.getArticleById(articleId)).thenReturn(existingArticle);
-        when(categoryReadService.getByCategoryName("Test Category")).thenReturn(testCategory);
+        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         when(s3Service.upload(mockFile)).thenReturn(Optional.of(expectedImageUrl));
         doNothing().when(tagService).saveTag(anyList(), any(Article.class));
 
@@ -322,7 +322,7 @@ class ArticleWriteServiceTest {
         // Then
         verify(memberReadService).getByNickname("testuser");
         verify(articleReadService).getArticleById(articleId);
-        verify(categoryReadService).getByCategoryName("Test Category");
+        verify(categoryReadService).getByMemberAndCategoryName(testMember,"Test Category");
         verify(s3Service).upload(mockFile);
         verify(tagService).saveTag(eq(updateRequest.tags()), eq(existingArticle));
         // Verify the update method was called by checking that the service completed successfully
@@ -348,7 +348,7 @@ class ArticleWriteServiceTest {
 
         verify(memberReadService).getByNickname("testuser");
         verify(articleReadService, never()).getArticleById(anyLong());
-        verify(categoryReadService, never()).getByCategoryName(anyString());
+        verify(categoryReadService, never()).getByMemberAndCategoryName(any(Member.class), anyString());
         verify(s3Service, never()).upload(any());
         verify(tagService, never()).saveTag(any(List.class), any(Article.class));
     }
@@ -370,7 +370,7 @@ class ArticleWriteServiceTest {
 
         when(memberReadService.getByNickname("testuser")).thenReturn(testMember);
         when(articleReadService.getArticleById(articleId)).thenReturn(existingArticle);
-        when(categoryReadService.getByCategoryName("Test Category")).thenReturn(testCategory);
+        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         doNothing().when(tagService).saveTag(anyList(), any(Article.class));
 
         // When
@@ -401,7 +401,7 @@ class ArticleWriteServiceTest {
 
         verify(memberReadService).getByNickname("testuser");
         verify(articleReadService).getArticleById(articleId);
-        verify(categoryReadService, never()).getByCategoryName(anyString());
+        verify(categoryReadService, never()).getByMemberAndCategoryName(any(Member.class), anyString());
         verify(s3Service, never()).upload(any());
         verify(tagService, never()).saveTag(any(List.class), any(Article.class));
     }
@@ -414,7 +414,7 @@ class ArticleWriteServiceTest {
 
         when(memberReadService.getByNickname("testuser")).thenReturn(testMember);
         when(articleReadService.getArticleById(articleId)).thenReturn(testArticle);
-        when(categoryReadService.getByCategoryName("Test Category"))
+        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category"))
             .thenThrow(new CMissingDataException());
 
         // When & Then
@@ -424,7 +424,7 @@ class ArticleWriteServiceTest {
 
         verify(memberReadService).getByNickname("testuser");
         verify(articleReadService).getArticleById(articleId);
-        verify(categoryReadService).getByCategoryName("Test Category");
+        verify(categoryReadService).getByMemberAndCategoryName(testMember, "Test Category");
         verify(s3Service, never()).upload(any());
         verify(tagService, never()).saveTag(any(List.class), any(Article.class));
     }
@@ -443,7 +443,7 @@ class ArticleWriteServiceTest {
 
         when(memberReadService.getByNickname("testuser")).thenReturn(testMember);
         when(articleReadService.getArticleById(articleId)).thenReturn(existingArticle);
-        when(categoryReadService.getByCategoryName("Test Category")).thenReturn(testCategory);
+        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         when(s3Service.upload(mockFile)).thenReturn(Optional.empty());
 
         // When & Then
@@ -576,7 +576,7 @@ class ArticleWriteServiceTest {
 
         when(memberReadService.getByNickname("testuser")).thenReturn(testMember);
         when(articleReadService.getArticleById(articleId)).thenReturn(existingArticle);
-        when(categoryReadService.getByCategoryName("Test Category")).thenReturn(testCategory);
+        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         doNothing().when(tagService).saveTag(anyList(), any(Article.class));
 
         // When
@@ -606,7 +606,7 @@ class ArticleWriteServiceTest {
 
         when(memberReadService.getByNickname("testuser")).thenReturn(testMember);
         when(articleReadService.getArticleById(articleId)).thenReturn(existingArticle);
-        when(categoryReadService.getByCategoryName("Test Category")).thenReturn(testCategory);
+        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         when(s3Service.upload(mockFile)).thenReturn(Optional.of(newImageUrl));
         doNothing().when(tagService).saveTag(anyList(), any(Article.class));
 
@@ -633,7 +633,7 @@ class ArticleWriteServiceTest {
         );
         String expectedImageUrl = "https://s3.amazonaws.com/bucket/uploaded-file.jpg";
         
-        when(categoryReadService.getByCategoryName("Test Category")).thenReturn(testCategory);
+        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
         when(s3Service.upload(mockFile)).thenReturn(Optional.of(expectedImageUrl));
         when(articleRepository.save(any(Article.class))).thenReturn(testArticle);
@@ -654,7 +654,7 @@ class ArticleWriteServiceTest {
         // Given
         String expectedImageUrl = "https://s3.amazonaws.com/bucket/uploaded-file.jpg";
         
-        when(categoryReadService.getByCategoryName("Test Category")).thenReturn(testCategory);
+        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
         when(s3Service.upload(mockFile)).thenReturn(Optional.of(expectedImageUrl));
         when(articleRepository.save(any(Article.class))).thenReturn(testArticle);
@@ -665,7 +665,7 @@ class ArticleWriteServiceTest {
             articleWriteService.createArticle(createRequest, customUser, mockFile)
         );
 
-        verify(categoryReadService).getByCategoryName("Test Category");
+        verify(categoryReadService).getByMemberAndCategoryName(testMember, "Test Category");
         verify(memberReadService).getByCustomUser(customUser);
         verify(s3Service).upload(mockFile);
         verify(articleRepository).save(any(Article.class));

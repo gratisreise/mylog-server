@@ -17,6 +17,7 @@ import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.article.ArticleResponse;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Article;
+import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.MemberRepository;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -113,8 +115,8 @@ class ArticleReadServiceTest {
         pageable = Pageable.ofSize(20);
     }
 
-    private List<Article> createTestArticles(Member member, com.mylog.model.entity.Category category, int count) {
-        return java.util.stream.IntStream.range(0, count)
+    private List<Article> createTestArticles(Member member, Category category, int count) {
+        return IntStream.range(0, count)
                 .mapToObj(i -> Article.builder()
                         .id((long) (i + 1))
                         .title("Test Article " + i)
