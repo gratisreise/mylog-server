@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(CUnAuthorizedException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public CommonResult handleUnAuthorizedException(CUnAuthorizedException ex){
         return ResponseService.getFailResult(ResultCode.UNAUTHORIZED_ACCESS);
     }

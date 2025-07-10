@@ -19,9 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-@OAuth2ServiceType(OauthProvider.KAKAO)
-@Service
 @Slf4j
+@Service
+@OAuth2ServiceType(OauthProvider.KAKAO)
 public class KakaoOAuth2UserService extends AbstractOAuth2UserService {
 
     private final MemberRepository memberRepository;

@@ -1,5 +1,6 @@
 package com.mylog.config;
 
+import com.mylog.exception.CUnAuthorizedException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Jwts.SIG;
@@ -91,8 +92,8 @@ public class JwtUtil {
                 .build()
                 .parseSignedClaims(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
+        } catch (RuntimeException e) {
+            throw new CUnAuthorizedException("유효하지 않은 토큰입니다.");
         }
     }
 

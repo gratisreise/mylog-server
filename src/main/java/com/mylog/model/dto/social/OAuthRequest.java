@@ -2,6 +2,7 @@ package com.mylog.model.dto.social;
 
 import com.mylog.enums.OauthProvider;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -12,7 +13,7 @@ import lombok.ToString;
 public class OAuthRequest {
     @NotBlank
     private String code;
-    @NotBlank
+    @NotNull
     private OauthProvider provider;
     @NotBlank
     private String state;

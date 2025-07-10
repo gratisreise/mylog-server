@@ -71,11 +71,11 @@ public class SecurityConfig {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             //jwt 커스텀필터 넣기
+            .addFilterBefore(new ExceptionHandlerFilter(),
+                UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(
-                new JwtAuthenticationFilter(token,
-                    userDetailsService),
-                UsernamePasswordAuthenticationFilter.class
-            )
+                new JwtAuthenticationFilter(token, userDetailsService),
+                UsernamePasswordAuthenticationFilter.class)
 
             //빌드
             .build();
