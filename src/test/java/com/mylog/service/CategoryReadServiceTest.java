@@ -130,32 +130,32 @@ class CategoryReadServiceTest {
     }
 
     @Test
-    void getByCategoryName_성공() {
+    void getByMemberAndCategoryName_성공() {
         // Given
         String categoryName = "Test Category";
-        when(categoryRepository.findByCategoryName(categoryName)).thenReturn(Optional.of(testCategory));
+        when(categoryRepository.findByMemberAndCategoryName(testMember, categoryName)).thenReturn(Optional.of(testCategory));
 
         // When
-        Category result = categoryReadService.getByCategoryName(categoryName);
+        Category result = categoryReadService.getByMemberAndCategoryName(testMember, categoryName);
 
         // Then
         assertThat(result).isEqualTo(testCategory);
         assertThat(result.getCategoryName()).isEqualTo(categoryName);
 
-        verify(categoryRepository).findByCategoryName(categoryName);
+        verify(categoryRepository).findByMemberAndCategoryName(testMember, categoryName);
     }
 
     @Test
-    void getByCategoryName_카테고리를_찾을_수_없음() {
+    void getByMemberAndCategoryName_카테고리를_찾을_수_없음() {
         // Given
         String categoryName = "Non-existent Category";
-        when(categoryRepository.findByCategoryName(categoryName)).thenReturn(Optional.empty());
+        when(categoryRepository.findByMemberAndCategoryName(testMember, categoryName)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> categoryReadService.getByCategoryName(categoryName))
+        assertThatThrownBy(() -> categoryReadService.getByMemberAndCategoryName(testMember, categoryName))
                 .isInstanceOf(CMissingDataException.class);
 
-        verify(categoryRepository).findByCategoryName(categoryName);
+        verify(categoryRepository).findByMemberAndCategoryName(testMember, categoryName);
     }
 
     @Test

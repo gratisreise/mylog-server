@@ -33,8 +33,8 @@ public class CategoryReadService {
             .orElseThrow(CMissingDataException::new);
     }
 
-    public Category getByCategoryName(String categoryName) {
-        return categoryRepository.findByCategoryName(categoryName)
+    public Category getByMemberAndCategoryName(Member member, String categoryName) {
+        return categoryRepository.findByMemberAndCategoryName(member, categoryName)
             .orElseThrow(CMissingDataException::new);
     }
 

@@ -6,5 +6,5 @@ import org.hibernate.validator.constraints.Length;
 
 public record CommentCreateRequest (
     @Length(min=2, max=200) @NotBlank String content,
-    @NotBlank long parentCommentId
+    long parentCommentId
 ){ }
