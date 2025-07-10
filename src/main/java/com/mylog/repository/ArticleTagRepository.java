@@ -13,4 +13,5 @@ public interface ArticleTagRepository extends JpaRepository<ArticleTag, ArticleT
     List<ArticleTag> findByArticle(Article article);
 
     void deleteByArticle(Article article);
+
 }

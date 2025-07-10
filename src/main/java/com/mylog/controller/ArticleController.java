@@ -62,7 +62,7 @@ public class ArticleController {
     @Operation(summary = "게시글 수정")
     public CommonResult updateArticle(
         @RequestPart(value = "request") @Valid ArticleUpdateRequest request,
-        @RequestPart(value = "file") MultipartFile file,
+        @RequestPart(required = false, value = "file") MultipartFile file,
         @AuthenticationPrincipal CustomUser customUser,
         @PathVariable Long articleId
     ) throws IOException {
@@ -102,8 +102,8 @@ public class ArticleController {
     @GetMapping("/search")
     @Operation(summary = "전체 게시글 검색")
     public SingleResult<Page<ArticleResponse>> searchArticles(
-        @RequestParam String keyword,
-        @RequestParam String tag,
+        @RequestParam(required = false) String keyword,
+        @RequestParam(required = false) String tag,
         @PageableDefault Pageable pageable
     ){
         return ResponseService.getSingleResult(articleReadService.getArticles(keyword, tag, pageable));

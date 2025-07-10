@@ -4,8 +4,11 @@ import com.mylog.model.dto.article.ArticleResponse;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Article;
 import com.mylog.exception.CMissingDataException;
+import com.mylog.model.entity.ArticleTag;
 import com.mylog.repository.ArticleRepository;
+import com.mylog.repository.ArticleTagRepository;
 import com.mylog.repository.MemberRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ArticleReadService {
     private final ArticleRepository articleRepository;
+    private final ArticleTagReadService articleTagReadService;
     private final MemberRepository memberRepository;
 
     public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser) {
@@ -25,7 +29,7 @@ public class ArticleReadService {
             .getId();
 
         return articleRepository.findAllByMemberId(memberId, pageable)
-            .map(ArticleResponse::new);
+            .map(this::createArticleResponse);
     }
 
     public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser,
@@ -35,38 +39,41 @@ public class ArticleReadService {
             .getId();
         return articleRepository
             .findByMemberIdAndTitleContainingIgnoreCase(memberId, keyword, pageable)
-            .map(ArticleResponse::new);
+            .map(this::createArticleResponse);
     }
 
 
     public ArticleResponse getArticle(Long id){
-        Article article = articleRepository.findById(id)
-            .orElseThrow(CMissingDataException::new);
-        String category = article.getCategory().getCategoryName();
-        String author = article.getMember().getNickname();
-        return new ArticleResponse(article, author, category);
+        Article article = articleRepository.findById(id).orElseThrow(CMissingDataException::new);
+        return createArticleResponse(article);
     }
 
     public Page<ArticleResponse> getArticles(Pageable pageable){
         return articleRepository.findAll(pageable)
-            .map(ArticleResponse::new);
+            .map(this::createArticleResponse);
     }
 
     public Page<ArticleResponse> getArticles(String keyword, String tag, Pageable pageable){
         return !isClear(keyword) ?
             articleRepository.findByTitleContainingIgnoreCase(keyword, pageable)
-            .map(ArticleResponse::new) :
+            .map(this::createArticleResponse) :
             articleRepository.findAllByTagName(tag, pageable)
-                .map(ArticleResponse::new);
+                .map(this::createArticleResponse);
     }
 
-
-    private boolean isClear(String s){
-        return s == null || s.isEmpty();
-    }
 
     public Article getArticleById(Long articleId) {
         return articleRepository.findById(articleId)
             .orElseThrow(CMissingDataException::new);
     }
+
+    private boolean isClear(String s){
+        return s == null || s.isEmpty();
+    }
+
+    private ArticleResponse createArticleResponse(Article article){
+        List<String> tags = articleTagReadService.getTags(article);
+        return new ArticleResponse(article, tags);
+    }
+
 }

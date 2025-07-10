@@ -8,12 +8,16 @@ import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
 @IdClass(ArticleTagId.class)
 @AllArgsConstructor
+@Getter
+@Setter
 public class ArticleTag {
 
     @Id

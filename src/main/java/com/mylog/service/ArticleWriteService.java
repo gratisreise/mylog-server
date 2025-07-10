@@ -56,7 +56,7 @@ public class ArticleWriteService {
         Category category = categoryReadService.getByMemberAndCategoryName(articleMember, request.category());
 
         String articleImg;
-        if(!isSame(article.getArticleImg(), file.getOriginalFilename())){
+        if(!isSame(article.getArticleImg(), file)){
             articleImg = s3Service.upload(file).orElseThrow(CMissingDataException::new);
         } else {
             articleImg = article.getArticleImg();
@@ -67,7 +67,9 @@ public class ArticleWriteService {
         article.update(request, category, articleImg);
     }
 
-    private boolean isSame(String origin, String another) {
+    private boolean isSame(String origin, MultipartFile file) {
+        if(file == null) return true;
+        String another = file.getOriginalFilename();
         return origin.substring(93).equals(another);
     }
 
