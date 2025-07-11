@@ -9,7 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.mylog.exception.CInvalidDataException;
+import com.mylog.exception.CDuplicatedException;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.member.SignUpRequest;
@@ -96,7 +96,8 @@ class MemberWriteServiceTest {
 
         // When & Then
         assertThatThrownBy(() -> memberWriteService.saveMember(request))
-                .isInstanceOf(CMissingDataException.class);
+                .isInstanceOf(CDuplicatedException.class)
+                .hasMessage("이미 존재하는 이메일입니다.");
     }
 
     @Test
@@ -117,18 +118,20 @@ class MemberWriteServiceTest {
     @DisplayName("회원 정보 수정 성공")
     void updateMember_성공() throws IOException {
         // Given
-        UpdateMemberRequest request = new UpdateMemberRequest("newPassword123!", "newName", "newNickname", "newBio");
+        UpdateMemberRequest request = new UpdateMemberRequest("newPassword123!", "newName", "newNickname", "newBio", null);
         MockMultipartFile file = new MockMultipartFile("file", "new_image.jpg", "image/jpeg", "image data".getBytes());
         String originalProfileImg = member.getProfileImg();
 
         when(memberReadService.getById(1L)).thenReturn(member);
         when(memberRepository.existsByNickname(anyString())).thenReturn(false);
+        when(passwordEncoder.encode(anyString())).thenReturn("newEncodedPassword");
         when(s3Service.upload(any(MultipartFile.class))).thenReturn(Optional.of("http://example.com/new.jpg"));
 
         // When
         memberWriteService.updateMember(request, customUser, file);
 
         // Then
+        verify(passwordEncoder, times(1)).encode("newPassword123!");
         verify(s3Service, times(1)).upload(file);
         verify(s3Service, times(1)).deleteImage(originalProfileImg);
     }
@@ -137,16 +140,18 @@ class MemberWriteServiceTest {
     @DisplayName("회원 정보 수정 성공 - 이미지 변경 없음")
     void updateMember_성공_이미지_변경_없음() throws IOException {
         // Given
-        UpdateMemberRequest request = new UpdateMemberRequest("newPassword123!", "newName", "newNickname", "newBio");
+        UpdateMemberRequest request = new UpdateMemberRequest("newPassword123!", "newName", "newNickname", "newBio", null);
         // The original file name from the uploaded file is the same as the filename in the existing URL
         MockMultipartFile file = new MockMultipartFile("file", "default.jpg", "image/jpeg", "image data".getBytes());
         when(memberReadService.getById(1L)).thenReturn(member);
         when(memberRepository.existsByNickname(anyString())).thenReturn(false);
+        when(passwordEncoder.encode(anyString())).thenReturn("newEncodedPassword");
 
         // When
         memberWriteService.updateMember(request, customUser, file);
 
         // Then
+        verify(passwordEncoder, times(1)).encode("newPassword123!");
         verify(s3Service, never()).upload(any(MultipartFile.class));
         verify(s3Service, never()).deleteImage(anyString());
     }
@@ -156,16 +161,18 @@ class MemberWriteServiceTest {
     void updateMember_성공_기본이미지에서_변경() throws IOException {
         // Given
         member.setProfileImg(BASIC_IMAGE_URL);
-        UpdateMemberRequest request = new UpdateMemberRequest("newPassword123!", "newName", "newNickname", "newBio");
+        UpdateMemberRequest request = new UpdateMemberRequest("newPassword123!", "newName", "newNickname", "newBio", null);
         MockMultipartFile file = new MockMultipartFile("file", "new_image.jpg", "image/jpeg", "image data".getBytes());
         when(memberReadService.getById(1L)).thenReturn(member);
         when(memberRepository.existsByNickname(anyString())).thenReturn(false);
+        when(passwordEncoder.encode(anyString())).thenReturn("newEncodedPassword");
         when(s3Service.upload(any(MultipartFile.class))).thenReturn(Optional.of("http://example.com/new.jpg"));
 
         // When
         memberWriteService.updateMember(request, customUser, file);
 
         // Then
+        verify(passwordEncoder, times(1)).encode("newPassword123!");
         verify(s3Service, times(1)).upload(file);
         verify(s3Service, never()).deleteImage(anyString());
     }
@@ -174,23 +181,26 @@ class MemberWriteServiceTest {
     @DisplayName("회원 정보 수정 실패 - 닉네임 중복")
     void updateMember_실패_닉네임_중복() {
         // Given
-        UpdateMemberRequest request = new UpdateMemberRequest("newPassword123!", "newName", "newNickname", "newBio");
+        UpdateMemberRequest request = new UpdateMemberRequest("newPassword123!", "newName", "newNickname", "newBio", null);
         MockMultipartFile file = new MockMultipartFile("file", "new_image.jpg", "image/jpeg", "image data".getBytes());
+        when(memberReadService.getById(1L)).thenReturn(member);
         when(memberRepository.existsByNickname(anyString())).thenReturn(true);
 
         // When & Then
         assertThatThrownBy(() -> memberWriteService.updateMember(request, customUser, file))
-                .isInstanceOf(CInvalidDataException.class);
+                .isInstanceOf(CDuplicatedException.class)
+                .hasMessage("중복되는 닉네임 입니다.");
     }
 
     @Test
     @DisplayName("회원 정보 수정 실패 - S3 업로드 실패")
     void updateMember_실패_S3업로드_실패() throws IOException {
         // Given
-        UpdateMemberRequest request = new UpdateMemberRequest("newPassword123!", "newName", "newNickname", "newBio");
+        UpdateMemberRequest request = new UpdateMemberRequest("newPassword123!", "newName", "newNickname", "newBio", null);
         MockMultipartFile file = new MockMultipartFile("file", "new_image.jpg", "image/jpeg", "image data".getBytes());
         when(memberReadService.getById(1L)).thenReturn(member);
         when(memberRepository.existsByNickname(anyString())).thenReturn(false);
+        when(passwordEncoder.encode(anyString())).thenReturn("newEncodedPassword");
         when(s3Service.upload(any(MultipartFile.class))).thenReturn(Optional.empty());
 
         // When & Then

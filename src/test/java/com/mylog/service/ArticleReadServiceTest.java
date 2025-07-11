@@ -51,8 +51,12 @@ class ArticleReadServiceTest {
     @Mock
     private MemberRepository memberRepository;
 
+    @Mock
+    private ArticleTagReadService articleTagReadService;
+
     @InjectMocks
     private ArticleReadService articleReadService;
+
 
     private CustomUser customUser;
     private Pageable pageable;
