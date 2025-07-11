@@ -15,7 +15,7 @@ public class CustomUser extends User {
 
 
     public CustomUser(Member member, Collection<? extends GrantedAuthority> authorities) {
-        super(member.getNickname(), member.getPassword(), authorities);
+        super(String.valueOf(member.getId()), member.getPassword(), authorities);
         this.memberId = member.getId();
         this.provider = member.getProvider();
     }

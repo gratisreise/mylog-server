@@ -83,7 +83,7 @@ public class Member {
     }
 
     public void update(UpdateMemberRequest request) {
-        this.password = request.password();
+        this.password = request.password() == null ? this.password : request.password();
         this.memberName = request.memberName();
         this.nickname = request.nickname();
         this.bio = request.bio();

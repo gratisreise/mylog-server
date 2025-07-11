@@ -26,15 +26,19 @@ public class AuthService {
 
     //로그인
     public LoginResponse login(LoginRequest request) {
-
+        log.info(request.email());
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
+        log.info("authentication clear");
 
         Member member = memberReadService.getByEmail(request.email());
+        log.info("{}", member);
 
-        String username = member.getNickname();
         long memberId = member.getId();
+        String username = String.valueOf(memberId);
+
+        log.info("{}", memberId);
 
         String refreshToken = jwtUtil.createRefreshToken(username);
         String accessToken = jwtUtil.createAccessToken(username, memberId);

@@ -6,6 +6,7 @@ import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,16 +15,19 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final MemberReadService memberReadService;
 
+    //회원가입할 때는 이메일로 찾고 모든 토큰 요청마다 검증은 id로 하고
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberReadService.getByNickname(username);
+        Member member = username.contains("@") ?
+            memberReadService.getByEmail(username) :
+            memberReadService.getById(Long.parseLong(username));
         return createUserDetails(member);
     }
-
 
     private UserDetails createUserDetails(Member member) {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");

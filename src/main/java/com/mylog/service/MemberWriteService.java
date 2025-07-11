@@ -1,5 +1,6 @@
 package com.mylog.service;
 
+import com.mylog.exception.CDuplicatedException;
 import com.mylog.model.dto.member.SignUpRequest;
 import com.mylog.model.dto.member.UpdateMemberRequest;
 import com.mylog.model.dto.classes.CustomUser;
@@ -8,6 +9,7 @@ import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CInvalidDataException;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
+import jakarta.validation.constraints.Pattern;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +35,7 @@ public class MemberWriteService {
 
     public void saveMember(SignUpRequest request){
         if(memberRepository.existsByEmail(request.email())){
-            throw new CMissingDataException("이미 존재하는 이메일입니다.");
+            throw new CDuplicatedException("이미 존재하는 이메일입니다.");
         }
 
         String cryptedPassword = passwordEncoder.encode(request.password());
@@ -54,11 +56,22 @@ public class MemberWriteService {
 
     public void updateMember(UpdateMemberRequest request, CustomUser customUser, MultipartFile file)
         throws IOException{
-        if(memberRepository.existsByNickname(request.nickname())){
-            throw new CInvalidDataException("중복되는 닉네임 입니다.");
-        }
 
         Member member = memberReadService.getById(customUser.getMemberId());
+        // 내거 온거 문자열 비교
+
+        if(validateNickname(member.getNickname(), request.nickname())){
+            throw new CDuplicatedException("중복되는 닉네임 입니다.");
+        }
+
+        if(request.password() != null){
+            request = createUpdateRequest(request);
+        }
+
+        if(request.imageUrl() == null){
+            member.update(request);
+            return;
+        }
 
         String profileImg = file.getOriginalFilename();
         String memberImg = member.getProfileImg();
@@ -73,6 +86,16 @@ public class MemberWriteService {
         log.info("memberImg: {}, profileImg: {}", memberImg, profileImg);
     }
 
+    private UpdateMemberRequest createUpdateRequest(UpdateMemberRequest request) {
+        return new UpdateMemberRequest(
+            passwordEncoder.encode(request.password()),
+            request.memberName(),
+            request.nickname(),
+            request.bio(),
+            request.imageUrl()
+        );
+    }
+
     public void deleteMember(CustomUser customUser){
         Member member = memberReadService.getById(customUser.getMemberId());
 
@@ -85,5 +108,9 @@ public class MemberWriteService {
 
     private boolean isSame(String origin, String update) {
         return origin.substring(93).equals(update);
+    }
+
+    private boolean validateNickname(String origin, String request){
+        return !origin.equals(request) && memberRepository.existsByNickname(request);
     }
 }

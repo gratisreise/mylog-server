@@ -57,7 +57,7 @@ public class MemberController {
     @Operation(summary = "개인정보수정")
     public CommonResult updateMember(
         @RequestPart(value="request") @Valid UpdateMemberRequest request,
-        @RequestPart(value="file") MultipartFile file,
+        @RequestPart(required = false, value="file") MultipartFile file,
         @AuthenticationPrincipal CustomUser customUser
     ) throws IOException {
         log.info("{}", customUser);
