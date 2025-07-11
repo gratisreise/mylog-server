@@ -19,11 +19,14 @@ public class CategoryReadService {
 
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
+    ;
 
     public List<CategoryResponse> getCategories(CustomUser customUser){
         Member member = generateMember(customUser);
+
         return categoryRepository.findByMember(member)
             .stream()
+            .filter(category -> !category.getCategoryName().equals(CategoryWriteService.originCategory))
             .map(CategoryResponse::new)
             .toList();
     }

@@ -68,7 +68,7 @@ public class MemberWriteService {
             request = createUpdateRequest(request);
         }
 
-        if(request.imageUrl() == null){
+        if(file == null){
             member.update(request);
             return;
         }

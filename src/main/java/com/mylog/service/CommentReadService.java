@@ -20,19 +20,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentReadService {
 
     private final CommentRepository commentRepository;
-    private final MemberRepository memberRepository;
+    private final MemberReadService memberReadService;
     private final ArticleRepository articleRepository;
 
     public Page<CommentResponse> getMyComments(CustomUser customUser, Pageable pageable) {
-        Member member = memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new);
+        Member member = memberReadService.getById(customUser.getMemberId());
         return commentRepository.findAllByMember(member, pageable)
             .map(CommentResponse::new);
     }
 
     public Page<CommentResponse> getComments(CustomUser customUser, Pageable pageable) {
-        Member member = memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new);
+        Member member = memberReadService.getById(customUser.getMemberId());
         return commentRepository.findAllByArticle_Member(member, pageable)
             .map(CommentResponse::new);
     }
