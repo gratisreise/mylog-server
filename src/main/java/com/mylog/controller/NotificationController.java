@@ -30,8 +30,7 @@ public class NotificationController {
     @Operation(summary = "알림조회")
     public SingleResult<Page<NotificationResponse>> getNotifications(
         @AuthenticationPrincipal CustomUser customUser,
-        @PageableDefault(sort="createdAt", direction = Direction.DESC)
-        Pageable pageable
+        @PageableDefault Pageable pageable
     ){
         return ResponseService.getSingleResult(notificationService.receiveNotification(customUser, pageable));
     }
@@ -46,7 +45,7 @@ public class NotificationController {
 
 
     //알림 끄기/켜기
-    @PutMapping("/set/{type}")
+    @PutMapping("/settings/{type}")
     @Operation(summary = "알림 토글")
     public CommonResult toggleNotification(
         @AuthenticationPrincipal CustomUser customUser,
@@ -55,5 +54,6 @@ public class NotificationController {
         notificationService.toggleNotification(customUser, type);
         return ResponseService.getSuccessResult();
     }
+
 
 }

@@ -37,7 +37,6 @@ public class NotificationSetting {
     @Column(length = 20, nullable = false)
     private String type;
 
-
     private boolean disabled;
 
     @CreatedDate

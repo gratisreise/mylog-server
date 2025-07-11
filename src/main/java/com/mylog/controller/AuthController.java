@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
     private final OAuth2UserServiceFactory oAuth2UserServiceFactory;
-
+    
     @Operation(summary = "이메일 로그인")
     @PostMapping("/login")
     public SingleResult<LoginResponse> login(@RequestBody LoginRequest request){

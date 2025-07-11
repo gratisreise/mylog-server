@@ -93,18 +93,16 @@ public class CommentController {
     @Operation(summary = "내가 작성한 댓글 조회")
     public SingleResult<Page<CommentResponse>> getComments(
         @AuthenticationPrincipal CustomUser customUser,
-        @PageableDefault(size = 20, sort="createdAt", direction = Direction.DESC)
-        Pageable pageable
+        @PageableDefault Pageable pageable
     ) {
         return ResponseService.getSingleResult(commentReadService.getMyComments(customUser, pageable));
     }
 
     @GetMapping("/articles/me/comments")
-    @Operation(summary = "내게시글에 닥성된 댓글 조회")
+    @Operation(summary = "내게시글에 작성된 댓글 조회")
     public SingleResult<Page<CommentResponse>> getMyArticlesComments(
         @AuthenticationPrincipal CustomUser customUser,
-        @PageableDefault(size = 20, sort="createdAt", direction = Direction.DESC)
-        Pageable pageable
+        @PageableDefault Pageable pageable
     ){
         return ResponseService.getSingleResult(commentReadService.getComments(customUser, pageable));
     }

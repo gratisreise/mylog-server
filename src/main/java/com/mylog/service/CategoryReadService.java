@@ -19,7 +19,7 @@ public class CategoryReadService {
 
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
-    ;
+
 
     public List<CategoryResponse> getCategories(CustomUser customUser){
         Member member = generateMember(customUser);

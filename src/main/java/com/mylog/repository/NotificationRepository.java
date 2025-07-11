@@ -14,7 +14,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Query(
             """
             SELECT n FROM Notification n WHERE n.member = :member AND n.read = false
-            AND n.type NOT IN (SELECT ns.type FROM NotificationSetting ns WHERE ns.member = :member AND ns.disabled = false)
+            AND n.type IN (SELECT ns.type FROM NotificationSetting ns WHERE ns.member = :member AND ns.disabled = false)
             """)
     Page<Notification> findAllByMemberAndReadFalse(Member member, Pageable pageable);
 
