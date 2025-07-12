@@ -72,20 +72,21 @@ class CustomUserDetailsServiceTest {
     }
 
     @Test
-    @DisplayName("사용자명으로 UserDetails 로딩 성공 - 로컬 사용자")
-    void loadUserByUsername_로컬_사용자_성공() {
+    @DisplayName("이메일로 UserDetails 로딩 성공 - 로컬 사용자")
+    void loadUserByUsername_이메일_로컬_사용자_성공() {
         // Given
-        when(memberReadService.getByNickname(TEST_NICKNAME)).thenReturn(testMember);
+        String email = "test@example.com";
+        when(memberReadService.getByEmail(email)).thenReturn(testMember);
 
         // When
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(TEST_NICKNAME);
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
         // Then
         assertThat(userDetails).isNotNull();
         assertThat(userDetails).isInstanceOf(CustomUser.class);
         
         CustomUser customUser = (CustomUser) userDetails;
-        assertThat(customUser.getUsername()).isEqualTo(TEST_NICKNAME);
+        assertThat(customUser.getUsername()).isEqualTo("1");
         assertThat(customUser.getPassword()).isEqualTo(DEFAULT_ENCRYPTED_PASSWORD);
         assertThat(customUser.getMemberId()).isEqualTo(1L);
         assertThat(customUser.getProvider()).isEqualTo(OauthProvider.LOCAL);
@@ -95,91 +96,88 @@ class CustomUserDetailsServiceTest {
         assertThat(authorities).hasSize(1);
         assertThat(authorities.iterator().next().getAuthority()).isEqualTo("ROLE_USER");
         
-        verify(memberReadService).getByNickname(TEST_NICKNAME);
+        verify(memberReadService).getByEmail(email);
     }
 
     @Test
-    @DisplayName("사용자명으로 UserDetails 로딩 성공 - OAuth 사용자")
-    void loadUserByUsername_OAuth_사용자_성공() {
+    @DisplayName("ID로 UserDetails 로딩 성공 - 토큰 검증")
+    void loadUserByUsername_ID_토큰_검증_성공() {
         // Given
-        when(memberReadService.getByNickname(OAUTH_NICKNAME)).thenReturn(oauthMember);
+        String memberId = "2";
+        when(memberReadService.getById(2L)).thenReturn(oauthMember);
 
         // When
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(OAUTH_NICKNAME);
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(memberId);
 
         // Then
         assertThat(userDetails).isNotNull();
         assertThat(userDetails).isInstanceOf(CustomUser.class);
         
         CustomUser customUser = (CustomUser) userDetails;
-        assertThat(customUser.getUsername()).isEqualTo(OAUTH_NICKNAME);
+        assertThat(customUser.getUsername()).isEqualTo("2");
         assertThat(customUser.getMemberId()).isEqualTo(2L);
         assertThat(customUser.getProvider()).isEqualTo(OauthProvider.GOOGLE);
-        
-        // OAuth users might have null password - this should be handled properly
-        // The password field in CustomUser should still work with Spring Security
         
         // Verify authorities
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
         assertThat(authorities).hasSize(1);
         assertThat(authorities.iterator().next().getAuthority()).isEqualTo("ROLE_USER");
         
-        verify(memberReadService).getByNickname(OAUTH_NICKNAME);
+        verify(memberReadService).getById(2L);
     }
 
     @Test
-    @DisplayName("사용자명으로 UserDetails 로딩 실패 - 존재하지 않는 사용자")
-    void loadUserByUsername_존재하지_않는_사용자_실패() {
+    @DisplayName("존재하지 않는 이메일로 UserDetails 로딩 실패")
+    void loadUserByUsername_존재하지_않는_이메일_실패() {
         // Given
-        String nonExistentUsername = "nonexistent";
-        when(memberReadService.getByNickname(nonExistentUsername))
+        String nonExistentEmail = "nonexistent@example.com";
+        when(memberReadService.getByEmail(nonExistentEmail))
                 .thenThrow(new CMissingDataException("사용자를 찾을 수 없습니다."));
 
         // When & Then
-        assertThatThrownBy(() -> customUserDetailsService.loadUserByUsername(nonExistentUsername))
+        assertThatThrownBy(() -> customUserDetailsService.loadUserByUsername(nonExistentEmail))
                 .isInstanceOf(CMissingDataException.class)
                 .hasMessage("사용자를 찾을 수 없습니다.");
         
-        verify(memberReadService).getByNickname(nonExistentUsername);
+        verify(memberReadService).getByEmail(nonExistentEmail);
     }
 
     @Test
-    @DisplayName("빈 사용자명으로 UserDetails 로딩 시도")
-    void loadUserByUsername_빈_사용자명() {
+    @DisplayName("존재하지 않는 ID로 UserDetails 로딩 실패")
+    void loadUserByUsername_존재하지_않는_ID_실패() {
         // Given
-        String emptyUsername = "";
-        when(memberReadService.getByNickname(emptyUsername))
+        String nonExistentId = "999";
+        when(memberReadService.getById(999L))
                 .thenThrow(new CMissingDataException("사용자를 찾을 수 없습니다."));
 
         // When & Then
-        assertThatThrownBy(() -> customUserDetailsService.loadUserByUsername(emptyUsername))
-                .isInstanceOf(CMissingDataException.class);
+        assertThatThrownBy(() -> customUserDetailsService.loadUserByUsername(nonExistentId))
+                .isInstanceOf(CMissingDataException.class)
+                .hasMessage("사용자를 찾을 수 없습니다.");
         
-        verify(memberReadService).getByNickname(emptyUsername);
+        verify(memberReadService).getById(999L);
     }
 
     @Test
-    @DisplayName("null 사용자명으로 UserDetails 로딩 시도")
-    void loadUserByUsername_null_사용자명() {
+    @DisplayName("잘못된 ID 형식으로 UserDetails 로딩 실패")
+    void loadUserByUsername_잘못된_ID_형식_실패() {
         // Given
-        when(memberReadService.getByNickname(null))
-                .thenThrow(new CMissingDataException("사용자를 찾을 수 없습니다."));
+        String invalidIdFormat = "abc";
 
         // When & Then
-        assertThatThrownBy(() -> customUserDetailsService.loadUserByUsername(null))
-                .isInstanceOf(CMissingDataException.class);
-        
-        verify(memberReadService).getByNickname(null);
+        assertThatThrownBy(() -> customUserDetailsService.loadUserByUsername(invalidIdFormat))
+                .isInstanceOf(NumberFormatException.class);
     }
 
     @Test
     @DisplayName("UserDetails 계정 상태 검증")
     void loadUserByUsername_계정_상태_검증() {
         // Given
-        when(memberReadService.getByNickname(TEST_NICKNAME)).thenReturn(testMember);
+        String email = "test@example.com";
+        when(memberReadService.getByEmail(email)).thenReturn(testMember);
 
         // When
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(TEST_NICKNAME);
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
         // Then
         assertThat(userDetails.isEnabled()).isTrue();
@@ -192,10 +190,11 @@ class CustomUserDetailsServiceTest {
     @DisplayName("권한 설정 검증 - ROLE_USER 기본 권한")
     void loadUserByUsername_권한_설정_검증() {
         // Given
-        when(memberReadService.getByNickname(TEST_NICKNAME)).thenReturn(testMember);
+        String email = "test@example.com";
+        when(memberReadService.getByEmail(email)).thenReturn(testMember);
 
         // When
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(TEST_NICKNAME);
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
         // Then
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
@@ -211,10 +210,11 @@ class CustomUserDetailsServiceTest {
     @DisplayName("CustomUser 객체 생성 검증")
     void loadUserByUsername_CustomUser_객체_생성_검증() {
         // Given
-        when(memberReadService.getByNickname(TEST_NICKNAME)).thenReturn(testMember);
+        String email = "test@example.com";
+        when(memberReadService.getByEmail(email)).thenReturn(testMember);
 
         // When
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(TEST_NICKNAME);
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
         // Then
         assertThat(userDetails).isInstanceOf(CustomUser.class);
@@ -226,7 +226,7 @@ class CustomUserDetailsServiceTest {
         assertThat(customUser.getProvider()).isEqualTo(testMember.getProvider());
         
         // UserDetails 인터페이스 구현 검증
-        assertThat(customUser.getUsername()).isEqualTo(testMember.getNickname());
+        assertThat(customUser.getUsername()).isEqualTo(testMember.getId().toString());
         assertThat(customUser.getPassword()).isEqualTo(testMember.getPassword());
     }
 
@@ -246,7 +246,7 @@ class CustomUserDetailsServiceTest {
                 .providerId("kakao@example.com" + OauthProvider.KAKAO)
                 .build();
 
-        // Given - NAVER 사용자
+        // Given - NAVER 사용자 ID로 조회
         Member naverMember = Member.builder()
                 .id(4L)
                 .nickname("naveruser")
@@ -259,12 +259,12 @@ class CustomUserDetailsServiceTest {
                 .providerId("naver@example.com" + OauthProvider.NAVER)
                 .build();
 
-        when(memberReadService.getByNickname("kakaouser")).thenReturn(kakaoMember);
-        when(memberReadService.getByNickname("naveruser")).thenReturn(naverMember);
+        when(memberReadService.getByEmail("kakao@example.com")).thenReturn(kakaoMember);
+        when(memberReadService.getById(4L)).thenReturn(naverMember);
 
         // When
-        UserDetails kakaoUserDetails = customUserDetailsService.loadUserByUsername("kakaouser");
-        UserDetails naverUserDetails = customUserDetailsService.loadUserByUsername("naveruser");
+        UserDetails kakaoUserDetails = customUserDetailsService.loadUserByUsername("kakao@example.com");
+        UserDetails naverUserDetails = customUserDetailsService.loadUserByUsername("4");
 
         // Then
         CustomUser kakaoCustomUser = (CustomUser) kakaoUserDetails;
@@ -277,51 +277,36 @@ class CustomUserDetailsServiceTest {
         assertThat(kakaoUserDetails.getAuthorities()).hasSize(1);
         assertThat(naverUserDetails.getAuthorities()).hasSize(1);
         
-        verify(memberReadService).getByNickname("kakaouser");
-        verify(memberReadService).getByNickname("naveruser");
+        verify(memberReadService).getByEmail("kakao@example.com");
+        verify(memberReadService).getById(4L);
     }
 
     @Test
     @DisplayName("멤버 서비스 호출 실패 시 예외 전파")
     void loadUserByUsername_멤버_서비스_예외_전파() {
         // Given
-        when(memberReadService.getByNickname(TEST_NICKNAME))
+        String email = "test@example.com";
+        when(memberReadService.getByEmail(email))
                 .thenThrow(new RuntimeException("Database connection failed"));
 
         // When & Then
-        assertThatThrownBy(() -> customUserDetailsService.loadUserByUsername(TEST_NICKNAME))
+        assertThatThrownBy(() -> customUserDetailsService.loadUserByUsername(email))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("Database connection failed");
         
-        verify(memberReadService).getByNickname(TEST_NICKNAME);
+        verify(memberReadService).getByEmail(email);
     }
 
     @Test
-    @DisplayName("대소문자 구분 사용자명 처리")
-    void loadUserByUsername_대소문자_구분() {
+    @DisplayName("연속된 사용자 조회 요청 처리 - 이메일")
+    void loadUserByUsername_연속_요청_처리_이메일() {
         // Given
-        String upperCaseUsername = TEST_NICKNAME.toUpperCase();
-        when(memberReadService.getByNickname(upperCaseUsername))
-                .thenThrow(new CMissingDataException("사용자를 찾을 수 없습니다."));
-
-        // When & Then
-        assertThatThrownBy(() -> customUserDetailsService.loadUserByUsername(upperCaseUsername))
-                .isInstanceOf(CMissingDataException.class);
-        
-        // 대소문자를 구분하여 정확한 사용자명이 전달되는지 확인
-        verify(memberReadService).getByNickname(upperCaseUsername);
-        verify(memberReadService, never()).getByNickname(TEST_NICKNAME);
-    }
-
-    @Test
-    @DisplayName("연속된 사용자 조회 요청 처리")
-    void loadUserByUsername_연속_요청_처리() {
-        // Given
-        when(memberReadService.getByNickname(TEST_NICKNAME)).thenReturn(testMember);
+        String email = "test@example.com";
+        when(memberReadService.getByEmail(email)).thenReturn(testMember);
 
         // When
-        UserDetails firstCall = customUserDetailsService.loadUserByUsername(TEST_NICKNAME);
-        UserDetails secondCall = customUserDetailsService.loadUserByUsername(TEST_NICKNAME);
+        UserDetails firstCall = customUserDetailsService.loadUserByUsername(email);
+        UserDetails secondCall = customUserDetailsService.loadUserByUsername(email);
 
         // Then
         assertThat(firstCall).isNotNull();
@@ -339,35 +324,36 @@ class CustomUserDetailsServiceTest {
         assertThat(firstCustomUser.getProvider()).isEqualTo(secondCustomUser.getProvider());
         
         // 멤버 서비스는 두 번 호출되어야 함
-        verify(memberReadService, times(2)).getByNickname(TEST_NICKNAME);
+        verify(memberReadService, times(2)).getByEmail(email);
     }
 
     @Test
-    @DisplayName("특수문자 포함 사용자명 처리")
-    void loadUserByUsername_특수문자_사용자명() {
+    @DisplayName("연속된 사용자 조회 요청 처리 - ID")
+    void loadUserByUsername_연속_요청_처리_ID() {
         // Given
-        String specialUsername = "user@#$%";
-        Member specialMember = Member.builder()
-                .id(5L)
-                .nickname(specialUsername)
-                .email("special@example.com")
-                .password(DEFAULT_ENCRYPTED_PASSWORD)
-                .memberName("Special User")
-                .bio("Special bio")
-                .profileImg("https://example.com/special-profile.jpg")
-                .provider(OauthProvider.LOCAL)
-                .providerId("special@example.com" + OauthProvider.LOCAL)
-                .build();
-        
-        when(memberReadService.getByNickname(specialUsername)).thenReturn(specialMember);
+        String memberId = "1";
+        when(memberReadService.getById(1L)).thenReturn(testMember);
 
         // When
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(specialUsername);
+        UserDetails firstCall = customUserDetailsService.loadUserByUsername(memberId);
+        UserDetails secondCall = customUserDetailsService.loadUserByUsername(memberId);
 
         // Then
-        assertThat(userDetails).isNotNull();
-        assertThat(userDetails.getUsername()).isEqualTo(specialUsername);
+        assertThat(firstCall).isNotNull();
+        assertThat(secondCall).isNotNull();
         
-        verify(memberReadService).getByNickname(specialUsername);
+        // 각 호출은 새로운 CustomUser 인스턴스를 생성해야 함
+        assertThat(firstCall).isNotSameAs(secondCall);
+        
+        // 하지만 내용은 동일해야 함
+        CustomUser firstCustomUser = (CustomUser) firstCall;
+        CustomUser secondCustomUser = (CustomUser) secondCall;
+        
+        assertThat(firstCustomUser.getMemberId()).isEqualTo(secondCustomUser.getMemberId());
+        assertThat(firstCustomUser.getUsername()).isEqualTo(secondCustomUser.getUsername());
+        assertThat(firstCustomUser.getProvider()).isEqualTo(secondCustomUser.getProvider());
+        
+        // 멤버 서비스는 두 번 호출되어야 함
+        verify(memberReadService, times(2)).getById(1L);
     }
 }

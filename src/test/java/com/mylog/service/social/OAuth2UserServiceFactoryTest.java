@@ -20,7 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * OAuth2UserServiceFactory 단위 테스트
- * 
  * OAuth2 제공자별 서비스 팩토리 클래스의 서비스 선택 로직과 예외 처리를 테스트합니다.
  * 지원되는 제공자(Google, Naver, Kakao)에 대한 정확한 서비스 반환과
  * 지원되지 않는 제공자에 대한 예외 발생을 검증합니다.

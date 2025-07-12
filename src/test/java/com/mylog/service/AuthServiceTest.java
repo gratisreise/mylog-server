@@ -86,12 +86,13 @@ class AuthServiceTest {
     @DisplayName("로그인 성공 - 유효한 자격증명으로 JWT 토큰 생성")
     void login_성공() {
         // Given
+        String username = String.valueOf(testMember.getId()); // "1"
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
         when(memberReadService.getByEmail(DEFAULT_EMAIL)).thenReturn(testMember);
-        when(jwtUtil.createAccessToken(DEFAULT_NICKNAME, 1L)).thenReturn(TEST_ACCESS_TOKEN);
-        when(jwtUtil.createRefreshToken(DEFAULT_NICKNAME)).thenReturn(TEST_REFRESH_TOKEN);
-        doNothing().when(refreshTokenService).saveRefreshToken(DEFAULT_NICKNAME, TEST_REFRESH_TOKEN);
+        when(jwtUtil.createAccessToken(username, 1L)).thenReturn(TEST_ACCESS_TOKEN);
+        when(jwtUtil.createRefreshToken(username)).thenReturn(TEST_REFRESH_TOKEN);
+        doNothing().when(refreshTokenService).saveRefreshToken(username, TEST_REFRESH_TOKEN);
 
         // When
         LoginResponse response = authService.login(loginRequest);
@@ -104,9 +105,9 @@ class AuthServiceTest {
         // Verify interactions
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
         verify(memberReadService).getByEmail(DEFAULT_EMAIL);
-        verify(jwtUtil).createAccessToken(DEFAULT_NICKNAME, 1L);
-        verify(jwtUtil).createRefreshToken(DEFAULT_NICKNAME);
-        verify(refreshTokenService).saveRefreshToken(DEFAULT_NICKNAME, TEST_REFRESH_TOKEN);
+        verify(jwtUtil).createAccessToken(username, 1L);
+        verify(jwtUtil).createRefreshToken(username);
+        verify(refreshTokenService).saveRefreshToken(username, TEST_REFRESH_TOKEN);
     }
 
     @Test
@@ -141,11 +142,12 @@ class AuthServiceTest {
     @DisplayName("토큰 리프레시 성공 - 유효한 리프레시 토큰으로 새 액세스 토큰 발급")
     void refresh_성공() {
         // Given
-        when(jwtUtil.getRefreshUsername(TEST_REFRESH_TOKEN)).thenReturn(DEFAULT_NICKNAME);
-        when(memberReadService.getByNickname(DEFAULT_NICKNAME)).thenReturn(testMember);
-        when(refreshTokenService.validateRefreshToken(DEFAULT_NICKNAME, TEST_REFRESH_TOKEN))
+        String username = "1"; // String.valueOf(memberId)
+        when(jwtUtil.getRefreshUsername(TEST_REFRESH_TOKEN)).thenReturn(username);
+        when(memberReadService.getByNickname(username)).thenReturn(testMember);
+        when(refreshTokenService.validateRefreshToken(username, TEST_REFRESH_TOKEN))
                 .thenReturn(true);
-        when(jwtUtil.createAccessToken(DEFAULT_NICKNAME, 1L)).thenReturn(NEW_ACCESS_TOKEN);
+        when(jwtUtil.createAccessToken(username, 1L)).thenReturn(NEW_ACCESS_TOKEN);
 
         // When
         RefreshResponse response = authService.refresh(refreshRequest);
@@ -159,9 +161,10 @@ class AuthServiceTest {
     @DisplayName("토큰 리프레시 실패 - 유효하지 않은 리프레시 토큰")
     void refresh_유효하지_않은_토큰_실패() {
         // Given
-        when(jwtUtil.getRefreshUsername(TEST_REFRESH_TOKEN)).thenReturn(DEFAULT_NICKNAME);
-        when(memberReadService.getByNickname(DEFAULT_NICKNAME)).thenReturn(testMember);
-        when(refreshTokenService.validateRefreshToken(DEFAULT_NICKNAME, TEST_REFRESH_TOKEN))
+        String username = "1";
+        when(jwtUtil.getRefreshUsername(TEST_REFRESH_TOKEN)).thenReturn(username);
+        when(memberReadService.getByNickname(username)).thenReturn(testMember);
+        when(refreshTokenService.validateRefreshToken(username, TEST_REFRESH_TOKEN))
                 .thenReturn(false);
 
         // When & Then
@@ -174,8 +177,9 @@ class AuthServiceTest {
     @DisplayName("토큰 리프레시 실패 - 존재하지 않는 사용자")
     void refresh_존재하지_않는_사용자_실패() {
         // Given
-        when(jwtUtil.getRefreshUsername(TEST_REFRESH_TOKEN)).thenReturn(DEFAULT_NICKNAME);
-        when(memberReadService.getByNickname(DEFAULT_NICKNAME))
+        String username = "1";
+        when(jwtUtil.getRefreshUsername(TEST_REFRESH_TOKEN)).thenReturn(username);
+        when(memberReadService.getByNickname(username))
                 .thenThrow(new CMissingDataException("사용자를 찾을 수 없습니다."));
 
         // When & Then
@@ -203,13 +207,14 @@ class AuthServiceTest {
     @DisplayName("리프레시 토큰 저장 실패 처리")
     void login_리프레시_토큰_저장_실패() {
         // Given
+        String username = String.valueOf(testMember.getId()); // "1"
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
         when(memberReadService.getByEmail(DEFAULT_EMAIL)).thenReturn(testMember);
-        when(jwtUtil.createAccessToken(DEFAULT_NICKNAME, 1L)).thenReturn(TEST_ACCESS_TOKEN);
-        when(jwtUtil.createRefreshToken(DEFAULT_NICKNAME)).thenReturn(TEST_REFRESH_TOKEN);
+        when(jwtUtil.createAccessToken(username, 1L)).thenReturn(TEST_ACCESS_TOKEN);
+        when(jwtUtil.createRefreshToken(username)).thenReturn(TEST_REFRESH_TOKEN);
         doThrow(new RuntimeException("Redis connection failed"))
-                .when(refreshTokenService).saveRefreshToken(DEFAULT_NICKNAME, TEST_REFRESH_TOKEN);
+                .when(refreshTokenService).saveRefreshToken(username, TEST_REFRESH_TOKEN);
 
         // When & Then
         assertThatThrownBy(() -> authService.login(loginRequest))

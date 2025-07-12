@@ -43,7 +43,7 @@ class CommentReadServiceTest {
     private CommentRepository commentRepository;
 
     @Mock
-    private MemberRepository memberRepository;
+    private MemberReadService memberReadService;
 
     @Mock
     private ArticleRepository articleRepository;
@@ -142,7 +142,7 @@ class CommentReadServiceTest {
         // Given
         Page<Comment> commentPage = new PageImpl<>(List.of(testComment), pageable, 1);
         
-        when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
+        when(memberReadService.getById(1L)).thenReturn(testMember);
         when(commentRepository.findAllByMember(testMember, pageable)).thenReturn(commentPage);
 
         // When
@@ -153,20 +153,20 @@ class CommentReadServiceTest {
         assertThat(result.getContent().get(0).content()).isEqualTo("Test comment");
         assertThat(result.getTotalElements()).isEqualTo(1);
         
-        verify(memberRepository).findById(1L);
+        verify(memberReadService).getById(1L);
         verify(commentRepository).findAllByMember(testMember, pageable);
     }
 
     @Test
     void getMyComments_사용자_없음() {
         // Given
-        when(memberRepository.findById(1L)).thenReturn(Optional.empty());
+        when(memberReadService.getById(1L)).thenThrow(new CMissingDataException());
 
         // When & Then
         assertThatThrownBy(() -> commentReadService.getMyComments(customUser, pageable))
                 .isInstanceOf(CMissingDataException.class);
 
-        verify(memberRepository).findById(1L);
+        verify(memberReadService).getById(1L);
         verify(commentRepository, never()).findAllByMember(any(), any());
     }
 
@@ -175,7 +175,7 @@ class CommentReadServiceTest {
         // Given
         Page<Comment> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
         
-        when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
+        when(memberReadService.getById(1L)).thenReturn(testMember);
         when(commentRepository.findAllByMember(testMember, pageable)).thenReturn(emptyPage);
 
         // When
@@ -185,7 +185,7 @@ class CommentReadServiceTest {
         assertThat(result.getContent()).isEmpty();
         assertThat(result.getTotalElements()).isEqualTo(0);
         
-        verify(memberRepository).findById(1L);
+        verify(memberReadService).getById(1L);
         verify(commentRepository).findAllByMember(testMember, pageable);
     }
 
@@ -194,7 +194,7 @@ class CommentReadServiceTest {
         // Given
         Page<Comment> commentPage = new PageImpl<>(comments, pageable, 2);
         
-        when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
+        when(memberReadService.getById(1L)).thenReturn(testMember);
         when(commentRepository.findAllByArticle_Member(testMember, pageable)).thenReturn(commentPage);
 
         // When
@@ -204,7 +204,7 @@ class CommentReadServiceTest {
         assertThat(result.getContent()).hasSize(2);
         assertThat(result.getTotalElements()).isEqualTo(2);
         
-        verify(memberRepository).findById(1L);
+        verify(memberReadService).getById(1L);
         verify(commentRepository).findAllByArticle_Member(testMember, pageable);
     }
 
@@ -377,7 +377,7 @@ class CommentReadServiceTest {
         );
         Page<Comment> commentPage = new PageImpl<>(pageComments, customPageable, 12); // 총 12개
         
-        when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
+        when(memberReadService.getById(1L)).thenReturn(testMember);
         when(commentRepository.findAllByMember(testMember, customPageable)).thenReturn(commentPage);
 
         // When
@@ -418,7 +418,7 @@ class CommentReadServiceTest {
         
         Page<Comment> anotherCommentPage = new PageImpl<>(List.of(anotherComment), pageable, 1);
         
-        when(memberRepository.findById(3L)).thenReturn(Optional.of(anotherMember));
+        when(memberReadService.getById(3L)).thenReturn(anotherMember);
         when(commentRepository.findAllByMember(anotherMember, pageable)).thenReturn(anotherCommentPage);
 
         // When
@@ -428,7 +428,7 @@ class CommentReadServiceTest {
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().get(0).content()).isEqualTo("다른 사용자 댓글");
         
-        verify(memberRepository).findById(3L);
+        verify(memberReadService).getById(3L);
         verify(commentRepository).findAllByMember(anotherMember, pageable);
     }
 }
