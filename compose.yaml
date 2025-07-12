@@ -1,6 +1,6 @@
 services:
-  mylog-app:
-    container_name: mylog-app
+  mylog-blue:
+    container_name: mylog-blue
     image: ${DOCKER_USERNAME}/mylog:latest
     ports:
       - "8080:8080"
@@ -23,9 +23,10 @@ services:
       - REDIRECT_URI=${REDIRECT_URI}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      interval: 30s      # 운영 중이므로 간격을 넓게
+      timeout: 10s       # 충분한 타임아웃
+      retries: 3         # 적당한 재시도
+      start_period: 60s  # 초기 기동 시간 고려
     networks:
       - mylog-network
     logging:
@@ -38,44 +39,45 @@ services:
         condition: service_healthy
     restart: always
 
-#  mylog-app-blue:
-#    image: ${DOCKER_USERNAME}/mylog:latest
-#    container_name: mylog-app-blue
-#    ports:
-#      - "8081:8080"
-#    environment:
-#      - SPRING_PROFILES_ACTIVE=prod
-#      - DB_URL=${DB_URL}
-#      - DB_USER_NAME=${DB_USER_NAME}
-#      - DB_USER_PASSWORD=${DB_USER_PASSWORD}
-#      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
-#      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
-#      - ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET}
-#      - REFRESH_TOKEN_SECRET=${REFRESH_TOKEN_SECRET}
-#      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-#      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-#      - NAVER_CLIENT_ID=${NAVER_CLIENT_ID}
-#      - NAVER_CLIENT_SECRET=${NAVER_CLIENT_SECRET}
-#      - KAKAO_CLIENT_ID=${KAKAO_CLIENT_ID}
-#      - KAKAO_CLIENT_SECRET=${KAKAO_CLIENT_SECRET}
-#      - SENTRY_DSN=${SENTRY_DSN}
-#      - REDIRECT_URI=${REDIRECT_URI}
-#    healthcheck:
-#      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 3
-#    networks:
-#      - mylog-network
-#    logging:
-#      driver: json-file
-#      options:
-#        max-size: "100m"
-#        max-file: "3"
-#    depends_on:
-#      redis:
-#        condition: service_healthy
-#    restart: unless-stopped
+  mylog-green:
+    image: ${DOCKER_USERNAME}/mylog:latest
+    container_name: mylog-green
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - DB_URL=${DB_URL}
+      - DB_USER_NAME=${DB_USER_NAME}
+      - DB_USER_PASSWORD=${DB_USER_PASSWORD}
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+      - ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET}
+      - REFRESH_TOKEN_SECRET=${REFRESH_TOKEN_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - NAVER_CLIENT_ID=${NAVER_CLIENT_ID}
+      - NAVER_CLIENT_SECRET=${NAVER_CLIENT_SECRET}
+      - KAKAO_CLIENT_ID=${KAKAO_CLIENT_ID}
+      - KAKAO_CLIENT_SECRET=${KAKAO_CLIENT_SECRET}
+      - SENTRY_DSN=${SENTRY_DSN}
+      - REDIRECT_URI=${REDIRECT_URI}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 30s      # 운영 중이므로 간격을 넓게
+      timeout: 10s       # 충분한 타임아웃
+      retries: 3         # 적당한 재시도
+      start_period: 60s  # 초기 기동 시간 고려
+    networks:
+      - mylog-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "3"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
 
   redis: # redis
     image: redis:8.0.2-alpine
@@ -91,6 +93,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 20s
 
 networks:
   mylog-network:

@@ -1,193 +1,268 @@
-name: CI/CD for MyLog with Docker Compose
+name: CI/CD for MyLog with GCP Blue-Green Deployment
 
-#on:
-#  push:
-#    branches: [ main ]
-#  pull_request:
-#    branches: [ main ]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: mylog
-  NGINX_CONFIG_PATH: /etc/nginx/conf.d/mylog.fyi.conf
+  IMAGE_NAME: mylog-server
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: asia-northeast3
+  ZONE: asia-northeast3-a
+  # 타임아웃 설정
+  HEALTH_CHECK_TIMEOUT: 300
+  DEPLOYMENT_TIMEOUT: 900
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'gradle'
+          
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-      - name: Run tests
-        run: ./gradlew test --parallel
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+          
+      - name: Run tests with coverage
+        run: ./gradlew test jacocoTestReport --parallel --continue
+        
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
-          path: build/reports/tests/
+          name: test-results-${{ github.run_id }}
+          path: |
+            build/reports/tests/
+            build/reports/jacoco/
+          retention-days: 7
 
   build-and-push:
     runs-on: ubuntu-latest
     needs: test
+    timeout-minutes: 45
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'gradle'
+          
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+          
       - name: Build application JAR
-        run: ./gradlew clean bootJar -x test
+        run: ./gradlew clean bootJar -x test --build-cache
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=moby/buildkit:v0.12.0
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build and push Docker image
+
+      - name: Build and push Docker image with cache
         run: |
-          docker compose build
+          # Docker 빌드 캐시 활용
+          export DOCKER_BUILDKIT=1
+          docker compose build --parallel
           docker compose push
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          COMPOSE_DOCKER_CLI_BUILD: 1
 
   deploy:
     runs-on: ubuntu-latest
     needs: build-and-push
+    timeout-minutes: 25
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      # 🔹 GitHub Actions 러너 IP 동적 등록 및 AWS 설정
-      - name: Get GitHub Actions runner public IP
-        id: get_ip
-        run: echo "MY_IP=$(curl -s checkip.amazonaws.com)/32" >> $GITHUB_ENV
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
         with:
-          aws-access-key-id: ${{ secrets.EC2_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.EC2_SECRET_KEY }}
-          aws-region: ap-northeast-2
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: latest
+          install_components: 'gcloud'
 
-      - name: Authorize SSH ingress for runner IP
+      - name: Setup network access
+        id: network_setup
         run: |
-          aws ec2 authorize-security-group-ingress \
-            --group-id ${{ secrets.AWS_SG_ID }} \
-            --protocol tcp --port 22 --cidr $MY_IP
+          # IP 획득과 방화벽 규칙을 한 번에 처리
+          MY_IP=$(curl -s --max-time 10 ifconfig.me)
+          if [[ -z "$MY_IP" ]]; then
+            echo "❌ Failed to get public IP"
+            exit 1
+          fi
+          
+          echo "MY_IP=$MY_IP" >> $GITHUB_ENV
+          echo "🌐 Runner IP: $MY_IP"
+          
+          # 방화벽 규칙 생성 (기존 규칙 확인 후)
+          RULE_NAME="github-runner-ssh-${{ github.run_id }}"
+          if ! gcloud compute firewall-rules describe "$RULE_NAME" --project="$GCP_PROJECT_ID" >/dev/null 2>&1; then
+            gcloud compute firewall-rules create "$RULE_NAME" \
+              --allow tcp:22 \
+              --source-ranges "$MY_IP/32" \
+              --target-tags ssh-allowed \
+              --description "Temporary SSH access for GitHub Actions runner" \
+              --project="$GCP_PROJECT_ID"
+            echo "✅ Firewall rule created: $RULE_NAME"
+          else
+            echo "ℹ️ Firewall rule already exists: $RULE_NAME"
+          fi
 
-      # 🔹 환경 변수 파일 생성
-      - name: Create .env file for deployment
+      - name: Create deployment environment file
         run: |
-          echo "DB_URL=${{ secrets.DB_URL }}" >> .env
-          echo "DB_USER_NAME=${{ secrets.DB_USER_NAME }}" >> .env
-          echo "DB_USER_PASSWORD=${{ secrets.DB_USER_PASSWORD }}" >> .env
-          echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> .env
-          echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> .env
-          echo "ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}" >> .env
-          echo "REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}" >> .env
-          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
-          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
-          echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> .env
-          echo "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" >> .env
-          echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" >> .env
-          echo "KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}" >> .env
-          echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> .env
-          echo "REDIRECT_URI=${{ secrets.REDIRECT_URI }}" >> .env
-          echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
-          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
-          echo "DOCKER_PASSWORD=${{ secrets.DOCKER_PASSWORD }}" >> .env
+          # 환경 변수 파일 생성 (보안 강화)
+          cat > .env << 'EOF'
+          # Database Configuration
+          DB_URL=${{ secrets.DB_URL }}
+          DB_USER_NAME=${{ secrets.DB_USER_NAME }}
+          DB_USER_PASSWORD=${{ secrets.DB_USER_PASSWORD }}
+          
+          # AWS Configuration (S3)
+          AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}
+          
+          # JWT Secrets
+          ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}
+          REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
+          
+          # OAuth2 Configuration
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+          NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}
+          KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
+          KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
+          
+          # External Services
+          SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+          REDIRECT_URI=${{ secrets.REDIRECT_URI }}
+          REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+          
+          # Docker Configuration
+          DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD=${{ secrets.DOCKER_PASSWORD }}
+          EOF
+          
+          # 파일 권한 설정
+          chmod 600 .env
+          echo "✅ Environment file created with secure permissions"
 
-      # 🔹 EC2 서버에 파일 전송 및 배포
-      - name: Copy deployment files to EC2
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          port: 22
-          source: ".env,compose.yaml"
-          target: "~/"
+      - name: Copy deployment files to GCE
+        timeout-minutes: 5
+        run: |
+          # SSH 키 설정 (보안 강화)
+          echo "${{ secrets.GCP_SSH_PRIVATE_KEY }}" > /tmp/ssh_key
+          chmod 600 /tmp/ssh_key
+          
+          # SSH 연결 테스트
+          if ! ssh -i /tmp/ssh_key -o StrictHostKeyChecking=no \
+               -o ConnectTimeout=10 -o BatchMode=yes \
+               ${{ secrets.GCE_USER }}@${{ secrets.GCE_EXTERNAL_IP }} "echo 'SSH connection test successful'"; then
+            echo "❌ SSH connection failed"
+            exit 1
+          fi
+          
+          # 파일 전송 with progress
+          echo "📤 Copying deployment files to GCE..."
+          scp -i /tmp/ssh_key -o StrictHostKeyChecking=no \
+              -o ConnectTimeout=30 -C \
+              .env compose.yaml scripts/deploy-bluegreen.sh \
+              ${{ secrets.GCE_USER }}@${{ secrets.GCE_EXTERNAL_IP }}:~/
+          
+          echo "✅ Files copied successfully"
 
-      - name: Deploy and manage application on EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          port: 22
-          script: |
-            set -e
-            LOG_FILE="/var/log/deployment.log"
-            exec > >(sudo tee -a $LOG_FILE) 2>&1
-            echo "Deployment started at $(date)"
-            
-            # Health check 함수 정의
-            wait_for_health() {
-              local port=$1
-              local retries=30
-              local delay=5
-              echo "Waiting for service health check on port $port..."
-              for ((i=1; i<=retries; i++)); do
-                if curl -s "http://localhost:${port}/actuator/health" | grep -q "UP"; then
-                  echo "✅ Health check passed on port $port"
-                  return 0
-                fi
-                echo "⏳ Attempt $i/$retries: Service not healthy yet..."
-                sleep $delay
-              done
-              echo "❌ Health check failed after $retries attempts"
-              return 1
-            }
-            
-            # Docker 서비스 시작
-            sudo systemctl start docker
-            sudo systemctl enable docker
-            
-            # Docker Hub 로그인
-            echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-            echo "Logged into Docker Hub."
-            
-            # 🔹 Step 1: 최신 이미지 다운로드
-            docker compose pull
-            echo "Pulled latest Docker images."
-            
-            # 🔹 Step 2: 기존 컨테이너 중단 및 삭제
-            echo "Stopping and removing old containers..."
-            docker compose down || true
-            
-            # 🔹 Step 3: 새 컨테이너 시작
-            echo "Starting new container..."
-            docker compose up -d
-            
-            # 🔹 Step 4: 배포 완료 후 헬스 체크
-            echo "Checking health of newly deployed container..."
-            if ! wait_for_health 8080; then
-              echo "New container health check failed. Deployment aborted."
-              exit 1
-            fi
-            
-            # 정리 작업
-            docker image prune -f
-            rm -f .env compose.yaml
-            echo "Deployment completed at $(date)"
-      
+      - name: Deploy application with Blue-Green strategy
+        timeout-minutes: 15
+        run: |
+          echo "🚀 Starting Blue-Green deployment on GCE..."
+          
+          # 배포 스크립트 실행 권한 부여 및 실행
+          ssh -i /tmp/ssh_key -o StrictHostKeyChecking=no \
+              -o ConnectTimeout=30 -o ServerAliveInterval=10 \
+              ${{ secrets.GCE_USER }}@${{ secrets.GCE_EXTERNAL_IP }} << 'ENDSSH'
+          
+          # 스크립트 실행 권한 부여
+          chmod +x ~/deploy-bluegreen.sh
+          
+          # 환경 변수 export
+          export DOCKER_USERNAME="$DOCKER_USERNAME"
+          export DOCKER_PASSWORD="$DOCKER_PASSWORD"
+          
+          # Blue-Green 배포 스크립트 실행
+          ~/deploy-bluegreen.sh
+          
+          ENDSSH
+          
+          echo "✅ Blue-Green deployment completed successfully"
 
-      # 🔹 배포 완료 후 보안 그룹 규칙 제거
-      - name: Revoke SSH ingress for runner IP
+      - name: Post-deployment validation
+        if: success()
+        run: |
+          echo "🔍 Validating deployment..."
+          
+          # 외부에서 헬스 체크 (선택적)
+          if curl -sf --max-time 30 "http://${{ secrets.GCE_EXTERNAL_IP }}/actuator/health" | grep -q "UP"; then
+            echo "✅ External health check passed"
+          else
+            echo "⚠️ External health check failed (may be due to firewall/proxy settings)"
+          fi
+          
+          echo "✅ Deployment validation completed"
+
+      - name: Cleanup resources
         if: always()
         run: |
-          aws ec2 revoke-security-group-ingress \
-            --group-id ${{ secrets.AWS_SG_ID }} \
-            --protocol tcp --port 22 --cidr $MY_IP
+          echo "🧹 Cleaning up deployment resources..."
+          
+          # 방화벽 규칙 제거
+          RULE_NAME="github-runner-ssh-${{ github.run_id }}"
+          if gcloud compute firewall-rules describe "$RULE_NAME" --project="$GCP_PROJECT_ID" >/dev/null 2>&1; then
+            gcloud compute firewall-rules delete "$RULE_NAME" \
+              --quiet --project="$GCP_PROJECT_ID"
+            echo "✅ Firewall rule removed: $RULE_NAME"
+          else
+            echo "ℹ️ Firewall rule not found or already removed: $RULE_NAME"
+          fi
+          
+          # SSH 키 파일 제거
+          rm -f /tmp/ssh_key
+          
+          # 환경 파일 제거
+          rm -f .env
+          
+          echo "✅ Resource cleanup completed"
