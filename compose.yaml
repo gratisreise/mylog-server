@@ -1,7 +1,10 @@
 services:
   mylog-blue:
     container_name: mylog-blue
-    image: ${DOCKER_USERNAME}/mylog-server:latest
+    image: ${DOCKER_USERNAME}/mylog-server
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     environment:
@@ -23,10 +26,10 @@ services:
       - REDIRECT_URI=${REDIRECT_URI}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 30s      # 운영 중이므로 간격을 넓게
-      timeout: 10s       # 충분한 타임아웃
-      retries: 3         # 적당한 재시도
-      start_period: 60s  # 초기 기동 시간 고려
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     networks:
       - mylog-network
     logging:
@@ -37,10 +40,10 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-    restart: always
+    restart: unless-stopped
 
   mylog-green:
-    image: ${DOCKER_USERNAME}/mylog-server:latest
+    image: ${DOCKER_USERNAME}/mylog-server
     container_name: mylog-green
     ports:
       - "8081:8081"
@@ -63,10 +66,10 @@ services:
       - REDIRECT_URI=${REDIRECT_URI}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
-      interval: 30s      # 운영 중이므로 간격을 넓게
-      timeout: 10s       # 충분한 타임아웃
-      retries: 3         # 적당한 재시도
-      start_period: 60s  # 초기 기동 시간 고려
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     networks:
       - mylog-network
     logging:
@@ -84,16 +87,25 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
-    command: redis-server --port 6379
+    command: [ "redis-server", "--port", "6379", "--requirepass", "${REDIS_PASSWORD}" ]
     networks:
       - mylog-network
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 20s
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: unless-stopped
 
 networks:
   mylog-network:
