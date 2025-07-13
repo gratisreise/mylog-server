@@ -61,26 +61,42 @@ cleanup_containers() {
     echo "✅ $container_name container cleaned up"
 }
 
-# Nginx 포트 전환 함수 (효율적 버전)
+# Nginx 포트 전환 함수 (HELP.md 설정 구조에 맞춤)
 switch_nginx_port() {
     local port=$1
     local environment=$2
+    local config_file="/etc/nginx/sites-available/mylog-api.click"
     
     echo "🔄 Switching Nginx to $environment environment (port $port)..."
     
-    # sed를 사용해서 포트 번호만 변경 (훨씬 효율적!)
-    if sudo sed -i "s/proxy_pass http:\/\/localhost:[0-9]*/proxy_pass http:\/\/localhost:$port/g" /etc/nginx/sites-available/default; then
-        # Nginx 설정 검증 및 리로드
+    # HELP.md 구조에 맞춰 proxy_pass 라인만 정확히 변경
+    # location / { 블록 내의 proxy_pass 라인을 찾아서 변경
+    if sudo sed -i "/location \/ {/,/}/ s|proxy_pass http://localhost:[0-9]*;|proxy_pass http://localhost:$port;|g" "$config_file"; then
+        # Nginx 설정 검증
         if sudo nginx -t; then
-            sudo systemctl reload nginx
-            echo "✅ Nginx switched to $environment environment (port $port)"
-            return 0
+            # Nginx 리로드
+            if sudo systemctl reload nginx; then
+                echo "✅ Nginx switched to $environment environment (port $port)"
+                
+                # 변경사항 확인 로그
+                echo "📋 Current proxy_pass configuration:"
+                sudo grep -A 10 "location / {" "$config_file" | grep "proxy_pass" || true
+                
+                return 0
+            else
+                echo "❌ Failed to reload Nginx"
+                return 1
+            fi
         else
             echo "❌ Nginx configuration test failed"
+            echo "🔍 Configuration syntax check output:"
+            sudo nginx -t 2>&1 || true
             return 1
         fi
     else
         echo "❌ Failed to update Nginx configuration"
+        echo "🔍 Checking if config file exists:"
+        ls -la "$config_file" || true
         return 1
     fi
 }
