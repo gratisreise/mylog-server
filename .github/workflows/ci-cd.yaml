@@ -201,7 +201,7 @@ jobs:
           echo "📤 Copying deployment files to GCE..."
           scp -i /tmp/ssh_key -o StrictHostKeyChecking=no \
               -o ConnectTimeout=30 -C \
-              .env compose.yaml scripts/deploy-bluegreen.sh \
+              .env compose.yaml scripts/deploy-bluegreen.sh promethue.yml\
               ${{ secrets.GCE_USER }}@${{ secrets.GCE_EXTERNAL_IP }}:~/
           
           echo "✅ Files copied successfully"
@@ -219,30 +219,16 @@ jobs:
           # 스크립트 실행 권한 부여
           chmod +x ~/deploy-bluegreen.sh
           
-          # 환경 변수 export
+          # 환경 변수 export (deploy-bluegreen.sh에서 Docker 로그인 처리)
           export DOCKER_USERNAME="${{ secrets.DOCKER_USERNAME }}"
           export DOCKER_PASSWORD="${{ secrets.DOCKER_PASSWORD }}"
           
-          # Blue-Green 배포 스크립트 실행
+          # Blue-Green 배포 스크립트 실행 (Docker 로그인, 이미지 pull, 정리 작업 포함)
           ~/deploy-bluegreen.sh
           
           ENDSSH
           
           echo "✅ Blue-Green deployment completed successfully"
-
-      - name: Post-deployment validation
-        if: success()
-        run: |
-          echo "🔍 Validating deployment..."
-          
-          # 외부에서 헬스 체크 (선택적)
-          if curl -sf --max-time 30 "http://${{ secrets.GCE_EXTERNAL_IP }}/actuator/health" | grep -q "UP"; then
-            echo "✅ External health check passed"
-          else
-            echo "⚠️ External health check failed (may be due to firewall/proxy settings)"
-          fi
-          
-          echo "✅ Deployment validation completed"
 
       - name: Cleanup resources
         if: always()
@@ -262,7 +248,6 @@ jobs:
           # SSH 키 파일 제거
           rm -f /tmp/ssh_key
           
-          # 환경 파일 제거
-          rm -f .env
+          # 환경 파일은 deploy-bluegreen.sh에서 처리됨
           
           echo "✅ Resource cleanup completed"
