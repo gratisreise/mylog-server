@@ -144,7 +144,6 @@ class AuthServiceTest {
         // Given
         String username = "1"; // String.valueOf(memberId)
         when(jwtUtil.getRefreshUsername(TEST_REFRESH_TOKEN)).thenReturn(username);
-        when(memberReadService.getByNickname(username)).thenReturn(testMember);
         when(refreshTokenService.validateRefreshToken(username, TEST_REFRESH_TOKEN))
                 .thenReturn(true);
         when(jwtUtil.createAccessToken(username, 1L)).thenReturn(NEW_ACCESS_TOKEN);
@@ -163,7 +162,6 @@ class AuthServiceTest {
         // Given
         String username = "1";
         when(jwtUtil.getRefreshUsername(TEST_REFRESH_TOKEN)).thenReturn(username);
-        when(memberReadService.getByNickname(username)).thenReturn(testMember);
         when(refreshTokenService.validateRefreshToken(username, TEST_REFRESH_TOKEN))
                 .thenReturn(false);
 
@@ -171,21 +169,6 @@ class AuthServiceTest {
         assertThatThrownBy(() -> authService.refresh(refreshRequest))
                 .isInstanceOf(CInvalidDataException.class)
                 .hasMessage("유효하지 않은 토큰입니다.");
-    }
-
-    @Test
-    @DisplayName("토큰 리프레시 실패 - 존재하지 않는 사용자")
-    void refresh_존재하지_않는_사용자_실패() {
-        // Given
-        String username = "1";
-        when(jwtUtil.getRefreshUsername(TEST_REFRESH_TOKEN)).thenReturn(username);
-        when(memberReadService.getByNickname(username))
-                .thenThrow(new CMissingDataException("사용자를 찾을 수 없습니다."));
-
-        // When & Then
-        assertThatThrownBy(() -> authService.refresh(refreshRequest))
-                .isInstanceOf(CMissingDataException.class)
-                .hasMessage("사용자를 찾을 수 없습니다.");
     }
 
     @Test
