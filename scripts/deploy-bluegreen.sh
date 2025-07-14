@@ -221,7 +221,7 @@ main() {
         echo "🔵 Starting Blue environment..."
         
         # mylog-blue 서비스와 redis 시작 (container_name: mylog-blue, 포트: 8080)
-        if ! docker compose up mylog-blue redis -d; then
+        if ! docker compose up mylog-blue redis prometheus -d; then
             echo "❌ Failed to start initial Blue environment"
             exit 1
         fi

@@ -105,6 +105,8 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - mylog-network
     restart: unless-stopped
 
 networks:
