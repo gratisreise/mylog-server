@@ -24,6 +24,7 @@ services:
       - KAKAO_CLIENT_SECRET=${KAKAO_CLIENT_SECRET}
       - SENTRY_DSN=${SENTRY_DSN}
       - REDIRECT_URI=${REDIRECT_URI}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       interval: 30s
@@ -64,6 +65,7 @@ services:
       - KAKAO_CLIENT_SECRET=${KAKAO_CLIENT_SECRET}
       - SENTRY_DSN=${SENTRY_DSN}
       - REDIRECT_URI=${REDIRECT_URI}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
       interval: 30s
@@ -87,12 +89,12 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
-    command: [ "redis-server", "--port", "6379", "--requirepass", "${REDIS_PASSWORD}" ]
+    command: redis-server --port 6379 --requirepass ${REDIS_PASSWORD}
     networks:
       - mylog-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      test: ["CMD-SHELL", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5

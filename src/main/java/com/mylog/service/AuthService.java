@@ -52,8 +52,7 @@ public class AuthService {
     public RefreshResponse refresh(RefreshRequest request) {
         String username = jwtUtil.getRefreshUsername(request.refreshToken());
         log.info("{}", username);
-        long memberId = memberReadService.getByNickname(username).getId();
-
+        long memberId = Long.parseLong(username);
         if (!refreshTokenService.validateRefreshToken(username, request.refreshToken())) {
             throw new CInvalidDataException("유효하지 않은 토큰입니다.");
         }
