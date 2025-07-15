@@ -201,7 +201,7 @@ jobs:
           echo "📤 Copying deployment files to GCE..."
           scp -i /tmp/ssh_key -o StrictHostKeyChecking=no \
               -o ConnectTimeout=30 -C \
-              .env compose.yaml scripts/deploy-bluegreen.sh promethue.yml\
+              .env compose.yaml scripts/deploy-bluegreen.sh prometheus.yml\
               ${{ secrets.GCE_USER }}@${{ secrets.GCE_EXTERNAL_IP }}:~/
           
           echo "✅ Files copied successfully"
