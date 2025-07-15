@@ -23,7 +23,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtUtil token;
-    private final MemberRepository memberRepository;
 
     private static final String[] WHITELISTED_URLS = {
         "/api/auth/**",

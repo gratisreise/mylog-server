@@ -1,6 +1,5 @@
 package com.mylog.config;
 
-import com.mylog.repository.MemberRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
