@@ -59,51 +59,6 @@ gratisreise-mylog/
         └── ci-cd.yaml                # GitHub Actions CI/CD 설정
 ```
 
-## 설치 및 실행 방법
-1. **필수 환경**
-   - Java 17
-   - Docker 및 Docker Compose
-   - Gradle 8.13
-   - AWS 계정 (S3 설정용)
-   - Redis
-   - Google, Kakao, Naver OAuth 클라이언트 ID/시크릿
-
-2. **환경 변수 설정**
-   `.env` 파일을 프로젝트 루트에 생성하고 아래 변수를 설정하세요:
-   ```plaintext
-   DB_URL=<데이터베이스 URL>
-   DB_USER_NAME=<데이터베이스 사용자 이름>
-   DB_USER_PASSWORD=<데이터베이스 비밀번호>
-   AWS_ACCESS_KEY=<AWS 액세스 키>
-   AWS_SECRET_KEY=<AWS 시크릿 키>
-   ACCESS_TOKEN_SECRET=<JWT 액세스 토큰 시크릿>
-   REFRESH_TOKEN_SECRET=<JWT 리프레시 토큰 시크릿>
-   GOOGLE_CLIENT_ID=<Google OAuth 클라이언트 ID>
-   GOOGLE_CLIENT_SECRET=<Google OAuth 클라이언트 시크릿>
-   NAVER_CLIENT_ID=<Naver OAuth 클라이언트 ID>
-   NAVER_CLIENT_SECRET=<Naver OAuth 클라이언트 시크릿>
-   KAKAO_CLIENT_ID=<Kakao OAuth 클라이언트 ID>
-   KAKAO_CLIENT_SECRET=<Kakao OAuth 클라이언트 시크릿>
-   SENTRY_DSN=<Sentry DSN>
-   REDIRECT_URI=<OAuth 리다이렉트 URI>
-   DOCKER_USERNAME=<Docker Hub 사용자 이름>
-   ```
-
-3. **프로젝트 빌드**
-   ```bash
-   ./gradlew clean build -x test
-   ```
-
-4. **Docker Compose 실행**
-   ```bash
-   docker-compose up -d
-   ```
-
-5. **애플리케이션 접속**
-   - 기본 포트: `http://localhost:8080`
-   - H2 콘솔: `http://localhost:8080/h2-console` (개발 환경에서 활성화)
-   - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
-
 ## API 엔드포인트
 주요 API 엔드포인트는 다음과 같습니다 (자세한 스펙은 Swagger UI 참조):
 - **인증**
@@ -140,14 +95,23 @@ gratisreise-mylog/
   - `PUT /api/notifications`: 알림 읽음 처리
   - `PUT /api/notifications/toggle`: 알림 설정 토글
 
+[상세api스펙](mylog-api.click/swagger-ui/index.html)
+
+
 ## CI/CD 파이프라인
 GitHub Actions를 통해 테스트, 빌드, 배포가 자동화되어 있습니다:
 1. **테스트**: `gradlew test`를 실행해 단위 테스트 수행
 2. **빌드 및 푸시**: Gradle로 애플리케이션 빌드 후 Docker 이미지를 생성하고 Docker Hub에 푸시
 3. **배포**: EC2에 `.env` 및 `docker-compose.yaml`을 전송하고, 블루-그린 배포 방식으로 애플리케이션 배포
 
-## 테스트
-단위 테스트는 JUnit과 Mockito를 사용하여 작성되었습니다. 테스트 실행:
-```bash
-./gradlew test
-```
+## 아키텍쳐
+1. 소프트웨어 아키텍쳐
+![소프트웨어아키텍쳐](src/main/resources/public/소프트웨어아키텍쳐.png)
+
+2. 배포 아키텍쳐
+![배포아키텍쳐](src/main/resources/public/배포아키텍쳐.png)
+
+3. 인증/인가 
+![인증/인가](src/main/resources/public/인증인가흐름도.png)
+##
+
