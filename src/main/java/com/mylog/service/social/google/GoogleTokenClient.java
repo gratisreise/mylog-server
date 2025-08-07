@@ -16,6 +16,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface GoogleTokenClient {
     @PostMapping(value = "/token", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     GoogleTokenResponse getAccessToken(@RequestBody Map<String, ?> formParams);
-
 }
 

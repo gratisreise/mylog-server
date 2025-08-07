@@ -30,7 +30,6 @@ public class ArticleWriteService {
     private final S3Service s3Service;
 
     public void createArticle(ArticleCreateRequest request, CustomUser customUser, MultipartFile file) throws IOException{
-
         Member member =  memberReadService.getByCustomUser(customUser);
         Category category = categoryReadService.getByMemberAndCategoryName(member, request.category());
         String imageUrl = s3Service.upload(file).orElseThrow(CMissingDataException::new);

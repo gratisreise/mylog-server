@@ -43,6 +43,12 @@ public class CategoryWriteService {
         categoryRepository.save(category);
     }
 
+    public void createCategory(Member member){
+        if(categoryReadService.isExists(member)) return;
+        Category category = new Category(member, originCategory);
+        categoryRepository.save(category);
+    }
+
     public void updateCategory(CategoryUpdateRequest request,Long categoryId, CustomUser customUser){
         Category category = categoryReadService.getById(categoryId);
 

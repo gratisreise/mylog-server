@@ -82,7 +82,7 @@ public class ArticleController {
     }
 
     //전체 게시글 목록 조회
-    @GetMapping
+    @GetMapping("/all")
     @Operation(summary = "전체 게시글 목록 조회")
     public SingleResult<Page<ArticleResponse>> getArticles(@PageableDefault Pageable pageable){
         return ResponseService.getSingleResult(articleReadService.getArticles(pageable));

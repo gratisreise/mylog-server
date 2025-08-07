@@ -59,6 +59,7 @@ public class MemberController {
         @RequestPart(required = false, value="file") MultipartFile file,
         @AuthenticationPrincipal CustomUser customUser
     ) throws IOException {
+        log.info("request: {}", request.toString());
         log.info("{}", customUser);
         memberWriteService.updateMember(request, customUser, file);
         return ResponseService.getSuccessResult();

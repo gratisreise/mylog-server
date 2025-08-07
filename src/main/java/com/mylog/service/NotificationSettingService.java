@@ -20,4 +20,7 @@ public class NotificationSettingService {
         return notificationSettingRepository.findByMember(member)
             .stream().map(NotificationSettingResponse::new).toList();
     }
+
+
+
 }

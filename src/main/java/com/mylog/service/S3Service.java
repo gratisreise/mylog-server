@@ -44,7 +44,7 @@ public class S3Service {
         }
 
         String result = String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, fileName);
-        log.info("result: {}", result);
+        log.info("s3 result: {}", result);
         return Optional.of(result);
     }
 

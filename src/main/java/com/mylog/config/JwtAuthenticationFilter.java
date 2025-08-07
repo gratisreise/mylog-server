@@ -29,13 +29,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(jwt) && tokenProvider.validateAccessToken(jwt)) {
             String username = tokenProvider.getUsername(jwt);
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            log.info("{}", username);
+            log.info("UserDetails 통과 username{}", username);
 
             //검증
             UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.info("스프링컨텍스트에 등록성공");
         }
         
         filterChain.doFilter(request, response);

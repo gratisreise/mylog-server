@@ -41,6 +41,13 @@ public class CategoryReadService {
             .orElseThrow(CMissingDataException::new);
     }
 
+    public boolean isExists(Member member){
+        Category category = categoryRepository.findByMemberAndCategoryName(member, CategoryWriteService.originCategory)
+            .orElseGet(Category::new);
+            return category.getId() != null;
+    }
+
+
     public int getCategorySize(Member member) {
         return categoryRepository.findByMember(member).size();
     }

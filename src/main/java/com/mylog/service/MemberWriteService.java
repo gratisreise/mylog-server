@@ -50,7 +50,7 @@ public class MemberWriteService {
         log.info("member: {}", member.toString());
         memberRepository.save(member);
 
-        //비동기 처리 ㄱㄱ
+        //비동기 처리
         categoryWriteService.createCategory(request.email());
     }
 

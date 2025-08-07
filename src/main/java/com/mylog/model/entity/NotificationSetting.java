@@ -45,4 +45,5 @@ public class NotificationSetting {
     public void toggle(){
         this.disabled = !this.disabled;
     }
+
 }

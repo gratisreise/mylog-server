@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CMissingDataException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public CommonResult handleInvalidDataException(CMissingDataException ex){
+    public CommonResult handleMissingDataException(CMissingDataException ex){
         return ResponseService.getFailResult(ResultCode.DATA_MISSED);
     }
 

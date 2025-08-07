@@ -50,7 +50,6 @@ public class NotificationService {
         if(notificationSettingRepository.existsByMemberAndType(member, type)){
             return;
         }
-
         NotificationSetting setting = NotificationSetting.builder()
             .member(member)
             .type(type)
