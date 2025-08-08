@@ -4,6 +4,7 @@ import com.mylog.common.CommonResult;
 import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;
 import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.model.dto.comment.CommentArticleResponse;
 import com.mylog.model.dto.comment.CommentCreateRequest;
 import com.mylog.model.dto.comment.CommentResponse;
 import com.mylog.model.dto.comment.CommentUpdateRequest;
@@ -46,13 +47,14 @@ public class CommentController {
 
     @GetMapping("/articles/{articleId}/comments")
     @Operation(summary = "댓글 목록 조회")
-    public SingleResult<Page<CommentResponse>> getComments(
+    public SingleResult<Page<CommentArticleResponse>> getComments(
         @PathVariable Long articleId,
         @PageableDefault(sort="createdAt", direction = Direction.DESC)
         Pageable pageable
     ) {
         return ResponseService.getSingleResult(commentReadService.getComments(articleId, pageable));
     }
+
 
     @GetMapping("/articles/{articleId}/comments/{parentId}")
     @Operation(summary = "대댓글 목록 조회")

@@ -2,6 +2,7 @@ package com.mylog.repository;
 
 import com.mylog.model.entity.Comment;
 import com.mylog.model.entity.Member;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -25,4 +26,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     //나의 게시글 댓글 조회
     @EntityGraph(attributePaths = {"article", "member"})
     Page<Comment> findAllByArticle_Member(Member member, Pageable pageable);
+
+    //답글조회
+    @EntityGraph(attributePaths = {"article", "member"})
+    List<Comment> findByArticle_IdAndParentId(Long articleId, Long parentId);
+
 }
