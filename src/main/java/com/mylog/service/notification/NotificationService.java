@@ -1,4 +1,4 @@
-package com.mylog.service;
+package com.mylog.service.notification;
 
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.notification.NotificationResponse;
@@ -8,6 +8,7 @@ import com.mylog.model.entity.NotificationSetting;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.NotificationRepository;
 import com.mylog.repository.NotificationSettingRepository;
+import com.mylog.service.member.MemberReadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -11,7 +11,7 @@ import com.mylog.model.dto.social.google.GoogleTokenResponse;
 import com.mylog.model.dto.social.google.GoogleUserInfo;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.MemberRepository;
-import com.mylog.service.CategoryWriteService;
+import com.mylog.service.category.CategoryWriteService;
 import com.mylog.service.RefreshTokenService;
 import com.mylog.service.social.AbstractOAuth2UserService;
 import java.util.HashMap;

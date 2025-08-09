@@ -1,7 +1,6 @@
-package com.mylog.service;
+package com.mylog.service.articletage;
 
 import com.mylog.model.entity.Article;
-import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.ArticleTagRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

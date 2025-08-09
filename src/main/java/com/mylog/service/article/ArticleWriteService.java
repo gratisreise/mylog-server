@@ -1,5 +1,5 @@
 
-package com.mylog.service;
+package com.mylog.service.article;
 
 import com.mylog.model.dto.article.ArticleCreateRequest;
 import com.mylog.model.dto.article.ArticleUpdateRequest;
@@ -7,10 +7,13 @@ import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Article;
 import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
-import com.mylog.exception.CMissingDataException;
 import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.ArticleTagRepository;
+import com.mylog.service.category.CategoryReadService;
+import com.mylog.service.member.MemberReadService;
+import com.mylog.service.S3Service;
+import com.mylog.service.tag.TagService;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

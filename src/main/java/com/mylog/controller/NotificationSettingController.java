@@ -4,7 +4,7 @@ import com.mylog.common.ListResult;
 import com.mylog.common.ResponseService;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.notification.NotificationSettingResponse;
-import com.mylog.service.NotificationSettingService;
+import com.mylog.service.notificationsetting.NotificationSettingService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

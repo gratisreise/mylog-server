@@ -1,4 +1,4 @@
-package com.mylog.service;
+package com.mylog.service.category;
 
 import com.mylog.exception.CReachedLimitException;
 import com.mylog.exception.CUnAuthorizedException;
@@ -8,6 +8,7 @@ import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.CategoryRepository;
+import com.mylog.service.member.MemberReadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CategoryWriteService {
 
-    private final MemberReadService  memberReadService;
+    private final MemberReadService memberReadService;
     private final CategoryRepository categoryRepository;
     private final CategoryReadService categoryReadService;
 

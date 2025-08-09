@@ -15,6 +15,7 @@ import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.member.MemberResponse;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.MemberRepository;
+import com.mylog.service.member.MemberReadService;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;

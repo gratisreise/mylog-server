@@ -5,12 +5,10 @@ import com.mylog.model.dto.auth.LoginResponse;
 import com.mylog.model.dto.social.OAuth2UserInfo;
 import com.mylog.model.dto.social.OAuthRequest;
 import com.mylog.model.entity.Member;
-import com.mylog.service.CategoryReadService;
-import com.mylog.service.CategoryWriteService;
+import com.mylog.service.category.CategoryWriteService;
 import com.mylog.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.client.RestTemplate;
 
 @RequiredArgsConstructor
 @Slf4j

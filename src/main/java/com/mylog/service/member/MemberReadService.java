@@ -1,4 +1,4 @@
-package com.mylog.service;
+package com.mylog.service.member;
 
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.member.MemberResponse;

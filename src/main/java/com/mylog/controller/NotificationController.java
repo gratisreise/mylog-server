@@ -5,7 +5,7 @@ import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.notification.NotificationResponse;
-import com.mylog.service.NotificationService;
+import com.mylog.service.notification.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

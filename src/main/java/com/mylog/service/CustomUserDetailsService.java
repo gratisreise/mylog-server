@@ -2,8 +2,7 @@ package com.mylog.service;
 
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Member;
-import com.mylog.exception.CMissingDataException;
-import com.mylog.repository.MemberRepository;
+import com.mylog.service.member.MemberReadService;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

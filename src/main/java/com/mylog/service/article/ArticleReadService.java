@@ -1,13 +1,12 @@
-package com.mylog.service;
+package com.mylog.service.article;
 
 import com.mylog.model.dto.article.ArticleResponse;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Article;
 import com.mylog.exception.CMissingDataException;
-import com.mylog.model.entity.ArticleTag;
 import com.mylog.repository.ArticleRepository;
-import com.mylog.repository.ArticleTagRepository;
 import com.mylog.repository.MemberRepository;
+import com.mylog.service.articletage.ArticleTagReadService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

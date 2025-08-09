@@ -17,6 +17,7 @@ import com.mylog.model.dto.auth.LoginResponse;
 import com.mylog.model.dto.auth.RefreshRequest;
 import com.mylog.model.dto.auth.RefreshResponse;
 import com.mylog.model.entity.Member;
+import com.mylog.service.member.MemberReadService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

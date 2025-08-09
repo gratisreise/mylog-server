@@ -1,4 +1,4 @@
-package com.mylog.service;
+package com.mylog.service.comment;
 
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.comment.CommentCreateRequest;
@@ -6,9 +6,11 @@ import com.mylog.model.dto.comment.CommentUpdateRequest;
 import com.mylog.model.entity.Article;
 import com.mylog.model.entity.Comment;
 import com.mylog.model.entity.Member;
-import com.mylog.exception.CMissingDataException;
 import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.repository.CommentRepository;
+import com.mylog.service.notification.NotificationService;
+import com.mylog.service.article.ArticleReadService;
+import com.mylog.service.member.MemberReadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

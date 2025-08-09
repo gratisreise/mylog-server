@@ -2,10 +2,8 @@ package com.mylog.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -21,6 +19,8 @@ import com.mylog.model.entity.Comment;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CommentRepository;
+import com.mylog.service.comment.CommentReadService;
+import com.mylog.service.member.MemberReadService;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;

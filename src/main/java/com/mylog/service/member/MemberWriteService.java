@@ -1,15 +1,14 @@
-package com.mylog.service;
+package com.mylog.service.member;
 
 import com.mylog.exception.CDuplicatedException;
 import com.mylog.model.dto.member.SignUpRequest;
 import com.mylog.model.dto.member.UpdateMemberRequest;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Member;
-import com.mylog.enums.OauthProvider;
-import com.mylog.exception.CInvalidDataException;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.MemberRepository;
-import jakarta.validation.constraints.Pattern;
+import com.mylog.service.category.CategoryWriteService;
+import com.mylog.service.S3Service;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

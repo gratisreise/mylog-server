@@ -1,4 +1,4 @@
-package com.mylog.service;
+package com.mylog.service.category;
 
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.category.CategoryResponse;

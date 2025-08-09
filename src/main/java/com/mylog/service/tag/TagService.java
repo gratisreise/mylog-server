@@ -1,4 +1,4 @@
-package com.mylog.service;
+package com.mylog.service.tag;
 
 
 import com.mylog.model.entity.Article;

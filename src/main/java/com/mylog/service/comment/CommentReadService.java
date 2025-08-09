@@ -1,4 +1,4 @@
-package com.mylog.service;
+package com.mylog.service.comment;
 
 import com.mylog.classes.Reply;
 import com.mylog.model.dto.classes.CustomUser;
@@ -9,7 +9,7 @@ import com.mylog.model.entity.Member;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CommentRepository;
-import com.mylog.repository.MemberRepository;
+import com.mylog.service.member.MemberReadService;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

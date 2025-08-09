@@ -7,6 +7,7 @@ import com.mylog.model.dto.auth.LoginResponse;
 import com.mylog.model.dto.auth.RefreshRequest;
 import com.mylog.model.dto.auth.RefreshResponse;
 import com.mylog.model.entity.Member;
+import com.mylog.service.member.MemberReadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
