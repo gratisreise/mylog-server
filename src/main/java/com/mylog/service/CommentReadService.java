@@ -57,18 +57,6 @@ public class CommentReadService {
         return replies;
     }
 
-    public Page<CommentResponse> getChildComments(Long articleId, Long parentId, Pageable pageable){
-        if(!articleRepository.existsById(articleId)){
-            throw new CMissingDataException("존재하지 않는 게시글입니다.");
-        }
-        if(!commentRepository.existsById(parentId)){
-            throw new CMissingDataException("존재하지 않는 댓글입니다.");
-        }
-        return null;
-//        return commentRepository.findByArticle_IdAndParentId(articleId, parentId, pageable)
-//            .map(CommentResponse::new);
-    }
-
     public Comment getById(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(CMissingDataException::new);
     }

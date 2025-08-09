@@ -32,7 +32,7 @@ public class ArticleWriteService {
     public void createArticle(ArticleCreateRequest request, CustomUser customUser, MultipartFile file) throws IOException{
         Member member =  memberReadService.getByCustomUser(customUser);
         Category category = categoryReadService.getByMemberAndCategoryName(member, request.category());
-        String imageUrl = s3Service.upload(file).orElseThrow(CMissingDataException::new);
+        String imageUrl = s3Service.upload(file);
 
         Article article = new Article(request, category, member, imageUrl);
 
@@ -56,7 +56,7 @@ public class ArticleWriteService {
 
         String articleImg;
         if(!isSame(article.getArticleImg(), file)){
-            articleImg = s3Service.upload(file).orElseThrow(CMissingDataException::new);
+            articleImg = s3Service.upload(file);
         } else {
             articleImg = article.getArticleImg();
         }

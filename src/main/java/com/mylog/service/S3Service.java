@@ -24,7 +24,7 @@ public class S3Service {
     private String bucketName;
 
     //이미지 업로드
-    public Optional<String> upload(MultipartFile file) throws IOException {
+    public String upload(MultipartFile file) throws IOException {
         String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
         String contentType = file.getContentType();
         String region = "ap-northeast-2";
@@ -45,7 +45,7 @@ public class S3Service {
 
         String result = String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, fileName);
         log.info("s3 result: {}", result);
-        return Optional.of(result);
+        return result;
     }
 
     // 이미지 삭제

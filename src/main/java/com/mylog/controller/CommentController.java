@@ -55,20 +55,6 @@ public class CommentController {
         return ResponseService.getSingleResult(commentReadService.getComments(articleId, pageable));
     }
 
-
-    @GetMapping("/articles/{articleId}/comments/{parentId}")
-    @Operation(summary = "대댓글 목록 조회")
-    public SingleResult<Page<CommentResponse>> getChildComments(
-        @PathVariable Long articleId,
-        @PathVariable Long parentId,
-        @PageableDefault(size= 5, sort="createdAt", direction = Direction.DESC)
-        Pageable pageable
-    ) {
-        return ResponseService.getSingleResult(
-            commentReadService.getChildComments(articleId, parentId, pageable)
-        );
-    }
-
     @PutMapping("/comments/{commentId}")
     @Operation(summary = "댓글 수정")
     public CommonResult updateComments(

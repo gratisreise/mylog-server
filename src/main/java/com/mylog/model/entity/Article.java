@@ -30,7 +30,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
 public class Article {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
