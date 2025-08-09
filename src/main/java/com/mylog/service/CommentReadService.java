@@ -43,7 +43,7 @@ public class CommentReadService {
         if(!articleRepository.existsById(articleId)){
             throw new CMissingDataException("존재하지 않는 게시글 입니다.");
         }
-        //
+
         return commentRepository.findByArticle_IdAndParentId(articleId, 0L, pageable)
             .map(comment -> new CommentArticleResponse(comment, getReplies(comment)));
     }

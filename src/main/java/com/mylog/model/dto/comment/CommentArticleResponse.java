@@ -4,6 +4,7 @@ import com.mylog.classes.Reply;
 import com.mylog.model.entity.Comment;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.Getter;
 
 public record CommentArticleResponse(
     Long id,

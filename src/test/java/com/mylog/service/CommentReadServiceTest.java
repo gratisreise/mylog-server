@@ -2,14 +2,18 @@ package com.mylog.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.mylog.classes.Reply;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.model.dto.comment.CommentArticleResponse;
 import com.mylog.model.dto.comment.CommentResponse;
 import com.mylog.model.entity.Article;
 import com.mylog.model.entity.Category;
@@ -17,7 +21,6 @@ import com.mylog.model.entity.Comment;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.ArticleRepository;
 import com.mylog.repository.CommentRepository;
-import com.mylog.repository.MemberRepository;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -56,8 +59,10 @@ class CommentReadServiceTest {
     private Comment testComment;
     private Pageable pageable;
     private Comment parentComment;
-    private Comment childComment;
+    private Comment childComment1;
+
     private List<Comment> comments;
+    private List<Reply> replies;
 
     @BeforeEach
     void setUp() {
@@ -124,7 +129,7 @@ class CommentReadServiceTest {
                 .build();
         
         // 자식 댓글 생성 (대댓글)
-        childComment = Comment.builder()
+        childComment1 = Comment.builder()
                 .id(2L)
                 .content("자식 댓글")
                 .article(testArticle)
@@ -133,8 +138,9 @@ class CommentReadServiceTest {
                 .createdAt(LocalDateTime.now().minusHours(1))
                 .updatedAt(LocalDateTime.now().minusHours(1))
                 .build();
+
         
-        comments = List.of(parentComment, childComment);
+        comments = List.of(parentComment, childComment1);
     }
 
     @Test
@@ -213,19 +219,24 @@ class CommentReadServiceTest {
         // Given
         Long articleId = 1L;
         Page<Comment> commentPage = new PageImpl<>(List.of(parentComment), pageable, 1);
-        
-        when(articleRepository.existsById(articleId)).thenReturn(true);
-        when(commentRepository.findByArticle_Id(articleId, pageable)).thenReturn(commentPage);
+        List<Comment> replies = List.of(childComment1);
 
+        when(articleRepository.existsById(articleId)).thenReturn(true);
+        when(commentRepository.findByArticle_IdAndParentId(articleId, 0L, pageable)).thenReturn(commentPage);
+        when(commentRepository.findByArticle_IdAndParentId(articleId, 1L)).thenReturn(replies);
         // When
-        Page<CommentResponse> result = commentReadService.getComments(articleId, pageable);
+        Page<CommentArticleResponse> result = commentReadService.getComments(articleId, pageable);
 
         // Then
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().get(0).content()).isEqualTo("부모 댓글");
-        
+        assertThat(result.getContent().get(0).replies()).hasSize(1);
+        assertThat(result.getContent().get(0).replies().get(0).getContent()).isEqualTo("자식 댓글");
+
+
         verify(articleRepository).existsById(articleId);
-        verify(commentRepository).findByArticle_Id(articleId, pageable);
+        verify(commentRepository).findByArticle_IdAndParentId(articleId, 0L, pageable);
+        verify(commentRepository).findByArticle_IdAndParentId(articleId, 1L);
     }
 
     @Test
@@ -242,30 +253,6 @@ class CommentReadServiceTest {
 
         verify(articleRepository).existsById(articleId);
         verify(commentRepository, never()).findByArticle_Id(any(), any());
-    }
-
-    @Test
-    void getChildComments_대댓글_조회_성공() {
-        // Given
-        Long articleId = 1L;
-        Long parentId = 1L;
-        Page<Comment> childCommentsPage = new PageImpl<>(List.of(childComment), pageable, 1);
-        
-        when(articleRepository.existsById(articleId)).thenReturn(true);
-        when(commentRepository.existsById(parentId)).thenReturn(true);
-        when(commentRepository.findByArticle_IdAndParentId(articleId, parentId, pageable))
-                .thenReturn(childCommentsPage);
-
-        // When
-        Page<CommentResponse> result = commentReadService.getChildComments(articleId, parentId, pageable);
-
-        // Then
-        assertThat(result.getContent()).hasSize(1);
-        assertThat(result.getContent().get(0).content()).isEqualTo("자식 댓글");
-        
-        verify(articleRepository).existsById(articleId);
-        verify(commentRepository).existsById(parentId);
-        verify(commentRepository).findByArticle_IdAndParentId(articleId, parentId, pageable);
     }
 
     @Test
@@ -333,39 +320,6 @@ class CommentReadServiceTest {
         verify(commentRepository).findById(commentId);
     }
 
-    @Test
-    void 계층형_댓글_구조_테스트() {
-        // Given
-        Long articleId = 1L;
-        
-        // 부모 댓글들만 조회 (parentId = 0)
-        Page<Comment> parentCommentsPage = new PageImpl<>(List.of(parentComment), pageable, 1);
-        
-        when(articleRepository.existsById(articleId)).thenReturn(true);
-        when(commentRepository.findByArticle_Id(articleId, pageable)).thenReturn(parentCommentsPage);
-
-        // When - 부모 댓글 조회
-        Page<CommentResponse> parentResults = commentReadService.getComments(articleId, pageable);
-
-        // Then
-        assertThat(parentResults.getContent()).hasSize(1);
-        assertThat(parentResults.getContent().get(0).content()).isEqualTo("부모 댓글");
-        
-        // Given - 자식 댓글 조회
-        Long parentId = 1L;
-        Page<Comment> childCommentsPage = new PageImpl<>(List.of(childComment), pageable, 1);
-        
-        when(commentRepository.existsById(parentId)).thenReturn(true);
-        when(commentRepository.findByArticle_IdAndParentId(articleId, parentId, pageable))
-                .thenReturn(childCommentsPage);
-
-        // When - 자식 댓글 조회
-        Page<CommentResponse> childResults = commentReadService.getChildComments(articleId, parentId, pageable);
-
-        // Then
-        assertThat(childResults.getContent()).hasSize(1);
-        assertThat(childResults.getContent().get(0).content()).isEqualTo("자식 댓글");
-    }
 
     @Test
     void 페이징_테스트() {
