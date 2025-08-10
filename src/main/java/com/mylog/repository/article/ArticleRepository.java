@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ArticleRepository extends JpaRepository<Article, Long> {
+public interface ArticleRepository extends JpaRepository<Article, Long>, ArticleRepositoryCustom{
 
     //게시글 제목검색
     Page<Article> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
@@ -22,17 +22,4 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
         String keyword,
         Pageable pageable
     );
-
-
-    //태그검색
-    @Query("""
-    SELECT a FROM Article a
-    JOIN ArticleTag at ON a.id = at.article.id
-    JOIN Tag t ON at.tag.id = t.id
-    WHERE t.tagName = :tagName
-    """)
-    Page<Article> findAllByTagName(String tagName, Pageable pageable);
-
-
-
 }
