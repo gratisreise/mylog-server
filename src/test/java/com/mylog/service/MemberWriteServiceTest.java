@@ -128,7 +128,7 @@ class MemberWriteServiceTest {
         when(memberReadService.getById(1L)).thenReturn(member);
         when(memberRepository.existsByNickname(anyString())).thenReturn(false);
         when(passwordEncoder.encode(anyString())).thenReturn("newEncodedPassword");
-        when(s3Service.upload(any(MultipartFile.class))).thenReturn(Optional.of("http://example.com/new.jpg"));
+        when(s3Service.upload(any(MultipartFile.class))).thenReturn("http\\://example.com/new.jpg");
 
         // When
         memberWriteService.updateMember(request, customUser, file);
@@ -169,7 +169,7 @@ class MemberWriteServiceTest {
         when(memberReadService.getById(1L)).thenReturn(member);
         when(memberRepository.existsByNickname(anyString())).thenReturn(false);
         when(passwordEncoder.encode(anyString())).thenReturn("newEncodedPassword");
-        when(s3Service.upload(any(MultipartFile.class))).thenReturn(Optional.of("http://example.com/new.jpg"));
+        when(s3Service.upload(any(MultipartFile.class))).thenReturn("http\\://example.com/new.jpg");
 
         // When
         memberWriteService.updateMember(request, customUser, file);
@@ -195,21 +195,6 @@ class MemberWriteServiceTest {
                 .hasMessage("중복되는 닉네임 입니다.");
     }
 
-    @Test
-    @DisplayName("회원 정보 수정 실패 - S3 업로드 실패")
-    void updateMember_실패_S3업로드_실패() throws IOException {
-        // Given
-        UpdateMemberRequest request = new UpdateMemberRequest("newPassword123!", "newName", "newNickname", "newBio", null);
-        MockMultipartFile file = new MockMultipartFile("file", "new_image.jpg", "image/jpeg", "image data".getBytes());
-        when(memberReadService.getById(1L)).thenReturn(member);
-        when(memberRepository.existsByNickname(anyString())).thenReturn(false);
-        when(passwordEncoder.encode(anyString())).thenReturn("newEncodedPassword");
-        when(s3Service.upload(any(MultipartFile.class))).thenReturn(Optional.empty());
-
-        // When & Then
-        assertThatThrownBy(() -> memberWriteService.updateMember(request, customUser, file))
-                .isInstanceOf(CMissingDataException.class);
-    }
 
     @Test
     @DisplayName("회원 삭제 성공")

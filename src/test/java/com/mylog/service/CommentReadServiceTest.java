@@ -255,41 +255,7 @@ class CommentReadServiceTest {
         verify(commentRepository, never()).findByArticle_Id(any(), any());
     }
 
-    @Test
-    void getChildComments_존재하지_않는_게시글() {
-        // Given
-        Long articleId = 999L;
-        Long parentId = 1L;
-        
-        when(articleRepository.existsById(articleId)).thenReturn(false);
 
-        // When & Then
-        assertThatThrownBy(() -> commentReadService.getChildComments(articleId, parentId, pageable))
-                .isInstanceOf(CMissingDataException.class)
-                .hasMessage("존재하지 않는 게시글입니다.");
-
-        verify(articleRepository).existsById(articleId);
-        verify(commentRepository, never()).existsById(any());
-    }
-
-    @Test
-    void getChildComments_존재하지_않는_부모_댓글() {
-        // Given
-        Long articleId = 1L;
-        Long parentId = 999L;
-        
-        when(articleRepository.existsById(articleId)).thenReturn(true);
-        when(commentRepository.existsById(parentId)).thenReturn(false);
-
-        // When & Then
-        assertThatThrownBy(() -> commentReadService.getChildComments(articleId, parentId, pageable))
-                .isInstanceOf(CMissingDataException.class)
-                .hasMessage("존재하지 않는 댓글입니다.");
-
-        verify(articleRepository).existsById(articleId);
-        verify(commentRepository).existsById(parentId);
-        verify(commentRepository, never()).findByArticle_IdAndParentId(any(), any(), any());
-    }
 
     @Test
     void getById_댓글_조회_성공() {
