@@ -4,7 +4,7 @@ import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.member.MemberResponse;
 import com.mylog.model.entity.Member;
 import com.mylog.exception.CMissingDataException;
-import com.mylog.repository.MemberRepository;
+import com.mylog.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

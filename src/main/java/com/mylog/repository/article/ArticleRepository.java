@@ -1,4 +1,4 @@
-package com.mylog.repository;
+package com.mylog.repository.article;
 
 import com.mylog.model.entity.Article;
 import org.springframework.data.domain.Page;

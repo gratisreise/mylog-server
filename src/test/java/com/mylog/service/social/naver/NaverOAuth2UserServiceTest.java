@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -20,7 +18,7 @@ import com.mylog.model.dto.social.naver.NaverResponse;
 import com.mylog.model.dto.social.naver.NaverTokenResponse;
 import com.mylog.model.dto.social.naver.NaverUserInfo;
 import com.mylog.model.entity.Member;
-import com.mylog.repository.MemberRepository;
+import com.mylog.repository.member.MemberRepository;
 import com.mylog.service.RefreshTokenService;
 import java.util.Map;
 import java.util.Optional;

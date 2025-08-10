@@ -16,7 +16,7 @@ import com.mylog.model.entity.Article;
 import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Comment;
 import com.mylog.model.entity.Member;
-import com.mylog.repository.CommentRepository;
+import com.mylog.repository.comment.CommentRepository;
 import com.mylog.service.article.ArticleReadService;
 import com.mylog.service.comment.CommentReadService;
 import com.mylog.service.comment.CommentWriteService;

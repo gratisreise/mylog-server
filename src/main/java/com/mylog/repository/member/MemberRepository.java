@@ -1,4 +1,4 @@
-package com.mylog.repository;
+package com.mylog.repository.member;
 
 import com.mylog.model.entity.Member;
 import com.mylog.enums.OauthProvider;

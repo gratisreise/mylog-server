@@ -1,4 +1,4 @@
-package com.mylog.repository;
+package com.mylog.repository.category;
 
 import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;

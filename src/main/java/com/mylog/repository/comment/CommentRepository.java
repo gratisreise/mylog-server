@@ -1,4 +1,4 @@
-package com.mylog.repository;
+package com.mylog.repository.comment;
 
 import com.mylog.model.entity.Comment;
 import com.mylog.model.entity.Member;

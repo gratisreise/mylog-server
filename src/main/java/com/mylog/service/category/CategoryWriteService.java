@@ -7,7 +7,7 @@ import com.mylog.model.dto.category.CategoryUpdateRequest;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
-import com.mylog.repository.CategoryRepository;
+import com.mylog.repository.category.CategoryRepository;
 import com.mylog.service.member.MemberReadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

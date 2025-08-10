@@ -6,7 +6,7 @@ import com.mylog.model.dto.member.UpdateMemberRequest;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Member;
 import com.mylog.exception.CMissingDataException;
-import com.mylog.repository.MemberRepository;
+import com.mylog.repository.member.MemberRepository;
 import com.mylog.service.category.CategoryWriteService;
 import com.mylog.service.S3Service;
 import java.io.IOException;
@@ -78,7 +78,7 @@ public class MemberWriteService {
         if(isSame(memberImg, profileImg)){
             member.update(request);
         } else {
-            profileImg = s3Service.upload(file).orElseThrow(CMissingDataException::new);
+            profileImg = s3Service.upload(file);
             if(!memberImg.equals(basicImageUrl)) s3Service.deleteImage(memberImg);
             member.update(request, profileImg);
         }

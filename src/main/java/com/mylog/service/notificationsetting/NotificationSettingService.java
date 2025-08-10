@@ -3,7 +3,7 @@ package com.mylog.service.notificationsetting;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.notification.NotificationSettingResponse;
 import com.mylog.model.entity.Member;
-import com.mylog.repository.NotificationSettingRepository;
+import com.mylog.repository.notificationsetting.NotificationSettingRepository;
 import com.mylog.service.member.MemberReadService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

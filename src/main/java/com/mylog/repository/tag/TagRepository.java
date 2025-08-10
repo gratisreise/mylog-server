@@ -1,4 +1,4 @@
-package com.mylog.repository;
+package com.mylog.repository.tag;
 
 import com.mylog.model.entity.Tag;
 import java.util.Optional;

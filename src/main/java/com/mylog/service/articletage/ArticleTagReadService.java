@@ -1,7 +1,7 @@
 package com.mylog.service.articletage;
 
 import com.mylog.model.entity.Article;
-import com.mylog.repository.ArticleTagRepository;
+import com.mylog.repository.articletag.ArticleTagRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

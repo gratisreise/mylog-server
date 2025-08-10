@@ -15,7 +15,7 @@ import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.member.SignUpRequest;
 import com.mylog.model.dto.member.UpdateMemberRequest;
 import com.mylog.model.entity.Member;
-import com.mylog.repository.MemberRepository;
+import com.mylog.repository.member.MemberRepository;
 import com.mylog.service.category.CategoryWriteService;
 import com.mylog.service.member.MemberReadService;
 import com.mylog.service.member.MemberWriteService;

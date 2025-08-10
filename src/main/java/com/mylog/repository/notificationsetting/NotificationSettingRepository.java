@@ -1,4 +1,4 @@
-package com.mylog.repository;
+package com.mylog.repository.notificationsetting;
 
 import com.mylog.model.entity.Member;
 import com.mylog.model.entity.NotificationSetting;

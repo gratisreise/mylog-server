@@ -7,7 +7,7 @@ import com.mylog.model.entity.Article;
 import com.mylog.model.entity.Comment;
 import com.mylog.model.entity.Member;
 import com.mylog.exception.CUnAuthorizedException;
-import com.mylog.repository.CommentRepository;
+import com.mylog.repository.comment.CommentRepository;
 import com.mylog.service.notification.NotificationService;
 import com.mylog.service.article.ArticleReadService;
 import com.mylog.service.member.MemberReadService;

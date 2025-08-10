@@ -11,7 +11,7 @@ import com.mylog.model.dto.social.naver.NaverOAuth2UserInfo;
 import com.mylog.model.dto.social.naver.NaverTokenResponse;
 import com.mylog.model.dto.social.naver.NaverUserInfo;
 import com.mylog.model.entity.Member;
-import com.mylog.repository.MemberRepository;
+import com.mylog.repository.member.MemberRepository;
 import com.mylog.service.category.CategoryWriteService;
 import com.mylog.service.RefreshTokenService;
 import com.mylog.service.social.AbstractOAuth2UserService;

@@ -1,6 +1,5 @@
 package com.mylog.config;
 
-import com.mylog.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

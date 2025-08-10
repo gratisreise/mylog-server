@@ -1,4 +1,4 @@
-package com.mylog.repository;
+package com.mylog.repository.articletag;
 
 import com.mylog.model.entity.Article;
 import com.mylog.model.entity.ArticleTag;

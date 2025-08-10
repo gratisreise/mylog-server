@@ -14,7 +14,7 @@ import com.mylog.model.dto.category.CategoryUpdateRequest;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
-import com.mylog.repository.CategoryRepository;
+import com.mylog.repository.category.CategoryRepository;
 import com.mylog.service.category.CategoryReadService;
 import com.mylog.service.category.CategoryWriteService;
 import com.mylog.service.member.MemberReadService;
