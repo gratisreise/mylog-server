@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface NotificationSettingRepository extends JpaRepository<NotificationSetting, Long> {
+public interface NotificationSettingRepository extends JpaRepository<NotificationSetting, Long>, NotificationSettingRepositoryCustom {
 
     List<NotificationSetting> findByMember(Member member);
     Optional<NotificationSetting> findByMemberAndType(Member member, String type);

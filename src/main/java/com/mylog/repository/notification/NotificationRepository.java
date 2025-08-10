@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface NotificationRepository extends JpaRepository<Notification, Long> {
+public interface NotificationRepository extends JpaRepository<Notification, Long>, NotificationRepositoryCustom {
 
     @Query(
             """

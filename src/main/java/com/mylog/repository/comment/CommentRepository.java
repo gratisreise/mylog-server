@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+public interface CommentRepository extends JpaRepository<Comment, Long>, CommentRepositoryCustom{
 
     //게시글 댓글 목록 조회
     @EntityGraph(attributePaths = {"article", "member"})

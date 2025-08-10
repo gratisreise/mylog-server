@@ -1,6 +1,7 @@
 package com.mylog.service.articletage;
 
 import com.mylog.model.entity.Article;
+import com.mylog.model.entity.Tag;
 import com.mylog.repository.articletag.ArticleTagRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +15,7 @@ public class ArticleTagReadService {
 
     public List<String> getTags(Article article){
         return articleTagRepository.findByArticle(article)
-            .stream().map(data -> data.getTag().getTagName())
-            .toList();
+            .stream().map(Tag::getTagName).toList();
     }
 
 }
