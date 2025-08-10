@@ -7,6 +7,7 @@ import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.article.ArticleRepository;
 import com.mylog.repository.member.MemberRepository;
 import com.mylog.service.articletage.ArticleTagReadService;
+import com.mylog.service.tag.TagReadService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ArticleReadService {
     private final ArticleRepository articleRepository;
-    private final ArticleTagReadService articleTagReadService;
+    private final TagReadService tagReadService;
     private final MemberRepository memberRepository;
 
     public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser) {
@@ -71,7 +72,7 @@ public class ArticleReadService {
     }
 
     private ArticleResponse createArticleResponse(Article article){
-        List<String> tags = articleTagReadService.getTags(article);
+        List<String> tags = tagReadService.getTags(article);
         return new ArticleResponse(article, tags);
     }
 

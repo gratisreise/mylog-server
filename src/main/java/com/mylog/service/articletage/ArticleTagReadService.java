@@ -1,21 +1,10 @@
 package com.mylog.service.articletage;
 
-import com.mylog.model.entity.Article;
-import com.mylog.model.entity.Tag;
-import com.mylog.repository.articletag.ArticleTagRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class ArticleTagReadService {
-    private final ArticleTagRepository articleTagRepository;
-
-
-    public List<String> getTags(Article article){
-        return articleTagRepository.findByArticle(article)
-            .stream().map(Tag::getTagName).toList();
-    }
 
 }
