@@ -27,14 +27,12 @@ public class AuthService {
 
     //로그인
     public LoginResponse login(LoginRequest request) {
-        log.info(request.email());
+        log.info("email: {}", request.email());
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
-        log.info("authentication clear");
-
+        log.info("saved userInfo");
         Member member = memberReadService.getByEmail(request.email());
-        log.info("{}", member);
 
         long memberId = member.getId();
         String username = String.valueOf(memberId);

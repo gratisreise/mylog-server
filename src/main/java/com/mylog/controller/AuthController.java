@@ -30,6 +30,7 @@ public class AuthController {
     @Operation(summary = "이메일 로그인")
     @PostMapping("/login")
     public SingleResult<LoginResponse> login(@RequestBody LoginRequest request){
+        log.info("request : {}", request.toString());
         return ResponseService.getSingleResult(authService.login(request));
     }
 

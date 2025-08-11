@@ -23,6 +23,7 @@ import com.mylog.repository.article.ArticleRepository;
 import com.mylog.repository.member.MemberRepository;
 import com.mylog.service.article.ArticleReadService;
 import com.mylog.service.articletage.ArticleTagReadService;
+import com.mylog.service.tag.TagReadService;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +55,7 @@ class ArticleReadServiceTest {
     private MemberRepository memberRepository;
 
     @Mock
-    private ArticleTagReadService articleTagReadService;
+    private TagReadService tagReadService;
 
     @InjectMocks
     private ArticleReadService articleReadService;

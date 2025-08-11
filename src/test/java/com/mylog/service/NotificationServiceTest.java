@@ -352,7 +352,7 @@ public class NotificationServiceTest {
             List<Notification> notifications = List.of(testNotification);
             Page<Notification> notificationPage = new PageImpl<>(notifications);
             
-            when(notificationRepository.findAllByMemberAndReadFalse(eq(testMember), any(Pageable.class)))
+            when(notificationRepository.findByMemberAndRead(eq(testMember), any(Pageable.class)))
                 .thenReturn(notificationPage);
 
             // When
@@ -364,7 +364,7 @@ public class NotificationServiceTest {
             assertThat(result.getTotalElements()).isEqualTo(1);
             
             verify(memberReadService).getByCustomUser(customUser);
-            verify(notificationRepository).findAllByMemberAndReadFalse(eq(testMember), any(Pageable.class));
+            verify(notificationRepository).findByMemberAndRead(eq(testMember), any(Pageable.class));
         }
 
         @Test
@@ -374,7 +374,7 @@ public class NotificationServiceTest {
             when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
             
             Page<Notification> emptyPage = new PageImpl<>(Collections.emptyList());
-            when(notificationRepository.findAllByMemberAndReadFalse(eq(testMember), any(Pageable.class)))
+            when(notificationRepository.findByMemberAndRead(eq(testMember), any(Pageable.class)))
                 .thenReturn(emptyPage);
 
             // When
@@ -396,7 +396,7 @@ public class NotificationServiceTest {
             List<Notification> unreadNotifications = List.of(testNotification);
             Page<Notification> notificationPage = new PageImpl<>(unreadNotifications);
             
-            when(notificationRepository.findAllByMemberAndReadFalse(eq(testMember), any(Pageable.class)))
+            when(notificationRepository.findByMemberAndRead(eq(testMember), any(Pageable.class)))
                 .thenReturn(notificationPage);
 
             // When
@@ -404,7 +404,7 @@ public class NotificationServiceTest {
 
             // Then
             assertThat(result.getContent()).hasSize(1);
-            verify(notificationRepository).findAllByMemberAndReadFalse(eq(testMember), any(Pageable.class));
+            verify(notificationRepository).findByMemberAndRead(eq(testMember), any(Pageable.class));
         }
     }
 

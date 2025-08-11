@@ -9,7 +9,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update #자동생성
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
