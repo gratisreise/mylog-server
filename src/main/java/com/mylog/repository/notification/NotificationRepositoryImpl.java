@@ -1,11 +1,44 @@
 package com.mylog.repository.notification;
 
-import com.mylog.repository.member.MemberRepositoryCustom;
+import com.mylog.model.entity.Member;
+import com.mylog.model.entity.Notification;
+import com.mylog.model.entity.QNotification;
+import com.mylog.model.entity.QNotificationSetting;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
 public class NotificationRepositoryImpl implements NotificationRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+
+    @Override
+    public Page<Notification> findByMemberAndRead(Member member, Pageable pageable) {
+        QNotification notification = QNotification.notification;
+        QNotificationSetting notificationSetting = QNotificationSetting.notificationSetting;
+
+        List<Notification> content = queryFactory
+            .select(notification)
+            .from(notification, notificationSetting)
+            .leftJoin(notification).on(notification.member.eq(notificationSetting.member))
+            .where(notificationSetting.disabled.isFalse())
+            .where(notification.read.isFalse())
+            .fetch();
+
+        Long total =  queryFactory
+            .select(notification.count())
+            .from(notification, notificationSetting)
+            .leftJoin(notification).on(notification.member.eq(notificationSetting.member))
+            .where(notificationSetting.disabled.isFalse())
+            .where(notification.read.isFalse())
+            .fetchOne();
+
+        total = total == null ? 0 : total;
+
+        return new PageImpl<>(content, pageable, total);
+    }
 }

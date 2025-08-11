@@ -1,11 +1,11 @@
 package com.mylog.service.notification;
 
+import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.notification.NotificationResponse;
 import com.mylog.model.entity.Member;
 import com.mylog.model.entity.Notification;
 import com.mylog.model.entity.NotificationSetting;
-import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.notification.NotificationRepository;
 import com.mylog.repository.notificationsetting.NotificationSettingRepository;
 import com.mylog.service.member.MemberReadService;
@@ -64,7 +64,7 @@ public class NotificationService {
         Member member = memberReadService.getByCustomUser(customUser);
 
         return notificationRepository
-            .findAllByMemberAndReadFalse(member, pageable)
+            .findByMemberAndRead(member, pageable)
             .map(NotificationResponse::new);
     };
 
