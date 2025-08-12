@@ -4,9 +4,10 @@ import com.mylog.model.dto.article.ArticleResponse;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Article;
 import com.mylog.exception.CMissingDataException;
+import com.mylog.model.entity.Member;
 import com.mylog.repository.article.ArticleRepository;
 import com.mylog.repository.member.MemberRepository;
-import com.mylog.service.articletage.ArticleTagReadService;
+import com.mylog.service.member.MemberReadService;
 import com.mylog.service.tag.TagReadService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,24 +25,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArticleReadService {
     private final ArticleRepository articleRepository;
     private final TagReadService tagReadService;
+    private final MemberReadService memberReadService;
     private final MemberRepository memberRepository;
 
     public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser) {
-        Long memberId = memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new)
-            .getId();
-
-        return articleRepository.findAllByMemberId(memberId, pageable)
+        Member member = memberReadService.getById(customUser.getMemberId());
+        return articleRepository.findAllByMember(member, pageable)
             .map(this::createArticleResponse);
     }
 
-    public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser,
-        String keyword) {
-        Long memberId = memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new)
-            .getId();
+    public Page<ArticleResponse> getArticles(Pageable pageable,
+        CustomUser customUser, String keyword) {
+        Member member = memberReadService.getById(customUser.getMemberId());
         return articleRepository
-            .findByMemberIdAndTitleContainingIgnoreCase(memberId, keyword, pageable)
+            .findByMemberAndTitleContainingIgnoreCase(member, keyword, pageable)
             .map(this::createArticleResponse);
     }
 
@@ -57,6 +54,7 @@ public class ArticleReadService {
             .map(this::createArticleResponse);
     }
 
+
     @Cacheable(value = "articles", key="'태그='+#tag")
     public Page<ArticleResponse> getArticles(String keyword, String tag, Pageable pageable){
         return !isClear(keyword) ?
@@ -65,7 +63,6 @@ public class ArticleReadService {
             articleRepository.findAllByTagName(tag, pageable)
                 .map(this::createArticleResponse);
     }
-
 
     public Article getArticleById(Long articleId) {
         return articleRepository.findById(articleId)

@@ -13,8 +13,7 @@ public class TagReadService {
     private final TagRepository tagRepository;
 
     public List<String> getTags(Article article){
-        return tagRepository.findByArticle(article)
-            .stream().map(Tag::getTagName).toList();
+        return tagRepository.findByArticle(article);
     }
 
 }

@@ -14,12 +14,12 @@ public class TagRepositoryImpl implements TagRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Tag> findByArticle(Article article) {
+    public List<String> findByArticle(Article article) {
         QArticleTag articleTag = QArticleTag.articleTag;
         QTag tag = QTag.tag;
 
         return  queryFactory
-            .select(tag)
+            .select(tag.tagName)
             .from(articleTag)
             .join(articleTag.tag, tag)
             .where(articleTag.article.eq(article))

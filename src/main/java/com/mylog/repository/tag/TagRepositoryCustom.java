@@ -5,5 +5,5 @@ import com.mylog.model.entity.Tag;
 import java.util.List;
 
 public interface TagRepositoryCustom  {
-    List<Tag> findByArticle(Article article);
+    List<String> findByArticle(Article article);
 }

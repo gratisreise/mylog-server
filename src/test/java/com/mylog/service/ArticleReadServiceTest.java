@@ -22,7 +22,6 @@ import com.mylog.model.entity.Member;
 import com.mylog.repository.article.ArticleRepository;
 import com.mylog.repository.member.MemberRepository;
 import com.mylog.service.article.ArticleReadService;
-import com.mylog.service.articletage.ArticleTagReadService;
 import com.mylog.service.tag.TagReadService;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -159,7 +158,7 @@ class ArticleReadServiceTest {
         Page<Article> articlePage = new PageImpl<>(articles, pageable, 3);
 
         when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
-        when(articleRepository.findAllByMemberId(1L, pageable)).thenReturn(articlePage);
+        when(articleRepository.findAllByMember(1L, pageable)).thenReturn(articlePage);
 
         // When
         Page<ArticleResponse> result = articleReadService.getArticles(pageable, customUser);
@@ -176,7 +175,7 @@ class ArticleReadServiceTest {
         assertEquals("Test Category", content.get(0).category());
 
         verify(memberRepository).findById(1L);
-        verify(articleRepository).findAllByMemberId(1L, pageable);
+        verify(articleRepository).findAllByMember(1L, pageable);
     }
 
     @Test
@@ -191,7 +190,7 @@ class ArticleReadServiceTest {
         );
 
         verify(memberRepository).findById(1L);
-        verify(articleRepository, never()).findAllByMemberId(anyLong(), any(Pageable.class));
+        verify(articleRepository, never()).findAllByMember(anyLong(), any(Pageable.class));
     }
 
     @Test
@@ -201,7 +200,7 @@ class ArticleReadServiceTest {
         Page<Article> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
 
         when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
-        when(articleRepository.findAllByMemberId(1L, pageable)).thenReturn(emptyPage);
+        when(articleRepository.findAllByMember(1L, pageable)).thenReturn(emptyPage);
 
         // When
         Page<ArticleResponse> result = articleReadService.getArticles(pageable, customUser);
@@ -213,7 +212,7 @@ class ArticleReadServiceTest {
         assertTrue(result.getContent().isEmpty());
 
         verify(memberRepository).findById(1L);
-        verify(articleRepository).findAllByMemberId(1L, pageable);
+        verify(articleRepository).findAllByMember(1L, pageable);
     }
 
     @Test
@@ -533,7 +532,7 @@ class ArticleReadServiceTest {
         Page<Article> articlePage = new PageImpl<>(articles, pageable, 1);
 
         when(memberRepository.findById(2L)).thenReturn(Optional.of(anotherMember));
-        when(articleRepository.findAllByMemberId(2L, pageable)).thenReturn(articlePage);
+        when(articleRepository.findAllByMember(2L, pageable)).thenReturn(articlePage);
 
         // When
         Page<ArticleResponse> result = articleReadService.getArticles(pageable, anotherCustomUser);
@@ -541,8 +540,8 @@ class ArticleReadServiceTest {
         // Then
         assertNotNull(result);
         verify(memberRepository).findById(2L);
-        verify(articleRepository).findAllByMemberId(2L, pageable);
-        verify(articleRepository, never()).findAllByMemberId(eq(1L), any(Pageable.class));
+        verify(articleRepository).findAllByMember(2L, pageable);
+        verify(articleRepository, never()).findAllByMember(eq(1L), any(Pageable.class));
     }
 
     @Test
