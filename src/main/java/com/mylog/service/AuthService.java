@@ -27,17 +27,17 @@ public class AuthService {
 
     //로그인
     public LoginResponse login(LoginRequest request) {
-        log.info("email: {}", request.email());
+//        log.info("email: {}", request.email());
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
-        log.info("saved userInfo");
+//        log.info("saved userInfo");
         Member member = memberReadService.getByEmail(request.email());
 
         long memberId = member.getId();
         String username = String.valueOf(memberId);
 
-        log.info("{}", memberId);
+//        log.info("{}", memberId);
 
         String refreshToken = jwtUtil.createRefreshToken(username);
         String accessToken = jwtUtil.createAccessToken(username, memberId);

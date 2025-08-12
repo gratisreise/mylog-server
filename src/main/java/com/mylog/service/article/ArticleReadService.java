@@ -10,6 +10,8 @@ import com.mylog.service.articletage.ArticleTagReadService;
 import com.mylog.service.tag.TagReadService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class ArticleReadService {
     private final ArticleRepository articleRepository;
     private final TagReadService tagReadService;
@@ -48,11 +51,13 @@ public class ArticleReadService {
         return createArticleResponse(article);
     }
 
+    @Cacheable(value = "articles", key="#pageable.getPageNumber()")
     public Page<ArticleResponse> getArticles(Pageable pageable){
         return articleRepository.findAll(pageable)
             .map(this::createArticleResponse);
     }
 
+    @Cacheable(value = "articles", key="'태그='+#tag")
     public Page<ArticleResponse> getArticles(String keyword, String tag, Pageable pageable){
         return !isClear(keyword) ?
             articleRepository.findByTitleContainingIgnoreCase(keyword, pageable)

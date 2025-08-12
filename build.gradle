@@ -33,6 +33,7 @@ dependencies {
     implementation 'org.postgresql:postgresql:42.7.3'
     runtimeOnly 'com.h2database:h2:2.2.224'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.2.2'
 
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.12.5'

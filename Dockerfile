@@ -1,6 +1,6 @@
 # docker buildx build --platform=linux/amd64 -t nooaahh/mylog --push .
 # docker buildx build --platform=linux/amd64,linux/arm64 -t nooaahh/mylog --push .
-# docker build -t nooaahh/mylog .
+# docker build -t mylog .
 
 # 1. Gradle 빌드 이미지 (빌드 전용)
 FROM gradle:8.2.1-jdk17 AS builder

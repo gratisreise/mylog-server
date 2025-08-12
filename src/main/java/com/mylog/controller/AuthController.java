@@ -30,7 +30,6 @@ public class AuthController {
     @Operation(summary = "이메일 로그인")
     @PostMapping("/login")
     public SingleResult<LoginResponse> login(@RequestBody LoginRequest request){
-        log.info("request : {}", request.toString());
         return ResponseService.getSingleResult(authService.login(request));
     }
 
@@ -43,7 +42,6 @@ public class AuthController {
     @Operation(summary = "소셜 로그인")
     @PostMapping("/oauth/login")
     public SingleResult<LoginResponse> socialLogin(@RequestBody @Valid OAuthRequest request){
-        log.info("{}", request);
         OAuth2UserService service = oAuth2UserServiceFactory.getOAuth2UserService(request.getProvider());
         return ResponseService.getSingleResult(service.login(request));
     }

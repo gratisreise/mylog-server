@@ -7,6 +7,7 @@ import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberReadService {
     private final MemberRepository memberRepository;
 
+
+//    @Cacheable(value = "members", key = "#customUser.getMemberId()")
     public MemberResponse getMember(CustomUser customUser){
         Member member = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);

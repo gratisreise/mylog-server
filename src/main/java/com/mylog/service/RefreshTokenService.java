@@ -14,7 +14,6 @@ public class RefreshTokenService {
     private final ValueOperations<String, String> valueOperations;
 
     public void saveRefreshToken(String username, String refreshToken) {
-
         valueOperations.set(
             generateKey(username),
             refreshToken,

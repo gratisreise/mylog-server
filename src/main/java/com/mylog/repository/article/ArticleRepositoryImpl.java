@@ -8,11 +8,13 @@ import com.mylog.repository.member.MemberRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
+@Slf4j
 public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
@@ -22,7 +24,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         QArticle article = QArticle.article;
         QArticleTag articleTag = QArticleTag.articleTag;
         QTag tag = QTag.tag;
-
+        log.info("no-cache");
 
         List<Article> content = queryFactory
             .select(article)
@@ -30,7 +32,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
             .join(articleTag.article, article)
             .join(articleTag.tag, tag)
             .where(tag.tagName.eq(tagName))
-            .offset(pageable.getOffset())
+            .offset(pageable.getOffset() * pageable.getPageNumber())
             .limit(pageable.getPageSize())
             .fetch();
 

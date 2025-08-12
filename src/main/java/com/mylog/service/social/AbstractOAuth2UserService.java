@@ -20,11 +20,11 @@ public abstract class AbstractOAuth2UserService implements OAuth2UserService {
     @Override
     public LoginResponse login(OAuthRequest request){
         String accessToken = getAccessToken(request);
-        log.info("{}", accessToken);
+//        log.info("{}", accessToken);
         OAuth2UserInfo userInfo = getUserInfo(accessToken);
-        log.info("{}", userInfo);
+//        log.info("{}", userInfo);
         Member member = createOrUpdateMember(userInfo);
-        log.info("{}", member);
+//        log.info("{}", member);
 
         long memberId = member.getId();
         String username = String.valueOf(memberId);
