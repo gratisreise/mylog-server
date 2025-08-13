@@ -1,5 +1,6 @@
 package com.mylog.service.category;
 
+import com.mylog.common.CommonValue;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.category.CategoryResponse;
 import com.mylog.model.dto.classes.CustomUser;
@@ -23,16 +24,15 @@ public class CategoryReader {
 
     public List<CategoryResponse> getCategories(CustomUser customUser){
         Member member = generateMember(customUser);
-        long memberId = member.getId();
         return categoryRepository.findByMember(member)
             .stream()
             .filter(this::isOriginCategory)
-            .map(category -> new CategoryResponse(category, memberId))
+            .map(CategoryResponse::new)
             .toList();
     }
 
     private boolean isOriginCategory(Category category){
-        return !category.getCategoryName().equals(CategoryService.originCategory);
+        return !category.getCategoryName().equals(CommonValue.ORIGIN_CATEGORY);
     }
 
     private Member generateMember(CustomUser customUser) {
@@ -43,10 +43,6 @@ public class CategoryReader {
     public Category getByMemberAndCategoryName(Member member, String categoryName) {
         return categoryRepository.findByMemberAndCategoryName(member, categoryName)
             .orElseThrow(CMissingDataException::new);
-    }
-
-    public int getCategorySize(Member member) {
-        return categoryRepository.findByMember(member).size();
     }
 
     public Category getById(Long categoryId) {

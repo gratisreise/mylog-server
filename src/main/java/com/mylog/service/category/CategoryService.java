@@ -1,5 +1,6 @@
 package com.mylog.service.category;
 
+import com.mylog.common.CommonValue;
 import com.mylog.exception.CReachedLimitException;
 import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.model.dto.category.CategoryCreateRequest;
@@ -22,14 +23,12 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryReader categoryReader;
 
-    private final int limit = 20;
-    public static String originCategory = "없음";
 
     public void createCategory(CategoryCreateRequest request, CustomUser customUser){
         Member member = memberReader.getById(customUser.getMemberId());
-        int categorySize = categoryReader.getCategorySize(member);
+        int categorySize = categoryRepository.countByMember(member);
 
-        if(categorySize == limit){
+        if(categorySize == CommonValue.CATEGORY_LIMIT){
             throw new CReachedLimitException("카테고리 갯수가 한도에 도달했습니다.");
         }
 
@@ -40,15 +39,15 @@ public class CategoryService {
 
     public void createCategory(String email){
         Member member = memberReader.getByEmail(email);
-        Category category = new Category(member, originCategory);
+        Category category = new Category(member, CommonValue.ORIGIN_CATEGORY);
         categoryRepository.save(category);
     }
 
     public void createCategory(Member member){
-        if(categoryRepository.existsByMemberAndCategoryName(member, CategoryService.originCategory)){
+        if(categoryRepository.existsByMemberAndCategoryName(member, CommonValue.ORIGIN_CATEGORY)){
             return;
         }
-        Category category = new Category(member, originCategory);
+        Category category = new Category(member, CommonValue.ORIGIN_CATEGORY);
         categoryRepository.save(category);
     }
 
