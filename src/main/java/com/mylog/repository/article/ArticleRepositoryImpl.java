@@ -32,7 +32,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
             .join(articleTag.article, article)
             .join(articleTag.tag, tag)
             .where(tag.tagName.eq(tagName))
-            .offset(pageable.getOffset() * pageable.getPageNumber())
+            .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
 

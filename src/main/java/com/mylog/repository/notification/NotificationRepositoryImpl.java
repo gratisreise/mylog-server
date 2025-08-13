@@ -27,6 +27,8 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
             .leftJoin(notification).on(notification.member.eq(notificationSetting.member))
             .where(notificationSetting.disabled.isFalse())
             .where(notification.read.isFalse())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
             .fetch();
 
         Long total =  queryFactory
