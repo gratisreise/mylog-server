@@ -21,6 +21,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Comment
     Page<Comment> findByArticle_IdAndParentId(Long articleId, Long parentId, Pageable pageable);
 
     //나의 댓글 조회
+
     Page<Comment> findAllByMember(Member member, Pageable pageable);
 
     //나의 게시글 댓글 조회

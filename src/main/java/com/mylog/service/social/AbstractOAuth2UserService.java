@@ -5,7 +5,7 @@ import com.mylog.model.dto.auth.LoginResponse;
 import com.mylog.model.dto.social.OAuth2UserInfo;
 import com.mylog.model.dto.social.OAuthRequest;
 import com.mylog.model.entity.Member;
-import com.mylog.service.category.CategoryWriteService;
+import com.mylog.service.category.CategoryService;
 import com.mylog.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class AbstractOAuth2UserService implements OAuth2UserService {
     protected final JwtUtil jwtUtil;
     protected final RefreshTokenService refreshTokenService;
-    private final CategoryWriteService categoryWriteService;
+    private final CategoryService categoryService;
 
     @Override
     public LoginResponse login(OAuthRequest request){
@@ -29,7 +29,7 @@ public abstract class AbstractOAuth2UserService implements OAuth2UserService {
         long memberId = member.getId();
         String username = String.valueOf(memberId);
 
-        categoryWriteService.createCategory(member);
+        categoryService.createCategory(member);
 
         String refreshToken = jwtUtil.createRefreshToken(username);
         refreshTokenService.saveRefreshToken(username, refreshToken);

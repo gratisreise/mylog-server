@@ -17,10 +17,10 @@ import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Comment;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.comment.CommentRepository;
-import com.mylog.service.article.ArticleReadService;
-import com.mylog.service.comment.CommentReadService;
-import com.mylog.service.comment.CommentWriteService;
-import com.mylog.service.member.MemberReadService;
+import com.mylog.service.article.ArticleReader;
+import com.mylog.service.comment.CommentReader;
+import com.mylog.service.comment.CommentService;
+import com.mylog.service.member.MemberReader;
 import com.mylog.service.notification.NotificationService;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -33,22 +33,22 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class CommentWriteServiceTest {
+class CommentServiceTest {
 
     @InjectMocks
-    private CommentWriteService commentWriteService;
+    private CommentService commentService;
 
     @Mock
     private CommentRepository commentRepository;
 
     @Mock
-    private CommentReadService commentReadService;
+    private CommentReader commentReader;
 
     @Mock
-    private MemberReadService memberReadService;
+    private MemberReader memberReader;
 
     @Mock
-    private ArticleReadService articleReadService;
+    private ArticleReader articleReader;
 
     @Mock
     private NotificationService notificationService;
@@ -125,11 +125,11 @@ class CommentWriteServiceTest {
         // Given
         Long articleId = 1L;
         
-        when(articleReadService.getArticleById(articleId)).thenReturn(testArticle);
-        when(memberReadService.getById(1L)).thenReturn(testMember);
+        when(articleReader.getArticleById(articleId)).thenReturn(testArticle);
+        when(memberReader.getById(1L)).thenReturn(testMember);
 
         // When
-        commentWriteService.createComment(articleId, commentCreateRequest, customUser);
+        commentService.createComment(articleId, commentCreateRequest, customUser);
 
         // Then
         ArgumentCaptor<Comment> commentCaptor = ArgumentCaptor.forClass(Comment.class);
@@ -141,8 +141,8 @@ class CommentWriteServiceTest {
         assertThat(savedComment.getMember()).isEqualTo(testMember);
         assertThat(savedComment.getParentId()).isEqualTo(0L);
         
-        verify(articleReadService).getArticleById(articleId);
-        verify(memberReadService).getById(1L);
+        verify(articleReader).getArticleById(articleId);
+        verify(memberReader).getById(1L);
     }
 
     @Test
@@ -150,11 +150,11 @@ class CommentWriteServiceTest {
         // Given
         Long articleId = 1L;
         
-        when(articleReadService.getArticleById(articleId)).thenReturn(testArticle);
-        when(memberReadService.getById(1L)).thenReturn(testMember);
+        when(articleReader.getArticleById(articleId)).thenReturn(testArticle);
+        when(memberReader.getById(1L)).thenReturn(testMember);
 
         // When
-        commentWriteService.createComment(articleId, commentCreateRequest, customUser);
+        commentService.createComment(articleId, commentCreateRequest, customUser);
 
         // Then
         verify(notificationService).createNotificationSetting(testArticle.getMember(), "comment");
@@ -166,15 +166,15 @@ class CommentWriteServiceTest {
         // Given
         Long commentId = 1L;
         
-        when(commentReadService.getById(commentId)).thenReturn(testComment);
-        when(memberReadService.getById(1L)).thenReturn(testMember);
+        when(commentReader.getById(commentId)).thenReturn(testComment);
+        when(memberReader.getById(1L)).thenReturn(testMember);
 
         // When
-        commentWriteService.updateComment(commentUpdateRequest, customUser, commentId);
+        commentService.updateComment(commentUpdateRequest, customUser, commentId);
 
         // Then
-        verify(commentReadService).getById(commentId);
-        verify(memberReadService).getById(1L);
+        verify(commentReader).getById(commentId);
+        verify(memberReader).getById(1L);
     }
 
     @Test
@@ -191,16 +191,16 @@ class CommentWriteServiceTest {
                 .updatedAt(LocalDateTime.now())
                 .build();
         
-        when(commentReadService.getById(commentId)).thenReturn(commentByOther);
-        when(memberReadService.getById(1L)).thenReturn(testMember);
+        when(commentReader.getById(commentId)).thenReturn(commentByOther);
+        when(memberReader.getById(1L)).thenReturn(testMember);
 
         // When & Then
-        assertThatThrownBy(() -> commentWriteService.updateComment(commentUpdateRequest, customUser, commentId))
+        assertThatThrownBy(() -> commentService.updateComment(commentUpdateRequest, customUser, commentId))
                 .isInstanceOf(CUnAuthorizedException.class)
                 .hasMessage("허용되지 않는 유저입니다.");
 
-        verify(commentReadService).getById(commentId);
-        verify(memberReadService).getById(1L);
+        verify(commentReader).getById(commentId);
+        verify(memberReader).getById(1L);
     }
 
     @Test
@@ -208,16 +208,16 @@ class CommentWriteServiceTest {
         // Given
         Long commentId = 1L;
         
-        when(commentReadService.getById(commentId)).thenReturn(testComment);
-        when(memberReadService.getById(1L)).thenReturn(testMember);
+        when(commentReader.getById(commentId)).thenReturn(testComment);
+        when(memberReader.getById(1L)).thenReturn(testMember);
 
         // When
-        commentWriteService.deleteComment(commentId, customUser);
+        commentService.deleteComment(commentId, customUser);
 
         // Then
         verify(commentRepository).deleteById(commentId);
-        verify(commentReadService).getById(commentId); // validateDelete에서 한 번, deleteComment에서 한 번
-        verify(memberReadService).getById(1L);
+        verify(commentReader).getById(commentId); // validateDelete에서 한 번, deleteComment에서 한 번
+        verify(memberReader).getById(1L);
     }
 
     @Test
@@ -236,16 +236,16 @@ class CommentWriteServiceTest {
                 .updatedAt(LocalDateTime.now())
                 .build();
         
-        when(commentReadService.getById(commentId)).thenReturn(commentOnMyArticle);
-        when(memberReadService.getById(1L)).thenReturn(testMember);
+        when(commentReader.getById(commentId)).thenReturn(commentOnMyArticle);
+        when(memberReader.getById(1L)).thenReturn(testMember);
 
         // When
-        commentWriteService.deleteComment(commentId, customUser);
+        commentService.deleteComment(commentId, customUser);
 
         // Then - 게시글 작성자가 다른 사용자의 댓글을 삭제할 수 있음
         verify(commentRepository).deleteById(commentId);
-        verify(commentReadService).getById(commentId);
-        verify(memberReadService).getById(1L);
+        verify(commentReader).getById(commentId);
+        verify(memberReader).getById(1L);
     }
 
     @Test
@@ -271,16 +271,16 @@ class CommentWriteServiceTest {
                 .updatedAt(LocalDateTime.now())
                 .build();
         
-        when(commentReadService.getById(commentId)).thenReturn(otherComment);
-        when(memberReadService.getById(1L)).thenReturn(testMember);
+        when(commentReader.getById(commentId)).thenReturn(otherComment);
+        when(memberReader.getById(1L)).thenReturn(testMember);
 
         // When & Then
-        assertThatThrownBy(() -> commentWriteService.deleteComment(commentId, customUser))
+        assertThatThrownBy(() -> commentService.deleteComment(commentId, customUser))
                 .isInstanceOf(CUnAuthorizedException.class)
                 .hasMessage("허용되지 않는 유저입니다.");
 
-        verify(commentReadService).getById(commentId);
-        verify(memberReadService).getById(1L);
+        verify(commentReader).getById(commentId);
+        verify(memberReader).getById(1L);
         verify(commentRepository, never()).deleteById(commentId);
     }
 
@@ -302,21 +302,21 @@ class CommentWriteServiceTest {
         CustomUser user2Custom = new CustomUser(user2, Collections.emptyList());
         CustomUser user3Custom = new CustomUser(user3, Collections.emptyList());
         
-        when(commentReadService.getById(1L)).thenReturn(user2CommentOnUser1Article);
+        when(commentReader.getById(1L)).thenReturn(user2CommentOnUser1Article);
         
         // Case 1: 댓글 작성자가 삭제 -> 성공
-        when(memberReadService.getById(2L)).thenReturn(user2);
-        assertThatCode(() -> commentWriteService.deleteComment(1L, user2Custom))
+        when(memberReader.getById(2L)).thenReturn(user2);
+        assertThatCode(() -> commentService.deleteComment(1L, user2Custom))
                 .doesNotThrowAnyException();
         
         // Case 2: 게시글 작성자가 삭제 -> 성공
-        when(memberReadService.getById(1L)).thenReturn(user1);
-        assertThatCode(() -> commentWriteService.deleteComment(1L, user1Custom))
+        when(memberReader.getById(1L)).thenReturn(user1);
+        assertThatCode(() -> commentService.deleteComment(1L, user1Custom))
                 .doesNotThrowAnyException();
         
         // Case 3: 무관한 사용자가 삭제 -> 실패
-        when(memberReadService.getById(3L)).thenReturn(user3);
-        assertThatThrownBy(() -> commentWriteService.deleteComment(1L, user3Custom))
+        when(memberReader.getById(3L)).thenReturn(user3);
+        assertThatThrownBy(() -> commentService.deleteComment(1L, user3Custom))
                 .isInstanceOf(CUnAuthorizedException.class);
     }
 }

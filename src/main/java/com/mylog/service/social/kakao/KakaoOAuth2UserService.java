@@ -11,7 +11,7 @@ import com.mylog.model.dto.social.kako.KakaoTokenResponse;
 import com.mylog.model.dto.social.kako.KakaoUserInfo;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.member.MemberRepository;
-import com.mylog.service.category.CategoryWriteService;
+import com.mylog.service.category.CategoryService;
 import com.mylog.service.RefreshTokenService;
 import com.mylog.service.social.AbstractOAuth2UserService;
 import java.util.HashMap;
@@ -40,12 +40,12 @@ public class KakaoOAuth2UserService extends AbstractOAuth2UserService {
 
     public KakaoOAuth2UserService(
         JwtUtil jwtUtil, RefreshTokenService refreshTokenService,
-        CategoryWriteService categoryWriteService,
+        CategoryService categoryService,
         MemberRepository memberRepository,
         KakaoTokenClient kakaoTokenClient,
         KakaoUserClient kakaoUserClient
     ){
-        super(jwtUtil, refreshTokenService, categoryWriteService);
+        super(jwtUtil, refreshTokenService, categoryService);
         this.memberRepository = memberRepository;
         this.kakaoTokenClient = kakaoTokenClient;
         this.kakaoUserClient = kakaoUserClient;

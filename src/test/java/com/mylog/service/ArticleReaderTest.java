@@ -21,8 +21,8 @@ import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.article.ArticleRepository;
 import com.mylog.repository.member.MemberRepository;
-import com.mylog.service.article.ArticleReadService;
-import com.mylog.service.tag.TagReadService;
+import com.mylog.service.article.ArticleReader;
+import com.mylog.service.tag.TagReader;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +45,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
  * Tests all public methods with various scenarios including pagination, search, authorization, and error cases
  */
 @ExtendWith(MockitoExtension.class)
-class ArticleReadServiceTest {
+class ArticleReaderTest {
 
     @Mock
     private ArticleRepository articleRepository;
@@ -54,10 +54,10 @@ class ArticleReadServiceTest {
     private MemberRepository memberRepository;
 
     @Mock
-    private TagReadService tagReadService;
+    private TagReader tagReader;
 
     @InjectMocks
-    private ArticleReadService articleReadService;
+    private ArticleReader articleReader;
 
 
     private CustomUser customUser;
@@ -161,7 +161,7 @@ class ArticleReadServiceTest {
         when(articleRepository.findAllByMember(1L, pageable)).thenReturn(articlePage);
 
         // When
-        Page<ArticleResponse> result = articleReadService.getArticles(pageable, customUser);
+        Page<ArticleResponse> result = articleReader.getArticles(pageable, customUser);
 
         // Then
         assertNotNull(result);
@@ -186,7 +186,7 @@ class ArticleReadServiceTest {
 
         // When & Then
         assertThrows(CMissingDataException.class, () ->
-            articleReadService.getArticles(pageable, customUser)
+            articleReader.getArticles(pageable, customUser)
         );
 
         verify(memberRepository).findById(1L);
@@ -203,7 +203,7 @@ class ArticleReadServiceTest {
         when(articleRepository.findAllByMember(1L, pageable)).thenReturn(emptyPage);
 
         // When
-        Page<ArticleResponse> result = articleReadService.getArticles(pageable, customUser);
+        Page<ArticleResponse> result = articleReader.getArticles(pageable, customUser);
 
         // Then
         assertNotNull(result);
@@ -228,7 +228,7 @@ class ArticleReadServiceTest {
             .thenReturn(articlePage);
 
         // When
-        Page<ArticleResponse> result = articleReadService.getArticles(pageable, customUser, keyword);
+        Page<ArticleResponse> result = articleReader.getArticles(pageable, customUser, keyword);
 
         // Then
         assertNotNull(result);
@@ -248,7 +248,7 @@ class ArticleReadServiceTest {
 
         // When & Then
         assertThrows(CMissingDataException.class, () ->
-            articleReadService.getArticles(pageable, customUser, keyword)
+            articleReader.getArticles(pageable, customUser, keyword)
         );
 
         verify(memberRepository).findById(1L);
@@ -267,7 +267,7 @@ class ArticleReadServiceTest {
             .thenReturn(emptyPage);
 
         // When
-        Page<ArticleResponse> result = articleReadService.getArticles(pageable, customUser, keyword);
+        Page<ArticleResponse> result = articleReader.getArticles(pageable, customUser, keyword);
 
         // Then
         assertNotNull(result);
@@ -286,7 +286,7 @@ class ArticleReadServiceTest {
         when(articleRepository.findById(articleId)).thenReturn(Optional.of(testArticle));
 
         // When
-        ArticleResponse result = articleReadService.getArticle(articleId);
+        ArticleResponse result = articleReader.getArticle(articleId);
 
         // Then
         assertNotNull(result);
@@ -308,7 +308,7 @@ class ArticleReadServiceTest {
 
         // When & Then
         assertThrows(CMissingDataException.class, () ->
-            articleReadService.getArticle(articleId)
+            articleReader.getArticle(articleId)
         );
 
         verify(articleRepository).findById(articleId);
@@ -324,7 +324,7 @@ class ArticleReadServiceTest {
         when(articleRepository.findAll(pageable)).thenReturn(articlePage);
 
         // When
-        Page<ArticleResponse> result = articleReadService.getArticles(pageable);
+        Page<ArticleResponse> result = articleReader.getArticles(pageable);
 
         // Then
         assertNotNull(result);
@@ -343,7 +343,7 @@ class ArticleReadServiceTest {
         when(articleRepository.findAll(pageable)).thenReturn(emptyPage);
 
         // When
-        Page<ArticleResponse> result = articleReadService.getArticles(pageable);
+        Page<ArticleResponse> result = articleReader.getArticles(pageable);
 
         // Then
         assertNotNull(result);
@@ -366,7 +366,7 @@ class ArticleReadServiceTest {
             .thenReturn(articlePage);
 
         // When
-        Page<ArticleResponse> result = articleReadService.getArticles(keyword, tag, pageable);
+        Page<ArticleResponse> result = articleReader.getArticles(keyword, tag, pageable);
 
         // Then
         assertNotNull(result);
@@ -389,7 +389,7 @@ class ArticleReadServiceTest {
         when(articleRepository.findAllByTagName(tag, pageable)).thenReturn(articlePage);
 
         // When
-        Page<ArticleResponse> result = articleReadService.getArticles(keyword, tag, pageable);
+        Page<ArticleResponse> result = articleReader.getArticles(keyword, tag, pageable);
 
         // Then
         assertNotNull(result);
@@ -411,7 +411,7 @@ class ArticleReadServiceTest {
         when(articleRepository.findAllByTagName(tag, pageable)).thenReturn(articlePage);
 
         // When
-        Page<ArticleResponse> result = articleReadService.getArticles(keyword, tag, pageable);
+        Page<ArticleResponse> result = articleReader.getArticles(keyword, tag, pageable);
 
         // Then
         assertNotNull(result);
@@ -434,7 +434,7 @@ class ArticleReadServiceTest {
             .thenReturn(articlePage);
 
         // When
-        Page<ArticleResponse> result = articleReadService.getArticles(keyword, tag, pageable);
+        Page<ArticleResponse> result = articleReader.getArticles(keyword, tag, pageable);
 
         // Then
         assertNotNull(result);
@@ -452,7 +452,7 @@ class ArticleReadServiceTest {
         when(articleRepository.findById(articleId)).thenReturn(Optional.of(testArticle));
 
         // When
-        Article result = articleReadService.getArticleById(articleId);
+        Article result = articleReader.getArticleById(articleId);
 
         // Then
         assertNotNull(result);
@@ -472,7 +472,7 @@ class ArticleReadServiceTest {
 
         // When & Then
         assertThrows(CMissingDataException.class, () ->
-            articleReadService.getArticleById(articleId)
+            articleReader.getArticleById(articleId)
         );
 
         verify(articleRepository).findById(articleId);
@@ -489,7 +489,7 @@ class ArticleReadServiceTest {
         when(articleRepository.findAll(smallPage)).thenReturn(articlePage);
 
         // When
-        Page<ArticleResponse> result = articleReadService.getArticles(smallPage);
+        Page<ArticleResponse> result = articleReader.getArticles(smallPage);
 
         // Then
         assertNotNull(result);
@@ -511,7 +511,7 @@ class ArticleReadServiceTest {
         when(articleRepository.findAll(pageable)).thenReturn(largePage);
 
         // When
-        Page<ArticleResponse> result = articleReadService.getArticles(pageable);
+        Page<ArticleResponse> result = articleReader.getArticles(pageable);
 
         // Then
         assertNotNull(result);
@@ -535,7 +535,7 @@ class ArticleReadServiceTest {
         when(articleRepository.findAllByMember(2L, pageable)).thenReturn(articlePage);
 
         // When
-        Page<ArticleResponse> result = articleReadService.getArticles(pageable, anotherCustomUser);
+        Page<ArticleResponse> result = articleReader.getArticles(pageable, anotherCustomUser);
 
         // Then
         assertNotNull(result);
@@ -551,7 +551,7 @@ class ArticleReadServiceTest {
         when(articleRepository.findById(1L)).thenReturn(Optional.of(testArticle));
 
         // When
-        ArticleResponse result = articleReadService.getArticle(1L);
+        ArticleResponse result = articleReader.getArticle(1L);
 
         // Then
         assertNotNull(result);
@@ -578,7 +578,7 @@ class ArticleReadServiceTest {
             .thenReturn(articlePage);
 
         // When
-        Page<ArticleResponse> result = articleReadService.getArticles(emptyKeyword, tag, pageable);
+        Page<ArticleResponse> result = articleReader.getArticles(emptyKeyword, tag, pageable);
 
         // Then
         assertNotNull(result);

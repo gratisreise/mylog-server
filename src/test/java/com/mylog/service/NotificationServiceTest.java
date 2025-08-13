@@ -18,7 +18,7 @@ import com.mylog.model.entity.Notification;
 import com.mylog.model.entity.NotificationSetting;
 import com.mylog.repository.notification.NotificationRepository;
 import com.mylog.repository.notificationsetting.NotificationSettingRepository;
-import com.mylog.service.member.MemberReadService;
+import com.mylog.service.member.MemberReader;
 import com.mylog.service.notification.NotificationService;
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +55,7 @@ public class NotificationServiceTest {
     private NotificationSettingRepository notificationSettingRepository;
 
     @Mock
-    private MemberReadService memberReadService;
+    private MemberReader memberReader;
 
     private Member testMember;
     private Member oauthMember;
@@ -347,7 +347,7 @@ public class NotificationServiceTest {
         @DisplayName("읽지 않은 알림들을 페이지네이션으로 조회한다")
         void receiveNotification_ReturnsUnreadNotificationsWithPagination() {
             // Given
-            when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
+            when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
             
             List<Notification> notifications = List.of(testNotification);
             Page<Notification> notificationPage = new PageImpl<>(notifications);
@@ -363,7 +363,7 @@ public class NotificationServiceTest {
             assertThat(result.getContent()).hasSize(1);
             assertThat(result.getTotalElements()).isEqualTo(1);
             
-            verify(memberReadService).getByCustomUser(customUser);
+            verify(memberReader).getByCustomUser(customUser);
             verify(notificationRepository).findByMemberAndRead(eq(testMember), any(Pageable.class));
         }
 
@@ -371,7 +371,7 @@ public class NotificationServiceTest {
         @DisplayName("읽지 않은 알림이 없는 경우 빈 페이지를 반환한다")
         void receiveNotification_WhenNoUnreadNotifications_ReturnsEmptyPage() {
             // Given
-            when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
+            when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
             
             Page<Notification> emptyPage = new PageImpl<>(Collections.emptyList());
             when(notificationRepository.findByMemberAndRead(eq(testMember), any(Pageable.class)))
@@ -390,7 +390,7 @@ public class NotificationServiceTest {
         @DisplayName("읽은 알림은 조회 결과에 포함되지 않는다")
         void receiveNotification_ExcludesReadNotifications() {
             // Given
-            when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
+            when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
             
             // Only unread notifications should be returned
             List<Notification> unreadNotifications = List.of(testNotification);
@@ -416,7 +416,7 @@ public class NotificationServiceTest {
         @DisplayName("알림 설정을 토글한다")
         void toggleNotification_TogglesNotificationSetting() {
             // Given
-            when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
+            when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
             when(notificationSettingRepository.findByMemberAndType(testMember, TEST_TYPE))
                 .thenReturn(Optional.of(enabledSetting));
 
@@ -424,7 +424,7 @@ public class NotificationServiceTest {
             notificationService.toggleNotification(customUser, TEST_TYPE);
 
             // Then
-            verify(memberReadService).getByCustomUser(customUser);
+            verify(memberReader).getByCustomUser(customUser);
             verify(notificationSettingRepository).findByMemberAndType(testMember, TEST_TYPE);
             // Note: toggle() method call is verified through the entity state change
         }
@@ -433,7 +433,7 @@ public class NotificationServiceTest {
         @DisplayName("존재하지 않는 알림 설정 토글 시 예외를 발생시킨다")
         void toggleNotification_WhenSettingNotFound_ThrowsException() {
             // Given
-            when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
+            when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
             when(notificationSettingRepository.findByMemberAndType(testMember, TEST_TYPE))
                 .thenReturn(Optional.empty());
 
@@ -451,7 +451,7 @@ public class NotificationServiceTest {
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
             );
             
-            when(memberReadService.getByCustomUser(otherUser)).thenReturn(oauthMember);
+            when(memberReader.getByCustomUser(otherUser)).thenReturn(oauthMember);
             when(notificationSettingRepository.findByMemberAndType(oauthMember, TEST_TYPE))
                 .thenReturn(Optional.of(disabledSetting));
 
@@ -459,7 +459,7 @@ public class NotificationServiceTest {
             notificationService.toggleNotification(otherUser, TEST_TYPE);
 
             // Then
-            verify(memberReadService).getByCustomUser(otherUser);
+            verify(memberReader).getByCustomUser(otherUser);
             verify(notificationSettingRepository).findByMemberAndType(oauthMember, TEST_TYPE);
             verify(notificationSettingRepository, never()).findByMemberAndType(testMember, TEST_TYPE);
         }
@@ -475,7 +475,7 @@ public class NotificationServiceTest {
                 .disabled(false)
                 .build();
             
-            when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
+            when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
             when(notificationSettingRepository.findByMemberAndType(testMember, likeType))
                 .thenReturn(Optional.of(likeSetting));
 
@@ -520,7 +520,7 @@ public class NotificationServiceTest {
             when(notificationSettingRepository.existsByMemberAndType(testMember, TEST_TYPE))
                 .thenReturn(false)
                 .thenReturn(true); // After creation
-            when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
+            when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
             when(notificationSettingRepository.findByMemberAndType(testMember, TEST_TYPE))
                 .thenReturn(Optional.of(enabledSetting));
 

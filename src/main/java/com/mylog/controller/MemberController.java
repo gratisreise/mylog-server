@@ -7,8 +7,8 @@ import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.member.MemberResponse;
 import com.mylog.model.dto.member.SignUpRequest;
 import com.mylog.model.dto.member.UpdateMemberRequest;
-import com.mylog.service.member.MemberReadService;
-import com.mylog.service.member.MemberWriteService;
+import com.mylog.service.member.MemberReader;
+import com.mylog.service.member.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -31,15 +31,15 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class MemberController {
 
-    private final MemberReadService memberReadService;
-    private final MemberWriteService memberWriteService;
+    private final MemberReader memberReader;
+    private final MemberService memberService;
 
 
     //회원가입
     @PostMapping("/sign-up")
     @Operation(summary = "회원가입")
     public CommonResult signUp(@RequestBody @Valid SignUpRequest request){
-        memberWriteService.saveMember(request);
+        memberService.saveMember(request);
         return ResponseService.getSuccessResult();
     }
 
@@ -47,7 +47,7 @@ public class MemberController {
     @GetMapping("/me")
     @Operation(summary = "개인정보조회")
     public SingleResult<MemberResponse> getMember(@AuthenticationPrincipal CustomUser customUser){
-        return ResponseService.getSingleResult(memberReadService.getMember(customUser));
+        return ResponseService.getSingleResult(memberReader.getMember(customUser));
     }
 
 
@@ -61,7 +61,7 @@ public class MemberController {
     ) throws IOException {
         log.info("request: {}", request.toString());
         log.info("{}", customUser);
-        memberWriteService.updateMember(request, customUser, file);
+        memberService.updateMember(request, customUser, file);
         return ResponseService.getSuccessResult();
     }
 
@@ -71,7 +71,7 @@ public class MemberController {
     @Operation(summary = "개인정보삭제")
     public CommonResult deleteMember(@AuthenticationPrincipal CustomUser customUser){
         log.info("{}", customUser);
-        memberWriteService.deleteMember(customUser);
+        memberService.deleteMember(customUser);
         return ResponseService.getSuccessResult();
     }
 

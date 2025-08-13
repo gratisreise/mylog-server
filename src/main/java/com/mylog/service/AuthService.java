@@ -7,7 +7,7 @@ import com.mylog.model.dto.auth.LoginResponse;
 import com.mylog.model.dto.auth.RefreshRequest;
 import com.mylog.model.dto.auth.RefreshResponse;
 import com.mylog.model.entity.Member;
-import com.mylog.service.member.MemberReadService;
+import com.mylog.service.member.MemberReader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,7 +22,7 @@ public class AuthService {
 
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
-    private final MemberReadService memberReadService;
+    private final MemberReader memberReader;
     private final RefreshTokenService refreshTokenService;
 
     //로그인
@@ -32,7 +32,7 @@ public class AuthService {
             new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
 //        log.info("saved userInfo");
-        Member member = memberReadService.getByEmail(request.email());
+        Member member = memberReader.getByEmail(request.email());
 
         long memberId = member.getId();
         String username = String.valueOf(memberId);

@@ -15,7 +15,7 @@ import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.member.MemberResponse;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.member.MemberRepository;
-import com.mylog.service.member.MemberReadService;
+import com.mylog.service.member.MemberReader;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,10 +33,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
  */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("MemberReadService Unit Tests")
-class MemberReadServiceTest {
+class MemberReaderTest {
 
     @InjectMocks
-    private MemberReadService memberReadService;
+    private MemberReader memberReader;
 
     @Mock
     private MemberRepository memberRepository;
@@ -87,7 +87,7 @@ class MemberReadServiceTest {
         when(memberRepository.findById(TEST_MEMBER_ID)).thenReturn(Optional.of(testMember));
 
         // When
-        MemberResponse response = memberReadService.getMember(customUser);
+        MemberResponse response = memberReader.getMember(customUser);
 
         // Then
         assertThat(response).isNotNull();
@@ -103,7 +103,7 @@ class MemberReadServiceTest {
         when(memberRepository.findById(TEST_MEMBER_ID)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> memberReadService.getMember(customUser))
+        assertThatThrownBy(() -> memberReader.getMember(customUser))
                 .isInstanceOf(CMissingDataException.class);
         
         verify(memberRepository).findById(TEST_MEMBER_ID);
@@ -116,7 +116,7 @@ class MemberReadServiceTest {
         when(memberRepository.findById(TEST_MEMBER_ID)).thenReturn(Optional.of(testMember));
 
         // When
-        Member foundMember = memberReadService.getById(TEST_MEMBER_ID);
+        Member foundMember = memberReader.getById(TEST_MEMBER_ID);
 
         // Then
         assertThat(foundMember).isNotNull();
@@ -135,7 +135,7 @@ class MemberReadServiceTest {
         when(memberRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> memberReadService.getById(nonExistentId))
+        assertThatThrownBy(() -> memberReader.getById(nonExistentId))
                 .isInstanceOf(CMissingDataException.class);
         
         verify(memberRepository).findById(nonExistentId);
@@ -150,7 +150,7 @@ class MemberReadServiceTest {
         when(memberRepository.findByNickname(TEST_NICKNAME)).thenReturn(Optional.of(testMember));
 
         // When
-        Member foundMember = memberReadService.getByNickname(TEST_NICKNAME);
+        Member foundMember = memberReader.getByNickname(TEST_NICKNAME);
 
         // Then
         assertThat(foundMember).isNotNull();
@@ -169,7 +169,7 @@ class MemberReadServiceTest {
         when(memberRepository.findByNickname(nonExistentNickname)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> memberReadService.getByNickname(nonExistentNickname))
+        assertThatThrownBy(() -> memberReader.getByNickname(nonExistentNickname))
                 .isInstanceOf(CMissingDataException.class);
         
         verify(memberRepository).findByNickname(nonExistentNickname);
@@ -183,7 +183,7 @@ class MemberReadServiceTest {
         when(memberRepository.findByNickname(emptyNickname)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> memberReadService.getByNickname(emptyNickname))
+        assertThatThrownBy(() -> memberReader.getByNickname(emptyNickname))
                 .isInstanceOf(CMissingDataException.class);
         
         verify(memberRepository).findByNickname(emptyNickname);
@@ -196,7 +196,7 @@ class MemberReadServiceTest {
         when(memberRepository.findByNickname(null)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> memberReadService.getByNickname(null))
+        assertThatThrownBy(() -> memberReader.getByNickname(null))
                 .isInstanceOf(CMissingDataException.class);
         
         verify(memberRepository).findByNickname(null);
@@ -209,7 +209,7 @@ class MemberReadServiceTest {
         when(memberRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(testMember));
 
         // When
-        Member foundMember = memberReadService.getByEmail(TEST_EMAIL);
+        Member foundMember = memberReader.getByEmail(TEST_EMAIL);
 
         // Then
         assertThat(foundMember).isNotNull();
@@ -228,7 +228,7 @@ class MemberReadServiceTest {
         when(memberRepository.findByEmail(nonExistentEmail)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> memberReadService.getByEmail(nonExistentEmail))
+        assertThatThrownBy(() -> memberReader.getByEmail(nonExistentEmail))
                 .isInstanceOf(CMissingDataException.class);
         
         verify(memberRepository).findByEmail(nonExistentEmail);
@@ -242,7 +242,7 @@ class MemberReadServiceTest {
         when(memberRepository.findByEmail(invalidEmail)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> memberReadService.getByEmail(invalidEmail))
+        assertThatThrownBy(() -> memberReader.getByEmail(invalidEmail))
                 .isInstanceOf(CMissingDataException.class);
         
         verify(memberRepository).findByEmail(invalidEmail);
@@ -255,7 +255,7 @@ class MemberReadServiceTest {
         when(memberRepository.findById(TEST_MEMBER_ID)).thenReturn(Optional.of(testMember));
 
         // When
-        Member foundMember = memberReadService.getByCustomUser(customUser);
+        Member foundMember = memberReader.getByCustomUser(customUser);
 
         // Then
         assertThat(foundMember).isNotNull();
@@ -273,7 +273,7 @@ class MemberReadServiceTest {
         when(memberRepository.findById(TEST_MEMBER_ID)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> memberReadService.getByCustomUser(customUser))
+        assertThatThrownBy(() -> memberReader.getByCustomUser(customUser))
                 .isInstanceOf(CMissingDataException.class);
         
         verify(memberRepository).findById(TEST_MEMBER_ID);
@@ -311,8 +311,8 @@ class MemberReadServiceTest {
         when(memberRepository.findByNickname("kakaouser")).thenReturn(Optional.of(kakaoMember));
 
         // When
-        Member googleFound = memberReadService.getByEmail("google@example.com");
-        Member kakaoFound = memberReadService.getByNickname("kakaouser");
+        Member googleFound = memberReader.getByEmail("google@example.com");
+        Member kakaoFound = memberReader.getByNickname("kakaouser");
 
         // Then
         assertThat(googleFound.getProvider()).isEqualTo(OauthProvider.GOOGLE);
@@ -330,7 +330,7 @@ class MemberReadServiceTest {
         when(memberRepository.findByEmail(upperCaseEmail)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> memberReadService.getByEmail(upperCaseEmail))
+        assertThatThrownBy(() -> memberReader.getByEmail(upperCaseEmail))
                 .isInstanceOf(CMissingDataException.class);
         
         // 정확한 대소문자로 조회되는지 확인
@@ -346,7 +346,7 @@ class MemberReadServiceTest {
         when(memberRepository.findByNickname(upperCaseNickname)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> memberReadService.getByNickname(upperCaseNickname))
+        assertThatThrownBy(() -> memberReader.getByNickname(upperCaseNickname))
                 .isInstanceOf(CMissingDataException.class);
         
         verify(memberRepository).findByNickname(upperCaseNickname);
@@ -361,7 +361,7 @@ class MemberReadServiceTest {
         when(memberRepository.findByNickname(nicknameWithSpaces)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> memberReadService.getByNickname(nicknameWithSpaces))
+        assertThatThrownBy(() -> memberReader.getByNickname(nicknameWithSpaces))
                 .isInstanceOf(CMissingDataException.class);
         
         verify(memberRepository).findByNickname(nicknameWithSpaces);
@@ -375,7 +375,7 @@ class MemberReadServiceTest {
         when(memberRepository.findByEmail(longEmail)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> memberReadService.getByEmail(longEmail))
+        assertThatThrownBy(() -> memberReader.getByEmail(longEmail))
                 .isInstanceOf(CMissingDataException.class);
         
         verify(memberRepository).findByEmail(longEmail);
@@ -401,7 +401,7 @@ class MemberReadServiceTest {
         when(memberRepository.findByNickname(specialNickname)).thenReturn(Optional.of(specialMember));
 
         // When
-        Member foundMember = memberReadService.getByNickname(specialNickname);
+        Member foundMember = memberReader.getByNickname(specialNickname);
 
         // Then
         assertThat(foundMember).isNotNull();
@@ -419,9 +419,9 @@ class MemberReadServiceTest {
         when(memberRepository.findByNickname(TEST_NICKNAME)).thenReturn(Optional.of(testMember));
 
         // When
-        Member foundById = memberReadService.getById(TEST_MEMBER_ID);
-        Member foundByEmail = memberReadService.getByEmail(TEST_EMAIL);
-        Member foundByNickname = memberReadService.getByNickname(TEST_NICKNAME);
+        Member foundById = memberReader.getById(TEST_MEMBER_ID);
+        Member foundByEmail = memberReader.getByEmail(TEST_EMAIL);
+        Member foundByNickname = memberReader.getByNickname(TEST_NICKNAME);
 
         // Then
         assertThat(foundById).isNotNull();
@@ -445,7 +445,7 @@ class MemberReadServiceTest {
                 .thenThrow(new RuntimeException("Database connection failed"));
 
         // When & Then
-        assertThatThrownBy(() -> memberReadService.getById(TEST_MEMBER_ID))
+        assertThatThrownBy(() -> memberReader.getById(TEST_MEMBER_ID))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("Database connection failed");
         
@@ -460,10 +460,10 @@ class MemberReadServiceTest {
         when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(testMember));
 
         // When - 여러 조회를 연속으로 실행
-        memberReadService.getById(1L);
-        memberReadService.getById(2L);
-        memberReadService.getByEmail(TEST_EMAIL);
-        memberReadService.getByEmail("another@example.com");
+        memberReader.getById(1L);
+        memberReader.getById(2L);
+        memberReader.getByEmail(TEST_EMAIL);
+        memberReader.getByEmail("another@example.com");
 
         // Then
         verify(memberRepository, times(2)).findById(anyLong());

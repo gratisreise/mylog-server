@@ -10,7 +10,7 @@ import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Member;
-import com.mylog.service.member.MemberReadService;
+import com.mylog.service.member.MemberReader;
 import java.util.Collection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +35,7 @@ class CustomUserDetailsServiceTest {
     private CustomUserDetailsService customUserDetailsService;
 
     @Mock
-    private MemberReadService memberReadService;
+    private MemberReader memberReader;
 
     private Member testMember;
     private Member oauthMember;
@@ -76,7 +76,7 @@ class CustomUserDetailsServiceTest {
     void loadUserByUsername_이메일_로컬_사용자_성공() {
         // Given
         String email = "test@example.com";
-        when(memberReadService.getByEmail(email)).thenReturn(testMember);
+        when(memberReader.getByEmail(email)).thenReturn(testMember);
 
         // When
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
@@ -96,7 +96,7 @@ class CustomUserDetailsServiceTest {
         assertThat(authorities).hasSize(1);
         assertThat(authorities.iterator().next().getAuthority()).isEqualTo("ROLE_USER");
         
-        verify(memberReadService).getByEmail(email);
+        verify(memberReader).getByEmail(email);
     }
 
     @Test
@@ -104,7 +104,7 @@ class CustomUserDetailsServiceTest {
     void loadUserByUsername_ID_토큰_검증_성공() {
         // Given
         String memberId = "2";
-        when(memberReadService.getById(2L)).thenReturn(oauthMember);
+        when(memberReader.getById(2L)).thenReturn(oauthMember);
 
         // When
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(memberId);
@@ -123,7 +123,7 @@ class CustomUserDetailsServiceTest {
         assertThat(authorities).hasSize(1);
         assertThat(authorities.iterator().next().getAuthority()).isEqualTo("ROLE_USER");
         
-        verify(memberReadService).getById(2L);
+        verify(memberReader).getById(2L);
     }
 
     @Test
@@ -131,7 +131,7 @@ class CustomUserDetailsServiceTest {
     void loadUserByUsername_존재하지_않는_이메일_실패() {
         // Given
         String nonExistentEmail = "nonexistent@example.com";
-        when(memberReadService.getByEmail(nonExistentEmail))
+        when(memberReader.getByEmail(nonExistentEmail))
                 .thenThrow(new CMissingDataException("사용자를 찾을 수 없습니다."));
 
         // When & Then
@@ -139,7 +139,7 @@ class CustomUserDetailsServiceTest {
                 .isInstanceOf(CMissingDataException.class)
                 .hasMessage("사용자를 찾을 수 없습니다.");
         
-        verify(memberReadService).getByEmail(nonExistentEmail);
+        verify(memberReader).getByEmail(nonExistentEmail);
     }
 
     @Test
@@ -147,7 +147,7 @@ class CustomUserDetailsServiceTest {
     void loadUserByUsername_존재하지_않는_ID_실패() {
         // Given
         String nonExistentId = "999";
-        when(memberReadService.getById(999L))
+        when(memberReader.getById(999L))
                 .thenThrow(new CMissingDataException("사용자를 찾을 수 없습니다."));
 
         // When & Then
@@ -155,7 +155,7 @@ class CustomUserDetailsServiceTest {
                 .isInstanceOf(CMissingDataException.class)
                 .hasMessage("사용자를 찾을 수 없습니다.");
         
-        verify(memberReadService).getById(999L);
+        verify(memberReader).getById(999L);
     }
 
     @Test
@@ -174,7 +174,7 @@ class CustomUserDetailsServiceTest {
     void loadUserByUsername_계정_상태_검증() {
         // Given
         String email = "test@example.com";
-        when(memberReadService.getByEmail(email)).thenReturn(testMember);
+        when(memberReader.getByEmail(email)).thenReturn(testMember);
 
         // When
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
@@ -191,7 +191,7 @@ class CustomUserDetailsServiceTest {
     void loadUserByUsername_권한_설정_검증() {
         // Given
         String email = "test@example.com";
-        when(memberReadService.getByEmail(email)).thenReturn(testMember);
+        when(memberReader.getByEmail(email)).thenReturn(testMember);
 
         // When
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
@@ -211,7 +211,7 @@ class CustomUserDetailsServiceTest {
     void loadUserByUsername_CustomUser_객체_생성_검증() {
         // Given
         String email = "test@example.com";
-        when(memberReadService.getByEmail(email)).thenReturn(testMember);
+        when(memberReader.getByEmail(email)).thenReturn(testMember);
 
         // When
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
@@ -259,8 +259,8 @@ class CustomUserDetailsServiceTest {
                 .providerId("naver@example.com" + OauthProvider.NAVER)
                 .build();
 
-        when(memberReadService.getByEmail("kakao@example.com")).thenReturn(kakaoMember);
-        when(memberReadService.getById(4L)).thenReturn(naverMember);
+        when(memberReader.getByEmail("kakao@example.com")).thenReturn(kakaoMember);
+        when(memberReader.getById(4L)).thenReturn(naverMember);
 
         // When
         UserDetails kakaoUserDetails = customUserDetailsService.loadUserByUsername("kakao@example.com");
@@ -277,8 +277,8 @@ class CustomUserDetailsServiceTest {
         assertThat(kakaoUserDetails.getAuthorities()).hasSize(1);
         assertThat(naverUserDetails.getAuthorities()).hasSize(1);
         
-        verify(memberReadService).getByEmail("kakao@example.com");
-        verify(memberReadService).getById(4L);
+        verify(memberReader).getByEmail("kakao@example.com");
+        verify(memberReader).getById(4L);
     }
 
     @Test
@@ -286,7 +286,7 @@ class CustomUserDetailsServiceTest {
     void loadUserByUsername_멤버_서비스_예외_전파() {
         // Given
         String email = "test@example.com";
-        when(memberReadService.getByEmail(email))
+        when(memberReader.getByEmail(email))
                 .thenThrow(new RuntimeException("Database connection failed"));
 
         // When & Then
@@ -294,7 +294,7 @@ class CustomUserDetailsServiceTest {
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("Database connection failed");
         
-        verify(memberReadService).getByEmail(email);
+        verify(memberReader).getByEmail(email);
     }
 
     @Test
@@ -302,7 +302,7 @@ class CustomUserDetailsServiceTest {
     void loadUserByUsername_연속_요청_처리_이메일() {
         // Given
         String email = "test@example.com";
-        when(memberReadService.getByEmail(email)).thenReturn(testMember);
+        when(memberReader.getByEmail(email)).thenReturn(testMember);
 
         // When
         UserDetails firstCall = customUserDetailsService.loadUserByUsername(email);
@@ -324,7 +324,7 @@ class CustomUserDetailsServiceTest {
         assertThat(firstCustomUser.getProvider()).isEqualTo(secondCustomUser.getProvider());
         
         // 멤버 서비스는 두 번 호출되어야 함
-        verify(memberReadService, times(2)).getByEmail(email);
+        verify(memberReader, times(2)).getByEmail(email);
     }
 
     @Test
@@ -332,7 +332,7 @@ class CustomUserDetailsServiceTest {
     void loadUserByUsername_연속_요청_처리_ID() {
         // Given
         String memberId = "1";
-        when(memberReadService.getById(1L)).thenReturn(testMember);
+        when(memberReader.getById(1L)).thenReturn(testMember);
 
         // When
         UserDetails firstCall = customUserDetailsService.loadUserByUsername(memberId);
@@ -354,6 +354,6 @@ class CustomUserDetailsServiceTest {
         assertThat(firstCustomUser.getProvider()).isEqualTo(secondCustomUser.getProvider());
         
         // 멤버 서비스는 두 번 호출되어야 함
-        verify(memberReadService, times(2)).getById(1L);
+        verify(memberReader, times(2)).getById(1L);
     }
 }

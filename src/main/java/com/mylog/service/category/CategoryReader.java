@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class CategoryReadService {
+public class CategoryReader {
 
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
@@ -32,7 +32,7 @@ public class CategoryReadService {
     }
 
     private boolean isOriginCategory(Category category){
-        return !category.getCategoryName().equals(CategoryWriteService.originCategory);
+        return !category.getCategoryName().equals(CategoryService.originCategory);
     }
 
     private Member generateMember(CustomUser customUser) {

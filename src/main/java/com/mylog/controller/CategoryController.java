@@ -7,8 +7,8 @@ import com.mylog.model.dto.category.CategoryCreateRequest;
 import com.mylog.model.dto.category.CategoryResponse;
 import com.mylog.model.dto.category.CategoryUpdateRequest;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.service.category.CategoryReadService;
-import com.mylog.service.category.CategoryWriteService;
+import com.mylog.service.category.CategoryReader;
+import com.mylog.service.category.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/categories")
 public class CategoryController {
-    private final CategoryReadService categoryReadService;
-    private final CategoryWriteService categoryWriteService;
+    private final CategoryReader categoryReader;
+    private final CategoryService categoryService;
 
     //카테고리 생성
     @PostMapping
@@ -36,7 +36,7 @@ public class CategoryController {
         @RequestBody @Valid CategoryCreateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        categoryWriteService.createCategory(request, customUser);
+        categoryService.createCategory(request, customUser);
         return ResponseService.getSuccessResult();
     }
 
@@ -46,7 +46,7 @@ public class CategoryController {
     public ListResult<CategoryResponse> getCategories(
         @AuthenticationPrincipal CustomUser customUser
     ){
-        return ResponseService.getListResult(categoryReadService.getCategories(customUser));
+        return ResponseService.getListResult(categoryReader.getCategories(customUser));
     }
 
     //카테고리 수정
@@ -57,7 +57,7 @@ public class CategoryController {
         @RequestBody @Valid CategoryUpdateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        categoryWriteService.updateCategory(request,categoryId, customUser);
+        categoryService.updateCategory(request,categoryId, customUser);
         return ResponseService.getSuccessResult();
     }
 
@@ -68,7 +68,7 @@ public class CategoryController {
         @PathVariable Long categoryId,
         @AuthenticationPrincipal CustomUser customUser
     ) {
-        categoryWriteService.deleteCategory(categoryId, customUser);
+        categoryService.deleteCategory(categoryId, customUser);
         return ResponseService.getSuccessResult();
     }
 

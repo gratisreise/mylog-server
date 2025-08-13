@@ -17,7 +17,7 @@ import com.mylog.model.dto.auth.LoginResponse;
 import com.mylog.model.dto.auth.RefreshRequest;
 import com.mylog.model.dto.auth.RefreshResponse;
 import com.mylog.model.entity.Member;
-import com.mylog.service.member.MemberReadService;
+import com.mylog.service.member.MemberReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ class AuthServiceTest {
     private AuthenticationManager authenticationManager;
 
     @Mock
-    private MemberReadService memberReadService;
+    private MemberReader memberReader;
 
     @Mock
     private RefreshTokenService refreshTokenService;
@@ -90,7 +90,7 @@ class AuthServiceTest {
         String username = String.valueOf(testMember.getId()); // "1"
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
-        when(memberReadService.getByEmail(DEFAULT_EMAIL)).thenReturn(testMember);
+        when(memberReader.getByEmail(DEFAULT_EMAIL)).thenReturn(testMember);
         when(jwtUtil.createAccessToken(username, 1L)).thenReturn(TEST_ACCESS_TOKEN);
         when(jwtUtil.createRefreshToken(username)).thenReturn(TEST_REFRESH_TOKEN);
         doNothing().when(refreshTokenService).saveRefreshToken(username, TEST_REFRESH_TOKEN);
@@ -105,7 +105,7 @@ class AuthServiceTest {
 
         // Verify interactions
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
-        verify(memberReadService).getByEmail(DEFAULT_EMAIL);
+        verify(memberReader).getByEmail(DEFAULT_EMAIL);
         verify(jwtUtil).createAccessToken(username, 1L);
         verify(jwtUtil).createRefreshToken(username);
         verify(refreshTokenService).saveRefreshToken(username, TEST_REFRESH_TOKEN);
@@ -130,7 +130,7 @@ class AuthServiceTest {
         // Given
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
-        when(memberReadService.getByEmail(DEFAULT_EMAIL))
+        when(memberReader.getByEmail(DEFAULT_EMAIL))
                 .thenThrow(new CMissingDataException("사용자를 찾을 수 없습니다."));
 
         // When & Then
@@ -194,7 +194,7 @@ class AuthServiceTest {
         String username = String.valueOf(testMember.getId()); // "1"
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
-        when(memberReadService.getByEmail(DEFAULT_EMAIL)).thenReturn(testMember);
+        when(memberReader.getByEmail(DEFAULT_EMAIL)).thenReturn(testMember);
         when(jwtUtil.createAccessToken(username, 1L)).thenReturn(TEST_ACCESS_TOKEN);
         when(jwtUtil.createRefreshToken(username)).thenReturn(TEST_REFRESH_TOKEN);
         doThrow(new RuntimeException("Redis connection failed"))

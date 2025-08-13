@@ -8,7 +8,7 @@ import com.mylog.model.entity.Notification;
 import com.mylog.model.entity.NotificationSetting;
 import com.mylog.repository.notification.NotificationRepository;
 import com.mylog.repository.notificationsetting.NotificationSettingRepository;
-import com.mylog.service.member.MemberReadService;
+import com.mylog.service.member.MemberReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationSettingRepository notificationSettingRepository;
-    private final MemberReadService memberReadService;
+    private final MemberReader memberReader;
 
     @Transactional
     public void sendNotification(Member member, Long relatedId, String type) {
@@ -61,7 +61,7 @@ public class NotificationService {
 
     //알람받기
     public Page<NotificationResponse> receiveNotification(CustomUser customUser, Pageable pageable){
-        Member member = memberReadService.getByCustomUser(customUser);
+        Member member = memberReader.getByCustomUser(customUser);
 
         return notificationRepository
             .findByMemberAndRead(member, pageable)
@@ -71,7 +71,7 @@ public class NotificationService {
     //알림끄기
     @Transactional
     public void toggleNotification(CustomUser customUser, String type){
-        Member member = memberReadService.getByCustomUser(customUser);
+        Member member = memberReader.getByCustomUser(customUser);
         notificationSettingRepository
             .findByMemberAndType(member, type)
             .orElseThrow(CMissingDataException::new)

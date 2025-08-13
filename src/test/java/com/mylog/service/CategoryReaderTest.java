@@ -15,7 +15,7 @@ import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.category.CategoryRepository;
 import com.mylog.repository.member.MemberRepository;
-import com.mylog.service.category.CategoryReadService;
+import com.mylog.service.category.CategoryReader;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -28,10 +28,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class CategoryReadServiceTest {
+class CategoryReaderTest {
 
     @InjectMocks
-    private CategoryReadService categoryReadService;
+    private CategoryReader categoryReader;
 
     @Mock
     private MemberRepository memberRepository;
@@ -90,7 +90,7 @@ class CategoryReadServiceTest {
         when(categoryRepository.findByMember(testMember)).thenReturn(testCategories);
 
         // When
-        List<CategoryResponse> result = categoryReadService.getCategories(customUser);
+        List<CategoryResponse> result = categoryReader.getCategories(customUser);
 
         // Then
         assertThat(result).hasSize(2);
@@ -107,7 +107,7 @@ class CategoryReadServiceTest {
         when(memberRepository.findById(1L)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> categoryReadService.getCategories(customUser))
+        assertThatThrownBy(() -> categoryReader.getCategories(customUser))
                 .isInstanceOf(CMissingDataException.class);
 
         verify(memberRepository).findById(1L);
@@ -121,7 +121,7 @@ class CategoryReadServiceTest {
         when(categoryRepository.findByMember(testMember)).thenReturn(Collections.emptyList());
 
         // When
-        List<CategoryResponse> result = categoryReadService.getCategories(customUser);
+        List<CategoryResponse> result = categoryReader.getCategories(customUser);
 
         // Then
         assertThat(result).isEmpty();
@@ -137,7 +137,7 @@ class CategoryReadServiceTest {
         when(categoryRepository.findByMemberAndCategoryName(testMember, categoryName)).thenReturn(Optional.of(testCategory));
 
         // When
-        Category result = categoryReadService.getByMemberAndCategoryName(testMember, categoryName);
+        Category result = categoryReader.getByMemberAndCategoryName(testMember, categoryName);
 
         // Then
         assertThat(result).isEqualTo(testCategory);
@@ -153,7 +153,7 @@ class CategoryReadServiceTest {
         when(categoryRepository.findByMemberAndCategoryName(testMember, categoryName)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> categoryReadService.getByMemberAndCategoryName(testMember, categoryName))
+        assertThatThrownBy(() -> categoryReader.getByMemberAndCategoryName(testMember, categoryName))
                 .isInstanceOf(CMissingDataException.class);
 
         verify(categoryRepository).findByMemberAndCategoryName(testMember, categoryName);
@@ -165,7 +165,7 @@ class CategoryReadServiceTest {
         when(categoryRepository.findByMember(testMember)).thenReturn(testCategories);
 
         // When
-        int result = categoryReadService.getCategorySize(testMember);
+        int result = categoryReader.getCategorySize(testMember);
 
         // Then
         assertThat(result).isEqualTo(2);
@@ -179,7 +179,7 @@ class CategoryReadServiceTest {
         when(categoryRepository.findByMember(testMember)).thenReturn(Collections.emptyList());
 
         // When
-        int result = categoryReadService.getCategorySize(testMember);
+        int result = categoryReader.getCategorySize(testMember);
 
         // Then
         assertThat(result).isEqualTo(0);
@@ -194,7 +194,7 @@ class CategoryReadServiceTest {
         when(categoryRepository.findByMember(testMember)).thenReturn(manyCategories);
 
         // When
-        int result = categoryReadService.getCategorySize(testMember);
+        int result = categoryReader.getCategorySize(testMember);
 
         // Then
         assertThat(result).isEqualTo(15);
@@ -209,7 +209,7 @@ class CategoryReadServiceTest {
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(testCategory));
 
         // When
-        Category result = categoryReadService.getById(categoryId);
+        Category result = categoryReader.getById(categoryId);
 
         // Then
         assertThat(result).isEqualTo(testCategory);
@@ -225,7 +225,7 @@ class CategoryReadServiceTest {
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> categoryReadService.getById(categoryId))
+        assertThatThrownBy(() -> categoryReader.getById(categoryId))
                 .isInstanceOf(CMissingDataException.class);
 
         verify(categoryRepository).findById(categoryId);
@@ -237,7 +237,7 @@ class CategoryReadServiceTest {
         Long invalidId = null;
 
         // When & Then
-        assertThatThrownBy(() -> categoryReadService.getById(invalidId))
+        assertThatThrownBy(() -> categoryReader.getById(invalidId))
                 .isInstanceOf(CMissingDataException.class);
 
         verify(categoryRepository).findById(null);
@@ -249,7 +249,7 @@ class CategoryReadServiceTest {
         when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
 
         // When
-        List<CategoryResponse> result = categoryReadService.getCategories(customUser);
+        List<CategoryResponse> result = categoryReader.getCategories(customUser);
 
         // Then - 내부 generateMember 메서드가 성공적으로 호출됨을 간접적으로 검증
         verify(memberRepository).findById(1L);
@@ -281,7 +281,7 @@ class CategoryReadServiceTest {
         when(categoryRepository.findByMember(testMember)).thenReturn(sortedCategories);
 
         // When
-        List<CategoryResponse> result = categoryReadService.getCategories(customUser);
+        List<CategoryResponse> result = categoryReader.getCategories(customUser);
 
         // Then
         assertThat(result).hasSize(2);
@@ -308,7 +308,7 @@ class CategoryReadServiceTest {
         when(categoryRepository.findByMember(otherMember)).thenReturn(Collections.emptyList());
 
         // When
-        List<CategoryResponse> result = categoryReadService.getCategories(otherCustomUser);
+        List<CategoryResponse> result = categoryReader.getCategories(otherCustomUser);
 
         // Then
         assertThat(result).isEmpty();

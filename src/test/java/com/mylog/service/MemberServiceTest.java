@@ -16,12 +16,11 @@ import com.mylog.model.dto.member.SignUpRequest;
 import com.mylog.model.dto.member.UpdateMemberRequest;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.member.MemberRepository;
-import com.mylog.service.category.CategoryWriteService;
-import com.mylog.service.member.MemberReadService;
-import com.mylog.service.member.MemberWriteService;
+import com.mylog.service.category.CategoryService;
+import com.mylog.service.member.MemberReader;
+import com.mylog.service.member.MemberService;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,10 +35,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
-class MemberWriteServiceTest {
+class MemberServiceTest {
 
     @InjectMocks
-    private MemberWriteService memberWriteService;
+    private MemberService memberService;
 
     @Mock
     private MemberRepository memberRepository;
@@ -51,10 +50,10 @@ class MemberWriteServiceTest {
     private S3Service s3Service;
 
     @Mock
-    private CategoryWriteService categoryWriteService;
+    private CategoryService categoryService;
 
     @Mock
-    private MemberReadService memberReadService;
+    private MemberReader memberReader;
 
     private Member member;
     private CustomUser customUser;
@@ -70,7 +69,7 @@ class MemberWriteServiceTest {
                 .profileImg("https://mylog-imgsource.s3.ap-northeast-2.amazonaws.com/5162d5b3-266b-4aae-bc16-d7f10fc4b2f1_default.jpg")
                 .build();
         customUser = new CustomUser(member, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
-        ReflectionTestUtils.setField(memberWriteService, "basicImageUrl", BASIC_IMAGE_URL);
+        ReflectionTestUtils.setField(memberService, "basicImageUrl", BASIC_IMAGE_URL);
     }
 
     @Test
@@ -80,14 +79,14 @@ class MemberWriteServiceTest {
         SignUpRequest request = new SignUpRequest("test@example.com", "password", "testuser");
         when(memberRepository.existsByEmail(anyString())).thenReturn(false);
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-        doNothing().when(categoryWriteService).createCategory(anyString());
+        doNothing().when(categoryService).createCategory(anyString());
 
         // When
-        memberWriteService.saveMember(request);
+        memberService.saveMember(request);
 
         // Then
         verify(memberRepository, times(1)).save(any(Member.class));
-        verify(categoryWriteService, times(1)).createCategory(request.email());
+        verify(categoryService, times(1)).createCategory(request.email());
     }
 
     @Test
@@ -98,7 +97,7 @@ class MemberWriteServiceTest {
         when(memberRepository.existsByEmail(anyString())).thenReturn(true);
 
         // When & Then
-        assertThatThrownBy(() -> memberWriteService.saveMember(request))
+        assertThatThrownBy(() -> memberService.saveMember(request))
                 .isInstanceOf(CDuplicatedException.class)
                 .hasMessage("이미 존재하는 이메일입니다.");
     }
@@ -112,7 +111,7 @@ class MemberWriteServiceTest {
         when(passwordEncoder.encode(anyString())).thenReturn(null);
 
         // When & Then
-        assertThatThrownBy(() -> memberWriteService.saveMember(request))
+        assertThatThrownBy(() -> memberService.saveMember(request))
                 .isInstanceOf(CMissingDataException.class)
                 .hasMessage("비밀번호 암호화를 실패했습니다.");
     }
@@ -125,13 +124,13 @@ class MemberWriteServiceTest {
         MockMultipartFile file = new MockMultipartFile("file", "new_image.jpg", "image/jpeg", "image data".getBytes());
         String originalProfileImg = member.getProfileImg();
 
-        when(memberReadService.getById(1L)).thenReturn(member);
+        when(memberReader.getById(1L)).thenReturn(member);
         when(memberRepository.existsByNickname(anyString())).thenReturn(false);
         when(passwordEncoder.encode(anyString())).thenReturn("newEncodedPassword");
         when(s3Service.upload(any(MultipartFile.class))).thenReturn("http\\://example.com/new.jpg");
 
         // When
-        memberWriteService.updateMember(request, customUser, file);
+        memberService.updateMember(request, customUser, file);
 
         // Then
         verify(passwordEncoder, times(1)).encode("newPassword123!");
@@ -146,12 +145,12 @@ class MemberWriteServiceTest {
         UpdateMemberRequest request = new UpdateMemberRequest("newPassword123!", "newName", "newNickname", "newBio", null);
         // The original file name from the uploaded file is the same as the filename in the existing URL
         MockMultipartFile file = new MockMultipartFile("file", "default.jpg", "image/jpeg", "image data".getBytes());
-        when(memberReadService.getById(1L)).thenReturn(member);
+        when(memberReader.getById(1L)).thenReturn(member);
         when(memberRepository.existsByNickname(anyString())).thenReturn(false);
         when(passwordEncoder.encode(anyString())).thenReturn("newEncodedPassword");
 
         // When
-        memberWriteService.updateMember(request, customUser, file);
+        memberService.updateMember(request, customUser, file);
 
         // Then
         verify(passwordEncoder, times(1)).encode("newPassword123!");
@@ -166,13 +165,13 @@ class MemberWriteServiceTest {
         member.setProfileImg(BASIC_IMAGE_URL);
         UpdateMemberRequest request = new UpdateMemberRequest("newPassword123!", "newName", "newNickname", "newBio", null);
         MockMultipartFile file = new MockMultipartFile("file", "new_image.jpg", "image/jpeg", "image data".getBytes());
-        when(memberReadService.getById(1L)).thenReturn(member);
+        when(memberReader.getById(1L)).thenReturn(member);
         when(memberRepository.existsByNickname(anyString())).thenReturn(false);
         when(passwordEncoder.encode(anyString())).thenReturn("newEncodedPassword");
         when(s3Service.upload(any(MultipartFile.class))).thenReturn("http\\://example.com/new.jpg");
 
         // When
-        memberWriteService.updateMember(request, customUser, file);
+        memberService.updateMember(request, customUser, file);
 
         // Then
         verify(passwordEncoder, times(1)).encode("newPassword123!");
@@ -186,11 +185,11 @@ class MemberWriteServiceTest {
         // Given
         UpdateMemberRequest request = new UpdateMemberRequest("newPassword123!", "newName", "newNickname", "newBio", null);
         MockMultipartFile file = new MockMultipartFile("file", "new_image.jpg", "image/jpeg", "image data".getBytes());
-        when(memberReadService.getById(1L)).thenReturn(member);
+        when(memberReader.getById(1L)).thenReturn(member);
         when(memberRepository.existsByNickname(anyString())).thenReturn(true);
 
         // When & Then
-        assertThatThrownBy(() -> memberWriteService.updateMember(request, customUser, file))
+        assertThatThrownBy(() -> memberService.updateMember(request, customUser, file))
                 .isInstanceOf(CDuplicatedException.class)
                 .hasMessage("중복되는 닉네임 입니다.");
     }
@@ -200,11 +199,11 @@ class MemberWriteServiceTest {
     @DisplayName("회원 삭제 성공")
     void deleteMember_성공() {
         // Given
-        when(memberReadService.getById(1L)).thenReturn(member);
+        when(memberReader.getById(1L)).thenReturn(member);
         doNothing().when(s3Service).deleteImage(anyString());
 
         // When
-        memberWriteService.deleteMember(customUser);
+        memberService.deleteMember(customUser);
 
         // Then
         verify(memberRepository, times(1)).deleteById(1L);
@@ -216,10 +215,10 @@ class MemberWriteServiceTest {
     void deleteMember_성공_기본이미지_사용자() {
         // Given
         member.setProfileImg(BASIC_IMAGE_URL);
-        when(memberReadService.getById(1L)).thenReturn(member);
+        when(memberReader.getById(1L)).thenReturn(member);
 
         // When
-        memberWriteService.deleteMember(customUser);
+        memberService.deleteMember(customUser);
 
         // Then
         verify(memberRepository, times(1)).deleteById(1L);

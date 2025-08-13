@@ -7,7 +7,7 @@ import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Member;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.member.MemberRepository;
-import com.mylog.service.category.CategoryWriteService;
+import com.mylog.service.category.CategoryService;
 import com.mylog.service.S3Service;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +22,12 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class MemberWriteService {
+public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
-    private final CategoryWriteService categoryWriteService;
-    private final MemberReadService memberReadService;
+    private final CategoryService categoryService;
+    private final MemberReader memberReader;
 
     @Value("${cloud.aws.s3.basic}")
     private String basicImageUrl;
@@ -50,13 +50,13 @@ public class MemberWriteService {
         memberRepository.save(member);
 
         //비동기 처리
-        categoryWriteService.createCategory(request.email());
+        categoryService.createCategory(request.email());
     }
 
     public void updateMember(UpdateMemberRequest request, CustomUser customUser, MultipartFile file)
         throws IOException{
 
-        Member member = memberReadService.getById(customUser.getMemberId());
+        Member member = memberReader.getById(customUser.getMemberId());
         // 내거 온거 문자열 비교
 
         if(validateNickname(member.getNickname(), request.nickname())){
@@ -96,7 +96,7 @@ public class MemberWriteService {
     }
 
     public void deleteMember(CustomUser customUser){
-        Member member = memberReadService.getById(customUser.getMemberId());
+        Member member = memberReader.getById(customUser.getMemberId());
 
         if(!member.getProfileImg().equals(basicImageUrl)) {
             s3Service.deleteImage(member.getProfileImg());

@@ -7,8 +7,8 @@ import com.mylog.exception.CMissingDataException;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.article.ArticleRepository;
 import com.mylog.repository.member.MemberRepository;
-import com.mylog.service.member.MemberReadService;
-import com.mylog.service.tag.TagReadService;
+import com.mylog.service.member.MemberReader;
+import com.mylog.service.tag.TagReader;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,21 +22,21 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
-public class ArticleReadService {
+public class ArticleReader {
     private final ArticleRepository articleRepository;
-    private final TagReadService tagReadService;
-    private final MemberReadService memberReadService;
+    private final TagReader tagReader;
+    private final MemberReader memberReader;
     private final MemberRepository memberRepository;
 
     public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser) {
-        Member member = memberReadService.getById(customUser.getMemberId());
+        Member member = memberReader.getById(customUser.getMemberId());
         return articleRepository.findAllByMember(member, pageable)
             .map(this::createArticleResponse);
     }
 
     public Page<ArticleResponse> getArticles(Pageable pageable,
         CustomUser customUser, String keyword) {
-        Member member = memberReadService.getById(customUser.getMemberId());
+        Member member = memberReader.getById(customUser.getMemberId());
         return articleRepository
             .findByMemberAndTitleContainingIgnoreCase(member, keyword, pageable)
             .map(this::createArticleResponse);
@@ -74,7 +74,7 @@ public class ArticleReadService {
     }
 
     private ArticleResponse createArticleResponse(Article article){
-        List<String> tags = tagReadService.getTags(article);
+        List<String> tags = tagReader.getTags(article);
         return new ArticleResponse(article, tags);
     }
 

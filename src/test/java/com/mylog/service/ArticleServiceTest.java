@@ -25,15 +25,14 @@ import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.article.ArticleRepository;
 import com.mylog.repository.articletag.ArticleTagRepository;
-import com.mylog.service.article.ArticleReadService;
-import com.mylog.service.article.ArticleWriteService;
-import com.mylog.service.category.CategoryReadService;
-import com.mylog.service.member.MemberReadService;
+import com.mylog.service.article.ArticleReader;
+import com.mylog.service.article.ArticleService;
+import com.mylog.service.category.CategoryReader;
+import com.mylog.service.member.MemberReader;
 import com.mylog.service.tag.TagService;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,22 +50,22 @@ import org.springframework.web.multipart.MultipartFile;
  * tag management integration, S3Service integration, and exception handling
  */
 @ExtendWith(MockitoExtension.class)
-class ArticleWriteServiceTest {
+class ArticleServiceTest {
 
     @Mock
     private ArticleRepository articleRepository;
 
     @InjectMocks
-    private ArticleWriteService articleWriteService;
+    private ArticleService articleService;
 
     @Mock
-    private ArticleReadService articleReadService;
+    private ArticleReader articleReader;
 
     @Mock
-    private CategoryReadService categoryReadService;
+    private CategoryReader categoryReader;
 
     @Mock
-    private MemberReadService memberReadService;
+    private MemberReader memberReader;
 
     @Mock
     private ArticleTagRepository articleTagRepository;
@@ -175,8 +174,8 @@ class ArticleWriteServiceTest {
         // Given
         String expectedImageUrl = "https://s3.amazonaws.com/bucket/uploaded-file.jpg";
 
-        when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
-        when(categoryReadService.getByMemberAndCategoryName(testMember,"Test Category"))
+        when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
+        when(categoryReader.getByMemberAndCategoryName(testMember,"Test Category"))
             .thenReturn(testCategory);
         when(s3Service.upload(mockFile)).thenReturn(expectedImageUrl);
         when(articleRepository.save(any(Article.class))).thenReturn(testArticle);
@@ -184,12 +183,12 @@ class ArticleWriteServiceTest {
 
         // When
         assertDoesNotThrow(() -> 
-            articleWriteService.createArticle(createRequest, customUser, mockFile)
+            articleService.createArticle(createRequest, customUser, mockFile)
         );
 
         // Then
-        verify(categoryReadService).getByMemberAndCategoryName(testMember,"Test Category");
-        verify(memberReadService).getByCustomUser(customUser);
+        verify(categoryReader).getByMemberAndCategoryName(testMember,"Test Category");
+        verify(memberReader).getByCustomUser(customUser);
         verify(s3Service).upload(mockFile);
         verify(articleRepository).save(any(Article.class));
         verify(tagService).saveTag(eq(createRequest.tags()), any(Article.class));
@@ -199,17 +198,17 @@ class ArticleWriteServiceTest {
     @DisplayName("아티클 생성 - 카테고리 없음 예외")
     void createArticle_categoryNotFound_예외발생() throws IOException {
         // Given
-        when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
-        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category"))
+        when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
+        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category"))
             .thenThrow(new CMissingDataException());
 
         // When & Then
         assertThrows(CMissingDataException.class, () ->
-            articleWriteService.createArticle(createRequest, customUser, mockFile)
+            articleService.createArticle(createRequest, customUser, mockFile)
         );
 
-        verify(memberReadService).getByCustomUser(customUser);
-        verify(categoryReadService).getByMemberAndCategoryName(testMember, "Test Category");
+        verify(memberReader).getByCustomUser(customUser);
+        verify(categoryReader).getByMemberAndCategoryName(testMember, "Test Category");
         verify(s3Service, never()).upload(any());
         verify(articleRepository, never()).save(any());
         verify(tagService, never()).saveTag(any(List.class), any(Article.class));
@@ -219,15 +218,15 @@ class ArticleWriteServiceTest {
     @DisplayName("아티클 생성 - 멤버 조회 실패 예외")
     void createArticle_memberNotFound_예외발생() throws IOException {
         // Given
-        when(memberReadService.getByCustomUser(customUser)).thenThrow(new CMissingDataException());
+        when(memberReader.getByCustomUser(customUser)).thenThrow(new CMissingDataException());
 
         // When & Then
         assertThrows(CMissingDataException.class, () ->
-            articleWriteService.createArticle(createRequest, customUser, mockFile)
+            articleService.createArticle(createRequest, customUser, mockFile)
         );
 
-        verify(memberReadService).getByCustomUser(customUser);
-        verify(categoryReadService, never()).getByMemberAndCategoryName(testMember, "Test Category");
+        verify(memberReader).getByCustomUser(customUser);
+        verify(categoryReader, never()).getByMemberAndCategoryName(testMember, "Test Category");
         verify(s3Service, never()).upload(any());
         verify(articleRepository, never()).save(any());
         verify(tagService, never()).saveTag(any(List.class), any(Article.class));
@@ -238,17 +237,17 @@ class ArticleWriteServiceTest {
     @DisplayName("아티클 생성 - S3 업로드 IOException 예외")
     void createArticle_s3IOException_예외발생() throws IOException {
         // Given
-        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
-        when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
+        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
+        when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
         when(s3Service.upload(mockFile)).thenThrow(new IOException("S3 upload failed"));
 
         // When & Then
         assertThrows(IOException.class, () ->
-            articleWriteService.createArticle(createRequest, customUser, mockFile)
+            articleService.createArticle(createRequest, customUser, mockFile)
         );
 
-        verify(categoryReadService).getByMemberAndCategoryName(testMember, "Test Category");
-        verify(memberReadService).getByCustomUser(customUser);
+        verify(categoryReader).getByMemberAndCategoryName(testMember, "Test Category");
+        verify(memberReader).getByCustomUser(customUser);
         verify(s3Service).upload(mockFile);
         verify(articleRepository, never()).save(any());
         verify(tagService, never()).saveTag(any(List.class), any(Article.class));
@@ -266,15 +265,15 @@ class ArticleWriteServiceTest {
         );
         String expectedImageUrl = "https://s3.amazonaws.com/bucket/uploaded-file.jpg";
         
-        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
-        when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
+        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
+        when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
         when(s3Service.upload(mockFile)).thenReturn(expectedImageUrl);
         when(articleRepository.save(any(Article.class))).thenReturn(testArticle);
         doNothing().when(tagService).saveTag(anyList(), any(Article.class));
 
         // When
         assertDoesNotThrow(() -> 
-            articleWriteService.createArticle(requestWithoutTags, customUser, mockFile)
+            articleService.createArticle(requestWithoutTags, customUser, mockFile)
         );
 
         // Then
@@ -294,21 +293,21 @@ class ArticleWriteServiceTest {
             .articleImg("https://s3.amazonaws.com/bucket/very-long-path-with-exactly-ninety-three-chars-1234567890123/existing-image.jpg")
             .build();
 
-        when(memberReadService.getByNickname("testuser")).thenReturn(testMember);
-        when(articleReadService.getArticleById(articleId)).thenReturn(existingArticle);
-        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
+        when(memberReader.getByNickname("testuser")).thenReturn(testMember);
+        when(articleReader.getArticleById(articleId)).thenReturn(existingArticle);
+        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         when(s3Service.upload(mockFile)).thenReturn(expectedImageUrl);
         doNothing().when(tagService).saveTag(anyList(), any(Article.class));
 
         // When
         assertDoesNotThrow(() -> 
-            articleWriteService.updateArticle(updateRequest, customUser, mockFile, articleId)
+            articleService.updateArticle(updateRequest, customUser, mockFile, articleId)
         );
 
         // Then
-        verify(memberReadService).getByNickname("testuser");
-        verify(articleReadService).getArticleById(articleId);
-        verify(categoryReadService).getByMemberAndCategoryName(testMember,"Test Category");
+        verify(memberReader).getByNickname("testuser");
+        verify(articleReader).getArticleById(articleId);
+        verify(categoryReader).getByMemberAndCategoryName(testMember,"Test Category");
         verify(s3Service).upload(mockFile);
         verify(tagService).saveTag(eq(updateRequest.tags()), eq(existingArticle));
         // Verify the update method was called by checking that the service completed successfully
@@ -325,16 +324,16 @@ class ArticleWriteServiceTest {
             .nickname("anothernickname")
             .build();
 
-        when(memberReadService.getByNickname("testuser")).thenReturn(anotherMember);
+        when(memberReader.getByNickname("testuser")).thenReturn(anotherMember);
 
         // When & Then
         assertThrows(CUnAuthorizedException.class, () ->
-            articleWriteService.updateArticle(updateRequest, customUser, mockFile, articleId)
+            articleService.updateArticle(updateRequest, customUser, mockFile, articleId)
         );
 
-        verify(memberReadService).getByNickname("testuser");
-        verify(articleReadService, never()).getArticleById(anyLong());
-        verify(categoryReadService, never()).getByMemberAndCategoryName(any(Member.class), anyString());
+        verify(memberReader).getByNickname("testuser");
+        verify(articleReader, never()).getArticleById(anyLong());
+        verify(categoryReader, never()).getByMemberAndCategoryName(any(Member.class), anyString());
         verify(s3Service, never()).upload(any());
         verify(tagService, never()).saveTag(any(List.class), any(Article.class));
     }
@@ -354,14 +353,14 @@ class ArticleWriteServiceTest {
             .articleImg(existingImageUrl)
             .build();
 
-        when(memberReadService.getByNickname("testuser")).thenReturn(testMember);
-        when(articleReadService.getArticleById(articleId)).thenReturn(existingArticle);
-        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
+        when(memberReader.getByNickname("testuser")).thenReturn(testMember);
+        when(articleReader.getArticleById(articleId)).thenReturn(existingArticle);
+        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         doNothing().when(tagService).saveTag(anyList(), any(Article.class));
 
         // When
         assertDoesNotThrow(() -> 
-            articleWriteService.updateArticle(updateRequest, customUser, mockFile, articleId)
+            articleService.updateArticle(updateRequest, customUser, mockFile, articleId)
         );
 
         // Then
@@ -376,18 +375,18 @@ class ArticleWriteServiceTest {
         // Given
         Long articleId = 999L;
 
-        when(memberReadService.getByNickname("testuser")).thenReturn(testMember);
-        when(articleReadService.getArticleById(articleId))
+        when(memberReader.getByNickname("testuser")).thenReturn(testMember);
+        when(articleReader.getArticleById(articleId))
             .thenThrow(new CMissingDataException());
 
         // When & Then
         assertThrows(CMissingDataException.class, () ->
-            articleWriteService.updateArticle(updateRequest, customUser, mockFile, articleId)
+            articleService.updateArticle(updateRequest, customUser, mockFile, articleId)
         );
 
-        verify(memberReadService).getByNickname("testuser");
-        verify(articleReadService).getArticleById(articleId);
-        verify(categoryReadService, never()).getByMemberAndCategoryName(any(Member.class), anyString());
+        verify(memberReader).getByNickname("testuser");
+        verify(articleReader).getArticleById(articleId);
+        verify(categoryReader, never()).getByMemberAndCategoryName(any(Member.class), anyString());
         verify(s3Service, never()).upload(any());
         verify(tagService, never()).saveTag(any(List.class), any(Article.class));
     }
@@ -398,19 +397,19 @@ class ArticleWriteServiceTest {
         // Given
         Long articleId = 1L;
 
-        when(memberReadService.getByNickname("testuser")).thenReturn(testMember);
-        when(articleReadService.getArticleById(articleId)).thenReturn(testArticle);
-        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category"))
+        when(memberReader.getByNickname("testuser")).thenReturn(testMember);
+        when(articleReader.getArticleById(articleId)).thenReturn(testArticle);
+        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category"))
             .thenThrow(new CMissingDataException());
 
         // When & Then
         assertThrows(CMissingDataException.class, () ->
-            articleWriteService.updateArticle(updateRequest, customUser, mockFile, articleId)
+            articleService.updateArticle(updateRequest, customUser, mockFile, articleId)
         );
 
-        verify(memberReadService).getByNickname("testuser");
-        verify(articleReadService).getArticleById(articleId);
-        verify(categoryReadService).getByMemberAndCategoryName(testMember, "Test Category");
+        verify(memberReader).getByNickname("testuser");
+        verify(articleReader).getArticleById(articleId);
+        verify(categoryReader).getByMemberAndCategoryName(testMember, "Test Category");
         verify(s3Service, never()).upload(any());
         verify(tagService, never()).saveTag(any(List.class), any(Article.class));
     }
@@ -423,20 +422,20 @@ class ArticleWriteServiceTest {
         // Given
         Long articleId = 1L;
         
-        when(articleReadService.getArticleById(articleId)).thenReturn(testArticle);
-        when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
+        when(articleReader.getArticleById(articleId)).thenReturn(testArticle);
+        when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
         doNothing().when(articleTagRepository).deleteByArticle(testArticle);
         doNothing().when(s3Service).deleteImage(testArticle.getArticleImg());
         doNothing().when(articleRepository).deleteById(articleId);
 
         // When
         assertDoesNotThrow(() -> 
-            articleWriteService.deleteArticle(articleId, customUser)
+            articleService.deleteArticle(articleId, customUser)
         );
 
         // Then
-        verify(articleReadService).getArticleById(articleId);
-        verify(memberReadService).getByCustomUser(customUser);
+        verify(articleReader).getArticleById(articleId);
+        verify(memberReader).getByCustomUser(customUser);
         verify(articleTagRepository).deleteByArticle(testArticle);
         verify(s3Service).deleteImage(testArticle.getArticleImg());
         verify(articleRepository).deleteById(articleId);
@@ -456,16 +455,16 @@ class ArticleWriteServiceTest {
             .member(anotherMember)
             .build();
 
-        when(articleReadService.getArticleById(articleId)).thenReturn(anotherArticle);
-        when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
+        when(articleReader.getArticleById(articleId)).thenReturn(anotherArticle);
+        when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
 
         // When & Then
         assertThrows(CUnAuthorizedException.class, () ->
-            articleWriteService.deleteArticle(articleId, customUser)
+            articleService.deleteArticle(articleId, customUser)
         );
 
-        verify(articleReadService).getArticleById(articleId);
-        verify(memberReadService).getByCustomUser(customUser);
+        verify(articleReader).getArticleById(articleId);
+        verify(memberReader).getByCustomUser(customUser);
         verify(articleTagRepository, never()).deleteByArticle(any());
         verify(s3Service, never()).deleteImage(anyString());
         verify(articleRepository, never()).deleteById(anyLong());
@@ -477,16 +476,16 @@ class ArticleWriteServiceTest {
         // Given
         Long articleId = 999L;
 
-        when(articleReadService.getArticleById(articleId))
+        when(articleReader.getArticleById(articleId))
             .thenThrow(new CMissingDataException());
 
         // When & Then
         assertThrows(CMissingDataException.class, () ->
-            articleWriteService.deleteArticle(articleId, customUser)
+            articleService.deleteArticle(articleId, customUser)
         );
 
-        verify(articleReadService).getArticleById(articleId);
-        verify(memberReadService, never()).getByCustomUser(any());
+        verify(articleReader).getArticleById(articleId);
+        verify(memberReader, never()).getByCustomUser(any());
         verify(articleTagRepository, never()).deleteByArticle(any());
         verify(s3Service, never()).deleteImage(anyString());
         verify(articleRepository, never()).deleteById(anyLong());
@@ -498,17 +497,17 @@ class ArticleWriteServiceTest {
         // Given
         Long articleId = 1L;
 
-        when(articleReadService.getArticleById(articleId)).thenReturn(testArticle);
-        when(memberReadService.getByCustomUser(customUser))
+        when(articleReader.getArticleById(articleId)).thenReturn(testArticle);
+        when(memberReader.getByCustomUser(customUser))
             .thenThrow(new CMissingDataException());
 
         // When & Then
         assertThrows(CMissingDataException.class, () ->
-            articleWriteService.deleteArticle(articleId, customUser)
+            articleService.deleteArticle(articleId, customUser)
         );
 
-        verify(articleReadService).getArticleById(articleId);
-        verify(memberReadService).getByCustomUser(customUser);
+        verify(articleReader).getArticleById(articleId);
+        verify(memberReader).getByCustomUser(customUser);
         verify(articleTagRepository, never()).deleteByArticle(any());
         verify(s3Service, never()).deleteImage(anyString());
         verify(articleRepository, never()).deleteById(anyLong());
@@ -536,14 +535,14 @@ class ArticleWriteServiceTest {
             "test content".getBytes()
         );
 
-        when(memberReadService.getByNickname("testuser")).thenReturn(testMember);
-        when(articleReadService.getArticleById(articleId)).thenReturn(existingArticle);
-        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
+        when(memberReader.getByNickname("testuser")).thenReturn(testMember);
+        when(articleReader.getArticleById(articleId)).thenReturn(existingArticle);
+        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         doNothing().when(tagService).saveTag(anyList(), any(Article.class));
 
         // When
         assertDoesNotThrow(() -> 
-            articleWriteService.updateArticle(updateRequest, customUser, sameFile, articleId)
+            articleService.updateArticle(updateRequest, customUser, sameFile, articleId)
         );
 
         // Then
@@ -566,15 +565,15 @@ class ArticleWriteServiceTest {
 
         String newImageUrl = "https://s3.amazonaws.com/bucket/new-image.jpg";
 
-        when(memberReadService.getByNickname("testuser")).thenReturn(testMember);
-        when(articleReadService.getArticleById(articleId)).thenReturn(existingArticle);
-        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
+        when(memberReader.getByNickname("testuser")).thenReturn(testMember);
+        when(articleReader.getArticleById(articleId)).thenReturn(existingArticle);
+        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         when(s3Service.upload(mockFile)).thenReturn(newImageUrl);
         doNothing().when(tagService).saveTag(anyList(), any(Article.class));
 
         // When
         assertDoesNotThrow(() -> 
-            articleWriteService.updateArticle(updateRequest, customUser, mockFile, articleId)
+            articleService.updateArticle(updateRequest, customUser, mockFile, articleId)
         );
 
         // Then
@@ -595,15 +594,15 @@ class ArticleWriteServiceTest {
         );
         String expectedImageUrl = "https://s3.amazonaws.com/bucket/uploaded-file.jpg";
         
-        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
-        when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
+        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
+        when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
         when(s3Service.upload(mockFile)).thenReturn(expectedImageUrl);
         when(articleRepository.save(any(Article.class))).thenReturn(testArticle);
         doNothing().when(tagService).saveTag(eq(tags), any(Article.class));
 
         // When
         assertDoesNotThrow(() -> 
-            articleWriteService.createArticle(requestWithTags, customUser, mockFile)
+            articleService.createArticle(requestWithTags, customUser, mockFile)
         );
 
         // Then
@@ -616,19 +615,19 @@ class ArticleWriteServiceTest {
         // Given
         String expectedImageUrl = "https://s3.amazonaws.com/bucket/uploaded-file.jpg";
         
-        when(categoryReadService.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
-        when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
+        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
+        when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
         when(s3Service.upload(mockFile)).thenReturn(expectedImageUrl);
         when(articleRepository.save(any(Article.class))).thenReturn(testArticle);
         doThrow(new RuntimeException("태그 저장 실패")).when(tagService).saveTag(anyList(), any(Article.class));
 
         // When & Then
         assertThrows(RuntimeException.class, () ->
-            articleWriteService.createArticle(createRequest, customUser, mockFile)
+            articleService.createArticle(createRequest, customUser, mockFile)
         );
 
-        verify(categoryReadService).getByMemberAndCategoryName(testMember, "Test Category");
-        verify(memberReadService).getByCustomUser(customUser);
+        verify(categoryReader).getByMemberAndCategoryName(testMember, "Test Category");
+        verify(memberReader).getByCustomUser(customUser);
         verify(s3Service).upload(mockFile);
         verify(articleRepository).save(any(Article.class));
         verify(tagService).saveTag(eq(createRequest.tags()), any(Article.class));
@@ -644,15 +643,15 @@ class ArticleWriteServiceTest {
             .nickname("differentuser")
             .build();
 
-        when(memberReadService.getByNickname("testuser")).thenReturn(differentMember);
+        when(memberReader.getByNickname("testuser")).thenReturn(differentMember);
 
         // When & Then
         CUnAuthorizedException exception = assertThrows(CUnAuthorizedException.class, () ->
-            articleWriteService.updateArticle(updateRequest, customUser, mockFile, articleId)
+            articleService.updateArticle(updateRequest, customUser, mockFile, articleId)
         );
 
         assertEquals("허용 되지 않는 유저입니다.", exception.getMessage());
-        verify(memberReadService).getByNickname("testuser");
+        verify(memberReader).getByNickname("testuser");
     }
 
     @Test
@@ -669,16 +668,16 @@ class ArticleWriteServiceTest {
             .member(differentMember)
             .build();
 
-        when(articleReadService.getArticleById(articleId)).thenReturn(differentArticle);
-        when(memberReadService.getByCustomUser(customUser)).thenReturn(testMember);
+        when(articleReader.getArticleById(articleId)).thenReturn(differentArticle);
+        when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
 
         // When & Then
         CUnAuthorizedException exception = assertThrows(CUnAuthorizedException.class, () ->
-            articleWriteService.deleteArticle(articleId, customUser)
+            articleService.deleteArticle(articleId, customUser)
         );
 
         assertEquals("허용 되지 않는 유저입니다.", exception.getMessage());
-        verify(articleReadService).getArticleById(articleId);
-        verify(memberReadService).getByCustomUser(customUser);
+        verify(articleReader).getArticleById(articleId);
+        verify(memberReader).getByCustomUser(customUser);
     }
 }

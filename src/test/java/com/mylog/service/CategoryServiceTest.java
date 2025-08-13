@@ -15,9 +15,9 @@ import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.category.CategoryRepository;
-import com.mylog.service.category.CategoryReadService;
-import com.mylog.service.category.CategoryWriteService;
-import com.mylog.service.member.MemberReadService;
+import com.mylog.service.category.CategoryReader;
+import com.mylog.service.category.CategoryService;
+import com.mylog.service.member.MemberReader;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,16 +29,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @ExtendWith(MockitoExtension.class)
-class CategoryWriteServiceTest {
+class CategoryServiceTest {
 
     @InjectMocks
-    private CategoryWriteService categoryWriteService;
+    private CategoryService categoryService;
 
     @Mock
-    private MemberReadService memberReadService;
+    private MemberReader memberReader;
 
     @Mock
-    private CategoryReadService categoryReadService;
+    private CategoryReader categoryReader;
 
     @Mock
     private CategoryRepository categoryRepository;
@@ -57,12 +57,12 @@ class CategoryWriteServiceTest {
     void createCategory_성공() {
         // Given
         CategoryCreateRequest request = new CategoryCreateRequest("New Category");
-        when(memberReadService.getById(1L)).thenReturn(member);
-        when(categoryReadService.getCategorySize(member)).thenReturn(5);
+        when(memberReader.getById(1L)).thenReturn(member);
+        when(categoryReader.getCategorySize(member)).thenReturn(5);
         when(categoryRepository.save(any(Category.class))).thenAnswer(i -> i.getArgument(0));
 
         // When
-        categoryWriteService.createCategory(request, customUser);
+        categoryService.createCategory(request, customUser);
 
         // Then
         verify(categoryRepository, times(1)).save(any(Category.class));
@@ -73,11 +73,11 @@ class CategoryWriteServiceTest {
     void createCategory_실패_최대_개수_도달() {
         // Given
         CategoryCreateRequest request = new CategoryCreateRequest("New Category");
-        when(memberReadService.getById(1L)).thenReturn(member);
-        when(categoryReadService.getCategorySize(member)).thenReturn(20);
+        when(memberReader.getById(1L)).thenReturn(member);
+        when(categoryReader.getCategorySize(member)).thenReturn(20);
 
         // When & Then
-        assertThatThrownBy(() -> categoryWriteService.createCategory(request, customUser))
+        assertThatThrownBy(() -> categoryService.createCategory(request, customUser))
                 .isInstanceOf(CReachedLimitException.class)
                 .hasMessage("카테고리 갯수가 한도에 도달했습니다.");
     }
@@ -88,14 +88,14 @@ class CategoryWriteServiceTest {
         // Given
         CategoryUpdateRequest request = new CategoryUpdateRequest("Updated Category");
         Category category = createCategory(member, "Original Category");
-        when(categoryReadService.getById(1L)).thenReturn(category);
+        when(categoryReader.getById(1L)).thenReturn(category);
 
         // When
-        categoryWriteService.updateCategory(request, 1L, customUser);
+        categoryService.updateCategory(request, 1L, customUser);
 
         // Then
         assertThat(category.getCategoryName()).isEqualTo("Updated Category");
-        verify(categoryReadService, times(1)).getById(1L);
+        verify(categoryReader, times(1)).getById(1L);
     }
 
     @Test
@@ -107,10 +107,10 @@ class CategoryWriteServiceTest {
         CustomUser anotherUser = new CustomUser(anotherMember, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
         Category category = createCategory(member, "Original Category"); // category is owned by member with ID 1
 
-        when(categoryReadService.getById(1L)).thenReturn(category);
+        when(categoryReader.getById(1L)).thenReturn(category);
 
         // When & Then
-        assertThatThrownBy(() -> categoryWriteService.updateCategory(request, 1L, anotherUser))
+        assertThatThrownBy(() -> categoryService.updateCategory(request, 1L, anotherUser))
                 .isInstanceOf(CUnAuthorizedException.class)
                 .hasMessage("허용되지 않는 유저입니다.");
     }
@@ -120,10 +120,10 @@ class CategoryWriteServiceTest {
     void deleteCategory_성공() {
         // Given
         Category category = createCategory(member, "Category to delete");
-        when(categoryReadService.getById(1L)).thenReturn(category);
+        when(categoryReader.getById(1L)).thenReturn(category);
 
         // When
-        categoryWriteService.deleteCategory(1L, customUser);
+        categoryService.deleteCategory(1L, customUser);
 
         // Then
         verify(categoryRepository, times(1)).deleteById(1L);
@@ -136,10 +136,10 @@ class CategoryWriteServiceTest {
         Member anotherMember = createMember(2L, "another@test.com", "anotherUser");
         CustomUser anotherUser = new CustomUser(anotherMember, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
         Category category = createCategory(member, "Original Category");
-        when(categoryReadService.getById(1L)).thenReturn(category);
+        when(categoryReader.getById(1L)).thenReturn(category);
 
         // When & Then
-        assertThatThrownBy(() -> categoryWriteService.deleteCategory(1L, anotherUser))
+        assertThatThrownBy(() -> categoryService.deleteCategory(1L, anotherUser))
                 .isInstanceOf(CUnAuthorizedException.class)
                 .hasMessage("허용되지 않는 유저입니다.");
     }

@@ -2,7 +2,7 @@ package com.mylog.service;
 
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Member;
-import com.mylog.service.member.MemberReadService;
+import com.mylog.service.member.MemberReader;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,14 +17,14 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final MemberReadService memberReadService;
+    private final MemberReader memberReader;
 
     //회원가입할 때는 이메일로 찾고 모든 토큰 요청마다 검증은 id로 하고
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = username.contains("@") ?
-            memberReadService.getByEmail(username) :
-            memberReadService.getById(Long.parseLong(username));
+            memberReader.getByEmail(username) :
+            memberReader.getById(Long.parseLong(username));
         return createUserDetails(member);
     }
 

@@ -9,7 +9,7 @@ import com.mylog.model.entity.Member;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.article.ArticleRepository;
 import com.mylog.repository.comment.CommentRepository;
-import com.mylog.service.member.MemberReadService;
+import com.mylog.service.member.MemberReader;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,20 +21,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class CommentReadService {
+public class CommentReader {
 
     private final CommentRepository commentRepository;
-    private final MemberReadService memberReadService;
+    private final MemberReader memberReader;
     private final ArticleRepository articleRepository;
 
     public Page<CommentResponse> getMyComments(CustomUser customUser, Pageable pageable) {
-        Member member = memberReadService.getById(customUser.getMemberId());
+        Member member = memberReader.getById(customUser.getMemberId());
         return commentRepository.findAllByMember(member, pageable)
             .map(CommentResponse::new);
     }
 
     public Page<CommentResponse> getComments(CustomUser customUser, Pageable pageable) {
-        Member member = memberReadService.getById(customUser.getMemberId());
+        Member member = memberReader.getById(customUser.getMemberId());
         return commentRepository.findAllByArticle_Member(member, pageable)
             .map(CommentResponse::new);
     }
@@ -43,7 +43,6 @@ public class CommentReadService {
         if(!articleRepository.existsById(articleId)){
             throw new CMissingDataException("존재하지 않는 게시글 입니다.");
         }
-
         return commentRepository.findByArticle_IdAndParentId(articleId, 0L, pageable)
             .map(comment -> new CommentArticleResponse(comment, getReplies(comment)));
     }

@@ -19,8 +19,8 @@ import com.mylog.model.entity.Comment;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.article.ArticleRepository;
 import com.mylog.repository.comment.CommentRepository;
-import com.mylog.service.comment.CommentReadService;
-import com.mylog.service.member.MemberReadService;
+import com.mylog.service.comment.CommentReader;
+import com.mylog.service.member.MemberReader;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -37,16 +37,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
-class CommentReadServiceTest {
+class CommentReaderTest {
 
     @InjectMocks
-    private CommentReadService commentReadService;
+    private CommentReader commentReader;
 
     @Mock
     private CommentRepository commentRepository;
 
     @Mock
-    private MemberReadService memberReadService;
+    private MemberReader memberReader;
 
     @Mock
     private ArticleRepository articleRepository;
@@ -148,31 +148,31 @@ class CommentReadServiceTest {
         // Given
         Page<Comment> commentPage = new PageImpl<>(List.of(testComment), pageable, 1);
         
-        when(memberReadService.getById(1L)).thenReturn(testMember);
+        when(memberReader.getById(1L)).thenReturn(testMember);
         when(commentRepository.findAllByMember(testMember, pageable)).thenReturn(commentPage);
 
         // When
-        Page<CommentResponse> result = commentReadService.getMyComments(customUser, pageable);
+        Page<CommentResponse> result = commentReader.getMyComments(customUser, pageable);
 
         // Then
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().get(0).content()).isEqualTo("Test comment");
         assertThat(result.getTotalElements()).isEqualTo(1);
         
-        verify(memberReadService).getById(1L);
+        verify(memberReader).getById(1L);
         verify(commentRepository).findAllByMember(testMember, pageable);
     }
 
     @Test
     void getMyComments_사용자_없음() {
         // Given
-        when(memberReadService.getById(1L)).thenThrow(new CMissingDataException());
+        when(memberReader.getById(1L)).thenThrow(new CMissingDataException());
 
         // When & Then
-        assertThatThrownBy(() -> commentReadService.getMyComments(customUser, pageable))
+        assertThatThrownBy(() -> commentReader.getMyComments(customUser, pageable))
                 .isInstanceOf(CMissingDataException.class);
 
-        verify(memberReadService).getById(1L);
+        verify(memberReader).getById(1L);
         verify(commentRepository, never()).findAllByMember(any(), any());
     }
 
@@ -181,17 +181,17 @@ class CommentReadServiceTest {
         // Given
         Page<Comment> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
         
-        when(memberReadService.getById(1L)).thenReturn(testMember);
+        when(memberReader.getById(1L)).thenReturn(testMember);
         when(commentRepository.findAllByMember(testMember, pageable)).thenReturn(emptyPage);
 
         // When
-        Page<CommentResponse> result = commentReadService.getMyComments(customUser, pageable);
+        Page<CommentResponse> result = commentReader.getMyComments(customUser, pageable);
 
         // Then
         assertThat(result.getContent()).isEmpty();
         assertThat(result.getTotalElements()).isEqualTo(0);
         
-        verify(memberReadService).getById(1L);
+        verify(memberReader).getById(1L);
         verify(commentRepository).findAllByMember(testMember, pageable);
     }
 
@@ -200,17 +200,17 @@ class CommentReadServiceTest {
         // Given
         Page<Comment> commentPage = new PageImpl<>(comments, pageable, 2);
         
-        when(memberReadService.getById(1L)).thenReturn(testMember);
+        when(memberReader.getById(1L)).thenReturn(testMember);
         when(commentRepository.findAllByArticle_Member(testMember, pageable)).thenReturn(commentPage);
 
         // When
-        Page<CommentResponse> result = commentReadService.getComments(customUser, pageable);
+        Page<CommentResponse> result = commentReader.getComments(customUser, pageable);
 
         // Then
         assertThat(result.getContent()).hasSize(2);
         assertThat(result.getTotalElements()).isEqualTo(2);
         
-        verify(memberReadService).getById(1L);
+        verify(memberReader).getById(1L);
         verify(commentRepository).findAllByArticle_Member(testMember, pageable);
     }
 
@@ -225,7 +225,7 @@ class CommentReadServiceTest {
         when(commentRepository.findByArticle_IdAndParentId(articleId, 0L, pageable)).thenReturn(commentPage);
         when(commentRepository.findByArticle_IdAndParentId(articleId, 1L)).thenReturn(replies);
         // When
-        Page<CommentArticleResponse> result = commentReadService.getComments(articleId, pageable);
+        Page<CommentArticleResponse> result = commentReader.getComments(articleId, pageable);
 
         // Then
         assertThat(result.getContent()).hasSize(1);
@@ -247,7 +247,7 @@ class CommentReadServiceTest {
         when(articleRepository.existsById(articleId)).thenReturn(false);
 
         // When & Then
-        assertThatThrownBy(() -> commentReadService.getComments(articleId, pageable))
+        assertThatThrownBy(() -> commentReader.getComments(articleId, pageable))
                 .isInstanceOf(CMissingDataException.class)
                 .hasMessage("존재하지 않는 게시글 입니다.");
 
@@ -264,7 +264,7 @@ class CommentReadServiceTest {
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(testComment));
 
         // When
-        Comment result = commentReadService.getById(commentId);
+        Comment result = commentReader.getById(commentId);
 
         // Then
         assertThat(result).isEqualTo(testComment);
@@ -280,7 +280,7 @@ class CommentReadServiceTest {
         when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> commentReadService.getById(commentId))
+        assertThatThrownBy(() -> commentReader.getById(commentId))
                 .isInstanceOf(CMissingDataException.class);
 
         verify(commentRepository).findById(commentId);
@@ -297,11 +297,11 @@ class CommentReadServiceTest {
         );
         Page<Comment> commentPage = new PageImpl<>(pageComments, customPageable, 12); // 총 12개
         
-        when(memberReadService.getById(1L)).thenReturn(testMember);
+        when(memberReader.getById(1L)).thenReturn(testMember);
         when(commentRepository.findAllByMember(testMember, customPageable)).thenReturn(commentPage);
 
         // When
-        Page<CommentResponse> result = commentReadService.getMyComments(customUser, customPageable);
+        Page<CommentResponse> result = commentReader.getMyComments(customUser, customPageable);
 
         // Then
         assertThat(result.getContent()).hasSize(2);
@@ -338,17 +338,17 @@ class CommentReadServiceTest {
         
         Page<Comment> anotherCommentPage = new PageImpl<>(List.of(anotherComment), pageable, 1);
         
-        when(memberReadService.getById(3L)).thenReturn(anotherMember);
+        when(memberReader.getById(3L)).thenReturn(anotherMember);
         when(commentRepository.findAllByMember(anotherMember, pageable)).thenReturn(anotherCommentPage);
 
         // When
-        Page<CommentResponse> result = commentReadService.getMyComments(anotherCustomUser, pageable);
+        Page<CommentResponse> result = commentReader.getMyComments(anotherCustomUser, pageable);
 
         // Then
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().get(0).content()).isEqualTo("다른 사용자 댓글");
         
-        verify(memberReadService).getById(3L);
+        verify(memberReader).getById(3L);
         verify(commentRepository).findAllByMember(anotherMember, pageable);
     }
 }
