@@ -4,9 +4,9 @@ import com.mylog.model.entity.Category;
 
 
 public record CategoryResponse(Long id, String categoryName, Long memberId) {
-    public CategoryResponse (Category category) {
+    public CategoryResponse (Category category, long memberId) {
         this(category.getId(),
             category.getCategoryName(),
-            category.getMember().getId());
+            memberId);
     }
 }

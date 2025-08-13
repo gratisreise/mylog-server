@@ -78,7 +78,7 @@ public class ArticleWriteService {
     public void deleteArticle(Long articleId, CustomUser customUser) {
         Article article = articleReadService.getArticleById(articleId);
         long articleMemberId = article.getMember().getId();
-        long requestMemberId = memberReadService.getByCustomUser(customUser).getId();
+        long requestMemberId = customUser.getMemberId();
 
         if(articleMemberId != requestMemberId){
             throw new CUnAuthorizedException("허용 되지 않는 유저입니다.");

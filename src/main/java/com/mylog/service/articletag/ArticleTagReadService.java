@@ -1,4 +1,4 @@
-package com.mylog.service.articletage;
+package com.mylog.service.articletag;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

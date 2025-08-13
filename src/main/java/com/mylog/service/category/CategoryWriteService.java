@@ -45,7 +45,9 @@ public class CategoryWriteService {
     }
 
     public void createCategory(Member member){
-        if(categoryReadService.isExists(member)) return;
+        if(categoryRepository.existsByMemberAndCategoryName(member, CategoryWriteService.originCategory)){
+            return;
+        }
         Category category = new Category(member, originCategory);
         categoryRepository.save(category);
     }

@@ -23,12 +23,16 @@ public class CategoryReadService {
 
     public List<CategoryResponse> getCategories(CustomUser customUser){
         Member member = generateMember(customUser);
-
+        long memberId = member.getId();
         return categoryRepository.findByMember(member)
             .stream()
-            .filter(category -> !category.getCategoryName().equals(CategoryWriteService.originCategory))
-            .map(CategoryResponse::new)
+            .filter(this::isOriginCategory)
+            .map(category -> new CategoryResponse(category, memberId))
             .toList();
+    }
+
+    private boolean isOriginCategory(Category category){
+        return !category.getCategoryName().equals(CategoryWriteService.originCategory);
     }
 
     private Member generateMember(CustomUser customUser) {
@@ -40,13 +44,6 @@ public class CategoryReadService {
         return categoryRepository.findByMemberAndCategoryName(member, categoryName)
             .orElseThrow(CMissingDataException::new);
     }
-
-    public boolean isExists(Member member){
-        Category category = categoryRepository.findByMemberAndCategoryName(member, CategoryWriteService.originCategory)
-            .orElseGet(Category::new);
-            return category.getId() != null;
-    }
-
 
     public int getCategorySize(Member member) {
         return categoryRepository.findByMember(member).size();
