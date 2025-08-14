@@ -16,17 +16,13 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Comment
     @EntityGraph(attributePaths = {"article", "member"})
     Page<Comment> findByArticle_Id(Long articleId, Pageable pageable);
 
-    //대댓글 목록 조회
-    @EntityGraph(attributePaths = {"article", "member"})
+    //댓글목록조회
+    @EntityGraph(attributePaths = {"member"})
     Page<Comment> findByArticle_IdAndParentId(Long articleId, Long parentId, Pageable pageable);
 
     //나의 댓글 조회
-
+    @EntityGraph(attributePaths = {"member"})
     Page<Comment> findAllByMember(Member member, Pageable pageable);
-
-    //나의 게시글 댓글 조회
-    @EntityGraph(attributePaths = {"article", "member"})
-    Page<Comment> findAllByArticle_Member(Member member, Pageable pageable);
 
     //답글조회
     @EntityGraph(attributePaths = {"article", "member"})

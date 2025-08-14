@@ -31,7 +31,7 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
             .limit(pageable.getPageSize())
             .fetch();
 
-        Long total =  queryFactory
+        long total =  queryFactory
             .select(notification.count())
             .from(notification, notificationSetting)
             .leftJoin(notification).on(notification.member.eq(notificationSetting.member))
@@ -39,7 +39,6 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
             .where(notification.read.isFalse())
             .fetchOne();
 
-        total = total == null ? 0 : total;
 
         return new PageImpl<>(content, pageable, total);
     }

@@ -27,18 +27,21 @@ public class CommentReader {
     private final MemberReader memberReader;
     private final ArticleRepository articleRepository;
 
+    //내가 작성한 댓글
     public Page<CommentResponse> getMyComments(CustomUser customUser, Pageable pageable) {
         Member member = memberReader.getById(customUser.getMemberId());
         return commentRepository.findAllByMember(member, pageable)
             .map(CommentResponse::new);
     }
 
+    //내 게시글의 댓글
     public Page<CommentResponse> getComments(CustomUser customUser, Pageable pageable) {
         Member member = memberReader.getById(customUser.getMemberId());
-        return commentRepository.findAllByArticle_Member(member, pageable)
+        return commentRepository.findMyArticlesComments(member, pageable)
             .map(CommentResponse::new);
     }
 
+    //게시글 상세 댓글 목록조회
     public Page<CommentArticleResponse> getComments(Long articleId, Pageable pageable){
         if(!articleRepository.existsById(articleId)){
             throw new CMissingDataException("존재하지 않는 게시글 입니다.");
@@ -47,13 +50,12 @@ public class CommentReader {
             .map(comment -> new CommentArticleResponse(comment, getReplies(comment)));
     }
 
+
     private List<Reply> getReplies(Comment comment){
         long articleId = comment.getArticle().getId();
         long parentId = comment.getId();
         List<Comment> comments = commentRepository.findByArticle_IdAndParentId(articleId, parentId);
-        List<Reply> replies = new ArrayList<>();
-        for(Comment com : comments) replies.add(new Reply(com));
-        return replies;
+        return comments.stream().map(Reply::new).toList();
     }
 
     public Comment getById(Long commentId) {

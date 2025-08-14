@@ -16,10 +16,13 @@ public record CommentArticleResponse(
     List<Reply> replies
 ) {
     public CommentArticleResponse(Comment comment, List<Reply> replies){
-        this(comment.getId(), comment.getContent(),
+        this(
+            comment.getId(),
+            comment.getContent(),
             comment.getMember().getNickname(),
             comment.getMember().getId(),
-            comment.getCreatedAt(), comment.getUpdatedAt(),
+            comment.getCreatedAt(),
+            comment.getUpdatedAt(),
             replies
         );
     }

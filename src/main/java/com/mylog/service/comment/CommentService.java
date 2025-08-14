@@ -33,9 +33,8 @@ public class CommentService {
         Comment comment = new Comment(article, member, request);
         commentRepository.save(comment);
 
-        //알림 보내기 완전 비동기 처리가능
+        //알림 보내기(비동기 적용가능)
         notificationService.createNotificationSetting(article.getMember(), "comment");
-
         notificationService.sendNotification(article.getMember(), article.getId(), "comment");
     }
 
@@ -60,17 +59,16 @@ public class CommentService {
         Comment comment = commentReader.getById(commentId);
         Article article = comment.getArticle();
 
-        long commentMemberId = comment.getMember().getId(); //댓글 작성자
+        long commentMemberId = comment.getMember().getId(); // 댓글 작성자
         long articleMemberId = article.getMember().getId(); // 게시글 작성자
-
-        long requestMemberId = memberReader.getById(customUser.getMemberId()).getId();
+        long requestMemberId = customUser.getMemberId();
 
         return requestMemberId == commentMemberId || requestMemberId == articleMemberId;
     }
 
     private boolean validateUpdate(CustomUser customUser, Comment comment) {
         long commentMemberId = comment.getMember().getId();
-        long requestMemberId = memberReader.getById(customUser.getMemberId()).getId();
+        long requestMemberId = customUser.getMemberId();
 
         return commentMemberId == requestMemberId;
     }

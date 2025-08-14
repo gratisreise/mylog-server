@@ -24,7 +24,6 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         QArticle article = QArticle.article;
         QArticleTag articleTag = QArticleTag.articleTag;
         QTag tag = QTag.tag;
-        log.info("no-cache");
 
         List<Article> content = queryFactory
             .select(article)
