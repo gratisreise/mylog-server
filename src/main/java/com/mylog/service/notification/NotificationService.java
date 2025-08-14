@@ -2,30 +2,29 @@ package com.mylog.service.notification;
 
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.dto.notification.NotificationResponse;
 import com.mylog.model.entity.Member;
 import com.mylog.model.entity.Notification;
 import com.mylog.model.entity.NotificationSetting;
 import com.mylog.repository.notification.NotificationRepository;
-import com.mylog.repository.notificationsetting.NotificationSettingRepository;
 import com.mylog.service.member.MemberReader;
+import com.mylog.service.notificationsetting.NotificationSettingReader;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class NotificationService {
     private final NotificationRepository notificationRepository;
-    private final NotificationSettingRepository notificationSettingRepository;
+    private final NotificationReader notificationReader;
+    private final NotificationSettingReader notificationSettingReader;
     private final MemberReader memberReader;
 
     @Transactional
     public void sendNotification(Member member, Long relatedId, String type) {
-        //알림이 켜져 있는지 확인
-         if(notificationIsDisabled(member, type)) return;
+        //알림 ON 확인
+         if(notificationSettingReader.isDisabled(member, type)) return;
 
         //알림생성
         Notification notification = new Notification(member, relatedId, type);
@@ -33,49 +32,10 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
-    private boolean notificationIsDisabled(Member member, String type) {
-        return notificationSettingRepository.findByMemberAndType(member, type)
-            .orElseThrow(CMissingDataException::new)
-            .isDisabled();
-    }
 
     @Transactional
     public void readNotification(Long notificationId){
-        Notification notification = notificationRepository.findById(notificationId)
-            .orElseThrow(CMissingDataException::new);
-        notification.makeRead();
-    };
-
-    @Transactional
-    public void createNotificationSetting(Member member, String type){
-        if(notificationSettingRepository.existsByMemberAndType(member, type)){
-            return;
-        }
-        NotificationSetting setting = NotificationSetting.builder()
-            .member(member)
-            .type(type)
-            .build();
-
-        notificationSettingRepository.save(setting);
-    }
-
-    //알람받기
-    public Page<NotificationResponse> receiveNotification(CustomUser customUser, Pageable pageable){
-        Member member = memberReader.getByCustomUser(customUser);
-
-        return notificationRepository
-            .findByMemberAndRead(member, pageable)
-            .map(NotificationResponse::new);
-    };
-
-    //알림끄기
-    @Transactional
-    public void toggleNotification(CustomUser customUser, String type){
-        Member member = memberReader.getByCustomUser(customUser);
-        notificationSettingRepository
-            .findByMemberAndType(member, type)
-            .orElseThrow(CMissingDataException::new)
-            .toggle();
+        notificationReader.getById(notificationId).read();
     };
 
 }

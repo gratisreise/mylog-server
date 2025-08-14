@@ -11,6 +11,7 @@ import com.mylog.repository.comment.CommentRepository;
 import com.mylog.service.notification.NotificationService;
 import com.mylog.service.article.ArticleReader;
 import com.mylog.service.member.MemberReader;
+import com.mylog.service.notificationsetting.NotificationSettingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ public class CommentService {
     private final MemberReader memberReader;
     private final ArticleReader articleReader;
     private final NotificationService notificationService;
+    private final NotificationSettingService notificationSettingService;
 
     public void createComment(Long articleId, CommentCreateRequest request, CustomUser customUser) {
         Article article = articleReader.getArticleById(articleId);
@@ -34,7 +36,7 @@ public class CommentService {
         commentRepository.save(comment);
 
         //알림 보내기(비동기 적용가능)
-        notificationService.createNotificationSetting(article.getMember(), "comment");
+        notificationSettingService.createNotificationSetting(article.getMember(), "comment");
         notificationService.sendNotification(article.getMember(), article.getId(), "comment");
     }
 

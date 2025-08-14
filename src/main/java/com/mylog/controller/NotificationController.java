@@ -5,6 +5,7 @@ import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.notification.NotificationResponse;
+import com.mylog.service.notification.NotificationReader;
 import com.mylog.service.notification.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationService notificationService;
-
+    private final NotificationReader notificationReader;
     //알림 조회
     @GetMapping
     @Operation(summary = "알림조회")
@@ -31,7 +32,7 @@ public class NotificationController {
         @AuthenticationPrincipal CustomUser customUser,
         @PageableDefault Pageable pageable
     ){
-        return ResponseService.getSingleResult(notificationService.receiveNotification(customUser, pageable));
+        return ResponseService.getSingleResult(notificationReader.receiveNotification(customUser, pageable));
     }
 
     //알림 읽기
@@ -41,18 +42,5 @@ public class NotificationController {
         notificationService.readNotification(id);
         return ResponseService.getSuccessResult();
     }
-
-
-    //알림 끄기/켜기
-    @PutMapping("/settings/{type}")
-    @Operation(summary = "알림 토글")
-    public CommonResult toggleNotification(
-        @AuthenticationPrincipal CustomUser customUser,
-        @PathVariable String type
-    ){
-        notificationService.toggleNotification(customUser, type);
-        return ResponseService.getSuccessResult();
-    }
-
 
 }

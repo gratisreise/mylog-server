@@ -51,7 +51,7 @@ public class Notification {
         this.relatedId = relatedId;
     }
 
-    public void makeRead() {
+    public void read() {
         this.read = true;
     }
 }

@@ -249,7 +249,7 @@ public class NotificationServiceTest {
 
         @Test
         @DisplayName("이미 읽은 알림도 다시 읽음 처리할 수 있다")
-        void readNotification_WhenAlreadyRead_StillCallsMakeRead() {
+        void readNotification_WhenAlreadyRead_StillCallsRead() {
             // Given
             when(notificationRepository.findById(TEST_NOTIFICATION_ID))
                 .thenReturn(Optional.of(readNotification));
