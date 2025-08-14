@@ -1,4 +1,4 @@
-package com.mylog.service;
+package com.mylog.service.article;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -21,7 +21,6 @@ import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.article.ArticleRepository;
 import com.mylog.repository.member.MemberRepository;
-import com.mylog.service.article.ArticleReader;
 import com.mylog.service.tag.TagReader;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -158,7 +157,7 @@ class ArticleReaderTest {
         Page<Article> articlePage = new PageImpl<>(articles, pageable, 3);
 
         when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
-        when(articleRepository.findAllByMember(1L, pageable)).thenReturn(articlePage);
+        when(articleRepository.findAllByMember(testMember, pageable)).thenReturn(articlePage);
 
         // When
         Page<ArticleResponse> result = articleReader.getArticles(pageable, customUser);
@@ -175,7 +174,7 @@ class ArticleReaderTest {
         assertEquals("Test Category", content.get(0).category());
 
         verify(memberRepository).findById(1L);
-        verify(articleRepository).findAllByMember(1L, pageable);
+        verify(articleRepository).findAllByMember(testMember, pageable);
     }
 
     @Test
@@ -190,7 +189,7 @@ class ArticleReaderTest {
         );
 
         verify(memberRepository).findById(1L);
-        verify(articleRepository, never()).findAllByMember(anyLong(), any(Pageable.class));
+        verify(articleRepository, never()).findAllByMember(any(Member.class), any(Pageable.class));
     }
 
     @Test
@@ -200,7 +199,7 @@ class ArticleReaderTest {
         Page<Article> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
 
         when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
-        when(articleRepository.findAllByMember(1L, pageable)).thenReturn(emptyPage);
+        when(articleRepository.findAllByMember(testMember, pageable)).thenReturn(emptyPage);
 
         // When
         Page<ArticleResponse> result = articleReader.getArticles(pageable, customUser);
@@ -212,7 +211,7 @@ class ArticleReaderTest {
         assertTrue(result.getContent().isEmpty());
 
         verify(memberRepository).findById(1L);
-        verify(articleRepository).findAllByMember(1L, pageable);
+        verify(articleRepository).findAllByMember(testMember, pageable);
     }
 
     @Test
@@ -224,7 +223,7 @@ class ArticleReaderTest {
         Page<Article> articlePage = new PageImpl<>(articles, pageable, 1);
 
         when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
-        when(articleRepository.findByMemberIdAndTitleContainingIgnoreCase(1L, keyword, pageable))
+        when(articleRepository.findByMemberAndTitleContainingIgnoreCase(testMember, keyword, pageable))
             .thenReturn(articlePage);
 
         // When
@@ -236,7 +235,7 @@ class ArticleReaderTest {
         assertEquals("Test Article", result.getContent().get(0).title());
 
         verify(memberRepository).findById(1L);
-        verify(articleRepository).findByMemberIdAndTitleContainingIgnoreCase(1L, keyword, pageable);
+        verify(articleRepository).findByMemberAndTitleContainingIgnoreCase(testMember, keyword, pageable);
     }
 
     @Test
@@ -252,7 +251,7 @@ class ArticleReaderTest {
         );
 
         verify(memberRepository).findById(1L);
-        verify(articleRepository, never()).findByMemberIdAndTitleContainingIgnoreCase(anyLong(), anyString(), any(Pageable.class));
+        verify(articleRepository, never()).findByMemberAndTitleContainingIgnoreCase(any(Member.class), anyString(), any(Pageable.class));
     }
 
     @Test
@@ -263,7 +262,7 @@ class ArticleReaderTest {
         Page<Article> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
 
         when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
-        when(articleRepository.findByMemberIdAndTitleContainingIgnoreCase(1L, keyword, pageable))
+        when(articleRepository.findByMemberAndTitleContainingIgnoreCase(testMember, keyword, pageable))
             .thenReturn(emptyPage);
 
         // When
@@ -273,9 +272,8 @@ class ArticleReaderTest {
         assertNotNull(result);
         assertEquals(0, result.getTotalElements());
         assertTrue(result.getContent().isEmpty());
-
         verify(memberRepository).findById(1L);
-        verify(articleRepository).findByMemberIdAndTitleContainingIgnoreCase(1L, keyword, pageable);
+        verify(articleRepository).findByMemberAndTitleContainingIgnoreCase(testMember, keyword, pageable);
     }
 
     @Test
@@ -532,7 +530,7 @@ class ArticleReaderTest {
         Page<Article> articlePage = new PageImpl<>(articles, pageable, 1);
 
         when(memberRepository.findById(2L)).thenReturn(Optional.of(anotherMember));
-        when(articleRepository.findAllByMember(2L, pageable)).thenReturn(articlePage);
+        when(articleRepository.findAllByMember(anotherMember, pageable)).thenReturn(articlePage);
 
         // When
         Page<ArticleResponse> result = articleReader.getArticles(pageable, anotherCustomUser);
@@ -540,8 +538,8 @@ class ArticleReaderTest {
         // Then
         assertNotNull(result);
         verify(memberRepository).findById(2L);
-        verify(articleRepository).findAllByMember(2L, pageable);
-        verify(articleRepository, never()).findAllByMember(eq(1L), any(Pageable.class));
+        verify(articleRepository).findAllByMember(anotherMember, pageable);
+        verify(articleRepository, never()).findAllByMember(eq(anotherMember), any(Pageable.class));
     }
 
     @Test

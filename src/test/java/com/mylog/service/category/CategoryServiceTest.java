@@ -1,4 +1,4 @@
-package com.mylog.service;
+package com.mylog.service.category;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,8 +15,6 @@ import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.category.CategoryRepository;
-import com.mylog.service.category.CategoryReader;
-import com.mylog.service.category.CategoryService;
 import com.mylog.service.member.MemberReader;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +56,7 @@ class CategoryServiceTest {
         // Given
         CategoryCreateRequest request = new CategoryCreateRequest("New Category");
         when(memberReader.getById(1L)).thenReturn(member);
-        when(categoryReader.getCategorySize(member)).thenReturn(5);
+        when(categoryRepository.countByMember(member)).thenReturn(5);
         when(categoryRepository.save(any(Category.class))).thenAnswer(i -> i.getArgument(0));
 
         // When
@@ -74,7 +72,7 @@ class CategoryServiceTest {
         // Given
         CategoryCreateRequest request = new CategoryCreateRequest("New Category");
         when(memberReader.getById(1L)).thenReturn(member);
-        when(categoryReader.getCategorySize(member)).thenReturn(20);
+        when(categoryRepository.countByMember(member)).thenReturn(20);
 
         // When & Then
         assertThatThrownBy(() -> categoryService.createCategory(request, customUser))

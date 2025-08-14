@@ -1,4 +1,4 @@
-package com.mylog.service;
+package com.mylog.service.member;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -16,9 +16,8 @@ import com.mylog.model.dto.member.SignUpRequest;
 import com.mylog.model.dto.member.UpdateMemberRequest;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.member.MemberRepository;
+import com.mylog.service.S3Service;
 import com.mylog.service.category.CategoryService;
-import com.mylog.service.member.MemberReader;
-import com.mylog.service.member.MemberService;
 import java.io.IOException;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;

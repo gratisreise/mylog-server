@@ -19,7 +19,6 @@ public class NotificationSettingService {
     private final NotificationSettingRepository notificationSettingRepository;
     private final MemberReader memberReader;
 
-    @Transactional
     public void createNotificationSetting(Member member, String type){
         if(notificationSettingRepository.existsByMemberAndType(member, type)){
             return;
@@ -33,7 +32,6 @@ public class NotificationSettingService {
     }
 
     //알림끄기
-    @Transactional
     public void toggleNotification(CustomUser customUser, String type){
         Member member = memberReader.getByCustomUser(customUser);
         notificationSettingRepository

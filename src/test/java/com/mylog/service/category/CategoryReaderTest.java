@@ -1,4 +1,4 @@
-package com.mylog.service;
+package com.mylog.service.category;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,7 +15,6 @@ import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.category.CategoryRepository;
 import com.mylog.repository.member.MemberRepository;
-import com.mylog.service.category.CategoryReader;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -165,7 +164,7 @@ class CategoryReaderTest {
         when(categoryRepository.findByMember(testMember)).thenReturn(testCategories);
 
         // When
-        int result = categoryReader.getCategorySize(testMember);
+        int result = categoryRepository.countByMember(testMember);
 
         // Then
         assertThat(result).isEqualTo(2);
@@ -179,7 +178,7 @@ class CategoryReaderTest {
         when(categoryRepository.findByMember(testMember)).thenReturn(Collections.emptyList());
 
         // When
-        int result = categoryReader.getCategorySize(testMember);
+        int result = categoryRepository.countByMember(testMember);
 
         // Then
         assertThat(result).isEqualTo(0);
@@ -194,7 +193,7 @@ class CategoryReaderTest {
         when(categoryRepository.findByMember(testMember)).thenReturn(manyCategories);
 
         // When
-        int result = categoryReader.getCategorySize(testMember);
+        int result = categoryRepository.countByMember(testMember);
 
         // Then
         assertThat(result).isEqualTo(15);

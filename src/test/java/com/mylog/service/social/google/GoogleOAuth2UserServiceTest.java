@@ -69,7 +69,7 @@ public class GoogleOAuth2UserServiceTest {
     private static final String TEST_ACCESS_TOKEN = "ya29.test_access_token";
     private static final String TEST_REFRESH_TOKEN = "1//test_refresh_token";
     private static final String TEST_JWT_ACCESS_TOKEN = "jwt.access.token";
-    private static final String TEST_JWT_REFRESH_TOKEN = "jwt.refresh.token";
+    private static final String TEST_JWT_REFRESH_TOKEN = "jwet.refresh.token";
     private static final String TEST_CLIENT_ID = "test_client_id.googleusercontent.com";
     private static final String TEST_CLIENT_SECRET = "test_client_secret";
     private static final String TEST_REDIRECT_URI = "http://localhost:8080/oauth2/callback/google";

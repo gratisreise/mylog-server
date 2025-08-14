@@ -25,6 +25,7 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
             .select(notification)
             .from(notification, notificationSetting)
             .leftJoin(notification).on(notification.member.eq(notificationSetting.member))
+            .where(notification.member.eq(member))
             .where(notificationSetting.disabled.isFalse())
             .where(notification.read.isFalse())
             .offset(pageable.getOffset())
@@ -38,7 +39,6 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
             .where(notificationSetting.disabled.isFalse())
             .where(notification.read.isFalse())
             .fetchOne();
-
 
         return new PageImpl<>(content, pageable, total);
     }

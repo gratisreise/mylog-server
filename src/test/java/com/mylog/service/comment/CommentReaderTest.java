@@ -1,4 +1,4 @@
-package com.mylog.service;
+package com.mylog.service.comment;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -19,7 +19,6 @@ import com.mylog.model.entity.Comment;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.article.ArticleRepository;
 import com.mylog.repository.comment.CommentRepository;
-import com.mylog.service.comment.CommentReader;
 import com.mylog.service.member.MemberReader;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -201,7 +200,7 @@ class CommentReaderTest {
         Page<Comment> commentPage = new PageImpl<>(comments, pageable, 2);
         
         when(memberReader.getById(1L)).thenReturn(testMember);
-        when(commentRepository.findAllByArticle_Member(testMember, pageable)).thenReturn(commentPage);
+        when(commentRepository.findMyArticlesComments(testMember, pageable)).thenReturn(commentPage);
 
         // When
         Page<CommentResponse> result = commentReader.getComments(customUser, pageable);
@@ -211,7 +210,7 @@ class CommentReaderTest {
         assertThat(result.getTotalElements()).isEqualTo(2);
         
         verify(memberReader).getById(1L);
-        verify(commentRepository).findAllByArticle_Member(testMember, pageable);
+        verify(commentRepository).findMyArticlesComments(testMember, pageable);
     }
 
     @Test

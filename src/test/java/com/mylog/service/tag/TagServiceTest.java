@@ -1,4 +1,4 @@
-package com.mylog.service;
+package com.mylog.service.tag;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -19,7 +19,6 @@ import com.mylog.model.entity.Member;
 import com.mylog.model.entity.Tag;
 import com.mylog.repository.articletag.ArticleTagRepository;
 import com.mylog.repository.tag.TagRepository;
-import com.mylog.service.tag.TagService;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

@@ -19,9 +19,7 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationReader notificationReader;
     private final NotificationSettingReader notificationSettingReader;
-    private final MemberReader memberReader;
 
-    @Transactional
     public void sendNotification(Member member, Long relatedId, String type) {
         //알림 ON 확인
          if(notificationSettingReader.isDisabled(member, type)) return;
@@ -32,8 +30,6 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
-
-    @Transactional
     public void readNotification(Long notificationId){
         notificationReader.getById(notificationId).read();
     };

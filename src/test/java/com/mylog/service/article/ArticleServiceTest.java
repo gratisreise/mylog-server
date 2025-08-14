@@ -1,4 +1,4 @@
-package com.mylog.service;
+package com.mylog.service.article;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,8 +25,7 @@ import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.article.ArticleRepository;
 import com.mylog.repository.articletag.ArticleTagRepository;
-import com.mylog.service.article.ArticleReader;
-import com.mylog.service.article.ArticleService;
+import com.mylog.service.S3Service;
 import com.mylog.service.category.CategoryReader;
 import com.mylog.service.member.MemberReader;
 import com.mylog.service.tag.TagService;

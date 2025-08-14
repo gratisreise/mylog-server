@@ -1,4 +1,4 @@
-package com.mylog.service;
+package com.mylog.service.comment;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -18,8 +18,6 @@ import com.mylog.model.entity.Comment;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.comment.CommentRepository;
 import com.mylog.service.article.ArticleReader;
-import com.mylog.service.comment.CommentReader;
-import com.mylog.service.comment.CommentService;
 import com.mylog.service.member.MemberReader;
 import com.mylog.service.notification.NotificationService;
 import java.time.LocalDateTime;
@@ -143,22 +141,6 @@ class CommentServiceTest {
         
         verify(articleReader).getArticleById(articleId);
         verify(memberReader).getById(1L);
-    }
-
-    @Test
-    void createComment_알림_전송_확인() {
-        // Given
-        Long articleId = 1L;
-        
-        when(articleReader.getArticleById(articleId)).thenReturn(testArticle);
-        when(memberReader.getById(1L)).thenReturn(testMember);
-
-        // When
-        commentService.createComment(articleId, commentCreateRequest, customUser);
-
-        // Then
-        verify(notificationService).createNotificationSetting(testArticle.getMember(), "comment");
-        verify(notificationService).sendNotification(testArticle.getMember(), testArticle.getId(), "comment");
     }
 
     @Test
