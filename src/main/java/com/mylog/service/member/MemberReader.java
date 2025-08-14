@@ -1,9 +1,9 @@
 package com.mylog.service.member;
 
+import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.member.MemberResponse;
 import com.mylog.model.entity.Member;
-import com.mylog.exception.CMissingDataException;
 import com.mylog.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberReader {
     private final MemberRepository memberRepository;
 
-
-//    @Cacheable(value = "members", key = "#customUser.getMemberId()")
     public MemberResponse getMember(CustomUser customUser){
         Member member = memberRepository.findById(customUser.getMemberId())
             .orElseThrow(CMissingDataException::new);

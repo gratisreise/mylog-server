@@ -46,7 +46,7 @@ public class MemberService {
 
         Member member = new Member(request, cryptedPassword, basicImageUrl);
 
-        log.info("member: {}", member.toString());
+//        log.info("member: {}", member.toString());
         memberRepository.save(member);
 
         //비동기 처리
@@ -57,32 +57,47 @@ public class MemberService {
         throws IOException{
 
         Member member = memberReader.getById(customUser.getMemberId());
-        // 내거 온거 문자열 비교
 
         if(validateNickname(member.getNickname(), request.nickname())){
             throw new CDuplicatedException("중복되는 닉네임 입니다.");
         }
 
-        if(request.password() != null){
+        if(request.password() != null){ //패스워드 암호화
             request = createUpdateRequest(request);
         }
 
-        if(file == null){
+        if(file == null){ //기존이랑 사진 동일
             member.update(request);
             return;
         }
 
         String profileImg = file.getOriginalFilename();
-        String memberImg = member.getProfileImg();
-        log.info("memberImg: {}, profileImg: {}", memberImg, profileImg);
-        if(isSame(memberImg, profileImg)){
+        String memberImg = member.getProfileImg().substring(93);
+
+        if(profileImg.equals(memberImg)){
             member.update(request);
         } else {
             profileImg = s3Service.upload(file);
-            if(!memberImg.equals(basicImageUrl)) s3Service.deleteImage(memberImg);
+            deleteImage(memberImg);
             member.update(request, profileImg);
         }
-        log.info("memberImg: {}, profileImg: {}", memberImg, profileImg);
+    }
+
+    public void deleteMember(CustomUser customUser){
+        Member member = memberReader.getById(customUser.getMemberId());
+        String memberImage = member.getProfileImg();
+
+        deleteImage(memberImage);
+
+        memberRepository.deleteById(customUser.getMemberId());
+    }
+
+    private boolean validateNickname(String origin, String request){
+        return !origin.equals(request) && memberRepository.existsByNickname(request);
+    }
+
+    private void deleteImage(String memberImg) {
+        if(!memberImg.equals(basicImageUrl)) s3Service.deleteImage(memberImg);
     }
 
     private UpdateMemberRequest createUpdateRequest(UpdateMemberRequest request) {
@@ -93,23 +108,5 @@ public class MemberService {
             request.bio(),
             request.imageUrl()
         );
-    }
-
-    public void deleteMember(CustomUser customUser){
-        Member member = memberReader.getById(customUser.getMemberId());
-
-        if(!member.getProfileImg().equals(basicImageUrl)) {
-            s3Service.deleteImage(member.getProfileImg());
-        }
-
-        memberRepository.deleteById(customUser.getMemberId());
-    }
-
-    private boolean isSame(String origin, String update) {
-        return origin.substring(93).equals(update);
-    }
-
-    private boolean validateNickname(String origin, String request){
-        return !origin.equals(request) && memberRepository.existsByNickname(request);
     }
 }
