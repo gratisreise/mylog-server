@@ -1,5 +1,6 @@
 package com.mylog.service.article;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -43,11 +44,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- * Comprehensive unit tests for ArticleWriteService
- * Tests all public methods including file upload scenarios, authorization validation, 
- * tag management integration, S3Service integration, and exception handling
- */
 @ExtendWith(MockitoExtension.class)
 class ArticleServiceTest {
 
@@ -422,19 +418,15 @@ class ArticleServiceTest {
         Long articleId = 1L;
         
         when(articleReader.getArticleById(articleId)).thenReturn(testArticle);
-        when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
         doNothing().when(articleTagRepository).deleteByArticle(testArticle);
         doNothing().when(s3Service).deleteImage(testArticle.getArticleImg());
         doNothing().when(articleRepository).deleteById(articleId);
 
         // When
-        assertDoesNotThrow(() -> 
-            articleService.deleteArticle(articleId, customUser)
-        );
+        articleService.deleteArticle(articleId, customUser);
 
         // Then
         verify(articleReader).getArticleById(articleId);
-        verify(memberReader).getByCustomUser(customUser);
         verify(articleTagRepository).deleteByArticle(testArticle);
         verify(s3Service).deleteImage(testArticle.getArticleImg());
         verify(articleRepository).deleteById(articleId);
@@ -455,15 +447,13 @@ class ArticleServiceTest {
             .build();
 
         when(articleReader.getArticleById(articleId)).thenReturn(anotherArticle);
-        when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
 
         // When & Then
-        assertThrows(CUnAuthorizedException.class, () ->
-            articleService.deleteArticle(articleId, customUser)
-        );
+        assertThatThrownBy(() -> articleService.deleteArticle(articleId, customUser))
+            .isInstanceOf(CUnAuthorizedException.class)
+            .hasMessage("허용 되지 않는 유저입니다.");
 
         verify(articleReader).getArticleById(articleId);
-        verify(memberReader).getByCustomUser(customUser);
         verify(articleTagRepository, never()).deleteByArticle(any());
         verify(s3Service, never()).deleteImage(anyString());
         verify(articleRepository, never()).deleteById(anyLong());
@@ -485,28 +475,6 @@ class ArticleServiceTest {
 
         verify(articleReader).getArticleById(articleId);
         verify(memberReader, never()).getByCustomUser(any());
-        verify(articleTagRepository, never()).deleteByArticle(any());
-        verify(s3Service, never()).deleteImage(anyString());
-        verify(articleRepository, never()).deleteById(anyLong());
-    }
-
-    @Test
-    @DisplayName("아티클 삭제 - 멤버 조회 실패 예외")
-    void deleteArticle_memberNotFound_예외발생() {
-        // Given
-        Long articleId = 1L;
-
-        when(articleReader.getArticleById(articleId)).thenReturn(testArticle);
-        when(memberReader.getByCustomUser(customUser))
-            .thenThrow(new CMissingDataException());
-
-        // When & Then
-        assertThrows(CMissingDataException.class, () ->
-            articleService.deleteArticle(articleId, customUser)
-        );
-
-        verify(articleReader).getArticleById(articleId);
-        verify(memberReader).getByCustomUser(customUser);
         verify(articleTagRepository, never()).deleteByArticle(any());
         verify(s3Service, never()).deleteImage(anyString());
         verify(articleRepository, never()).deleteById(anyLong());
@@ -668,15 +636,15 @@ class ArticleServiceTest {
             .build();
 
         when(articleReader.getArticleById(articleId)).thenReturn(differentArticle);
-        when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
 
         // When & Then
-        CUnAuthorizedException exception = assertThrows(CUnAuthorizedException.class, () ->
-            articleService.deleteArticle(articleId, customUser)
-        );
+        assertThatThrownBy(()->articleService.deleteArticle(articleId, customUser))
+            .isInstanceOf(CUnAuthorizedException.class)
+            .hasMessage("허용 되지 않는 유저입니다.");
 
-        assertEquals("허용 되지 않는 유저입니다.", exception.getMessage());
         verify(articleReader).getArticleById(articleId);
-        verify(memberReader).getByCustomUser(customUser);
+        verify(articleTagRepository, never()).deleteByArticle(any(Article.class));
+        verify(s3Service, never()).deleteImage(anyString());
+        verify(articleRepository, never()).deleteById(anyLong());
     }
 }

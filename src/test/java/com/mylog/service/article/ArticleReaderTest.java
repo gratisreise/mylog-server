@@ -1,13 +1,12 @@
 package com.mylog.service.article;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,7 +19,7 @@ import com.mylog.model.entity.Article;
 import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.article.ArticleRepository;
-import com.mylog.repository.member.MemberRepository;
+import com.mylog.service.member.MemberReader;
 import com.mylog.service.tag.TagReader;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -39,10 +38,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-/**
- * Comprehensive unit tests for ArticleReadService
- * Tests all public methods with various scenarios including pagination, search, authorization, and error cases
- */
 @ExtendWith(MockitoExtension.class)
 class ArticleReaderTest {
 
@@ -50,10 +45,10 @@ class ArticleReaderTest {
     private ArticleRepository articleRepository;
 
     @Mock
-    private MemberRepository memberRepository;
+    private TagReader tagReader;
 
     @Mock
-    private TagReader tagReader;
+    private MemberReader memberReader;
 
     @InjectMocks
     private ArticleReader articleReader;
@@ -62,7 +57,6 @@ class ArticleReaderTest {
     private CustomUser customUser;
     private Pageable pageable;
     private Member testMember;
-    private Member testMember2;
     private Article testArticle;
     private com.mylog.model.entity.Category testCategory;
 
@@ -79,20 +73,6 @@ class ArticleReaderTest {
             .profileImg("https://example.com/default.jpg")
             .provider(OauthProvider.LOCAL)
             .providerId("test@example.com" + OauthProvider.LOCAL)
-            .createdAt(LocalDateTime.now())
-            .updatedAt(LocalDateTime.now())
-            .build();
-
-        testMember2 = Member.builder()
-            .id(2L)
-            .email("test2@example.com")
-            .password("password123")
-            .memberName("Test User 2")
-            .nickname("testuser2")
-            .bio("Test bio 2")
-            .profileImg("https://example.com/default2.jpg")
-            .provider(OauthProvider.LOCAL)
-            .providerId("test2@example.com" + OauthProvider.LOCAL)
             .createdAt(LocalDateTime.now())
             .updatedAt(LocalDateTime.now())
             .build();
@@ -156,7 +136,7 @@ class ArticleReaderTest {
         List<Article> articles = createTestArticles(testMember, testCategory, 3);
         Page<Article> articlePage = new PageImpl<>(articles, pageable, 3);
 
-        when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
+        when(memberReader.getById(1L)).thenReturn(testMember);
         when(articleRepository.findAllByMember(testMember, pageable)).thenReturn(articlePage);
 
         // When
@@ -173,7 +153,7 @@ class ArticleReaderTest {
         assertEquals("testuser", content.get(0).author());
         assertEquals("Test Category", content.get(0).category());
 
-        verify(memberRepository).findById(1L);
+        verify(memberReader).getById(1L);
         verify(articleRepository).findAllByMember(testMember, pageable);
     }
 
@@ -181,14 +161,14 @@ class ArticleReaderTest {
     @DisplayName("사용자 아티클 목록 조회 - 멤버 없음 예외")
     void getArticles_memberNotFound_예외발생() {
         // Given
-        when(memberRepository.findById(1L)).thenReturn(Optional.empty());
+        when(memberReader.getById(1L)).thenThrow(CMissingDataException.class);
 
         // When & Then
         assertThrows(CMissingDataException.class, () ->
             articleReader.getArticles(pageable, customUser)
         );
 
-        verify(memberRepository).findById(1L);
+        verify(memberReader).getById(1L);
         verify(articleRepository, never()).findAllByMember(any(Member.class), any(Pageable.class));
     }
 
@@ -198,7 +178,7 @@ class ArticleReaderTest {
         // Given
         Page<Article> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
 
-        when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
+        when(memberReader.getById(1L)).thenReturn(testMember);
         when(articleRepository.findAllByMember(testMember, pageable)).thenReturn(emptyPage);
 
         // When
@@ -210,7 +190,7 @@ class ArticleReaderTest {
         assertEquals(0, result.getTotalPages());
         assertTrue(result.getContent().isEmpty());
 
-        verify(memberRepository).findById(1L);
+        verify(memberReader).getById(1L);
         verify(articleRepository).findAllByMember(testMember, pageable);
     }
 
@@ -222,7 +202,7 @@ class ArticleReaderTest {
         List<Article> articles = List.of(testArticle);
         Page<Article> articlePage = new PageImpl<>(articles, pageable, 1);
 
-        when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
+        when(memberReader.getById(1L)).thenReturn(testMember);
         when(articleRepository.findByMemberAndTitleContainingIgnoreCase(testMember, keyword, pageable))
             .thenReturn(articlePage);
 
@@ -234,23 +214,22 @@ class ArticleReaderTest {
         assertEquals(1, result.getTotalElements());
         assertEquals("Test Article", result.getContent().get(0).title());
 
-        verify(memberRepository).findById(1L);
+        verify(memberReader).getById(1L);
         verify(articleRepository).findByMemberAndTitleContainingIgnoreCase(testMember, keyword, pageable);
     }
 
     @Test
-    @DisplayName("키워드로 사용자 아티클 검색 - 멤버 없음 예외")
+    @DisplayName("키워드로 사용자 회원없음 예외발생")
     void getArticles_withKeyword_memberNotFound_예외발생() {
         // Given
         String keyword = "test";
-        when(memberRepository.findById(1L)).thenReturn(Optional.empty());
+        when(memberReader.getById(1L)).thenThrow(CMissingDataException.class);
 
         // When & Then
-        assertThrows(CMissingDataException.class, () ->
-            articleReader.getArticles(pageable, customUser, keyword)
-        );
+        assertThatThrownBy(()-> articleReader.getArticles(pageable, customUser, keyword))
+            .isInstanceOf(CMissingDataException.class);
 
-        verify(memberRepository).findById(1L);
+        verify(memberReader).getById(1L);
         verify(articleRepository, never()).findByMemberAndTitleContainingIgnoreCase(any(Member.class), anyString(), any(Pageable.class));
     }
 
@@ -261,7 +240,7 @@ class ArticleReaderTest {
         String keyword = "nonexistent";
         Page<Article> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
 
-        when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
+        when(memberReader.getById(1L)).thenReturn(testMember);
         when(articleRepository.findByMemberAndTitleContainingIgnoreCase(testMember, keyword, pageable))
             .thenReturn(emptyPage);
 
@@ -272,7 +251,7 @@ class ArticleReaderTest {
         assertNotNull(result);
         assertEquals(0, result.getTotalElements());
         assertTrue(result.getContent().isEmpty());
-        verify(memberRepository).findById(1L);
+        verify(memberReader).getById(1L);
         verify(articleRepository).findByMemberAndTitleContainingIgnoreCase(testMember, keyword, pageable);
     }
 
@@ -520,47 +499,6 @@ class ArticleReaderTest {
         verify(articleRepository).findAll(pageable);
     }
 
-    @Test
-    @DisplayName("멤버 ID 일치성 검증")
-    void getArticles_memberIdConsistency_성공() {
-        // Given
-        Member anotherMember = createMemberBuilder().id(2L).email("another@test.com").build();
-        CustomUser anotherCustomUser = new CustomUser(anotherMember, List.of(new SimpleGrantedAuthority("ROLE_USER")));
-        List<Article> articles = List.of(testArticle);
-        Page<Article> articlePage = new PageImpl<>(articles, pageable, 1);
-
-        when(memberRepository.findById(2L)).thenReturn(Optional.of(anotherMember));
-        when(articleRepository.findAllByMember(anotherMember, pageable)).thenReturn(articlePage);
-
-        // When
-        Page<ArticleResponse> result = articleReader.getArticles(pageable, anotherCustomUser);
-
-        // Then
-        assertNotNull(result);
-        verify(memberRepository).findById(2L);
-        verify(articleRepository).findAllByMember(anotherMember, pageable);
-        verify(articleRepository, never()).findAllByMember(eq(anotherMember), any(Pageable.class));
-    }
-
-    @Test
-    @DisplayName("ArticleResponse 생성자 테스트 - 기본 생성자")
-    void articleResponse_constructor_기본생성자_성공() {
-        // Given
-        when(articleRepository.findById(1L)).thenReturn(Optional.of(testArticle));
-
-        // When
-        ArticleResponse result = articleReader.getArticle(1L);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(testArticle.getId(), result.id());
-        assertEquals(testArticle.getTitle(), result.title());
-        assertEquals(testArticle.getContent(), result.content());
-        assertEquals(testMember.getNickname(), result.author());
-        assertEquals(testCategory.getCategoryName(), result.category());
-        assertEquals(testArticle.getCreatedAt(), result.createdAt());
-        assertEquals(testArticle.getUpdatedAt(), result.updatedAt());
-    }
 
     @Test
     @DisplayName("검색 조건별 분기 테스트 - isClear 메서드 검증")

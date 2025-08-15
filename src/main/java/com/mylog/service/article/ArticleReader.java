@@ -26,7 +26,6 @@ public class ArticleReader {
     private final ArticleRepository articleRepository;
     private final TagReader tagReader;
     private final MemberReader memberReader;
-    private final MemberRepository memberRepository;
 
     public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser) {
         Member member = memberReader.getById(customUser.getMemberId());
