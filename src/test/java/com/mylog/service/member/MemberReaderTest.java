@@ -41,7 +41,6 @@ class MemberReaderTest {
     private MemberRepository memberRepository;
 
     private Member testMember;
-    private Member oauthMember;
     private CustomUser customUser;
 
     private static final Long TEST_MEMBER_ID = 1L;
@@ -62,18 +61,6 @@ class MemberReaderTest {
                 .profileImg("https://example.com/profile.jpg")
                 .provider(OauthProvider.LOCAL)
                 .providerId(TEST_EMAIL + OauthProvider.LOCAL)
-                .build();
-
-        oauthMember = Member.builder()
-                .id(2L)
-                .email(OAUTH_EMAIL)
-                .nickname(OAUTH_NICKNAME)
-                .password(null)
-                .memberName("OAuth User")
-                .bio("OAuth bio")
-                .profileImg("https://example.com/oauth-profile.jpg")
-                .provider(OauthProvider.GOOGLE)
-                .providerId(OAUTH_EMAIL + OauthProvider.GOOGLE)
                 .build();
 
         customUser = new CustomUser(testMember, Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
