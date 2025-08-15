@@ -1,7 +1,6 @@
 package com.mylog.service.comment;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -20,6 +19,7 @@ import com.mylog.repository.comment.CommentRepository;
 import com.mylog.service.article.ArticleReader;
 import com.mylog.service.member.MemberReader;
 import com.mylog.service.notification.NotificationService;
+import com.mylog.service.notificationsetting.NotificationSettingService;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,8 +51,10 @@ class CommentServiceTest {
     @Mock
     private NotificationService notificationService;
 
+    @Mock
+    private NotificationSettingService notificationSettingService;
+
     private CustomUser customUser;
-    private CustomUser customUser2;
     private Member testMember;
     private Member testMember2;
     private Category testCategory;
@@ -112,7 +114,6 @@ class CommentServiceTest {
                 .build();
 
         customUser = new CustomUser(testMember, Collections.emptyList());
-        customUser2 = new CustomUser(testMember2, Collections.emptyList());
         
         commentCreateRequest = new CommentCreateRequest("새로운 댓글 내용", 0L);
         commentUpdateRequest = new CommentUpdateRequest("수정된 댓글 내용");
@@ -149,14 +150,12 @@ class CommentServiceTest {
         Long commentId = 1L;
         
         when(commentReader.getById(commentId)).thenReturn(testComment);
-        when(memberReader.getById(1L)).thenReturn(testMember);
 
         // When
         commentService.updateComment(commentUpdateRequest, customUser, commentId);
 
         // Then
         verify(commentReader).getById(commentId);
-        verify(memberReader).getById(1L);
     }
 
     @Test
@@ -174,7 +173,6 @@ class CommentServiceTest {
                 .build();
         
         when(commentReader.getById(commentId)).thenReturn(commentByOther);
-        when(memberReader.getById(1L)).thenReturn(testMember);
 
         // When & Then
         assertThatThrownBy(() -> commentService.updateComment(commentUpdateRequest, customUser, commentId))
@@ -182,7 +180,6 @@ class CommentServiceTest {
                 .hasMessage("허용되지 않는 유저입니다.");
 
         verify(commentReader).getById(commentId);
-        verify(memberReader).getById(1L);
     }
 
     @Test
@@ -191,15 +188,13 @@ class CommentServiceTest {
         Long commentId = 1L;
         
         when(commentReader.getById(commentId)).thenReturn(testComment);
-        when(memberReader.getById(1L)).thenReturn(testMember);
 
         // When
         commentService.deleteComment(commentId, customUser);
 
         // Then
         verify(commentRepository).deleteById(commentId);
-        verify(commentReader).getById(commentId); // validateDelete에서 한 번, deleteComment에서 한 번
-        verify(memberReader).getById(1L);
+        verify(commentReader).getById(commentId);
     }
 
     @Test
@@ -219,7 +214,6 @@ class CommentServiceTest {
                 .build();
         
         when(commentReader.getById(commentId)).thenReturn(commentOnMyArticle);
-        when(memberReader.getById(1L)).thenReturn(testMember);
 
         // When
         commentService.deleteComment(commentId, customUser);
@@ -227,7 +221,6 @@ class CommentServiceTest {
         // Then - 게시글 작성자가 다른 사용자의 댓글을 삭제할 수 있음
         verify(commentRepository).deleteById(commentId);
         verify(commentReader).getById(commentId);
-        verify(memberReader).getById(1L);
     }
 
     @Test
@@ -254,7 +247,6 @@ class CommentServiceTest {
                 .build();
         
         when(commentReader.getById(commentId)).thenReturn(otherComment);
-        when(memberReader.getById(1L)).thenReturn(testMember);
 
         // When & Then
         assertThatThrownBy(() -> commentService.deleteComment(commentId, customUser))
@@ -262,43 +254,6 @@ class CommentServiceTest {
                 .hasMessage("허용되지 않는 유저입니다.");
 
         verify(commentReader).getById(commentId);
-        verify(memberReader).getById(1L);
         verify(commentRepository, never()).deleteById(commentId);
-    }
-
-    @Test
-    void 댓글_삭제_권한_매트릭스_테스트() {
-        // Given
-        Member user1 = testMember;      // 게시글 작성자
-        Member user2 = testMember2;     // 댓글 작성자  
-        Member user3 = Member.builder().id(3L).email("user3@test.com")
-                .memberName("User 3").nickname("user3").password("password")
-                .provider(OauthProvider.LOCAL).providerId("user3@test.com" + OauthProvider.LOCAL).build();
-        
-        Article user1Article = Article.builder().id(1L).member(user1).category(testCategory)
-                .title("User1 Article").content("Content").build();
-        Comment user2CommentOnUser1Article = Comment.builder().id(1L).article(user1Article).member(user2)
-                .content("User2 comment").parentId(0L).createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
-        
-        CustomUser user1Custom = new CustomUser(user1, Collections.emptyList());
-        CustomUser user2Custom = new CustomUser(user2, Collections.emptyList());
-        CustomUser user3Custom = new CustomUser(user3, Collections.emptyList());
-        
-        when(commentReader.getById(1L)).thenReturn(user2CommentOnUser1Article);
-        
-        // Case 1: 댓글 작성자가 삭제 -> 성공
-        when(memberReader.getById(2L)).thenReturn(user2);
-        assertThatCode(() -> commentService.deleteComment(1L, user2Custom))
-                .doesNotThrowAnyException();
-        
-        // Case 2: 게시글 작성자가 삭제 -> 성공
-        when(memberReader.getById(1L)).thenReturn(user1);
-        assertThatCode(() -> commentService.deleteComment(1L, user1Custom))
-                .doesNotThrowAnyException();
-        
-        // Case 3: 무관한 사용자가 삭제 -> 실패
-        when(memberReader.getById(3L)).thenReturn(user3);
-        assertThatThrownBy(() -> commentService.deleteComment(1L, user3Custom))
-                .isInstanceOf(CUnAuthorizedException.class);
     }
 }
