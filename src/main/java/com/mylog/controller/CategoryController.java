@@ -57,7 +57,7 @@ public class CategoryController {
         @RequestBody @Valid CategoryUpdateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        categoryService.updateCategory(request,categoryId, customUser);
+        categoryService.updateCategory(request, categoryId, customUser);
         return ResponseService.getSuccessResult();
     }
 

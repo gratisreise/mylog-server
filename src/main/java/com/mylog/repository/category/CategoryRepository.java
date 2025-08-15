@@ -15,7 +15,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long>, Categ
 
     boolean existsByMemberAndCategoryName(Member member, String categoryName);
 
-
     @Query("SELECT c FROM Category c JOIN FETCH c.member")
     List<Category> findByMember(Member member);
 
