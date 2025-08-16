@@ -72,9 +72,10 @@ public class MemberService {
         }
 
         String profileImg = file.getOriginalFilename();
-        String memberImg = member.getProfileImg().substring(93);
+        String memberImg = member.getProfileImg();
+        String originMemberImg = memberImg.substring(93);
 
-        if(profileImg.equals(memberImg)){
+        if(profileImg.equals(originMemberImg)){
             member.update(request);
         } else {
             profileImg = s3Service.upload(file);
