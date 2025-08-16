@@ -1,10 +1,26 @@
 package com.mylog.repository.article;
 
+import com.mylog.model.dto.article.ArticleResponse;
 import com.mylog.model.entity.Article;
+import com.mylog.model.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ArticleRepositoryCustom  {
 
+    //태그검색
     Page<Article> findAllByTagName(String tagName, Pageable pageable);
+
+    //전체 게시글 조회
+    Page<ArticleResponse> findAllCustom(Pageable pageable);
+
+    //내 게시글 목록조회
+    Page<ArticleResponse> findAllByMemberCustom(Member memberId, Pageable pageable);
+
+    //내 게시글 제목검색
+    Page<ArticleResponse> searchByTitleAndMember(Member member, String keyword, Pageable pageable);
+
+
+
+
 }

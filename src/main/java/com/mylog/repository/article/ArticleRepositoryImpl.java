@@ -1,12 +1,22 @@
 package com.mylog.repository.article;
 
+import com.mylog.model.dto.article.ArticleResponse;
 import com.mylog.model.entity.Article;
 import com.mylog.model.entity.QArticle;
 import com.mylog.model.entity.QArticleTag;
+import com.mylog.model.entity.QCategory;
+import com.mylog.model.entity.QMember;
 import com.mylog.model.entity.QTag;
 import com.mylog.repository.member.MemberRepositoryCustom;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringTemplate;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,7 +45,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
             .limit(pageable.getPageSize())
             .fetch();
 
-        Long total = queryFactory
+        long total = queryFactory
             .select(article.count())
             .from(articleTag)
             .join(articleTag.article, article)
@@ -43,9 +53,68 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
             .where(tag.tagName.eq(tagName))
             .fetchOne();
 
-        total = total == null ? 0 : total;
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public Page<ArticleResponse> findAllCustom(Pageable pageable) {
+        QArticle article = QArticle.article;
+        QMember member = QMember.member;
+        QCategory category = QCategory.category;
+
+        List<Article> articles = queryFactory
+            .selectFrom(article)
+            .join(article.member, member).fetchJoin()
+            .join(article.category, category).fetchJoin()
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+        List<Long> articleIds = getArticleIds(articles);
+
+        QArticleTag articleTag = QArticleTag.articleTag;
+        QTag tag = QTag.tag;
+
+        Map<Long, List<String>> articleTagMap = queryFactory
+            .select(articleTag.article.id, tag.tagName)
+            .from(articleTag)
+            .join(articleTag.tag, tag)
+            .where(articleTag.article.id.in(articleIds))
+            .fetch()
+            .stream()
+            .collect(Collectors.groupingBy(
+                tuple -> tuple.get(articleTag.article.id),
+                Collectors.mapping(
+                    tuple -> tuple.get(tag.tagName),
+                    Collectors.toList()
+                )
+            ));
+
+        List<ArticleResponse> content = getContent(articles, articleTagMap);
+
+        long total = queryFactory
+            .select(article.count())
+            .from(article)
+            .fetchOne();
 
         return new PageImpl<>(content, pageable, total);
     }
+
+    private List<Long> getArticleIds(List<Article> articles) {
+        return articles.stream()
+            .map(Article::getId)
+            .toList();
+    }
+
+
+    private List<ArticleResponse> getContent(List<Article> articles,
+        Map<Long, List<String>> articleTagMap) {
+        return articles.stream()
+            .map(a -> new ArticleResponse(a,
+                articleTagMap.getOrDefault(a.getId(), new ArrayList<>())))
+            .collect(Collectors.toList());
+    }
+
+
 
 }

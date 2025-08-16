@@ -2,6 +2,7 @@ package com.mylog.model.dto.article;
 
 import com.mylog.model.entity.Article;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 public record ArticleResponse(
@@ -26,4 +27,5 @@ public record ArticleResponse(
             article.getCreatedAt(),
             article.getUpdatedAt());
     }
+
 }

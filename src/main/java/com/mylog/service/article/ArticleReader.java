@@ -27,12 +27,14 @@ public class ArticleReader {
     private final TagReader tagReader;
     private final MemberReader memberReader;
 
+    //내 게시글 목록조회
     public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser) {
         Member member = memberReader.getById(customUser.getMemberId());
         return articleRepository.findAllByMember(member, pageable)
             .map(this::createArticleResponse);
     }
 
+    //내 게시글 검색
     public Page<ArticleResponse> getArticles(Pageable pageable,
         CustomUser customUser, String keyword) {
         Member member = memberReader.getById(customUser.getMemberId());
@@ -41,19 +43,21 @@ public class ArticleReader {
             .map(this::createArticleResponse);
     }
 
-
+    //게시글 상세
     public ArticleResponse getArticle(Long id){
         Article article = articleRepository.findById(id).orElseThrow(CMissingDataException::new);
-        return createArticleResponse(article);
+        List<String> tags = tagReader.getTags(article);
+        return new ArticleResponse(article, tags);
     }
 
+    // 전체 게시글 목록조회
     @Cacheable(value = "articles", key="#pageable.getPageNumber()")
     public Page<ArticleResponse> getArticles(Pageable pageable){
-        return articleRepository.findAll(pageable)
-            .map(this::createArticleResponse);
+        return articleRepository.findAllCustom(pageable);
     }
 
 
+    // 전체 게시글 검색
     @Cacheable(value = "articles", key="'태그='+#tag")
     public Page<ArticleResponse> getArticles(String keyword, String tag, Pageable pageable){
         return !isClear(keyword) ?
