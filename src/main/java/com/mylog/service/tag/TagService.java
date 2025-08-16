@@ -4,8 +4,6 @@ package com.mylog.service.tag;
 import com.mylog.model.entity.Article;
 import com.mylog.model.entity.ArticleTag;
 import com.mylog.model.entity.Tag;
-import com.mylog.exception.CMissingDataException;
-import com.mylog.repository.articletag.ArticleTagRepository;
 import com.mylog.repository.tag.TagRepository;
 import com.mylog.service.articletag.ArticleTagService;
 import java.util.List;
