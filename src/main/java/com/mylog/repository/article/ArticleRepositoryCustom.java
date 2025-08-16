@@ -15,10 +15,16 @@ public interface ArticleRepositoryCustom  {
     Page<ArticleResponse> findAllCustom(Pageable pageable);
 
     //내 게시글 목록조회
-    Page<ArticleResponse> findAllByMemberCustom(Member memberId, Pageable pageable);
+    Page<ArticleResponse> findMineByMember(Member member, Pageable pageable);
 
     //내 게시글 제목검색
-    Page<ArticleResponse> searchByTitleAndMember(Member member, String keyword, Pageable pageable);
+    Page<ArticleResponse> searchMineByTitle(Member member, String keyword, Pageable pageable);
+
+    //전체 게시글 제목검색
+    Page<ArticleResponse> searchAllByTitle(String keyword, Pageable pageable);
+
+    //전체 게시글 태그검색
+    Page<ArticleResponse> searchAllByTagName(String keyword, Pageable pageable);
 
 
 

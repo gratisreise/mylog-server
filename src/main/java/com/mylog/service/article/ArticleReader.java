@@ -6,7 +6,6 @@ import com.mylog.model.entity.Article;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.article.ArticleRepository;
-import com.mylog.repository.member.MemberRepository;
 import com.mylog.service.member.MemberReader;
 import com.mylog.service.tag.TagReader;
 import java.util.List;
@@ -30,17 +29,14 @@ public class ArticleReader {
     //내 게시글 목록조회
     public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser) {
         Member member = memberReader.getById(customUser.getMemberId());
-        return articleRepository.findAllByMember(member, pageable)
-            .map(this::createArticleResponse);
+        return articleRepository.findMineByMember(member, pageable);
     }
 
     //내 게시글 검색
     public Page<ArticleResponse> getArticles(Pageable pageable,
         CustomUser customUser, String keyword) {
         Member member = memberReader.getById(customUser.getMemberId());
-        return articleRepository
-            .findByMemberAndTitleContainingIgnoreCase(member, keyword, pageable)
-            .map(this::createArticleResponse);
+        return articleRepository.searchMineByTitle(member, keyword, pageable);
     }
 
     //게시글 상세
@@ -61,24 +57,16 @@ public class ArticleReader {
     @Cacheable(value = "articles", key="'태그='+#tag")
     public Page<ArticleResponse> getArticles(String keyword, String tag, Pageable pageable){
         return !isClear(keyword) ?
-            articleRepository.findByTitleContainingIgnoreCase(keyword, pageable)
-            .map(this::createArticleResponse) :
-            articleRepository.findAllByTagName(tag, pageable)
-                .map(this::createArticleResponse);
+            articleRepository.searchAllByTitle(keyword, pageable) :
+            articleRepository.searchAllByTagName(tag, pageable);
     }
 
     public Article getArticleById(Long articleId) {
-        return articleRepository.findById(articleId)
-            .orElseThrow(CMissingDataException::new);
+        return articleRepository.findById(articleId).orElseThrow(CMissingDataException::new);
     }
 
     private boolean isClear(String s){
         return s == null || s.isEmpty();
-    }
-
-    private ArticleResponse createArticleResponse(Article article){
-        List<String> tags = tagReader.getTags(article);
-        return new ArticleResponse(article, tags);
     }
 
 }

@@ -2,6 +2,7 @@ package com.mylog.repository.article;
 
 import com.mylog.model.dto.article.ArticleResponse;
 import com.mylog.model.entity.Article;
+import com.mylog.model.entity.Member;
 import com.mylog.model.entity.QArticle;
 import com.mylog.model.entity.QArticleTag;
 import com.mylog.model.entity.QCategory;
@@ -75,7 +76,69 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         QArticleTag articleTag = QArticleTag.articleTag;
         QTag tag = QTag.tag;
 
-        Map<Long, List<String>> articleTagMap = queryFactory
+        Map<Long, List<String>> articleTagMap = getMappedTags(articleTag, tag, articleIds);
+        List<ArticleResponse> content = getContent(articles, articleTagMap);
+
+        long total = queryFactory
+            .select(article.count())
+            .from(article)
+            .fetchOne();
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public Page<ArticleResponse> findMineByMember(Member member, Pageable pageable) {
+        QArticle article = QArticle.article;
+        QMember qmember = QMember.member;
+        QCategory category = QCategory.category;
+
+        List<Article> articles = queryFactory
+            .selectFrom(article)
+            .join(article.member, qmember).fetchJoin()
+            .join(article.category, category).fetchJoin()
+            .where(article.member.eq(member))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+        List<Long> articleIds = getArticleIds(articles);
+
+
+        QArticleTag articleTag = QArticleTag.articleTag;
+        QTag tag = QTag.tag;
+
+        Map<Long, List<String>> articleTagMap = getMappedTags(articleTag, tag, articleIds);
+
+        List<ArticleResponse> content = getContent(articles, articleTagMap);
+
+        long total = queryFactory
+            .select(article.count())
+            .from(article)
+            .where(article.member.eq(member))
+            .fetchOne();
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public Page<ArticleResponse> searchMineByTitle(Member member, String keyword,
+        Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public Page<ArticleResponse> searchAllByTitle(String keyword, Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public Page<ArticleResponse> searchAllByTagName(String keyword, Pageable pageable) {
+        return null;
+    }
+
+    private Map<Long, List<String>> getMappedTags(QArticleTag articleTag, QTag tag, List<Long> articleIds) {
+        return queryFactory
             .select(articleTag.article.id, tag.tagName)
             .from(articleTag)
             .join(articleTag.tag, tag)
@@ -89,16 +152,8 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                     Collectors.toList()
                 )
             ));
-
-        List<ArticleResponse> content = getContent(articles, articleTagMap);
-
-        long total = queryFactory
-            .select(article.count())
-            .from(article)
-            .fetchOne();
-
-        return new PageImpl<>(content, pageable, total);
     }
+
 
     private List<Long> getArticleIds(List<Article> articles) {
         return articles.stream()
