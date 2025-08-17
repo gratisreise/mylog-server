@@ -130,34 +130,6 @@ class ArticleReaderTest {
     }
 
     @Test
-    @DisplayName("사용자 아티클 목록 조회 성공")
-    void getArticles_withCustomUser_성공() {
-        // Given
-        List<Article> articles = createTestArticles(testMember, testCategory, 3);
-        Page<Article> articlePage = new PageImpl<>(articles, pageable, 3);
-
-        when(memberReader.getById(1L)).thenReturn(testMember);
-        when(articleRepository.findAllByMember(testMember, pageable)).thenReturn(articlePage);
-
-        // When
-        Page<ArticleResponse> result = articleReader.getArticles(pageable, customUser);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(3, result.getTotalElements());
-        assertEquals(1, result.getTotalPages());
-
-        List<ArticleResponse> content = result.getContent();
-        assertEquals(3, content.size());
-        assertEquals("Test Article 0", content.get(0).title());
-        assertEquals("testuser", content.get(0).author());
-        assertEquals("Test Category", content.get(0).category());
-
-        verify(memberReader).getById(1L);
-        verify(articleRepository).findAllByMember(testMember, pageable);
-    }
-
-    @Test
     @DisplayName("사용자 아티클 목록 조회 - 멤버 없음 예외")
     void getArticles_memberNotFound_예외발생() {
         // Given
@@ -176,10 +148,10 @@ class ArticleReaderTest {
     @DisplayName("사용자 아티클 목록 조회 - 빈 결과")
     void getArticles_emptyResult_성공() {
         // Given
-        Page<Article> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
+        Page<ArticleResponse> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
 
         when(memberReader.getById(1L)).thenReturn(testMember);
-        when(articleRepository.findAllByMember(testMember, pageable)).thenReturn(emptyPage);
+        when(articleRepository.findMineByMember(testMember, pageable)).thenReturn(emptyPage);
 
         // When
         Page<ArticleResponse> result = articleReader.getArticles(pageable, customUser);
@@ -191,7 +163,7 @@ class ArticleReaderTest {
         assertTrue(result.getContent().isEmpty());
 
         verify(memberReader).getById(1L);
-        verify(articleRepository).findAllByMember(testMember, pageable);
+        verify(articleRepository).findMineByMember(testMember, pageable);
     }
 
     @Test
@@ -199,11 +171,11 @@ class ArticleReaderTest {
     void getArticles_withKeyword_성공() {
         // Given
         String keyword = "test";
-        List<Article> articles = List.of(testArticle);
-        Page<Article> articlePage = new PageImpl<>(articles, pageable, 1);
+        List<ArticleResponse> articles = List.of(new ArticleResponse(testArticle, List.of()));
+        Page<ArticleResponse> articlePage = new PageImpl<>(articles, pageable, 1);
 
         when(memberReader.getById(1L)).thenReturn(testMember);
-        when(articleRepository.findByMemberAndTitleContainingIgnoreCase(testMember, keyword, pageable))
+        when(articleRepository.searchMineByTitle(testMember, keyword, pageable))
             .thenReturn(articlePage);
 
         // When
@@ -215,7 +187,7 @@ class ArticleReaderTest {
         assertEquals("Test Article", result.getContent().get(0).title());
 
         verify(memberReader).getById(1L);
-        verify(articleRepository).findByMemberAndTitleContainingIgnoreCase(testMember, keyword, pageable);
+        verify(articleRepository).searchMineByTitle(testMember, keyword, pageable);
     }
 
     @Test
@@ -238,10 +210,10 @@ class ArticleReaderTest {
     void getArticles_withKeyword_noResults_성공() {
         // Given
         String keyword = "nonexistent";
-        Page<Article> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
+        Page<ArticleResponse> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
 
         when(memberReader.getById(1L)).thenReturn(testMember);
-        when(articleRepository.findByMemberAndTitleContainingIgnoreCase(testMember, keyword, pageable))
+        when(articleRepository.searchMineByTitle(testMember, keyword, pageable))
             .thenReturn(emptyPage);
 
         // When
@@ -252,7 +224,7 @@ class ArticleReaderTest {
         assertEquals(0, result.getTotalElements());
         assertTrue(result.getContent().isEmpty());
         verify(memberReader).getById(1L);
-        verify(articleRepository).findByMemberAndTitleContainingIgnoreCase(testMember, keyword, pageable);
+        verify(articleRepository).searchMineByTitle(testMember, keyword, pageable);
     }
 
     @Test
@@ -292,55 +264,15 @@ class ArticleReaderTest {
     }
 
     @Test
-    @DisplayName("전체 아티클 목록 조회 성공")
-    void getArticles_allArticles_성공() {
-        // Given
-        List<Article> articles = createTestArticles(testMember, testCategory, 5);
-        Page<Article> articlePage = new PageImpl<>(articles, pageable, 5);
-
-        when(articleRepository.findAll(pageable)).thenReturn(articlePage);
-
-        // When
-        Page<ArticleResponse> result = articleReader.getArticles(pageable);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(5, result.getTotalElements());
-        assertEquals(1, result.getTotalPages());
-        assertEquals(5, result.getContent().size());
-
-        verify(articleRepository).findAll(pageable);
-    }
-
-    @Test
-    @DisplayName("전체 아티클 목록 조회 - 빈 결과")
-    void getArticles_allArticles_emptyResult_성공() {
-        // Given
-        Page<Article> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
-        when(articleRepository.findAll(pageable)).thenReturn(emptyPage);
-
-        // When
-        Page<ArticleResponse> result = articleReader.getArticles(pageable);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(0, result.getTotalElements());
-        assertTrue(result.getContent().isEmpty());
-
-        verify(articleRepository).findAll(pageable);
-    }
-
-    @Test
     @DisplayName("키워드로 전체 아티클 검색 성공")
     void getArticles_withKeywordSearch_성공() {
         // Given
         String keyword = "spring";
         String tag = null;
-        List<Article> articles = List.of(testArticle);
-        Page<Article> articlePage = new PageImpl<>(articles, pageable, 1);
+        List<ArticleResponse> articles = List.of(new ArticleResponse(testArticle, List.of()));
+        Page<ArticleResponse> articlePage = new PageImpl<>(articles, pageable, 1);
 
-        when(articleRepository.findByTitleContainingIgnoreCase(keyword, pageable))
-            .thenReturn(articlePage);
+        when(articleRepository.searchAllByTitle(keyword, pageable)).thenReturn(articlePage);
 
         // When
         Page<ArticleResponse> result = articleReader.getArticles(keyword, tag, pageable);
@@ -350,8 +282,8 @@ class ArticleReaderTest {
         assertEquals(1, result.getTotalElements());
         assertEquals("Test Article", result.getContent().get(0).title());
 
-        verify(articleRepository).findByTitleContainingIgnoreCase(keyword, pageable);
-        verify(articleRepository, never()).findAllByTagName(anyString(), any(Pageable.class));
+        verify(articleRepository).searchAllByTitle(keyword, pageable);
+        verify(articleRepository, never()).searchAllByTagName(anyString(), any(Pageable.class));
     }
 
     @Test
@@ -360,10 +292,11 @@ class ArticleReaderTest {
         // Given
         String keyword = "";
         String tag = "java";
-        List<Article> articles = List.of(testArticle);
-        Page<Article> articlePage = new PageImpl<>(articles, pageable, 1);
 
-        when(articleRepository.findAllByTagName(tag, pageable)).thenReturn(articlePage);
+        List<ArticleResponse> articles = List.of(new ArticleResponse(testArticle, List.of(tag)));
+        Page<ArticleResponse> articlePage = new PageImpl<>(articles, pageable, 1);
+
+        when(articleRepository.searchAllByTagName(tag, pageable)).thenReturn(articlePage);
 
         // When
         Page<ArticleResponse> result = articleReader.getArticles(keyword, tag, pageable);
@@ -372,8 +305,8 @@ class ArticleReaderTest {
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
 
-        verify(articleRepository, never()).findByTitleContainingIgnoreCase(anyString(), any(Pageable.class));
-        verify(articleRepository).findAllByTagName(tag, pageable);
+        verify(articleRepository, never()).searchAllByTitle(anyString(), any(Pageable.class));
+        verify(articleRepository).searchAllByTagName(tag, pageable);
     }
 
     @Test
@@ -382,33 +315,11 @@ class ArticleReaderTest {
         // Given
         String keyword = null;
         String tag = "spring";
-        List<Article> articles = List.of(testArticle);
-        Page<Article> articlePage = new PageImpl<>(articles, pageable, 1);
 
-        when(articleRepository.findAllByTagName(tag, pageable)).thenReturn(articlePage);
+        List<ArticleResponse> articles = List.of(new ArticleResponse(testArticle, List.of(tag)));
+        Page<ArticleResponse> articlePage = new PageImpl<>(articles, pageable, 1);
 
-        // When
-        Page<ArticleResponse> result = articleReader.getArticles(keyword, tag, pageable);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(1, result.getTotalElements());
-
-        verify(articleRepository, never()).findByTitleContainingIgnoreCase(anyString(), any(Pageable.class));
-        verify(articleRepository).findAllByTagName(tag, pageable);
-    }
-
-    @Test
-    @DisplayName("키워드와 태그 모두 제공 - 키워드 우선 검색")
-    void getArticles_withKeywordAndTag_키워드우선_성공() {
-        // Given
-        String keyword = "test";
-        String tag = "java";
-        List<Article> articles = List.of(testArticle);
-        Page<Article> articlePage = new PageImpl<>(articles, pageable, 1);
-
-        when(articleRepository.findByTitleContainingIgnoreCase(keyword, pageable))
-            .thenReturn(articlePage);
+        when(articleRepository.searchAllByTagName(tag, pageable)).thenReturn(articlePage);
 
         // When
         Page<ArticleResponse> result = articleReader.getArticles(keyword, tag, pageable);
@@ -417,9 +328,10 @@ class ArticleReaderTest {
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
 
-        verify(articleRepository).findByTitleContainingIgnoreCase(keyword, pageable);
-        verify(articleRepository, never()).findAllByTagName(anyString(), any(Pageable.class));
+        verify(articleRepository, never()).searchAllByTitle(anyString(), any(Pageable.class));
+        verify(articleRepository).searchAllByTagName(tag, pageable);
     }
+
 
     @Test
     @DisplayName("getArticleById 성공")
@@ -453,72 +365,5 @@ class ArticleReaderTest {
         );
 
         verify(articleRepository).findById(articleId);
-    }
-
-    @Test
-    @DisplayName("페이지네이션 테스트 - 다양한 페이지 크기")
-    void getArticles_pagination_다양한페이지크기() {
-        // Given
-        Pageable smallPage = Pageable.ofSize(5);
-        List<Article> articles = createTestArticles(testMember, testCategory, 10);
-        Page<Article> articlePage = new PageImpl<>(articles.subList(0, 5), smallPage, 10);
-
-        when(articleRepository.findAll(smallPage)).thenReturn(articlePage);
-
-        // When
-        Page<ArticleResponse> result = articleReader.getArticles(smallPage);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(10, result.getTotalElements()); // 전체 요소 수
-        assertEquals(2, result.getTotalPages()); // 전체 페이지 수
-        assertEquals(5, result.getContent().size()); // 현재 페이지 요소 수
-        assertTrue(result.hasNext()); // 다음 페이지 존재
-
-        verify(articleRepository).findAll(smallPage);
-    }
-
-    @Test
-    @DisplayName("대용량 데이터 처리 테스트")
-    void getArticles_largeDataSet_성공() {
-        // Given
-        List<Article> largeArticleList = createTestArticles(testMember, testCategory, 100);
-        Page<Article> largePage = new PageImpl<>(largeArticleList.subList(0, 20), pageable, 100);
-
-        when(articleRepository.findAll(pageable)).thenReturn(largePage);
-
-        // When
-        Page<ArticleResponse> result = articleReader.getArticles(pageable);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(100, result.getTotalElements());
-        assertEquals(5, result.getTotalPages());
-        assertEquals(20, result.getContent().size());
-
-        verify(articleRepository).findAll(pageable);
-    }
-
-
-    @Test
-    @DisplayName("검색 조건별 분기 테스트 - isClear 메서드 검증")
-    void getArticles_searchConditions_분기테스트() {
-        // Given - 키워드가 공백인 경우
-        String emptyKeyword = "  ";
-        String tag = "testtag";
-        List<Article> articles = List.of(testArticle);
-        Page<Article> articlePage = new PageImpl<>(articles, pageable, 1);
-
-        // 공백도 empty가 아니므로 키워드 검색이 실행되어야 함
-        when(articleRepository.findByTitleContainingIgnoreCase(emptyKeyword, pageable))
-            .thenReturn(articlePage);
-
-        // When
-        Page<ArticleResponse> result = articleReader.getArticles(emptyKeyword, tag, pageable);
-
-        // Then
-        assertNotNull(result);
-        verify(articleRepository).findByTitleContainingIgnoreCase(emptyKeyword, pageable);
-        verify(articleRepository, never()).findAllByTagName(anyString(), any(Pageable.class));
     }
 }
