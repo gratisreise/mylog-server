@@ -31,33 +31,6 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<Article> findAllByTagName(String tagName, Pageable pageable) {
-        QArticle article = QArticle.article;
-        QArticleTag articleTag = QArticleTag.articleTag;
-        QTag tag = QTag.tag;
-
-        List<Article> content = queryFactory
-            .select(article)
-            .from(articleTag)
-            .join(articleTag.article, article)
-            .join(articleTag.tag, tag)
-            .where(tag.tagName.eq(tagName))
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
-
-        long total = queryFactory
-            .select(article.count())
-            .from(articleTag)
-            .join(articleTag.article, article)
-            .join(articleTag.tag, tag)
-            .where(tag.tagName.eq(tagName))
-            .fetchOne();
-
-        return new PageImpl<>(content, pageable, total);
-    }
-
-    @Override
     public Page<ArticleResponse> findAllCustom(Pageable pageable) {
         QArticle article = QArticle.article;
         QMember member = QMember.member;
@@ -193,8 +166,40 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     }
 
     @Override
-    public Page<ArticleResponse> searchAllByTagName(String keyword, Pageable pageable) {
-        return null;
+    public Page<ArticleResponse> searchAllByTagName(String tagName, Pageable pageable) {
+        QArticle article = QArticle.article;
+        QArticleTag articleTag = QArticleTag.articleTag;
+        QTag tag = QTag.tag;
+        QMember member = QMember.member;
+        QCategory category = QCategory.category;
+
+        List<Article> articles = queryFactory
+            .select(article).distinct()
+            .from(articleTag)
+            .join(articleTag.article, article)
+            .join(articleTag.tag, tag)
+            .join(article.member, member).fetchJoin()
+            .join(article.category, category).fetchJoin()
+            .where(tag.tagName.eq(tagName))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+        List<Long> articleIds = getArticleIds(articles);
+
+        Map<Long, List<String>> articleTagMap = getMappedTags(articleTag, tag, articleIds);
+
+        List<ArticleResponse> content = getContent(articles, articleTagMap);
+
+        long total = queryFactory
+            .select(article.countDistinct())
+            .from(articleTag)
+            .join(articleTag.article, article)
+            .join(articleTag.tag, tag)
+            .where(tag.tagName.eq(tagName))
+            .fetchOne();
+
+        return new PageImpl<>(content, pageable, total);
     }
 
     private Map<Long, List<String>> getMappedTags(QArticleTag articleTag, QTag tag, List<Long> articleIds) {
@@ -229,7 +234,5 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                 articleTagMap.getOrDefault(a.getId(), new ArrayList<>())))
             .collect(Collectors.toList());
     }
-
-
 
 }

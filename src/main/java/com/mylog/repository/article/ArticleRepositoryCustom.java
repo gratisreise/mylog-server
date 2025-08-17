@@ -8,9 +8,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface ArticleRepositoryCustom  {
 
-    //태그검색
-    Page<Article> findAllByTagName(String tagName, Pageable pageable);
-
     //전체 게시글 조회
     Page<ArticleResponse> findAllCustom(Pageable pageable);
 
@@ -24,7 +21,7 @@ public interface ArticleRepositoryCustom  {
     Page<ArticleResponse> searchAllByTitle(String keyword, Pageable pageable);
 
     //전체 게시글 태그검색
-    Page<ArticleResponse> searchAllByTagName(String keyword, Pageable pageable);
+    Page<ArticleResponse> searchAllByTagName(String tagName, Pageable pageable);
 
 
 
