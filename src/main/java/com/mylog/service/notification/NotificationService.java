@@ -9,6 +9,7 @@ import com.mylog.repository.notification.NotificationRepository;
 import com.mylog.service.member.MemberReader;
 import com.mylog.service.notificationsetting.NotificationSettingReader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ public class NotificationService {
     private final NotificationReader notificationReader;
     private final NotificationSettingReader notificationSettingReader;
 
+    @Async
     public void sendNotification(Member member, Long relatedId, String type) {
         //알림 ON 확인
          if(notificationSettingReader.isDisabled(member, type)) return;

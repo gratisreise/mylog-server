@@ -36,8 +36,9 @@ public class CommentService {
         commentRepository.save(comment);
 
         //알림 보내기(비동기 적용가능)
-        notificationSettingService.createNotificationSetting(article.getMember(), "comment");
-        notificationService.sendNotification(article.getMember(), article.getId(), "comment");
+        Member articleMember = article.getMember();
+        notificationSettingService.createNotificationSetting(articleMember, "comment");
+        notificationService.sendNotification(articleMember, article.getId(), "comment");
     }
 
     public void updateComment(CommentUpdateRequest request, CustomUser customUser, Long commentId) {
@@ -71,7 +72,6 @@ public class CommentService {
     private boolean validateUpdate(CustomUser customUser, Comment comment) {
         long commentMemberId = comment.getMember().getId();
         long requestMemberId = customUser.getMemberId();
-
         return commentMemberId == requestMemberId;
     }
 }
