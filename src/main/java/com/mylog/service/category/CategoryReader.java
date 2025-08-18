@@ -7,7 +7,6 @@ import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
 import com.mylog.repository.category.CategoryRepository;
-import com.mylog.repository.member.MemberRepository;
 import com.mylog.service.member.MemberReader;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

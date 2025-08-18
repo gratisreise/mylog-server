@@ -5,7 +5,6 @@ import com.mylog.common.ListResult;
 import com.mylog.common.ResponseService;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.notification.NotificationSettingResponse;
-import com.mylog.service.notification.NotificationReader;
 import com.mylog.service.notificationsetting.NotificationSettingReader;
 import com.mylog.service.notificationsetting.NotificationSettingService;
 import io.swagger.v3.oas.annotations.Operation;

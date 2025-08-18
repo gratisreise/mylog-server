@@ -2,14 +2,12 @@ package com.mylog.service.social;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
 
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CInvalidDataException;
 import com.mylog.service.social.google.GoogleOAuth2UserService;
 import com.mylog.service.social.kakao.KakaoOAuth2UserService;
 import com.mylog.service.social.naver.NaverOAuth2UserService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -5,7 +5,6 @@ import com.mylog.model.entity.Member;
 import com.mylog.model.entity.QArticle;
 import com.mylog.model.entity.QComment;
 import com.mylog.model.entity.QMember;
-import com.mylog.repository.member.MemberRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

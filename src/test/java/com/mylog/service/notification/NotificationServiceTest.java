@@ -3,26 +3,16 @@ package com.mylog.service.notification;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
-import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.dto.notification.NotificationResponse;
 import com.mylog.model.entity.Member;
 import com.mylog.model.entity.Notification;
-import com.mylog.model.entity.NotificationSetting;
 import com.mylog.repository.notification.NotificationRepository;
-import com.mylog.repository.notificationsetting.NotificationSettingRepository;
-import com.mylog.service.member.MemberReader;
 import com.mylog.service.notificationsetting.NotificationSettingReader;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -32,10 +22,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 
 @ExtendWith(MockitoExtension.class)

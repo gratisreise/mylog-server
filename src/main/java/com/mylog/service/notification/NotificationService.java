@@ -1,12 +1,8 @@
 package com.mylog.service.notification;
 
-import com.mylog.exception.CMissingDataException;
-import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Member;
 import com.mylog.model.entity.Notification;
-import com.mylog.model.entity.NotificationSetting;
 import com.mylog.repository.notification.NotificationRepository;
-import com.mylog.service.member.MemberReader;
 import com.mylog.service.notificationsetting.NotificationSettingReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
