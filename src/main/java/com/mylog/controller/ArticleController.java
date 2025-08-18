@@ -100,7 +100,7 @@ public class ArticleController {
     }
 
     //전체 게시글 검색
-    @GetMapping("/search")
+    @GetMapping("/all/search")
     @Operation(summary = "전체 게시글 검색")
     public SingleResult<Page<ArticleResponse>> searchArticles(
         @RequestParam(required = false) String keyword,

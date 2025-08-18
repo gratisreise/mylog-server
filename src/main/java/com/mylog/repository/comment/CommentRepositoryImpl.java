@@ -25,7 +25,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
         QComment comment = QComment.comment;
 
         List<Comment> content = queryFactory
-            .select(comment)
+            .selectFrom(comment)
             .join(comment.article, article)
             .join(comment.member, members).fetchJoin()
             .where(article.member.eq(member))
@@ -35,8 +35,9 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 
         long total = queryFactory
             .select(comment.count())
+            .from(comment)
+            .from(comment)
             .join(comment.article, article)
-            .join(comment.member, members).fetchJoin()
             .where(article.member.eq(member))
             .fetchOne();
 

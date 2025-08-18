@@ -31,7 +31,7 @@ public class SecurityConfig {
         "/h2-console/**",
         "/actuator/**",
         "/api/tests/**",
-        "/api/articles/all"
+        "/api/articles/all/**"
     };
 
     @Bean

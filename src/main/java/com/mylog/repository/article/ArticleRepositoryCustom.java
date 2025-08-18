@@ -1,7 +1,6 @@
 package com.mylog.repository.article;
 
 import com.mylog.model.dto.article.ArticleResponse;
-import com.mylog.model.entity.Article;
 import com.mylog.model.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +21,5 @@ public interface ArticleRepositoryCustom  {
 
     //전체 게시글 태그검색
     Page<ArticleResponse> searchAllByTagName(String tagName, Pageable pageable);
-
-
-
 
 }
