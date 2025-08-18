@@ -1,4 +1,4 @@
-# docker buildx build --platform=linux/amd64 -t nooaahh/mylog --push .
+# docker buildx build --platform=linux/amd64 -t nooaahh/mylog-server --push .
 # docker buildx build --platform=linux/amd64,linux/arm64 -t nooaahh/mylog --push .
 # docker build -t mylog .
 

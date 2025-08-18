@@ -29,15 +29,20 @@
 - **카테고리 관리**: 사용자별 커스텀 카테고리 생성 및 관리
 - **알림 시스템**: 사용자 활동에 대한 실시간 알림 및 설정 관리
 - **미디어 관리**: AWS S3 기반 이미지 업로드 및 관리
+- **최적화**
+  - [캐싱을 이용한 TPS 300% 개선](https://www.notion.so/29609de9fe418053b59add56a43d9b5a)
+  - [N+1최적화를 통한 TPS 50% 개선](https://www.notion.so/N-1-29609de9fe418015b799f286a465d7e9)
+  - [비동기를 적용을 통한 기능의 분리](https://www.notion.so/29609de9fe41806b8e52fa53a1126739?pvs=25)
+  
 
 ---
 
 ## 2. 목차
-- [3. 주요 기능](#3-주요-기능)
-- [4. 기술 스택](#4-기술-스택)
-- [5. 아키텍처](#5-아키텍처)
-- [6. API 문서](#6-api-문서)
-- [7. 프로젝트 구조](#7-프로젝트-구조)
+- [주요 기능](#3-주요-기능)
+- [기술 스택](#4-기술-스택)
+- [아키텍처](#5-아키텍처)
+- [API 문서](#6-api-문서)
+- [프로젝트 구조](#7-프로젝트-구조)
 
 ---
 
@@ -124,7 +129,6 @@
 | 기술 | 버전 | 용도 |
 |------|------|------|
 | **PostgreSQL** | 13+ | 관계형 데이터베이스 (프로덕션) |
-| **H2 Database** | - | 인메모리 데이터베이스 (테스트) |
 | **Redis** | 6+ | 분산 캐싱 및 Refresh Token 저장 |
 
 ### 4.3 인증 & 보안
@@ -205,13 +209,7 @@
 
 ### 6.1 Swagger UI 접근
 
-애플리케이션 실행 후 아래 URL에서 대화형 API 문서를 확인할 수 있습니다:
 
-```
-http://localhost:8080/swagger-ui/index.html
-```
-
-**프로덕션 환경**:
 ```
 https://mylog-api.click/swagger-ui/index.html
 ```
@@ -267,12 +265,12 @@ https://mylog-api.click/swagger-ui/index.html
 | Method | Endpoint | Summary |
 |--------|----------|---------|
 | **POST** | `/api/articles` | 게시글 생성 (multipart: ArticleCreateRequest + file) |
-| **GET** | `/api/articles/{id}` | 게시글 단건 조회 |
-| **PUT** | `/api/articles/{id}` | 게시글 수정 (multipart: ArticleUpdateRequest + file) |
-| **DELETE** | `/api/articles/{id}` | 게시글 삭제 |
-| **GET** | `/api/articles` | 전체 게시글 목록 (페이지네이션) |
+| **GET** | `/api/articles/{articleId}` | 게시글 단건 조회 |
+| **PUT** | `/api/articles/{articleId}` | 게시글 수정 (multipart: ArticleUpdateRequest + file) |
+| **DELETE** | `/api/articles/{articleId}` | 게시글 삭제 |
+| **GET** | `/api/articles/all` | 전체 게시글 목록 (페이지네이션) |
 | **GET** | `/api/articles/me` | 내 게시글 목록 (페이지네이션, 인증 필요) |
-| **GET** | `/api/articles/search` | 게시글 검색 (?keyword=&tag=) |
+| **GET** | `/api/articles/all/search` | 전체 게시글 검색 (?keyword=&tag=) |
 | **GET** | `/api/articles/me/search` | 내 게시글 검색 (?keyword=) |
 
 #### 6.3.4 댓글 API (`/api`)
@@ -281,7 +279,6 @@ https://mylog-api.click/swagger-ui/index.html
 |--------|----------|---------|
 | **POST** | `/api/articles/{articleId}/comments` | 댓글 생성 |
 | **GET** | `/api/articles/{articleId}/comments` | 게시글 댓글 목록 (페이지네이션) |
-| **GET** | `/api/articles/{articleId}/comments/{parentId}` | 대댓글 목록 (페이지네이션) |
 | **PUT** | `/api/comments/{commentId}` | 댓글 수정 |
 | **DELETE** | `/api/comments/{commentId}` | 댓글 삭제 |
 | **GET** | `/api/comments/me` | 내가 작성한 댓글 목록 (페이지네이션) |
@@ -293,8 +290,8 @@ https://mylog-api.click/swagger-ui/index.html
 |--------|----------|---------|
 | **POST** | `/api/categories` | 카테고리 생성 |
 | **GET** | `/api/categories` | 내 카테고리 목록 조회 |
-| **PUT** | `/api/categories/{id}` | 카테고리 수정 |
-| **DELETE** | `/api/categories/{id}` | 카테고리 삭제 |
+| **PUT** | `/api/categories/{categoryId}` | 카테고리 수정 |
+| **DELETE** | `/api/categories/{categoryId}` | 카테고리 삭제 |
 
 #### 6.3.6 알림 API (`/api/notifications`)
 
@@ -302,7 +299,13 @@ https://mylog-api.click/swagger-ui/index.html
 |--------|----------|---------|
 | **GET** | `/api/notifications` | 알림 목록 조회 (페이지네이션) |
 | **PUT** | `/api/notifications/{id}` | 알림 읽음 처리 |
-| **PUT** | `/api/notifications/set/{type}` | 알림 유형별 설정 토글 |
+
+#### 6.3.7 알림 설정 API (`/api/notifications/settings`)
+
+| Method | Endpoint | Summary |
+|--------|----------|---------|
+| **GET** | `/api/notifications/settings` | 알림 설정 목록 조회 |
+| **PUT** | `/api/notifications/settings/{type}` | 알림 유형별 설정 토글 |
 
 ---
 
@@ -312,16 +315,17 @@ https://mylog-api.click/swagger-ui/index.html
 
 | 디렉토리 | 역할 | 주요 기능 |
 |---------|------|----------|
-| **annotations/** | 커스텨 어노테이션 | 인증 사용자 정보 주입 (`@AuthUser`) |
+| **annotations/** | 커스텀 어노테이션 | OAuth2 서비스 타입 지정 (`@OAuth2ServiceType`) |
+| **classes/** | 공통 클래스 | 댓글 응답 모델 (`Reply`), 인증 사용자 (`CustomUser`) |
 | **common/** | 응답 표준화 | 통일된 API 응답 구조 (`CommonResult`, `SingleResult`, `ListResult`) |
-| **config/** | 인프라 설정 | JPA, JWT, S3, Redis, Security 설정 |
-| **controller/** | REST API | 엔드포인트 정의 및 Swagger 문서화 |
-| **dto/** | 데이터 전송 객체 | Request/Response DTO 정의 |
-| **entity/** | 도메인 모델 | JPA 엔티티 및 연관 관계 정의 |
-| **enums/** | 열거형 | OAuth 제공자, 알림 유형 등 |
+| **config/** | 인프라 설정 | JWT, S3, Redis, Security, QueryDSL, Cache, Async, Feign 설정 |
+| **controller/** | REST API | 엔드포인트 정의 및 Swagger 문서화 (7개 컨트롤러) |
+| **model/dto/** | 데이터 전송 객체 | 도메인별 Request/Response DTO (auth, article, comment, member 등) |
+| **model/entity/** | 도메인 모델 | JPA 엔티티 및 연관 관계 정의 |
+| **enums/** | 열거형 | OAuth 제공자 (`OAuthProvider`) |
 | **exception/** | 커스텀 예외 | 도메인별 예외 클래스 및 전역 핸들러 |
-| **repository/** | 데이터 접근 | Spring Data JPA 리포지토리 인터페이스 |
-| **service/** | 비즈니스 로직 | Read/Write 서비스 분리 패턴 |
+| **repository/** | 데이터 접근 | 도메인별 Spring Data JPA 리포지토리 (QueryDSL 커스텀 구현 포함) |
+| **service/** | 비즈니스 로직 | 도메인별 Read/Write 서비스 분리 패턴 |
 
 ### 상세 구조
 
@@ -330,94 +334,55 @@ mylog/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/mylog/
-│   │   │   ├── annotations/                # 커스텀 어노테이션
-│   │   │   │   └── AuthUser.java             (현재 인증 사용자 주입)
+│   │   │   ├── annotations/             # 커스텀 어노테이션
+│   │   │   ├── classes/                 # 공통 클래스 (Reply, CustomUser)
+│   │   │   ├── common/                  # API 응답 모델
+│   │   │   ├── config/                  # 인프라 설정 (JWT, S3, Redis, Security 등)
+│   │   │   ├── controller/              # REST 컨트롤러 (7개)
+│   │   │   ├── enums/                   # 열거형 (OAuthProvider)
+│   │   │   ├── exception/               # 커스텀 예외 및 전역 핸들러
+│   │   │   ├── model/
+│   │   │   │   ├── dto/                 # 데이터 전송 객체
+│   │   │   │   │   ├── article/         (게시글 DTO)
+│   │   │   │   │   ├── auth/            (인증 DTO)
+│   │   │   │   │   ├── category/        (카테고리 DTO)
+│   │   │   │   │   ├── comment/         (댓글 DTO)
+│   │   │   │   │   ├── member/          (회원 DTO)
+│   │   │   │   │   ├── notification/    (알림 DTO)
+│   │   │   │   │   └── social/          (소셜 로그인 DTO - google, kakao, naver)
+│   │   │   │   └── entity/              # JPA 엔티티 (8개)
 │   │   │   │
-│   │   │   ├── common/                     # 공통 응답 모델
-│   │   │   │   ├── CommonResult.java         (기본 성공/에러 응답)
-│   │   │   │   ├── SingleResult.java         (단일 데이터 응답)
-│   │   │   │   ├── ListResult.java           (리스트 응답)
-│   │   │   │   └── ResponseService.java      (응답 팩토리)
+│   │   │   ├── repository/              # 데이터 접근 계층
+│   │   │   │   ├── article/             (게시글 리포지토리 + QueryDSL)
+│   │   │   │   ├── category/            (카테고리 리포지토리)
+│   │   │   │   ├── comment/             (댓글 리포지토리)
+│   │   │   │   ├── member/              (회원 리포지토리)
+│   │   │   │   ├── notification/        (알림 리포지토리)
+│   │   │   │   └── ... (기타 리포지토리)
 │   │   │   │
-│   │   │   ├── config/                     # 설정 클래스
-│   │   │   │   ├── JpaConfig.java            (JPA Auditing 설정)
-│   │   │   │   ├── JwtConfig.java            (JWT 시크릿 키 설정)
-│   │   │   │   ├── RedisConfig.java          (Redis 연결 설정)
-│   │   │   │   ├── S3Config.java             (AWS S3 클라이언트 설정)
-│   │   │   │   ├── SecurityConfig.java       (Spring Security 필터 체인)
-│   │   │   │   └── SwaggerConfig.java        (API 문서 설정)
+│   │   │   ├── service/                 # 비즈니스 로직
+│   │   │   │   ├── article/             (게시글 서비스 - Reader/Service)
+│   │   │   │   ├── category/            (카테고리 서비스)
+│   │   │   │   ├── comment/             (댓글 서비스)
+│   │   │   │   ├── member/              (회원 서비스)
+│   │   │   │   ├── notification/        (알림 서비스)
+│   │   │   │   ├── social/              (소셜 로그인 - google, kakao, naver)
+│   │   │   │   └── ... (기타 서비스)
 │   │   │   │
-│   │   │   ├── controller/                 # REST 컨트롤러
-│   │   │   │   ├── AuthController.java       (인증 API)
-│   │   │   │   ├── MemberController.java     (회원 관리 API)
-│   │   │   │   ├── ArticleController.java    (게시글 API)
-│   │   │   │   ├── CommentController.java    (댓글 API)
-│   │   │   │   ├── CategoryController.java   (카테고리 API)
-│   │   │   │   └── NotificationController.java (알림 API)
-│   │   │   │
-│   │   │   ├── dto/                        # 데이터 전송 객체
-│   │   │   │   ├── request/                  (요청 DTO)
-│   │   │   │   └── response/                 (응답 DTO)
-│   │   │   │
-│   │   │   ├── entity/                     # JPA 엔티티
-│   │   │   │   ├── Member.java               (회원 엔티티)
-│   │   │   │   ├── Article.java              (게시글 엔티티)
-│   │   │   │   ├── Comment.java              (댓글 엔티티, 계층형 구조)
-│   │   │   │   ├── Category.java             (카테고리 엔티티)
-│   │   │   │   ├── Tag.java                  (태그 엔티티)
-│   │   │   │   ├── ArticleTag.java           (게시글-태그 조인)
-│   │   │   │   └── Notification.java         (알림 엔티티)
-│   │   │   │
-│   │   │   ├── enums/                      # 열거형
-│   │   │   │   ├── OAuthProvider.java        (OAuth 제공자: GOOGLE, KAKAO, NAVER)
-│   │   │   │   └── NotificationType.java     (알림 유형)
-│   │   │   │
-│   │   │   ├── exception/                  # 커스텀 예외
-│   │   │   │   ├── GlobalExceptionHandler.java (전역 예외 핸들러)
-│   │   │   │   ├── EntityNotFoundException.java (404 예외)
-│   │   │   │   ├── DuplicateEntityException.java (409 예외)
-│   │   │   │   └── InvalidDataException.java (400 예외)
-│   │   │   │
-│   │   │   ├── repository/                 # JPA 리포지토리
-│   │   │   │   ├── MemberRepository.java     (회원 데이터 접근)
-│   │   │   │   ├── ArticleRepository.java    (게시글 데이터 접근)
-│   │   │   │   ├── CommentRepository.java    (댓글 데이터 접근)
-│   │   │   │   ├── CategoryRepository.java   (카테고리 데이터 접근)
-│   │   │   │   ├── TagRepository.java        (태그 데이터 접근)
-│   │   │   │   └── NotificationRepository.java (알림 데이터 접근)
-│   │   │   │
-│   │   │   ├── service/                    # 비즈니스 로직
-│   │   │   │   ├── AuthService.java          (인증 및 토큰 관리)
-│   │   │   │   ├── MemberService.java        (회원 CRUD)
-│   │   │   │   ├── ArticleReadService.java   (게시글 조회)
-│   │   │   │   ├── ArticleWriteService.java  (게시글 생성/수정/삭제)
-│   │   │   │   ├── CommentService.java       (댓글 관리)
-│   │   │   │   ├── CategoryService.java      (카테고리 관리)
-│   │   │   │   ├── NotificationService.java  (알림 관리)
-│   │   │   │   ├── S3Service.java            (AWS S3 파일 업로드)
-│   │   │   │   └── OAuth2UserService.java    (OAuth2 사용자 처리)
-│   │   │   │
-│   │   │   └── MylogApplication.java       # 메인 애플리케이션
+│   │   │   └── MylogApplication.java   # 메인 클래스
 │   │   │
 │   │   └── resources/
-│   │       ├── application.yml               (기본 설정)
-│   │       ├── application-dev.yml           (개발 환경)
-│   │       └── application-prod.yml          (프로덕션 환경)
+│   │       ├── application.yml          # 기본 설정
+│   │       ├── application-dev.yml      # 개발 환경
+│   │       └── application-prod.yml     # 프로덕션 환경
 │   │
-│   └── test/                                 # 단위 테스트
-│       └── java/com/mylog/
-│           ├── service/
-│           │   ├── ArticleWriteServiceTest.java
-│           │   ├── CommentServiceTest.java
-│           │   └── ...
-│           └── ServiceTestBase.java          (공통 테스트 설정)
+│   └── test/java/com/mylog/            # 단위 테스트 (20개 테스트 클래스)
+│       └── service/                     # 도메인별 서비스 테스트
 │
-├── .github/
-│   └── workflows/
-│       └── ci-cd.yaml                        # GitHub Actions CI/CD
-│
-├── docker-compose.yaml                       # Docker Compose 설정
-├── Dockerfile                                # Docker 이미지 빌드
-├── build.gradle                              # Gradle 빌드 설정
-└── README.md                                 # 프로젝트 문서 (본 파일)
+├── .github/workflows/
+│   └── ci-cd.yaml                       # GitHub Actions CI/CD
+├── docker-compose.yaml                  # Docker Compose 설정
+├── Dockerfile                           # Docker 이미지 빌드
+├── build.gradle                         # Gradle 빌드 설정
+└── README.md                            # 프로젝트 문서
 ```
