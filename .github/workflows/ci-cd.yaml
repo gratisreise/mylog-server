@@ -180,6 +180,7 @@ jobs:
           
           # 파일 권한 설정
           chmod 600 .env
+          cat .env
           echo "✅ Environment file created with secure permissions"
 
       - name: Copy deployment files to GCE
