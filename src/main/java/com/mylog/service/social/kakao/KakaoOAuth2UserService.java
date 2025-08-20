@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Slf4j
-@Service
 @OAuth2ServiceType(OauthProvider.KAKAO)
 public class KakaoOAuth2UserService extends AbstractOAuth2UserService {
 

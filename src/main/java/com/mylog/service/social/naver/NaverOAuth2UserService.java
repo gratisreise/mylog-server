@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Slf4j
-@Service
 @OAuth2ServiceType(OauthProvider.NAVER)
 public class NaverOAuth2UserService extends AbstractOAuth2UserService {
     private final MemberRepository memberRepository;
