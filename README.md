@@ -32,7 +32,6 @@
 - **최적화**
   - [캐싱을 이용한 TPS 300% 개선](https://www.notion.so/29609de9fe418053b59add56a43d9b5a)
   - [N+1최적화를 통한 TPS 50% 개선](https://www.notion.so/N-1-29609de9fe418015b799f286a465d7e9)
-  - [비동기를 적용을 통한 기능의 분리](https://www.notion.so/29609de9fe41806b8e52fa53a1126739?pvs=25)
   
 
 ---
