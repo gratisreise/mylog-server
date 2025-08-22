@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -21,7 +22,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Comment
     Page<Comment> findByArticle_IdAndParentId(Long articleId, Long parentId, Pageable pageable);
 
     //나의 댓글 조회
-    @EntityGraph(attributePaths = {"member"})
+    @Query("SELECT c FROM Comment c JOIN FETCH c.member")
     Page<Comment> findAllByMember(Member member, Pageable pageable);
 
     //답글조회
