@@ -2,6 +2,7 @@ package com.mylog.service.article;
 
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.article.ArticleResponse;
+import com.mylog.model.dto.article.ArticleTestResponse;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Article;
 import com.mylog.model.entity.Member;
@@ -35,6 +36,7 @@ public class ArticleReader {
     //내 게시글 검색
     public Page<ArticleResponse> getArticles(Pageable pageable,
         CustomUser customUser, String keyword) {
+        log.info("userId:{}", customUser.getMemberId());
         Member member = memberReader.getById(customUser.getMemberId());
         return articleRepository.searchMineByTitle(member, keyword, pageable);
     }
@@ -47,9 +49,17 @@ public class ArticleReader {
     }
 
     // 전체 게시글 목록조회
+//    @Cacheable(value = "articles", key="#pageable.getPageNumber()")
+//    public Page<ArticleResponse> getArticles(Pageable pageable){
+//        return articleRepository.findAllCustom(pageable);
+//    }
+
     @Cacheable(value = "articles", key="#pageable.getPageNumber()")
-    public Page<ArticleResponse> getArticles(Pageable pageable){
-        return articleRepository.findAllCustom(pageable);
+    public List<ArticleTestResponse> getArticles(Pageable pageable){
+        return articleRepository.findAll(pageable)
+            .getContent()
+            .stream().map(ArticleTestResponse::from)
+            .toList();
     }
 
 

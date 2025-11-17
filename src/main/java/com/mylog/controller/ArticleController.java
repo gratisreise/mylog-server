@@ -2,12 +2,15 @@ package com.mylog.controller;
 
 
 import com.mylog.common.CommonResult;
+import com.mylog.common.ListResult;
 import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;
 import com.mylog.model.dto.article.ArticleCreateRequest;
 import com.mylog.model.dto.article.ArticleResponse;
+import com.mylog.model.dto.article.ArticleTestResponse;
 import com.mylog.model.dto.article.ArticleUpdateRequest;
 import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.model.entity.Article;
 import com.mylog.service.article.ArticleReader;
 import com.mylog.service.article.ArticleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -83,11 +86,18 @@ public class ArticleController {
     }
 
     //전체 게시글 목록 조회
+//    @GetMapping("/all")
+//    @Operation(summary = "전체 게시글 목록 조회")
+//    public SingleResult<Page<ArticleResponse>> getArticles(
+//        @PageableDefault(sort="id", direction = Direction.ASC, page=150) Pageable pageable){
+//        return ResponseService.getSingleResult(articleReader.getArticles(pageable));
+//    }
+
     @GetMapping("/all")
     @Operation(summary = "전체 게시글 목록 조회")
-    public SingleResult<Page<ArticleResponse>> getArticles(
-        @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable){
-        return ResponseService.getSingleResult(articleReader.getArticles(pageable));
+    public ListResult<ArticleTestResponse> getArticles(
+        @PageableDefault(sort="id", direction = Direction.ASC, page=80, size= 1000) Pageable pageable){
+        return ResponseService.getListResult(articleReader.getArticles(pageable));
     }
 
     //내 게시글 목록 조회

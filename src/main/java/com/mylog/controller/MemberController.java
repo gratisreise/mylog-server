@@ -31,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class MemberController {
 
+    
     private final MemberReader memberReader;
     private final MemberService memberService;
 

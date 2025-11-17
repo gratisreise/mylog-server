@@ -1,5 +1,12 @@
 package com.mylog.model.dto.auth;
 
 import com.mylog.enums.OauthProvider;
+import jakarta.validation.constraints.NotBlank;
 
-public record RefreshRequest(String refreshToken, OauthProvider provider) {}
+public record RefreshRequest(
+    @NotBlank
+    String refreshToken,
+
+    @NotBlank
+    OauthProvider provider
+) {}

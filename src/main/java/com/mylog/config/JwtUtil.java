@@ -16,8 +16,6 @@ public class JwtUtil {
     private final long accessValidity;
     private final long refreshValidity;
 
-
-
     public JwtUtil(
         @Value("${jwt.access_secret}") String accessKey,
         @Value("${jwt.refresh_secret}") String refreshKey,
@@ -41,7 +39,7 @@ public class JwtUtil {
             .claim("memberId", memberId)
             .issuedAt(now)
             .expiration(validity)
-            .signWith(accessKey, Jwts.SIG.HS512) // 0.12.x 버전의 새로운 서명 방식
+            .signWith(accessKey, Jwts.SIG.HS512)
             .compact();
     }
 

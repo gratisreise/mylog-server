@@ -9,19 +9,19 @@ import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
-public class CacheConfig {
-
-    @Bean
-    public CacheManager cacheManager(){
-        SimpleCacheManager cacheManager = new SimpleCacheManager();
-        CaffeineCache articlesCache = new CaffeineCache("articles",
-            Caffeine.newBuilder()
-                .maximumSize(1000)
-                .expireAfterWrite(10, TimeUnit.SECONDS)
-                .recordStats()
-                .build());
-        cacheManager.setCaches(Arrays.asList(articlesCache));
-        return cacheManager;
-    };
-}
+//@Configuration
+//public class CacheConfig {
+//
+//    @Bean
+//    public CacheManager cacheManager(){
+//        SimpleCacheManager cacheManager = new SimpleCacheManager();
+//        CaffeineCache articlesCache = new CaffeineCache("articles",
+//            Caffeine.newBuilder()
+//                .maximumSize(1000)
+//                .expireAfterWrite(10, TimeUnit.SECONDS)
+//                .recordStats()
+//                .build());
+//        cacheManager.setCaches(Arrays.asList(articlesCache));
+//        return cacheManager;
+//    };
+//}

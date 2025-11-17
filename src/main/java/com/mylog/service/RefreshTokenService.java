@@ -22,7 +22,6 @@ public class RefreshTokenService {
         );
     }
 
-
     public boolean validateRefreshToken(String username, String refreshToken) {
         String storedToken = valueOperations.get(generateKey(username));
         return storedToken != null && storedToken.equals(refreshToken);
@@ -31,6 +30,5 @@ public class RefreshTokenService {
     private String generateKey(String username) {
         return KEY_PREFIX + username;
     }
-
 
 }

@@ -1,33 +1,31 @@
 package com.mylog.model.dto.article;
 
+
 import com.mylog.model.entity.Article;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import java.util.Locale;
 
-public record ArticleResponse(
+public record ArticleTestResponse(
     Long id,
     String title,
     String content,
     String author,
     String category,
     String articleImg,
-    List<String> tags,
     LocalDateTime createdAt,
-    LocalDateTime updatedAt) {
-
-    public ArticleResponse(Article article, List<String> tags) {
-        this(article.getId(),
+    LocalDateTime updatedAt
+) {
+    public static ArticleTestResponse from(Article article){
+        return new ArticleTestResponse(
+            article.getId(),
             article.getTitle(),
             article.getContent(),
             article.getMember().getNickname(),
             article.getCategory().getCategoryName(),
             article.getArticleImg(),
-            tags,
             article.getCreatedAt(),
-            article.getUpdatedAt());
+            article.getUpdatedAt()
+        );
     }
-
 }

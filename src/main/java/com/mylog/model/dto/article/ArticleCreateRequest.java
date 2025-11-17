@@ -9,11 +9,14 @@ public record ArticleCreateRequest (
     @NotBlank
     @Length(min = 5, max = 30)
     String title,
+
     @NotBlank
     @Length(min = 10, max = 3000)
     String content,
+
     @NotBlank
     String category,
+
     @NotNull
     List<String> tags
-) {}
+) { }
