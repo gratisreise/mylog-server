@@ -28,6 +28,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         return createUserDetails(member);
     }
 
+
+
     private UserDetails createUserDetails(Member member) {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");
         return new CustomUser(member, Collections.singleton(authority));

@@ -26,8 +26,8 @@ public class RedisConfig {
     @Bean
     public RedisCacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
         ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule()) // LocalDateTime 지원
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // ISO-8601로 출력
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         GenericJackson2JsonRedisSerializer serializer =
             new GenericJackson2JsonRedisSerializer(objectMapper);

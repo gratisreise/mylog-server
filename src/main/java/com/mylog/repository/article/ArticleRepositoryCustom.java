@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 public interface ArticleRepositoryCustom  {
 
     //전체 게시글 조회
+
     Page<ArticleResponse> findAllCustom(Pageable pageable);
 
     //내 게시글 목록조회

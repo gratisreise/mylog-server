@@ -202,12 +202,12 @@ jobs:
           
           # 파일 존재 확인
           echo "🔍 Checking files before transfer..."
-          ls -la .env compose.yaml ./prometheus.yml scripts/deploy-bluegreen.sh
+          ls -la .env compose.yaml scripts/deploy-bluegreen.sh
           
           # 파일 전송
           scp -i /tmp/ssh_key -o StrictHostKeyChecking=no \
               -o ConnectTimeout=30 -C \
-              .env compose.yaml ./prometheus.yml scripts/deploy-bluegreen.sh \
+              .env compose.yaml scripts/deploy-bluegreen.sh \
               ${{ secrets.GCE_USER }}@${{ secrets.GCE_EXTERNAL_IP }}:~/
           
           echo "✅ Files copied successfully"

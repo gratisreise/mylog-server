@@ -52,7 +52,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
             .from(article)
             .fetchOne();
 
-        return new PageImpl<>(content, pageable, total);
+        return new PageImpl<>(content,pageable, total);
     }
 
     @Override

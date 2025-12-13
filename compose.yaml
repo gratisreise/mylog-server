@@ -100,17 +100,6 @@ services:
       retries: 5
       start_period: 20s
 
-  prometheus:
-    image: prom/prometheus:v3.5.0
-    container_name: prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    networks:
-      - mylog-network
-    restart: unless-stopped
-
 networks:
   mylog-network:
     driver: bridge

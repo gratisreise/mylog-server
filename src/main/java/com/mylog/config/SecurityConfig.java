@@ -1,6 +1,5 @@
 package com.mylog.config;
 
-import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,9 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -58,12 +54,11 @@ public class SecurityConfig {
             .httpBasic(AbstractHttpConfigurer::disable)  // HTTP Basic 인증 비활성화
 
             // 요청 정책
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(WHITELISTED_URLS).permitAll() // 해당 url 허용
-                .anyRequest().authenticated() // 나머지 접근 방지
-            )
-//            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-
+//            .authorizeHttpRequests(auth -> auth
+//                .requestMatchers(WHITELISTED_URLS).permitAll() // 해당 url 허용
+//                .anyRequest().authenticated() // 나머지 접근 방지
+//            )
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
             //h2 콘솔 프레임 표시 허용
             .headers(headers -> headers
                 .frameOptions(FrameOptionsConfig::disable))

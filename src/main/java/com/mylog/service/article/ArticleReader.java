@@ -48,10 +48,11 @@ public class ArticleReader {
         return new ArticleResponse(article, tags);
     }
 
-    // 전체 게시글 목록조회
+//    // 전체 게시글 목록조회
 //    @Cacheable(value = "articles", key="#pageable.getPageNumber()")
-//    public Page<ArticleResponse> getArticles(Pageable pageable){
-//        return articleRepository.findAllCustom(pageable);
+//    public PageResponse<ArticleResponse> getArticles(Pageable pageable){
+//        Page<ArticleResponse> preArticles = articleRepository.findAllCustom(pageable);
+//        return PageResponse.from(preArticles);
 //    }
 
     @Cacheable(value = "articles", key="#pageable.getPageNumber()")
