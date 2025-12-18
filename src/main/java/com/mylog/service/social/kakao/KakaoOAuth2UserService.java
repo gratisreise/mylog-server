@@ -12,7 +12,7 @@ import com.mylog.model.dto.social.kako.KakaoUserInfo;
 import com.mylog.domain.entity.Member;
 import com.mylog.api.member.MemberRepository;
 import com.mylog.service.RefreshTokenService;
-import com.mylog.service.category.CategoryService;
+import com.mylog.api.category.CategoryWriter;
 import com.mylog.service.social.AbstractOAuth2UserService;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,12 +38,12 @@ public class KakaoOAuth2UserService extends AbstractOAuth2UserService {
 
     public KakaoOAuth2UserService(
         JwtUtil jwtUtil, RefreshTokenService refreshTokenService,
-        CategoryService categoryService,
+        CategoryWriter categoryWriter,
         MemberRepository memberRepository,
         KakaoTokenClient kakaoTokenClient,
         KakaoUserClient kakaoUserClient
     ){
-        super(jwtUtil, refreshTokenService, categoryService);
+        super(jwtUtil, refreshTokenService, categoryWriter);
         this.memberRepository = memberRepository;
         this.kakaoTokenClient = kakaoTokenClient;
         this.kakaoUserClient = kakaoUserClient;

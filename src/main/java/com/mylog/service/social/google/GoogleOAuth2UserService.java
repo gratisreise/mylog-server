@@ -12,7 +12,7 @@ import com.mylog.model.dto.social.google.GoogleUserInfo;
 import com.mylog.domain.entity.Member;
 import com.mylog.api.member.MemberRepository;
 import com.mylog.service.RefreshTokenService;
-import com.mylog.service.category.CategoryService;
+import com.mylog.api.category.CategoryWriter;
 import com.mylog.service.social.AbstractOAuth2UserService;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,12 +37,12 @@ public class GoogleOAuth2UserService extends AbstractOAuth2UserService {
 
     public GoogleOAuth2UserService(
         JwtUtil jwtUtil, RefreshTokenService refreshTokenService,
-        CategoryService categoryService,
+        CategoryWriter categoryWriter,
         MemberRepository memberRepository,
         GoogleTokenClient googleTokenClient,
         GoogleUserClient googleUserClient
     ) {
-        super(jwtUtil, refreshTokenService, categoryService);
+        super(jwtUtil, refreshTokenService, categoryWriter);
         this.memberRepository = memberRepository;
         this.googleTokenClient = googleTokenClient;
         this.googleUserClient = googleUserClient;

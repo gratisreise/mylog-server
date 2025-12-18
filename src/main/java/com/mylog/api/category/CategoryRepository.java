@@ -1,6 +1,6 @@
-package com.mylog.repository.category;
+package com.mylog.api.category;
 
-import com.mylog.model.entity.Category;
+import com.mylog.domain.entity.Category;
 import com.mylog.domain.entity.Member;
 import java.util.List;
 import java.util.Optional;

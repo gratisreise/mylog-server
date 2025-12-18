@@ -1,7 +1,6 @@
-package com.mylog.model.entity;
+package com.mylog.domain.entity;
 
-import com.mylog.domain.entity.Member;
-import com.mylog.model.dto.category.CategoryUpdateRequest;
+import com.mylog.api.category.CategoryUpdateRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -12,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,7 +28,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Setter
 @Builder
 @AllArgsConstructor
-public class Category {
+public class Category extends BaseEntity{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -39,20 +39,12 @@ public class Category {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @CreatedDate
-    private LocalDate createdAt;
-
-    @LastModifiedDate
-    private LocalDate updatedAt;
-
-    public Category(Member member, String categoryName) {
-        this.member = member;
-        this.categoryName = categoryName;
-    }
-
-
     public void update(CategoryUpdateRequest request) {
         this.categoryName = request.categoryName();
     }
 
+
+    public boolean isOwnedBy(Long memberId) {
+        return Objects.equals(memberId, member.getId());
+    }
 }

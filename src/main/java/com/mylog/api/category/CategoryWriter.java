@@ -1,15 +1,12 @@
-package com.mylog.service.category;
+package com.mylog.api.category;
 
+import com.mylog.api.member.MemberReader;
 import com.mylog.common.CommonValue;
+import com.mylog.domain.entity.Category;
+import com.mylog.domain.entity.Member;
 import com.mylog.exception.CReachedLimitException;
 import com.mylog.exception.CUnAuthorizedException;
-import com.mylog.model.dto.category.CategoryCreateRequest;
-import com.mylog.model.dto.category.CategoryUpdateRequest;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.entity.Category;
-import com.mylog.domain.entity.Member;
-import com.mylog.repository.category.CategoryRepository;
-import com.mylog.api.member.MemberReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -18,12 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class CategoryService {
+public class CategoryWriter {
 
     private final MemberReader memberReader;
     private final CategoryRepository categoryRepository;
     private final CategoryReader categoryReader;
-
 
     public void createCategory(CategoryCreateRequest request, CustomUser customUser){
         Member member = memberReader.getById(customUser.getMemberId());
@@ -33,31 +29,24 @@ public class CategoryService {
             throw new CReachedLimitException("카테고리 갯수가 한도에 도달했습니다.");
         }
 
-        Category category = new Category(member, request.categoryName());
+        Category category = request.toEntity(member);
 
         categoryRepository.save(category);
     }
-
 
     @Async
-    public void createCategory(String email){
-        Member member = memberReader.getByEmail(email);
-        Category category = new Category(member, CommonValue.ORIGIN_CATEGORY);
-        categoryRepository.save(category);
-    }
-
     public void createCategory(Member member){
-        if(categoryRepository.existsByMemberAndCategoryName(member, CommonValue.ORIGIN_CATEGORY)){
-            return;
-        }
-        Category category = new Category(member, CommonValue.ORIGIN_CATEGORY);
+        Category category = Category.builder()
+            .member(member)
+            .categoryName(CommonValue.ORIGIN_CATEGORY)
+            .build();
         categoryRepository.save(category);
     }
 
     public void updateCategory(CategoryUpdateRequest request,Long categoryId, CustomUser customUser){
         Category category = categoryReader.getById(categoryId);
 
-        if(!isHaveAuth(category, customUser)){
+        if(!category.isOwnedBy(customUser.getMemberId())){
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         }
 
@@ -67,16 +56,10 @@ public class CategoryService {
     public void deleteCategory(Long categoryId, CustomUser customUser){
         Category category = categoryReader.getById(categoryId);
 
-        if(!isHaveAuth(category, customUser)){
+        if(!category.isOwnedBy(customUser.getMemberId())){
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         }
 
         categoryRepository.deleteById(categoryId);
-    }
-
-    private boolean isHaveAuth(Category category, CustomUser customUser) {
-        long categoryMemberId = category.getMember().getId();
-        long userMemberId = customUser.getMemberId();
-        return categoryMemberId == userMemberId;
     }
 }

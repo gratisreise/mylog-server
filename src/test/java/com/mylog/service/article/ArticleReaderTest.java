@@ -17,7 +17,7 @@ import com.mylog.exception.CMissingDataException;
 import com.mylog.api.article.ArticleResponse;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.domain.entity.Article;
-import com.mylog.model.entity.Category;
+import com.mylog.domain.entity.Category;
 import com.mylog.domain.entity.Member;
 import com.mylog.api.article.ArticleRepository;
 import com.mylog.api.member.MemberReader;

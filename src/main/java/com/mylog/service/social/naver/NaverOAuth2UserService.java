@@ -13,7 +13,7 @@ import com.mylog.model.dto.social.naver.NaverUserInfo;
 import com.mylog.domain.entity.Member;
 import com.mylog.api.member.MemberRepository;
 import com.mylog.service.RefreshTokenService;
-import com.mylog.service.category.CategoryService;
+import com.mylog.api.category.CategoryWriter;
 import com.mylog.service.social.AbstractOAuth2UserService;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,10 +39,10 @@ public class NaverOAuth2UserService extends AbstractOAuth2UserService {
 
     public NaverOAuth2UserService(
         JwtUtil jwtUtil, RefreshTokenService refreshTokenService,
-        CategoryService categoryService,
+        CategoryWriter categoryWriter,
         MemberRepository memberRepository,
         NaverTokenClient naverTokenClient, NaverUserClient naverUserClient) {
-        super(jwtUtil, refreshTokenService, categoryService);
+        super(jwtUtil, refreshTokenService, categoryWriter);
         this.memberRepository = memberRepository;
         this.naverTokenClient = naverTokenClient;
         this.naverUserClient = naverUserClient;

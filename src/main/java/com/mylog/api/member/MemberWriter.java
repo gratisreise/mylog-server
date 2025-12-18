@@ -5,7 +5,7 @@ import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.domain.entity.Member;
 import com.mylog.service.S3Service;
-import com.mylog.service.category.CategoryService;
+import com.mylog.api.category.CategoryWriter;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ public class MemberWriter {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
-    private final CategoryService categoryService;
+    private final CategoryWriter categoryWriter;
     private final MemberReader memberReader;
 
     @Value("${cloud.aws.s3.basic}")
@@ -36,10 +36,10 @@ public class MemberWriter {
 
         Member member = request.toEntity(passwordEncoder, basicImageUrl);
 
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
 
         //멤버 생성 => 카테고리 자동생성
-        categoryService.createCategory(request.email());
+        categoryWriter.createCategory(member);
     }
 
     public void updateMember(UpdateMemberRequest request,

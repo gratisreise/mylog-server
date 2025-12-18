@@ -1,14 +1,9 @@
-package com.mylog.controller;
+package com.mylog.api.category;
 
 import com.mylog.common.CommonResult;
 import com.mylog.common.ListResult;
 import com.mylog.common.ResponseService;
-import com.mylog.model.dto.category.CategoryCreateRequest;
-import com.mylog.model.dto.category.CategoryResponse;
-import com.mylog.model.dto.category.CategoryUpdateRequest;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.service.category.CategoryReader;
-import com.mylog.service.category.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/categories")
 public class CategoryController {
     private final CategoryReader categoryReader;
-    private final CategoryService categoryService;
+    private final CategoryWriter categoryWriter;
 
     //카테고리 생성
     @PostMapping
@@ -36,7 +31,7 @@ public class CategoryController {
         @RequestBody @Valid CategoryCreateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        categoryService.createCategory(request, customUser);
+        categoryWriter.createCategory(request, customUser);
         return ResponseService.getSuccessResult();
     }
 
@@ -57,7 +52,7 @@ public class CategoryController {
         @RequestBody @Valid CategoryUpdateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        categoryService.updateCategory(request, categoryId, customUser);
+        categoryWriter.updateCategory(request, categoryId, customUser);
         return ResponseService.getSuccessResult();
     }
 
@@ -68,7 +63,7 @@ public class CategoryController {
         @PathVariable Long categoryId,
         @AuthenticationPrincipal CustomUser customUser
     ) {
-        categoryService.deleteCategory(categoryId, customUser);
+        categoryWriter.deleteCategory(categoryId, customUser);
         return ResponseService.getSuccessResult();
     }
 

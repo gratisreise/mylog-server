@@ -1,12 +1,10 @@
-package com.mylog.service.category;
+package com.mylog.api.category;
 
 import com.mylog.common.CommonValue;
 import com.mylog.exception.CMissingDataException;
-import com.mylog.model.dto.category.CategoryResponse;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.entity.Category;
+import com.mylog.domain.entity.Category;
 import com.mylog.domain.entity.Member;
-import com.mylog.repository.category.CategoryRepository;
 import com.mylog.api.member.MemberReader;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

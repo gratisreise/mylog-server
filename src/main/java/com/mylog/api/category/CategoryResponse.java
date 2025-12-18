@@ -1,6 +1,6 @@
-package com.mylog.model.dto.category;
+package com.mylog.api.category;
 
-import com.mylog.model.entity.Category;
+import com.mylog.domain.entity.Category;
 
 
 public record CategoryResponse(Long id, String categoryName, Long memberId) {

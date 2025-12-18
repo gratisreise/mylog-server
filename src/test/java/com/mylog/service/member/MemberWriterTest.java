@@ -20,7 +20,7 @@ import com.mylog.api.member.UpdateMemberRequest;
 import com.mylog.domain.entity.Member;
 import com.mylog.api.member.MemberRepository;
 import com.mylog.service.S3Service;
-import com.mylog.service.category.CategoryService;
+import com.mylog.api.category.CategoryWriter;
 import java.io.IOException;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +52,7 @@ class MemberWriterTest {
     private S3Service s3Service;
 
     @Mock
-    private CategoryService categoryService;
+    private CategoryWriter categoryWriter;
 
     @Mock
     private MemberReader memberReader;
@@ -81,14 +81,14 @@ class MemberWriterTest {
         SignUpRequest request = new SignUpRequest("test@example.com", "password", "testuser");
         when(memberRepository.existsByEmail(anyString())).thenReturn(false);
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-        doNothing().when(categoryService).createCategory(anyString());
+        doNothing().when(categoryWriter).createCategory(any());
 
         // When
         memberWriter.saveMember(request);
 
         // Then
         verify(memberRepository, times(1)).save(any(Member.class));
-        verify(categoryService, times(1)).createCategory(request.email());
+        verify(categoryWriter, times(1)).createCategory(any());
     }
 
     @Test
@@ -164,7 +164,6 @@ class MemberWriterTest {
     @DisplayName("회원 정보 수정 성공 - 기본 이미지에서 변경")
     void updateMember_성공_기본이미지에서_변경() throws IOException {
         // Given
-        member.setProfileImg(BASIC_IMAGE_URL);
         UpdateMemberRequest request = new UpdateMemberRequest("newPassword123!", "newName", "newNickname", "newBio", null);
         MockMultipartFile file = new MockMultipartFile("file", "new_image.jpg", "image/jpeg", "image data".getBytes());
         when(memberReader.getById(1L)).thenReturn(member);
@@ -216,7 +215,6 @@ class MemberWriterTest {
     @DisplayName("회원 삭제 성공 - 기본 이미지 사용자")
     void deleteMember_성공_기본이미지_사용자() {
         // Given
-        member.setProfileImg(BASIC_IMAGE_URL);
         when(memberReader.getById(1L)).thenReturn(member);
 
         // When

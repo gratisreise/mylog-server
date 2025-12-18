@@ -12,7 +12,7 @@ import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.dto.comment.CommentCreateRequest;
 import com.mylog.model.dto.comment.CommentUpdateRequest;
 import com.mylog.domain.entity.Article;
-import com.mylog.model.entity.Category;
+import com.mylog.domain.entity.Category;
 import com.mylog.model.entity.Comment;
 import com.mylog.domain.entity.Member;
 import com.mylog.repository.comment.CommentRepository;

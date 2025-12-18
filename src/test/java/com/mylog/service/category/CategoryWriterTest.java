@@ -7,14 +7,16 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.mylog.api.category.CategoryReader;
+import com.mylog.api.category.CategoryWriter;
 import com.mylog.exception.CReachedLimitException;
 import com.mylog.exception.CUnAuthorizedException;
-import com.mylog.model.dto.category.CategoryCreateRequest;
-import com.mylog.model.dto.category.CategoryUpdateRequest;
+import com.mylog.api.category.CategoryCreateRequest;
+import com.mylog.api.category.CategoryUpdateRequest;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.entity.Category;
+import com.mylog.domain.entity.Category;
 import com.mylog.domain.entity.Member;
-import com.mylog.repository.category.CategoryRepository;
+import com.mylog.api.category.CategoryRepository;
 import com.mylog.api.member.MemberReader;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,10 +29,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @ExtendWith(MockitoExtension.class)
-class CategoryServiceTest {
+class CategoryWriterTest {
 
     @InjectMocks
-    private CategoryService categoryService;
+    private CategoryWriter categoryWriter;
 
     @Mock
     private MemberReader memberReader;
@@ -60,7 +62,7 @@ class CategoryServiceTest {
         when(categoryRepository.save(any(Category.class))).thenAnswer(i -> i.getArgument(0));
 
         // When
-        categoryService.createCategory(request, customUser);
+        categoryWriter.createCategory(request, customUser);
 
         // Then
         verify(categoryRepository, times(1)).save(any(Category.class));
@@ -75,7 +77,7 @@ class CategoryServiceTest {
         when(categoryRepository.countByMember(member)).thenReturn(20);
 
         // When & Then
-        assertThatThrownBy(() -> categoryService.createCategory(request, customUser))
+        assertThatThrownBy(() -> categoryWriter.createCategory(request, customUser))
                 .isInstanceOf(CReachedLimitException.class)
                 .hasMessage("카테고리 갯수가 한도에 도달했습니다.");
     }
@@ -89,7 +91,7 @@ class CategoryServiceTest {
         when(categoryReader.getById(1L)).thenReturn(category);
 
         // When
-        categoryService.updateCategory(request, 1L, customUser);
+        categoryWriter.updateCategory(request, 1L, customUser);
 
         // Then
         assertThat(category.getCategoryName()).isEqualTo("Updated Category");
@@ -108,7 +110,7 @@ class CategoryServiceTest {
         when(categoryReader.getById(1L)).thenReturn(category);
 
         // When & Then
-        assertThatThrownBy(() -> categoryService.updateCategory(request, 1L, anotherUser))
+        assertThatThrownBy(() -> categoryWriter.updateCategory(request, 1L, anotherUser))
                 .isInstanceOf(CUnAuthorizedException.class)
                 .hasMessage("허용되지 않는 유저입니다.");
     }
@@ -121,7 +123,7 @@ class CategoryServiceTest {
         when(categoryReader.getById(1L)).thenReturn(category);
 
         // When
-        categoryService.deleteCategory(1L, customUser);
+        categoryWriter.deleteCategory(1L, customUser);
 
         // Then
         verify(categoryRepository, times(1)).deleteById(1L);
@@ -137,7 +139,7 @@ class CategoryServiceTest {
         when(categoryReader.getById(1L)).thenReturn(category);
 
         // When & Then
-        assertThatThrownBy(() -> categoryService.deleteCategory(1L, anotherUser))
+        assertThatThrownBy(() -> categoryWriter.deleteCategory(1L, anotherUser))
                 .isInstanceOf(CUnAuthorizedException.class)
                 .hasMessage("허용되지 않는 유저입니다.");
     }
