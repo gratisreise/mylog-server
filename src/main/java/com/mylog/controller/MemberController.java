@@ -30,11 +30,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @Slf4j
 public class MemberController {
-
-    
     private final MemberReader memberReader;
     private final MemberService memberService;
-
 
     //회원가입
     @PostMapping("/sign-up")
@@ -50,7 +47,6 @@ public class MemberController {
     public SingleResult<MemberResponse> getMember(@AuthenticationPrincipal CustomUser customUser){
         return ResponseService.getSingleResult(memberReader.getMember(customUser));
     }
-
 
     //개인정보 수정
     @PutMapping("/me")

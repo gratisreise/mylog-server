@@ -1,13 +1,14 @@
 package com.mylog.service.tag;
 
 
-import com.mylog.model.entity.Article;
+import com.mylog.domain.entity.Article;
 import com.mylog.model.entity.ArticleTag;
 import com.mylog.model.entity.Tag;
 import com.mylog.repository.tag.TagRepository;
-import com.mylog.service.articletag.ArticleTagService;
+import com.mylog.service.articletag.ArticleTagWriter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class TagService {
     private final TagRepository tagRepository;
     private final TagReader tagReader;
-    private final ArticleTagService articleTagService;
+    private final ArticleTagWriter articleTagWriter;
 
+    @Async
     public void saveTag(List<String> tags, Article article){
         for(String tag : tags){
             //존재하는지 확인
@@ -27,7 +29,7 @@ public class TagService {
             }
 
             Tag savedTag = tagReader.getTagByTagName(tag);
-            articleTagService.crateArticleTag(new ArticleTag(article, savedTag));
+            articleTagWriter.crateArticleTag(new ArticleTag(article, savedTag));
         }
     }
 

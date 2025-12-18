@@ -35,8 +35,8 @@ public class CategoryReader {
         return !category.getCategoryName().equals(CommonValue.ORIGIN_CATEGORY);
     }
 
-    public Category getByMemberAndCategoryName(Member member, String categoryName) {
-        return categoryRepository.findByMemberAndCategoryName(member, categoryName)
+    public Category getByMemberIdAndCategoryName(Long memberId, String categoryName) {
+        return categoryRepository.findByMemberIdAndCategoryName(memberId, categoryName)
             .orElseThrow(CMissingDataException::new);
     }
 

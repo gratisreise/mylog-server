@@ -1,6 +1,5 @@
-package com.mylog.repository.article;
+package com.mylog.article;
 
-import com.mylog.model.dto.article.ArticleResponse;
 import com.mylog.model.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 public interface ArticleRepositoryCustom  {
 
     //전체 게시글 조회
-
     Page<ArticleResponse> findAllCustom(Pageable pageable);
 
     //내 게시글 목록조회

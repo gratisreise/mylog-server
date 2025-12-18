@@ -51,6 +51,7 @@ public class Category {
         this.categoryName = categoryName;
     }
 
+
     public void update(CategoryUpdateRequest request) {
         this.categoryName = request.categoryName();
     }

@@ -1,7 +1,7 @@
 package com.mylog.service.tag;
 
 import com.mylog.exception.CMissingDataException;
-import com.mylog.model.entity.Article;
+import com.mylog.domain.entity.Article;
 import com.mylog.model.entity.Tag;
 import com.mylog.repository.tag.TagRepository;
 import java.util.List;

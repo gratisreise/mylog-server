@@ -1,8 +1,9 @@
-package com.mylog.model.entity;
+package com.mylog.domain.entity;
 
 
-import com.mylog.model.dto.article.ArticleCreateRequest;
-import com.mylog.model.dto.article.ArticleUpdateRequest;
+import com.mylog.article.ArticleUpdateRequest;
+import com.mylog.model.entity.Category;
+import com.mylog.model.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -12,25 +13,22 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Builder
-@AllArgsConstructor
 @Getter
 @Setter
-public class Article {
+@AllArgsConstructor
+public class Article extends BaseEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -52,25 +50,8 @@ public class Article {
     @Column(length = 300)
     private String articleImg;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
-    public Article(ArticleCreateRequest request, Category category, Member member,
-        String imageUrl) {
-        this.title = request.title();
-        this.content = request.content();
-        this.category = category;
-        this.member = member;
-        this.articleImg = imageUrl;
-    }
-
-    public void update(ArticleUpdateRequest request, Category category) {
-        this.title = request.title();
-        this.content = request.content();
-        this.category = category;
+    public boolean isOwnedBy(Long userId){
+        return Objects.equals(this.member.getId(), userId);
     }
 
     public void update(ArticleUpdateRequest request, Category category, String articleImg) {

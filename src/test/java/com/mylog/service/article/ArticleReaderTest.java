@@ -11,16 +11,16 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.mylog.article.ArticleReader;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
-import com.mylog.model.dto.article.ArticleResponse;
+import com.mylog.article.ArticleResponse;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.entity.Article;
+import com.mylog.domain.entity.Article;
 import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
-import com.mylog.repository.article.ArticleRepository;
+import com.mylog.article.ArticleRepository;
 import com.mylog.service.member.MemberReader;
-import com.mylog.service.tag.TagReader;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -45,9 +45,6 @@ class ArticleReaderTest {
     private ArticleRepository articleRepository;
 
     @Mock
-    private TagReader tagReader;
-
-    @Mock
     private MemberReader memberReader;
 
     @InjectMocks
@@ -58,7 +55,7 @@ class ArticleReaderTest {
     private Pageable pageable;
     private Member testMember;
     private Article testArticle;
-    private com.mylog.model.entity.Category testCategory;
+    private Category testCategory;
 
     @BeforeEach
     void setUp() {
@@ -77,7 +74,7 @@ class ArticleReaderTest {
             .updatedAt(LocalDateTime.now())
             .build();
 
-        testCategory = com.mylog.model.entity.Category.builder()
+        testCategory = Category.builder()
             .id(1L)
             .categoryName("Test Category")
             .member(testMember)
@@ -92,8 +89,6 @@ class ArticleReaderTest {
             .articleImg("https://example.com/article.jpg")
             .member(testMember)
             .category(testCategory)
-            .createdAt(LocalDateTime.now())
-            .updatedAt(LocalDateTime.now())
             .build();
 
         customUser = new CustomUser(testMember, List.of(new SimpleGrantedAuthority("ROLE_USER")));
@@ -109,8 +104,6 @@ class ArticleReaderTest {
                         .articleImg("https://example.com/article" + i + ".jpg")
                         .member(member)
                         .category(category)
-                        .createdAt(LocalDateTime.now())
-                        .updatedAt(LocalDateTime.now())
                         .build())
                 .toList();
     }

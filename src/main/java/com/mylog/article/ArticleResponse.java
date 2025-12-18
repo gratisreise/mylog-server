@@ -1,31 +1,30 @@
-package com.mylog.model.dto.article;
+package com.mylog.article;
 
-
-import com.mylog.model.entity.Article;
+import com.mylog.domain.entity.Article;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 
-public record ArticleTestResponse(
+public record ArticleResponse(
     Long id,
     String title,
     String content,
     String author,
     String category,
     String articleImg,
+    List<String> tags,
     LocalDateTime createdAt,
-    LocalDateTime updatedAt
-) {
-    public static ArticleTestResponse from(Article article){
-        return new ArticleTestResponse(
-            article.getId(),
+    LocalDateTime updatedAt) {
+
+    public ArticleResponse(Article article, List<String> tags) {
+        this(article.getId(),
             article.getTitle(),
             article.getContent(),
             article.getMember().getNickname(),
             article.getCategory().getCategoryName(),
             article.getArticleImg(),
+            tags,
             article.getCreatedAt(),
-            article.getUpdatedAt()
-        );
+            article.getUpdatedAt());
     }
+
 }

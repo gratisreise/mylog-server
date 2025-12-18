@@ -1,7 +1,6 @@
-package com.mylog.repository.article;
+package com.mylog.article;
 
-import com.mylog.model.dto.article.ArticleResponse;
-import com.mylog.model.entity.Article;
+import com.mylog.domain.entity.Article;
 import com.mylog.model.entity.Member;
 import com.mylog.model.entity.QArticle;
 import com.mylog.model.entity.QArticleTag;

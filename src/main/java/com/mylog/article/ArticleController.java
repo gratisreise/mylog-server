@@ -1,17 +1,11 @@
-package com.mylog.controller;
+package com.mylog.article;
 
 
 import com.mylog.common.CommonResult;
 import com.mylog.common.ListResult;
 import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;
-import com.mylog.model.dto.article.ArticleCreateRequest;
-import com.mylog.model.dto.article.ArticleResponse;
-import com.mylog.model.dto.article.ArticleTestResponse;
-import com.mylog.model.dto.article.ArticleUpdateRequest;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.service.article.ArticleReader;
-import com.mylog.service.article.ArticleService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -38,7 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/articles")
 public class ArticleController {
     private final ArticleReader articleReader;
-    private final ArticleService articleService;
+    private final ArticleWriter articleWriter;
 
     //게시글 생성
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -48,7 +42,7 @@ public class ArticleController {
         @RequestPart(value = "request") @Valid ArticleCreateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ) throws IOException {
-        articleService.createArticle(request, customUser, file);
+        articleWriter.createArticle(request, customUser, file);
         return ResponseService.getSuccessResult();
     }
 
@@ -68,7 +62,7 @@ public class ArticleController {
         @AuthenticationPrincipal CustomUser customUser,
         @PathVariable Long articleId
     ) throws IOException {
-        articleService.updateArticle(request, customUser, file, articleId);
+        articleWriter.updateArticle(request, customUser, file, articleId);
         return ResponseService.getSuccessResult();
     }
 
@@ -79,7 +73,7 @@ public class ArticleController {
         @AuthenticationPrincipal CustomUser customUser,
         @PathVariable Long articleId
     ){
-        articleService.deleteArticle(articleId, customUser);
+        articleWriter.deleteArticle(articleId, customUser);
         return ResponseService.getSuccessResult();
     }
 

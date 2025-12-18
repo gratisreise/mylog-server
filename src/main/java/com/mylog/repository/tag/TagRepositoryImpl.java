@@ -1,6 +1,6 @@
 package com.mylog.repository.tag;
 
-import com.mylog.model.entity.Article;
+import com.mylog.domain.entity.Article;
 import com.mylog.model.entity.QArticleTag;
 import com.mylog.model.entity.QTag;
 import com.querydsl.jpa.impl.JPAQueryFactory;

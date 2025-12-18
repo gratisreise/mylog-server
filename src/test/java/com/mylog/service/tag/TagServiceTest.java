@@ -7,11 +7,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.mylog.model.entity.Article;
+import com.mylog.domain.entity.Article;
 import com.mylog.model.entity.ArticleTag;
 import com.mylog.model.entity.Tag;
 import com.mylog.repository.tag.TagRepository;
-import com.mylog.service.articletag.ArticleTagService;
+import com.mylog.service.articletag.ArticleTagWriter;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +31,7 @@ class TagServiceTest {
     private TagReader tagReader;
 
     @Mock
-    private ArticleTagService articleTagService;
+    private ArticleTagWriter articleTagWriter;
 
     @InjectMocks
     private TagService tagService;
@@ -65,7 +65,7 @@ class TagServiceTest {
         verify(tagRepository, times(3)).existsByTagName(anyString());
         verify(tagRepository, times(3)).save(any(Tag.class));
         verify(tagReader, times(3)).getTagByTagName(anyString());
-        verify(articleTagService, times(3)).crateArticleTag(any(ArticleTag.class));
+        verify(articleTagWriter, times(3)).crateArticleTag(any(ArticleTag.class));
     }
 
     @Test
@@ -88,7 +88,7 @@ class TagServiceTest {
         verify(tagRepository, times(3)).existsByTagName(anyString());
         verify(tagRepository, never()).save(any(Tag.class));
         verify(tagReader, times(3)).getTagByTagName(anyString());
-        verify(articleTagService, times(3)).crateArticleTag(any(ArticleTag.class));
+        verify(articleTagWriter, times(3)).crateArticleTag(any(ArticleTag.class));
     }
 
     @Test
@@ -113,7 +113,7 @@ class TagServiceTest {
         verify(tagRepository, times(3)).existsByTagName(anyString());
         verify(tagRepository, times(1)).save(any(Tag.class)); // Spring만 저장
         verify(tagReader, times(3)).getTagByTagName(anyString());
-        verify(articleTagService, times(3)).crateArticleTag(any(ArticleTag.class));
+        verify(articleTagWriter, times(3)).crateArticleTag(any(ArticleTag.class));
     }
 
     @Test
@@ -128,6 +128,6 @@ class TagServiceTest {
         verify(tagRepository, never()).existsByTagName(anyString());
         verify(tagRepository, never()).save(any(Tag.class));
         verify(tagReader, never()).getTagByTagName(anyString());
-        verify(articleTagService, never()).crateArticleTag(any(ArticleTag.class));
+        verify(articleTagWriter, never()).crateArticleTag(any(ArticleTag.class));
     }
 }

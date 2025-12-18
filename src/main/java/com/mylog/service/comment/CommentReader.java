@@ -7,7 +7,7 @@ import com.mylog.model.dto.comment.CommentArticleResponse;
 import com.mylog.model.dto.comment.CommentResponse;
 import com.mylog.model.entity.Comment;
 import com.mylog.model.entity.Member;
-import com.mylog.repository.article.ArticleRepository;
+import com.mylog.article.ArticleRepository;
 import com.mylog.repository.comment.CommentRepository;
 import com.mylog.service.member.MemberReader;
 import java.util.List;

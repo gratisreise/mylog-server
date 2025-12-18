@@ -1,12 +1,9 @@
-package com.mylog.service.article;
+package com.mylog.article;
 
+import com.mylog.domain.entity.Article;
 import com.mylog.exception.CMissingDataException;
-import com.mylog.model.dto.article.ArticleResponse;
-import com.mylog.model.dto.article.ArticleTestResponse;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.entity.Article;
 import com.mylog.model.entity.Member;
-import com.mylog.repository.article.ArticleRepository;
 import com.mylog.service.member.MemberReader;
 import com.mylog.service.tag.TagReader;
 import java.util.List;
@@ -67,6 +64,7 @@ public class ArticleReader {
     // 전체 게시글 검색
     @Cacheable(value = "articles", key="'태그='+#tag")
     public Page<ArticleResponse> getArticles(String keyword, String tag, Pageable pageable){
+        StringBuilder sb = new StringBuilder();
         return !isClear(keyword) ?
             articleRepository.searchAllByTitle(keyword, pageable) :
             articleRepository.searchAllByTagName(tag, pageable);

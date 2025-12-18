@@ -1,4 +1,4 @@
-package com.mylog.model.dto.article;
+package com.mylog.article;
 
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;

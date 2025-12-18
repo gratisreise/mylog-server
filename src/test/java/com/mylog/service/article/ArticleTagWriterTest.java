@@ -15,16 +15,18 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.mylog.article.ArticleReader;
+import com.mylog.article.ArticleWriter;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.exception.CUnAuthorizedException;
-import com.mylog.model.dto.article.ArticleCreateRequest;
-import com.mylog.model.dto.article.ArticleUpdateRequest;
+import com.mylog.article.ArticleCreateRequest;
+import com.mylog.article.ArticleUpdateRequest;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.entity.Article;
+import com.mylog.domain.entity.Article;
 import com.mylog.model.entity.Category;
 import com.mylog.model.entity.Member;
-import com.mylog.repository.article.ArticleRepository;
+import com.mylog.article.ArticleRepository;
 import com.mylog.repository.articletag.ArticleTagRepository;
 import com.mylog.service.S3Service;
 import com.mylog.service.category.CategoryReader;
@@ -45,13 +47,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
-class ArticleServiceTest {
+class ArticleTagWriterTest {
 
     @Mock
     private ArticleRepository articleRepository;
 
     @InjectMocks
-    private ArticleService articleService;
+    private ArticleWriter articleWriter;
 
     @Mock
     private ArticleReader articleReader;
@@ -170,7 +172,7 @@ class ArticleServiceTest {
         String expectedImageUrl = "https://s3.amazonaws.com/bucket/uploaded-file.jpg";
 
         when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
-        when(categoryReader.getByMemberAndCategoryName(testMember,"Test Category"))
+        when(categoryReader.getByMemberIdAndCategoryName(testMember,"Test Category"))
             .thenReturn(testCategory);
         when(s3Service.upload(mockFile)).thenReturn(expectedImageUrl);
         when(articleRepository.save(any(Article.class))).thenReturn(testArticle);
@@ -178,11 +180,11 @@ class ArticleServiceTest {
 
         // When
         assertDoesNotThrow(() -> 
-            articleService.createArticle(createRequest, customUser, mockFile)
+            articleWriter.createArticle(createRequest, customUser, mockFile)
         );
 
         // Then
-        verify(categoryReader).getByMemberAndCategoryName(testMember,"Test Category");
+        verify(categoryReader).getByMemberIdAndCategoryName(testMember,"Test Category");
         verify(memberReader).getByCustomUser(customUser);
         verify(s3Service).upload(mockFile);
         verify(articleRepository).save(any(Article.class));
@@ -194,16 +196,16 @@ class ArticleServiceTest {
     void createArticle_categoryNotFound_예외발생() throws IOException {
         // Given
         when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
-        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category"))
+        when(categoryReader.getByMemberIdAndCategoryName(testMember, "Test Category"))
             .thenThrow(new CMissingDataException());
 
         // When & Then
         assertThrows(CMissingDataException.class, () ->
-            articleService.createArticle(createRequest, customUser, mockFile)
+            articleWriter.createArticle(createRequest, customUser, mockFile)
         );
 
         verify(memberReader).getByCustomUser(customUser);
-        verify(categoryReader).getByMemberAndCategoryName(testMember, "Test Category");
+        verify(categoryReader).getByMemberIdAndCategoryName(testMember, "Test Category");
         verify(s3Service, never()).upload(any());
         verify(articleRepository, never()).save(any());
         verify(tagService, never()).saveTag(any(List.class), any(Article.class));
@@ -217,11 +219,11 @@ class ArticleServiceTest {
 
         // When & Then
         assertThrows(CMissingDataException.class, () ->
-            articleService.createArticle(createRequest, customUser, mockFile)
+            articleWriter.createArticle(createRequest, customUser, mockFile)
         );
 
         verify(memberReader).getByCustomUser(customUser);
-        verify(categoryReader, never()).getByMemberAndCategoryName(testMember, "Test Category");
+        verify(categoryReader, never()).getByMemberIdAndCategoryName(testMember, "Test Category");
         verify(s3Service, never()).upload(any());
         verify(articleRepository, never()).save(any());
         verify(tagService, never()).saveTag(any(List.class), any(Article.class));
@@ -232,16 +234,16 @@ class ArticleServiceTest {
     @DisplayName("아티클 생성 - S3 업로드 IOException 예외")
     void createArticle_s3IOException_예외발생() throws IOException {
         // Given
-        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
+        when(categoryReader.getByMemberIdAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
         when(s3Service.upload(mockFile)).thenThrow(new IOException("S3 upload failed"));
 
         // When & Then
         assertThrows(IOException.class, () ->
-            articleService.createArticle(createRequest, customUser, mockFile)
+            articleWriter.createArticle(createRequest, customUser, mockFile)
         );
 
-        verify(categoryReader).getByMemberAndCategoryName(testMember, "Test Category");
+        verify(categoryReader).getByMemberIdAndCategoryName(testMember, "Test Category");
         verify(memberReader).getByCustomUser(customUser);
         verify(s3Service).upload(mockFile);
         verify(articleRepository, never()).save(any());
@@ -260,7 +262,7 @@ class ArticleServiceTest {
         );
         String expectedImageUrl = "https://s3.amazonaws.com/bucket/uploaded-file.jpg";
         
-        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
+        when(categoryReader.getByMemberIdAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
         when(s3Service.upload(mockFile)).thenReturn(expectedImageUrl);
         when(articleRepository.save(any(Article.class))).thenReturn(testArticle);
@@ -268,7 +270,7 @@ class ArticleServiceTest {
 
         // When
         assertDoesNotThrow(() -> 
-            articleService.createArticle(requestWithoutTags, customUser, mockFile)
+            articleWriter.createArticle(requestWithoutTags, customUser, mockFile)
         );
 
         // Then
@@ -290,19 +292,19 @@ class ArticleServiceTest {
 
         when(memberReader.getByNickname("testuser")).thenReturn(testMember);
         when(articleReader.getArticleById(articleId)).thenReturn(existingArticle);
-        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
+        when(categoryReader.getByMemberIdAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         when(s3Service.upload(mockFile)).thenReturn(expectedImageUrl);
         doNothing().when(tagService).saveTag(anyList(), any(Article.class));
 
         // When
         assertDoesNotThrow(() -> 
-            articleService.updateArticle(updateRequest, customUser, mockFile, articleId)
+            articleWriter.updateArticle(updateRequest, customUser, mockFile, articleId)
         );
 
         // Then
         verify(memberReader).getByNickname("testuser");
         verify(articleReader).getArticleById(articleId);
-        verify(categoryReader).getByMemberAndCategoryName(testMember,"Test Category");
+        verify(categoryReader).getByMemberIdAndCategoryName(testMember,"Test Category");
         verify(s3Service).upload(mockFile);
         verify(tagService).saveTag(eq(updateRequest.tags()), eq(existingArticle));
         // Verify the update method was called by checking that the service completed successfully
@@ -323,12 +325,12 @@ class ArticleServiceTest {
 
         // When & Then
         assertThrows(CUnAuthorizedException.class, () ->
-            articleService.updateArticle(updateRequest, customUser, mockFile, articleId)
+            articleWriter.updateArticle(updateRequest, customUser, mockFile, articleId)
         );
 
         verify(memberReader).getByNickname("testuser");
         verify(articleReader, never()).getArticleById(anyLong());
-        verify(categoryReader, never()).getByMemberAndCategoryName(any(Member.class), anyString());
+        verify(categoryReader, never()).getByMemberIdAndCategoryName(any(Member.class), anyString());
         verify(s3Service, never()).upload(any());
         verify(tagService, never()).saveTag(any(List.class), any(Article.class));
     }
@@ -350,12 +352,12 @@ class ArticleServiceTest {
 
         when(memberReader.getByNickname("testuser")).thenReturn(testMember);
         when(articleReader.getArticleById(articleId)).thenReturn(existingArticle);
-        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
+        when(categoryReader.getByMemberIdAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         doNothing().when(tagService).saveTag(anyList(), any(Article.class));
 
         // When
         assertDoesNotThrow(() -> 
-            articleService.updateArticle(updateRequest, customUser, mockFile, articleId)
+            articleWriter.updateArticle(updateRequest, customUser, mockFile, articleId)
         );
 
         // Then
@@ -376,12 +378,12 @@ class ArticleServiceTest {
 
         // When & Then
         assertThrows(CMissingDataException.class, () ->
-            articleService.updateArticle(updateRequest, customUser, mockFile, articleId)
+            articleWriter.updateArticle(updateRequest, customUser, mockFile, articleId)
         );
 
         verify(memberReader).getByNickname("testuser");
         verify(articleReader).getArticleById(articleId);
-        verify(categoryReader, never()).getByMemberAndCategoryName(any(Member.class), anyString());
+        verify(categoryReader, never()).getByMemberIdAndCategoryName(any(Member.class), anyString());
         verify(s3Service, never()).upload(any());
         verify(tagService, never()).saveTag(any(List.class), any(Article.class));
     }
@@ -394,17 +396,17 @@ class ArticleServiceTest {
 
         when(memberReader.getByNickname("testuser")).thenReturn(testMember);
         when(articleReader.getArticleById(articleId)).thenReturn(testArticle);
-        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category"))
+        when(categoryReader.getByMemberIdAndCategoryName(testMember, "Test Category"))
             .thenThrow(new CMissingDataException());
 
         // When & Then
         assertThrows(CMissingDataException.class, () ->
-            articleService.updateArticle(updateRequest, customUser, mockFile, articleId)
+            articleWriter.updateArticle(updateRequest, customUser, mockFile, articleId)
         );
 
         verify(memberReader).getByNickname("testuser");
         verify(articleReader).getArticleById(articleId);
-        verify(categoryReader).getByMemberAndCategoryName(testMember, "Test Category");
+        verify(categoryReader).getByMemberIdAndCategoryName(testMember, "Test Category");
         verify(s3Service, never()).upload(any());
         verify(tagService, never()).saveTag(any(List.class), any(Article.class));
     }
@@ -423,7 +425,7 @@ class ArticleServiceTest {
         doNothing().when(articleRepository).deleteById(articleId);
 
         // When
-        articleService.deleteArticle(articleId, customUser);
+        articleWriter.deleteArticle(articleId, customUser);
 
         // Then
         verify(articleReader).getArticleById(articleId);
@@ -449,7 +451,7 @@ class ArticleServiceTest {
         when(articleReader.getArticleById(articleId)).thenReturn(anotherArticle);
 
         // When & Then
-        assertThatThrownBy(() -> articleService.deleteArticle(articleId, customUser))
+        assertThatThrownBy(() -> articleWriter.deleteArticle(articleId, customUser))
             .isInstanceOf(CUnAuthorizedException.class)
             .hasMessage("허용 되지 않는 유저입니다.");
 
@@ -470,7 +472,7 @@ class ArticleServiceTest {
 
         // When & Then
         assertThrows(CMissingDataException.class, () ->
-            articleService.deleteArticle(articleId, customUser)
+            articleWriter.deleteArticle(articleId, customUser)
         );
 
         verify(articleReader).getArticleById(articleId);
@@ -504,12 +506,12 @@ class ArticleServiceTest {
 
         when(memberReader.getByNickname("testuser")).thenReturn(testMember);
         when(articleReader.getArticleById(articleId)).thenReturn(existingArticle);
-        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
+        when(categoryReader.getByMemberIdAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         doNothing().when(tagService).saveTag(anyList(), any(Article.class));
 
         // When
         assertDoesNotThrow(() -> 
-            articleService.updateArticle(updateRequest, customUser, sameFile, articleId)
+            articleWriter.updateArticle(updateRequest, customUser, sameFile, articleId)
         );
 
         // Then
@@ -534,13 +536,13 @@ class ArticleServiceTest {
 
         when(memberReader.getByNickname("testuser")).thenReturn(testMember);
         when(articleReader.getArticleById(articleId)).thenReturn(existingArticle);
-        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
+        when(categoryReader.getByMemberIdAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         when(s3Service.upload(mockFile)).thenReturn(newImageUrl);
         doNothing().when(tagService).saveTag(anyList(), any(Article.class));
 
         // When
         assertDoesNotThrow(() -> 
-            articleService.updateArticle(updateRequest, customUser, mockFile, articleId)
+            articleWriter.updateArticle(updateRequest, customUser, mockFile, articleId)
         );
 
         // Then
@@ -561,7 +563,7 @@ class ArticleServiceTest {
         );
         String expectedImageUrl = "https://s3.amazonaws.com/bucket/uploaded-file.jpg";
         
-        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
+        when(categoryReader.getByMemberIdAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
         when(s3Service.upload(mockFile)).thenReturn(expectedImageUrl);
         when(articleRepository.save(any(Article.class))).thenReturn(testArticle);
@@ -569,7 +571,7 @@ class ArticleServiceTest {
 
         // When
         assertDoesNotThrow(() -> 
-            articleService.createArticle(requestWithTags, customUser, mockFile)
+            articleWriter.createArticle(requestWithTags, customUser, mockFile)
         );
 
         // Then
@@ -582,7 +584,7 @@ class ArticleServiceTest {
         // Given
         String expectedImageUrl = "https://s3.amazonaws.com/bucket/uploaded-file.jpg";
         
-        when(categoryReader.getByMemberAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
+        when(categoryReader.getByMemberIdAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
         when(s3Service.upload(mockFile)).thenReturn(expectedImageUrl);
         when(articleRepository.save(any(Article.class))).thenReturn(testArticle);
@@ -590,10 +592,10 @@ class ArticleServiceTest {
 
         // When & Then
         assertThrows(RuntimeException.class, () ->
-            articleService.createArticle(createRequest, customUser, mockFile)
+            articleWriter.createArticle(createRequest, customUser, mockFile)
         );
 
-        verify(categoryReader).getByMemberAndCategoryName(testMember, "Test Category");
+        verify(categoryReader).getByMemberIdAndCategoryName(testMember, "Test Category");
         verify(memberReader).getByCustomUser(customUser);
         verify(s3Service).upload(mockFile);
         verify(articleRepository).save(any(Article.class));
@@ -614,7 +616,7 @@ class ArticleServiceTest {
 
         // When & Then
         CUnAuthorizedException exception = assertThrows(CUnAuthorizedException.class, () ->
-            articleService.updateArticle(updateRequest, customUser, mockFile, articleId)
+            articleWriter.updateArticle(updateRequest, customUser, mockFile, articleId)
         );
 
         assertEquals("허용 되지 않는 유저입니다.", exception.getMessage());
@@ -638,7 +640,7 @@ class ArticleServiceTest {
         when(articleReader.getArticleById(articleId)).thenReturn(differentArticle);
 
         // When & Then
-        assertThatThrownBy(()->articleService.deleteArticle(articleId, customUser))
+        assertThatThrownBy(()-> articleWriter.deleteArticle(articleId, customUser))
             .isInstanceOf(CUnAuthorizedException.class)
             .hasMessage("허용 되지 않는 유저입니다.");
 

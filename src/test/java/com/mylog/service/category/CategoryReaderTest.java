@@ -125,13 +125,13 @@ class CategoryReaderTest {
     }
 
     @Test
-    void getByMemberAndCategoryName_성공() {
+    void getByMemberIdAndCategoryName_성공() {
         // Given
         String categoryName = "Test Category";
         when(categoryRepository.findByMemberAndCategoryName(testMember, categoryName)).thenReturn(Optional.of(testCategory));
 
         // When
-        Category result = categoryReader.getByMemberAndCategoryName(testMember, categoryName);
+        Category result = categoryReader.getByMemberIdAndCategoryName(testMember, categoryName);
 
         // Then
         assertThat(result).isEqualTo(testCategory);
@@ -141,13 +141,13 @@ class CategoryReaderTest {
     }
 
     @Test
-    void getByMemberAndCategoryName_카테고리를_찾을_수_없음() {
+    void getByMemberIdAndCategoryName_카테고리를_찾을_수_없음() {
         // Given
         String categoryName = "Non-existent Category";
         when(categoryRepository.findByMemberAndCategoryName(testMember, categoryName)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> categoryReader.getByMemberAndCategoryName(testMember, categoryName))
+        assertThatThrownBy(() -> categoryReader.getByMemberIdAndCategoryName(testMember, categoryName))
                 .isInstanceOf(CMissingDataException.class);
 
         verify(categoryRepository).findByMemberAndCategoryName(testMember, categoryName);
