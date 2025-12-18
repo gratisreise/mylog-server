@@ -1,9 +1,7 @@
-package com.mylog.model.dto.comment;
+package com.mylog.api.comment;
 
-import com.mylog.classes.Reply;
-import com.mylog.model.entity.Comment;
+import com.mylog.domain.entity.Comment;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public record CommentResponse(
     Long id,
@@ -13,10 +11,12 @@ public record CommentResponse(
     LocalDateTime createdAt,
     LocalDateTime updatedAt
 ) {
-    public  CommentResponse (Comment comment) {
-        this(comment.getId(), comment.getContent(),
+    public static CommentResponse from(Comment comment) {
+        return new CommentResponse(
+            comment.getId(), comment.getContent(),
             comment.getMember().getNickname(),
             comment.getMember().getId(),
-            comment.getCreatedAt(), comment.getUpdatedAt());
+            comment.getCreatedAt(), comment.getUpdatedAt()
+        );
     }
 }

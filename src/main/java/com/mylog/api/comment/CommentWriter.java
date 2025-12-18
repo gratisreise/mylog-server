@@ -1,13 +1,10 @@
-package com.mylog.service.comment;
+package com.mylog.api.comment;
 
 import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.dto.comment.CommentCreateRequest;
-import com.mylog.model.dto.comment.CommentUpdateRequest;
 import com.mylog.domain.entity.Article;
-import com.mylog.model.entity.Comment;
+import com.mylog.domain.entity.Comment;
 import com.mylog.domain.entity.Member;
-import com.mylog.repository.comment.CommentRepository;
 import com.mylog.api.article.ArticleReader;
 import com.mylog.api.member.MemberReader;
 import com.mylog.service.notification.NotificationService;
@@ -19,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class CommentService {
+public class CommentWriter {
 
     private final CommentRepository commentRepository;
     private final CommentReader commentReader;
@@ -32,10 +29,10 @@ public class CommentService {
         Article article = articleReader.getArticleById(articleId);
         Member member = memberReader.getById(customUser.getMemberId());
 
-        Comment comment = new Comment(article, member, request);
+        Comment comment = request.toEntity(article, member);
         commentRepository.save(comment);
 
-        //알림 보내기(비동기 적용가능)
+        //게시글 작성자에게 알림을 보냄
         Member articleMember = article.getMember();
         notificationSettingService.createNotificationSetting(articleMember, "comment");
         notificationService.sendNotification(articleMember, article.getId(), "comment");
@@ -44,34 +41,20 @@ public class CommentService {
     public void updateComment(CommentUpdateRequest request, CustomUser customUser, Long commentId) {
         Comment comment = commentReader.getById(commentId);
 
-        if (!validateUpdate(customUser, comment)) {
+        if (!comment.isOwnedBy(customUser.getMemberId())) {
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         }
-        comment.setContent(request.content());
+
+        comment.update(request.content());
     }
 
     public void deleteComment(Long commentId, CustomUser customUser){
-        if (!validateDelete(commentId, customUser)) {
+        Comment comment = commentReader.getById(commentId);
+
+        if (comment.isOwnedBy(customUser.getMemberId())) {
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         }
 
         commentRepository.deleteById(commentId);
-    }
-
-    private boolean validateDelete(Long commentId, CustomUser customUser) {
-        Comment comment = commentReader.getById(commentId);
-        Article article = comment.getArticle();
-
-        long commentMemberId = comment.getMember().getId(); // 댓글 작성자
-        long articleMemberId = article.getMember().getId(); // 게시글 작성자
-        long requestMemberId = customUser.getMemberId();
-
-        return requestMemberId == commentMemberId || requestMemberId == articleMemberId;
-    }
-
-    private boolean validateUpdate(CustomUser customUser, Comment comment) {
-        long commentMemberId = comment.getMember().getId();
-        long requestMemberId = customUser.getMemberId();
-        return commentMemberId == requestMemberId;
     }
 }

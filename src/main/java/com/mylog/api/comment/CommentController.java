@@ -1,15 +1,9 @@
-package com.mylog.controller;
+package com.mylog.api.comment;
 
 import com.mylog.common.CommonResult;
 import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.dto.comment.CommentArticleResponse;
-import com.mylog.model.dto.comment.CommentCreateRequest;
-import com.mylog.model.dto.comment.CommentResponse;
-import com.mylog.model.dto.comment.CommentUpdateRequest;
-import com.mylog.service.comment.CommentReader;
-import com.mylog.service.comment.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class CommentController {
     private final CommentReader commentReader;
-    private final CommentService commentService;
+    private final CommentWriter commentWriter;
 
     @PostMapping("/articles/{articleId}/comments")
     @Operation(summary = "댓글 생성")
@@ -41,7 +35,7 @@ public class CommentController {
         @RequestBody @Valid CommentCreateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        commentService.createComment(articleId, request, customUser);
+        commentWriter.createComment(articleId, request, customUser);
         return ResponseService.getSuccessResult();
     }
 
@@ -62,7 +56,7 @@ public class CommentController {
         @PathVariable Long commentId,
         @AuthenticationPrincipal CustomUser customUser
     ) {
-        commentService.updateComment(request, customUser, commentId);
+        commentWriter.updateComment(request, customUser, commentId);
         return ResponseService.getSuccessResult();
     }
 
@@ -72,7 +66,7 @@ public class CommentController {
         @PathVariable Long commentId,
         @AuthenticationPrincipal CustomUser customUser
     ) {
-        commentService.deleteComment(commentId, customUser);
+        commentWriter.deleteComment(commentId, customUser);
         return ResponseService.getSuccessResult();
     }
 

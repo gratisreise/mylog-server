@@ -45,6 +45,10 @@ public class ArticleReader {
         return new ArticleResponse(article, tags);
     }
 
+    public boolean isExists(Long articleId){
+        return articleRepository.existsById(articleId);
+    }
+
 //    // 전체 게시글 목록조회
 //    @Cacheable(value = "articles", key="#pageable.getPageNumber()")
 //    public PageResponse<ArticleResponse> getArticles(Pageable pageable){

@@ -1,10 +1,8 @@
-package com.mylog.model.dto.comment;
+package com.mylog.api.comment;
 
-import com.mylog.classes.Reply;
-import com.mylog.model.entity.Comment;
+import com.mylog.domain.entity.Comment;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.Getter;
 
 public record CommentArticleResponse(
     Long id,
@@ -15,8 +13,8 @@ public record CommentArticleResponse(
     LocalDateTime updatedAt,
     List<Reply> replies
 ) {
-    public CommentArticleResponse(Comment comment, List<Reply> replies){
-        this(
+    public static CommentArticleResponse of(Comment comment, List<Reply> replies){
+        return new CommentArticleResponse(
             comment.getId(),
             comment.getContent(),
             comment.getMember().getNickname(),

@@ -6,16 +6,18 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.mylog.api.comment.CommentReader;
+import com.mylog.api.comment.CommentWriter;
 import com.mylog.domain.enums.OauthProvider;
 import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.dto.comment.CommentCreateRequest;
-import com.mylog.model.dto.comment.CommentUpdateRequest;
+import com.mylog.api.comment.CommentCreateRequest;
+import com.mylog.api.comment.CommentUpdateRequest;
 import com.mylog.domain.entity.Article;
 import com.mylog.domain.entity.Category;
-import com.mylog.model.entity.Comment;
+import com.mylog.domain.entity.Comment;
 import com.mylog.domain.entity.Member;
-import com.mylog.repository.comment.CommentRepository;
+import com.mylog.api.comment.CommentRepository;
 import com.mylog.api.article.ArticleReader;
 import com.mylog.api.member.MemberReader;
 import com.mylog.service.notification.NotificationService;
@@ -31,10 +33,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class CommentServiceTest {
+class CommentWriterTest {
 
     @InjectMocks
-    private CommentService commentService;
+    private CommentWriter commentWriter;
 
     @Mock
     private CommentRepository commentRepository;
@@ -128,7 +130,7 @@ class CommentServiceTest {
         when(memberReader.getById(1L)).thenReturn(testMember);
 
         // When
-        commentService.createComment(articleId, commentCreateRequest, customUser);
+        commentWriter.createComment(articleId, commentCreateRequest, customUser);
 
         // Then
         ArgumentCaptor<Comment> commentCaptor = ArgumentCaptor.forClass(Comment.class);
@@ -152,7 +154,7 @@ class CommentServiceTest {
         when(commentReader.getById(commentId)).thenReturn(testComment);
 
         // When
-        commentService.updateComment(commentUpdateRequest, customUser, commentId);
+        commentWriter.updateComment(commentUpdateRequest, customUser, commentId);
 
         // Then
         verify(commentReader).getById(commentId);
@@ -175,7 +177,7 @@ class CommentServiceTest {
         when(commentReader.getById(commentId)).thenReturn(commentByOther);
 
         // When & Then
-        assertThatThrownBy(() -> commentService.updateComment(commentUpdateRequest, customUser, commentId))
+        assertThatThrownBy(() -> commentWriter.updateComment(commentUpdateRequest, customUser, commentId))
                 .isInstanceOf(CUnAuthorizedException.class)
                 .hasMessage("허용되지 않는 유저입니다.");
 
@@ -190,7 +192,7 @@ class CommentServiceTest {
         when(commentReader.getById(commentId)).thenReturn(testComment);
 
         // When
-        commentService.deleteComment(commentId, customUser);
+        commentWriter.deleteComment(commentId, customUser);
 
         // Then
         verify(commentRepository).deleteById(commentId);
@@ -216,7 +218,7 @@ class CommentServiceTest {
         when(commentReader.getById(commentId)).thenReturn(commentOnMyArticle);
 
         // When
-        commentService.deleteComment(commentId, customUser);
+        commentWriter.deleteComment(commentId, customUser);
 
         // Then - 게시글 작성자가 다른 사용자의 댓글을 삭제할 수 있음
         verify(commentRepository).deleteById(commentId);
@@ -249,7 +251,7 @@ class CommentServiceTest {
         when(commentReader.getById(commentId)).thenReturn(otherComment);
 
         // When & Then
-        assertThatThrownBy(() -> commentService.deleteComment(commentId, customUser))
+        assertThatThrownBy(() -> commentWriter.deleteComment(commentId, customUser))
                 .isInstanceOf(CUnAuthorizedException.class)
                 .hasMessage("허용되지 않는 유저입니다.");
 
