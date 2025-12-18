@@ -1,6 +1,7 @@
 package com.mylog.model.entity;
 
 import com.mylog.domain.entity.Article;
+import com.mylog.domain.entity.Member;
 import com.mylog.model.dto.comment.CommentCreateRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

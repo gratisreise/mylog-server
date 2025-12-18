@@ -1,4 +1,4 @@
-package com.mylog.article;
+package com.mylog.api.article;
 
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;

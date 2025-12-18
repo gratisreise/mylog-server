@@ -1,8 +1,7 @@
-package com.mylog.model.entity;
+package com.mylog.domain.entity;
 
-import com.mylog.model.dto.member.SignUpRequest;
-import com.mylog.model.dto.member.UpdateMemberRequest;
-import com.mylog.enums.OauthProvider;
+import com.mylog.api.member.UpdateMemberRequest;
+import com.mylog.domain.enums.OauthProvider;
 import com.mylog.model.dto.social.OAuth2UserInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,17 +13,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -32,12 +28,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @Builder
 @Getter
-@Setter
 @Table(indexes = {
     @Index(name = "idx_provider_providerId", columnList = "provider,providerId", unique = true)
 })
-@ToString
-public class Member {
+public class Member extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -66,24 +60,9 @@ public class Member {
     @Column(length = 200)
     private String providerId;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
-    public Member(SignUpRequest request, String cryptedPassword, String basicImageUrl) {
-        this.email = request.email();
-        this.memberName = request.memberName();
-        this.nickname = request.email();
-        this.providerId = request.email() + OauthProvider.LOCAL;
-        this.provider = OauthProvider.LOCAL;
-        this.profileImg = basicImageUrl;
-        this.password = cryptedPassword;
-    }
-
-    public void update(UpdateMemberRequest request) {
-        this.password = request.password() == null ? this.password : request.password();
+    public void update(UpdateMemberRequest request, PasswordEncoder encoder) {
+        String password = request.password();
+        this.password = password == null ? this.password : encoder.encode(password);
         this.memberName = request.memberName();
         this.nickname = request.nickname();
         this.bio = request.bio();
@@ -104,5 +83,9 @@ public class Member {
         this.password = userInfo.getId() + UUID.randomUUID();
         this.nickname = userInfo.getId() + oauthProvider;
         this.profileImg = userInfo.getImageUrl();
+    }
+
+    public boolean isOwnedBy(Long memberId) {
+        return Objects.equals(id, memberId);
     }
 }

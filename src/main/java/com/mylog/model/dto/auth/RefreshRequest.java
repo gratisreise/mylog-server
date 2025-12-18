@@ -1,6 +1,6 @@
 package com.mylog.model.dto.auth;
 
-import com.mylog.enums.OauthProvider;
+import com.mylog.domain.enums.OauthProvider;
 import jakarta.validation.constraints.NotBlank;
 
 public record RefreshRequest(

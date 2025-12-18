@@ -1,14 +1,9 @@
-package com.mylog.controller;
+package com.mylog.api.member;
 
 import com.mylog.common.CommonResult;
 import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.dto.member.MemberResponse;
-import com.mylog.model.dto.member.SignUpRequest;
-import com.mylog.model.dto.member.UpdateMemberRequest;
-import com.mylog.service.member.MemberReader;
-import com.mylog.service.member.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -31,13 +26,13 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class MemberController {
     private final MemberReader memberReader;
-    private final MemberService memberService;
+    private final MemberWriter memberWriter;
 
     //회원가입
     @PostMapping("/sign-up")
     @Operation(summary = "회원가입")
     public CommonResult signUp(@RequestBody @Valid SignUpRequest request){
-        memberService.saveMember(request);
+        memberWriter.saveMember(request);
         return ResponseService.getSuccessResult();
     }
 
@@ -56,9 +51,7 @@ public class MemberController {
         @RequestPart(required = false, value="file") MultipartFile file,
         @AuthenticationPrincipal CustomUser customUser
     ) throws IOException {
-        log.info("request: {}", request.toString());
-        log.info("{}", customUser);
-        memberService.updateMember(request, customUser, file);
+        memberWriter.updateMember(request, customUser, file);
         return ResponseService.getSuccessResult();
     }
 
@@ -67,8 +60,7 @@ public class MemberController {
     @DeleteMapping("/me")
     @Operation(summary = "개인정보삭제")
     public CommonResult deleteMember(@AuthenticationPrincipal CustomUser customUser){
-        log.info("{}", customUser);
-        memberService.deleteMember(customUser);
+        memberWriter.deleteMember(customUser);
         return ResponseService.getSuccessResult();
     }
 

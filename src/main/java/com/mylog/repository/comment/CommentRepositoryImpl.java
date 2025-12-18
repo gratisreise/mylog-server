@@ -1,7 +1,7 @@
 package com.mylog.repository.comment;
 
 import com.mylog.model.entity.Comment;
-import com.mylog.model.entity.Member;
+import com.mylog.domain.entity.Member;
 import com.mylog.model.entity.QArticle;
 import com.mylog.model.entity.QComment;
 import com.mylog.model.entity.QMember;

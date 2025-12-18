@@ -9,12 +9,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.mylog.enums.OauthProvider;
+import com.mylog.api.member.MemberReader;
+import com.mylog.domain.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.dto.member.MemberResponse;
-import com.mylog.model.entity.Member;
-import com.mylog.repository.member.MemberRepository;
+import com.mylog.api.member.MemberResponse;
+import com.mylog.domain.entity.Member;
+import com.mylog.api.member.MemberRepository;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;

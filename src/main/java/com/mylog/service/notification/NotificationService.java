@@ -1,6 +1,6 @@
 package com.mylog.service.notification;
 
-import com.mylog.model.entity.Member;
+import com.mylog.domain.entity.Member;
 import com.mylog.model.entity.Notification;
 import com.mylog.repository.notification.NotificationRepository;
 import com.mylog.service.notificationsetting.NotificationSettingReader;

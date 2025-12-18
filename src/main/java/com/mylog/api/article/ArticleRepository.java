@@ -1,7 +1,7 @@
-package com.mylog.article;
+package com.mylog.api.article;
 
 import com.mylog.domain.entity.Article;
-import com.mylog.model.entity.Member;
+import com.mylog.domain.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

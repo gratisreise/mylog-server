@@ -1,10 +1,10 @@
-package com.mylog.article;
+package com.mylog.api.article;
 
 import com.mylog.domain.entity.Article;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.entity.Member;
-import com.mylog.service.member.MemberReader;
+import com.mylog.domain.entity.Member;
+import com.mylog.api.member.MemberReader;
 import com.mylog.service.tag.TagReader;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

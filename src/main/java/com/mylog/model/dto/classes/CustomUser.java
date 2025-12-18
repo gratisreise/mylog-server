@@ -1,7 +1,7 @@
 package com.mylog.model.dto.classes;
 
-import com.mylog.model.entity.Member;
-import com.mylog.enums.OauthProvider;
+import com.mylog.domain.entity.Member;
+import com.mylog.domain.enums.OauthProvider;
 import java.util.Collection;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

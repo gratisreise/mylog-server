@@ -1,6 +1,6 @@
 package com.mylog.repository.notificationsetting;
 
-import com.mylog.model.entity.Member;
+import com.mylog.domain.entity.Member;
 import com.mylog.model.entity.NotificationSetting;
 import java.util.List;
 import java.util.Optional;

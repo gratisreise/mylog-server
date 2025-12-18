@@ -7,14 +7,14 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.mylog.enums.OauthProvider;
+import com.mylog.domain.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.category.CategoryResponse;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Category;
-import com.mylog.model.entity.Member;
+import com.mylog.domain.entity.Member;
 import com.mylog.repository.category.CategoryRepository;
-import com.mylog.service.member.MemberReader;
+import com.mylog.api.member.MemberReader;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;

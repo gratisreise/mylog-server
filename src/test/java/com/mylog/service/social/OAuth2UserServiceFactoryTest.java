@@ -3,7 +3,7 @@ package com.mylog.service.social;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.mylog.enums.OauthProvider;
+import com.mylog.domain.enums.OauthProvider;
 import com.mylog.exception.CInvalidDataException;
 import com.mylog.service.social.google.GoogleOAuth2UserService;
 import com.mylog.service.social.kakao.KakaoOAuth2UserService;

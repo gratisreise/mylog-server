@@ -1,6 +1,6 @@
 package com.mylog.annotations;
 
-import com.mylog.enums.OauthProvider;
+import com.mylog.domain.enums.OauthProvider;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

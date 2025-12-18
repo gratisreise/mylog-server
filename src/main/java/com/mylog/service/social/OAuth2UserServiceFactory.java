@@ -1,7 +1,7 @@
 package com.mylog.service.social;
 
 import com.mylog.annotations.OAuth2ServiceType;
-import com.mylog.enums.OauthProvider;
+import com.mylog.domain.enums.OauthProvider;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

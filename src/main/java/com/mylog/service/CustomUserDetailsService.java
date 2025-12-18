@@ -1,8 +1,8 @@
 package com.mylog.service;
 
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.entity.Member;
-import com.mylog.service.member.MemberReader;
+import com.mylog.domain.entity.Member;
+import com.mylog.api.member.MemberReader;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,9 +1,8 @@
 package com.mylog.domain.entity;
 
 
-import com.mylog.article.ArticleUpdateRequest;
+import com.mylog.api.article.ArticleUpdateRequest;
 import com.mylog.model.entity.Category;
-import com.mylog.model.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

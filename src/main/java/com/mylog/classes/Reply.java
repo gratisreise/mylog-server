@@ -1,7 +1,7 @@
 package com.mylog.classes;
 
 import com.mylog.model.entity.Comment;
-import com.mylog.model.entity.Member;
+import com.mylog.domain.entity.Member;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package com.mylog.repository.member;
+package com.mylog.api.member;
 
 public interface MemberRepositoryCustom  {
 }

@@ -2,15 +2,15 @@ package com.mylog.service.social.google;
 
 import com.mylog.annotations.OAuth2ServiceType;
 import com.mylog.config.JwtUtil;
-import com.mylog.enums.OauthProvider;
+import com.mylog.domain.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.social.OAuth2UserInfo;
 import com.mylog.model.dto.social.OAuthRequest;
 import com.mylog.model.dto.social.google.GoogleOAuth2UserInfo;
 import com.mylog.model.dto.social.google.GoogleTokenResponse;
 import com.mylog.model.dto.social.google.GoogleUserInfo;
-import com.mylog.model.entity.Member;
-import com.mylog.repository.member.MemberRepository;
+import com.mylog.domain.entity.Member;
+import com.mylog.api.member.MemberRepository;
 import com.mylog.service.RefreshTokenService;
 import com.mylog.service.category.CategoryService;
 import com.mylog.service.social.AbstractOAuth2UserService;
@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @OAuth2ServiceType(OauthProvider.GOOGLE)

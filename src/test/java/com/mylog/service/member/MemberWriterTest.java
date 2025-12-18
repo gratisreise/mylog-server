@@ -10,13 +10,15 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.mylog.api.member.MemberReader;
+import com.mylog.api.member.MemberWriter;
 import com.mylog.exception.CDuplicatedException;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.dto.member.SignUpRequest;
-import com.mylog.model.dto.member.UpdateMemberRequest;
-import com.mylog.model.entity.Member;
-import com.mylog.repository.member.MemberRepository;
+import com.mylog.api.member.SignUpRequest;
+import com.mylog.api.member.UpdateMemberRequest;
+import com.mylog.domain.entity.Member;
+import com.mylog.api.member.MemberRepository;
 import com.mylog.service.S3Service;
 import com.mylog.service.category.CategoryService;
 import java.io.IOException;
@@ -35,10 +37,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
-class MemberServiceTest {
+class MemberWriterTest {
 
     @InjectMocks
-    private MemberService memberService;
+    private MemberWriter memberWriter;
 
     @Mock
     private MemberRepository memberRepository;
@@ -69,7 +71,7 @@ class MemberServiceTest {
                 .profileImg("https://mylog-imgsource.s3.ap-northeast-2.amazonaws.com/5162d5b3-266b-4aae-bc16-d7f10fc4b2f1_default.jpg")
                 .build();
         customUser = new CustomUser(member, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
-        ReflectionTestUtils.setField(memberService, "basicImageUrl", BASIC_IMAGE_URL);
+        ReflectionTestUtils.setField(memberWriter, "basicImageUrl", BASIC_IMAGE_URL);
     }
 
     @Test
@@ -82,7 +84,7 @@ class MemberServiceTest {
         doNothing().when(categoryService).createCategory(anyString());
 
         // When
-        memberService.saveMember(request);
+        memberWriter.saveMember(request);
 
         // Then
         verify(memberRepository, times(1)).save(any(Member.class));
@@ -97,7 +99,7 @@ class MemberServiceTest {
         when(memberRepository.existsByEmail(anyString())).thenReturn(true);
 
         // When & Then
-        assertThatThrownBy(() -> memberService.saveMember(request))
+        assertThatThrownBy(() -> memberWriter.saveMember(request))
                 .isInstanceOf(CDuplicatedException.class)
                 .hasMessage("이미 존재하는 이메일입니다.");
     }
@@ -111,7 +113,7 @@ class MemberServiceTest {
         when(passwordEncoder.encode(anyString())).thenReturn(null);
 
         // When & Then
-        assertThatThrownBy(() -> memberService.saveMember(request))
+        assertThatThrownBy(() -> memberWriter.saveMember(request))
                 .isInstanceOf(CMissingDataException.class)
                 .hasMessage("비밀번호 암호화를 실패했습니다.");
     }
@@ -130,7 +132,7 @@ class MemberServiceTest {
         when(s3Service.upload(any(MultipartFile.class))).thenReturn("http\\://example.com/new.jpg");
 
         // When
-        memberService.updateMember(request, customUser, file);
+        memberWriter.updateMember(request, customUser, file);
 
         // Then
         verify(passwordEncoder, times(1)).encode("newPassword123!");
@@ -150,7 +152,7 @@ class MemberServiceTest {
         when(passwordEncoder.encode(anyString())).thenReturn("newEncodedPassword");
 
         // When
-        memberService.updateMember(request, customUser, file);
+        memberWriter.updateMember(request, customUser, file);
 
         // Then
         verify(passwordEncoder, times(1)).encode("newPassword123!");
@@ -171,7 +173,7 @@ class MemberServiceTest {
         when(s3Service.upload(any(MultipartFile.class))).thenReturn("http\\://example.com/new.jpg");
 
         // When
-        memberService.updateMember(request, customUser, file);
+        memberWriter.updateMember(request, customUser, file);
 
         // Then
         verify(passwordEncoder, times(1)).encode("newPassword123!");
@@ -189,7 +191,7 @@ class MemberServiceTest {
         when(memberRepository.existsByNickname(anyString())).thenReturn(true);
 
         // When & Then
-        assertThatThrownBy(() -> memberService.updateMember(request, customUser, file))
+        assertThatThrownBy(() -> memberWriter.updateMember(request, customUser, file))
                 .isInstanceOf(CDuplicatedException.class)
                 .hasMessage("중복되는 닉네임 입니다.");
     }
@@ -203,7 +205,7 @@ class MemberServiceTest {
         doNothing().when(s3Service).deleteImage(anyString());
 
         // When
-        memberService.deleteMember(customUser);
+        memberWriter.deleteMember(customUser);
 
         // Then
         verify(memberRepository, times(1)).deleteById(1L);
@@ -218,7 +220,7 @@ class MemberServiceTest {
         when(memberReader.getById(1L)).thenReturn(member);
 
         // When
-        memberService.deleteMember(customUser);
+        memberWriter.deleteMember(customUser);
 
         // Then
         verify(memberRepository, times(1)).deleteById(1L);

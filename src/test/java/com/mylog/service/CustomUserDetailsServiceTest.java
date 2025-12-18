@@ -6,11 +6,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.mylog.enums.OauthProvider;
+import com.mylog.domain.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.entity.Member;
-import com.mylog.service.member.MemberReader;
+import com.mylog.domain.entity.Member;
+import com.mylog.api.member.MemberReader;
 import java.util.Collection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

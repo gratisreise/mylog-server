@@ -7,9 +7,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.mylog.enums.OauthProvider;
+import com.mylog.domain.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
-import com.mylog.model.entity.Member;
+import com.mylog.domain.entity.Member;
 import com.mylog.model.entity.Notification;
 import com.mylog.repository.notification.NotificationRepository;
 import com.mylog.service.notificationsetting.NotificationSettingReader;

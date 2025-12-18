@@ -1,4 +1,4 @@
-package com.mylog.enums;
+package com.mylog.domain.enums;
 
 public enum OauthProvider {
     LOCAL,

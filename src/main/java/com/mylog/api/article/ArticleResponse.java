@@ -1,4 +1,4 @@
-package com.mylog.article;
+package com.mylog.api.article;
 
 import com.mylog.domain.entity.Article;
 import java.time.LocalDateTime;

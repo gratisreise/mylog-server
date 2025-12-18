@@ -1,4 +1,4 @@
-package com.mylog.article;
+package com.mylog.api.article;
 
 
 import com.mylog.common.CommonResult;

@@ -1,10 +1,8 @@
-package com.mylog.service.member;
+package com.mylog.api.member;
 
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.dto.member.MemberResponse;
-import com.mylog.model.entity.Member;
-import com.mylog.repository.member.MemberRepository;
+import com.mylog.domain.entity.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

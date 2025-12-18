@@ -7,10 +7,11 @@ import com.mylog.model.dto.category.CategoryCreateRequest;
 import com.mylog.model.dto.category.CategoryUpdateRequest;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Category;
-import com.mylog.model.entity.Member;
+import com.mylog.domain.entity.Member;
 import com.mylog.repository.category.CategoryRepository;
-import com.mylog.service.member.MemberReader;
+import com.mylog.api.member.MemberReader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,8 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
+
+    @Async
     public void createCategory(String email){
         Member member = memberReader.getByEmail(email);
         Category category = new Category(member, CommonValue.ORIGIN_CATEGORY);

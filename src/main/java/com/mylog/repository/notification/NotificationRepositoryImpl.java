@@ -1,6 +1,6 @@
 package com.mylog.repository.notification;
 
-import com.mylog.model.entity.Member;
+import com.mylog.domain.entity.Member;
 import com.mylog.model.entity.Notification;
 import com.mylog.model.entity.QNotification;
 import com.mylog.model.entity.QNotificationSetting;

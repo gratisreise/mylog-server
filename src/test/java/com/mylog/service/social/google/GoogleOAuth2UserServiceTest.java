@@ -8,15 +8,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.mylog.config.JwtUtil;
-import com.mylog.enums.OauthProvider;
+import com.mylog.domain.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.social.OAuth2UserInfo;
 import com.mylog.model.dto.social.OAuthRequest;
 import com.mylog.model.dto.social.google.GoogleOAuth2UserInfo;
 import com.mylog.model.dto.social.google.GoogleTokenResponse;
 import com.mylog.model.dto.social.google.GoogleUserInfo;
-import com.mylog.model.entity.Member;
-import com.mylog.repository.member.MemberRepository;
+import com.mylog.domain.entity.Member;
+import com.mylog.api.member.MemberRepository;
 import com.mylog.service.RefreshTokenService;
 import java.util.Map;
 import java.util.Optional;

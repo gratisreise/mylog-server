@@ -1,16 +1,15 @@
 
-package com.mylog.article;
+package com.mylog.api.article;
 
 import com.mylog.domain.entity.Article;
 import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.model.entity.Category;
-import com.mylog.model.entity.Member;
-import com.mylog.repository.articletag.ArticleTagRepository;
+import com.mylog.domain.entity.Member;
 import com.mylog.service.S3Service;
 import com.mylog.service.articletag.ArticleTagWriter;
 import com.mylog.service.category.CategoryReader;
-import com.mylog.service.member.MemberReader;
+import com.mylog.api.member.MemberReader;
 import com.mylog.service.tag.TagService;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;

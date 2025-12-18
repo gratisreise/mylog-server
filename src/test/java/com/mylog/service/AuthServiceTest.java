@@ -9,15 +9,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.mylog.config.JwtUtil;
-import com.mylog.enums.OauthProvider;
+import com.mylog.domain.enums.OauthProvider;
 import com.mylog.exception.CInvalidDataException;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.auth.LoginRequest;
 import com.mylog.model.dto.auth.LoginResponse;
 import com.mylog.model.dto.auth.RefreshRequest;
 import com.mylog.model.dto.auth.RefreshResponse;
-import com.mylog.model.entity.Member;
-import com.mylog.service.member.MemberReader;
+import com.mylog.domain.entity.Member;
+import com.mylog.api.member.MemberReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

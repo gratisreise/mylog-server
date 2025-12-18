@@ -1,8 +1,8 @@
-package com.mylog.model.dto.member;
+package com.mylog.api.member;
 
 
-import com.mylog.enums.OauthProvider;
-import com.mylog.model.entity.Member;
+import com.mylog.domain.enums.OauthProvider;
+import com.mylog.domain.entity.Member;
 import java.time.LocalDateTime;
 
 public record MemberResponse(
