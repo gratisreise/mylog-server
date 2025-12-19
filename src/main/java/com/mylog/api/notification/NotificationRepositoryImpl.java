@@ -1,7 +1,7 @@
-package com.mylog.repository.notification;
+package com.mylog.api.notification;
 
 import com.mylog.domain.entity.Member;
-import com.mylog.model.entity.Notification;
+import com.mylog.domain.entity.Notification;
 import com.mylog.model.entity.QNotification;
 import com.mylog.model.entity.QNotificationSetting;
 import com.querydsl.jpa.impl.JPAQueryFactory;

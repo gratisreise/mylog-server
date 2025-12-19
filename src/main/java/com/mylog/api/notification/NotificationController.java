@@ -1,12 +1,9 @@
-package com.mylog.controller;
+package com.mylog.api.notification;
 
 import com.mylog.common.CommonResult;
 import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.dto.notification.NotificationResponse;
-import com.mylog.service.notification.NotificationReader;
-import com.mylog.service.notification.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
-    private final NotificationService notificationService;
+    private final NotificationWriter notificationWriter;
     private final NotificationReader notificationReader;
     //알림 조회
     @GetMapping
@@ -39,7 +36,7 @@ public class NotificationController {
     @PutMapping("/{id}")
     @Operation(summary = "알림 읽기")
     public CommonResult readNotification(@PathVariable Long id){
-        notificationService.readNotification(id);
+        notificationWriter.readNotification(id);
         return ResponseService.getSuccessResult();
     }
 

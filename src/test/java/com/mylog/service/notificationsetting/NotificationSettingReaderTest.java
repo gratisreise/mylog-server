@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.dto.notification.NotificationSettingResponse;
+import com.mylog.api.notification.NotificationSettingResponse;
 import com.mylog.domain.entity.Member;
 import com.mylog.model.entity.NotificationSetting;
 import com.mylog.repository.notificationsetting.NotificationSettingRepository;

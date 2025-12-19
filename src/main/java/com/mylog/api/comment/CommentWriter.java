@@ -7,7 +7,7 @@ import com.mylog.domain.entity.Comment;
 import com.mylog.domain.entity.Member;
 import com.mylog.api.article.ArticleReader;
 import com.mylog.api.member.MemberReader;
-import com.mylog.service.notification.NotificationService;
+import com.mylog.api.notification.NotificationWriter;
 import com.mylog.service.notificationsetting.NotificationSettingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class CommentWriter {
     private final CommentReader commentReader;
     private final MemberReader memberReader;
     private final ArticleReader articleReader;
-    private final NotificationService notificationService;
+    private final NotificationWriter notificationWriter;
     private final NotificationSettingService notificationSettingService;
 
     public void createComment(Long articleId, CommentCreateRequest request, CustomUser customUser) {
@@ -35,7 +35,7 @@ public class CommentWriter {
         //게시글 작성자에게 알림을 보냄
         Member articleMember = article.getMember();
         notificationSettingService.createNotificationSetting(articleMember, "comment");
-        notificationService.sendNotification(articleMember, article.getId(), "comment");
+        notificationWriter.sendNotification(articleMember, article.getId(), "comment");
     }
 
     public void updateComment(CommentUpdateRequest request, CustomUser customUser, Long commentId) {

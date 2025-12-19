@@ -1,6 +1,6 @@
-package com.mylog.repository.notification;
+package com.mylog.api.notification;
 
-import com.mylog.model.entity.Notification;
+import com.mylog.domain.entity.Notification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -7,11 +7,13 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.mylog.api.notification.NotificationReader;
+import com.mylog.api.notification.NotificationWriter;
 import com.mylog.domain.enums.OauthProvider;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.domain.entity.Member;
-import com.mylog.model.entity.Notification;
-import com.mylog.repository.notification.NotificationRepository;
+import com.mylog.domain.entity.Notification;
+import com.mylog.api.notification.NotificationRepository;
 import com.mylog.service.notificationsetting.NotificationSettingReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,10 +27,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 
 @ExtendWith(MockitoExtension.class)
-public class NotificationServiceTest {
+public class NotificationWriterTest {
 
     @InjectMocks
-    private NotificationService notificationService;
+    private NotificationWriter notificationWriter;
 
     @Mock
     private NotificationRepository notificationRepository;
@@ -84,7 +86,7 @@ public class NotificationServiceTest {
             when(notificationSettingReader.isDisabled(testMember, TEST_TYPE)).thenReturn(false);
 
             // When
-            notificationService.sendNotification(testMember, TEST_RELATED_ID, TEST_TYPE);
+            notificationWriter.sendNotification(testMember, TEST_RELATED_ID, TEST_TYPE);
 
             // Then
             ArgumentCaptor<Notification> notificationCaptor = ArgumentCaptor.forClass(Notification.class);
@@ -104,7 +106,7 @@ public class NotificationServiceTest {
             when(notificationSettingReader.isDisabled(testMember, TEST_TYPE)).thenReturn(true);
 
             // When
-            notificationService.sendNotification(testMember, TEST_RELATED_ID, TEST_TYPE);
+            notificationWriter.sendNotification(testMember, TEST_RELATED_ID, TEST_TYPE);
 
             // Then
             verify(notificationRepository, never()).save(any(Notification.class));
@@ -122,7 +124,7 @@ public class NotificationServiceTest {
             when(notificationReader.getById(TEST_NOTIFICATION_ID)).thenReturn(testNotification);
 
             // When
-            notificationService.readNotification(TEST_NOTIFICATION_ID);
+            notificationWriter.readNotification(TEST_NOTIFICATION_ID);
 
             // Then
             verify(notificationReader).getById(TEST_NOTIFICATION_ID);
@@ -136,7 +138,7 @@ public class NotificationServiceTest {
             when(notificationReader.getById(nonExistId)).thenThrow(CMissingDataException.class);
 
             // When & Then
-            assertThatThrownBy(() -> notificationService.readNotification(nonExistId))
+            assertThatThrownBy(() -> notificationWriter.readNotification(nonExistId))
                 .isInstanceOf(CMissingDataException.class);
             verify(notificationReader).getById(nonExistId);
         }

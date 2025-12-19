@@ -1,7 +1,7 @@
-package com.mylog.model.dto.notification;
+package com.mylog.api.notification;
 
-import com.mylog.model.entity.Notification;
 
+import com.mylog.domain.entity.Notification;
 
 public record NotificationResponse(String message, Long notificationId, Long articleId, String type) {
 

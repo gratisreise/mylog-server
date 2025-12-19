@@ -20,7 +20,7 @@ import com.mylog.domain.entity.Member;
 import com.mylog.api.comment.CommentRepository;
 import com.mylog.api.article.ArticleReader;
 import com.mylog.api.member.MemberReader;
-import com.mylog.service.notification.NotificationService;
+import com.mylog.api.notification.NotificationWriter;
 import com.mylog.service.notificationsetting.NotificationSettingService;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -51,7 +51,7 @@ class CommentWriterTest {
     private ArticleReader articleReader;
 
     @Mock
-    private NotificationService notificationService;
+    private NotificationWriter notificationWriter;
 
     @Mock
     private NotificationSettingService notificationSettingService;

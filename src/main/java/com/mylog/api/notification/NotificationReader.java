@@ -1,11 +1,9 @@
-package com.mylog.service.notification;
+package com.mylog.api.notification;
 
+import com.mylog.domain.entity.Notification;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.model.dto.notification.NotificationResponse;
 import com.mylog.domain.entity.Member;
-import com.mylog.model.entity.Notification;
-import com.mylog.repository.notification.NotificationRepository;
 import com.mylog.api.member.MemberReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
