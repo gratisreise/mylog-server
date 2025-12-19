@@ -9,12 +9,13 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.mylog.api.notificationsetting.NotificationSettingReader;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.api.notification.NotificationSettingResponse;
 import com.mylog.domain.entity.Member;
-import com.mylog.model.entity.NotificationSetting;
-import com.mylog.repository.notificationsetting.NotificationSettingRepository;
+import com.mylog.domain.entity.NotificationSetting;
+import com.mylog.api.notificationsetting.NotificationSettingRepository;
 import com.mylog.api.member.MemberReader;
 import java.util.Collections;
 import java.util.List;

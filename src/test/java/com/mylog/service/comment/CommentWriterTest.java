@@ -21,7 +21,7 @@ import com.mylog.api.comment.CommentRepository;
 import com.mylog.api.article.ArticleReader;
 import com.mylog.api.member.MemberReader;
 import com.mylog.api.notification.NotificationWriter;
-import com.mylog.service.notificationsetting.NotificationSettingService;
+import com.mylog.api.notificationsetting.NotificationSettingWriter;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +54,7 @@ class CommentWriterTest {
     private NotificationWriter notificationWriter;
 
     @Mock
-    private NotificationSettingService notificationSettingService;
+    private NotificationSettingWriter notificationSettingWriter;
 
     private CustomUser customUser;
     private Member testMember;

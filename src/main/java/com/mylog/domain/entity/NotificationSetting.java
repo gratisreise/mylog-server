@@ -1,7 +1,6 @@
-package com.mylog.model.entity;
+package com.mylog.domain.entity;
 
 
-import com.mylog.domain.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

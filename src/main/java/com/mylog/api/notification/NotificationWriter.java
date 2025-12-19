@@ -2,7 +2,7 @@ package com.mylog.api.notification;
 
 import com.mylog.domain.entity.Member;
 import com.mylog.domain.entity.Notification;
-import com.mylog.service.notificationsetting.NotificationSettingReader;
+import com.mylog.api.notificationsetting.NotificationSettingReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

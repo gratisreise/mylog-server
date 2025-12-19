@@ -1,10 +1,9 @@
-package com.mylog.service.notificationsetting;
+package com.mylog.api.notificationsetting;
 
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.domain.entity.Member;
-import com.mylog.model.entity.NotificationSetting;
-import com.mylog.repository.notificationsetting.NotificationSettingRepository;
+import com.mylog.domain.entity.NotificationSetting;
 import com.mylog.api.member.MemberReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
@@ -14,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class NotificationSettingService {
+public class NotificationSettingWriter {
     private final NotificationSettingRepository notificationSettingRepository;
     private final MemberReader memberReader;
 

@@ -14,7 +14,7 @@ import com.mylog.exception.CMissingDataException;
 import com.mylog.domain.entity.Member;
 import com.mylog.domain.entity.Notification;
 import com.mylog.api.notification.NotificationRepository;
-import com.mylog.service.notificationsetting.NotificationSettingReader;
+import com.mylog.api.notificationsetting.NotificationSettingReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
