@@ -22,7 +22,11 @@ public class NotificationWriter {
          if(notificationSettingReader.isDisabled(member, type)) return;
 
         //알림생성
-        Notification notification = new Notification(member, relatedId, type);
+        Notification notification = Notification.builder()
+            .member(member)
+            .relatedId(relatedId)
+            .type(type)
+            .build();
 
         notificationRepository.save(notification);
     }

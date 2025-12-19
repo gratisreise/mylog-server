@@ -28,7 +28,7 @@ public class NotificationReader {
         Member member = memberReader.getByCustomUser(customUser);
         return notificationRepository
             .findByMemberAndRead(member, pageable)
-            .map(NotificationResponse::new);
+            .map(NotificationResponse::from);
     };
 
 }
