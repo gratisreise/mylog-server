@@ -1,3 +1,3 @@
-package com.mylog.model.dto.auth;
+package com.mylog.api.member;
 
 public record RefreshResponse (String accessToken){}

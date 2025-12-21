@@ -1,4 +1,4 @@
-package com.mylog.model.dto.auth;
+package com.mylog.api.member;
 
 import com.mylog.domain.enums.OauthProvider;
 import jakarta.validation.constraints.NotBlank;

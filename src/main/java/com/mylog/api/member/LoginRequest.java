@@ -1,4 +1,4 @@
-package com.mylog.model.dto.auth;
+package com.mylog.api.member;
 
 import org.hibernate.validator.constraints.Length;
 

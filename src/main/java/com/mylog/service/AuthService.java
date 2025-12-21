@@ -1,11 +1,11 @@
 package com.mylog.service;
 
+import com.mylog.api.member.LoginRequest;
+import com.mylog.api.member.LoginResponse;
+import com.mylog.api.member.RefreshRequest;
+import com.mylog.api.member.RefreshResponse;
 import com.mylog.config.JwtUtil;
 import com.mylog.exception.CInvalidDataException;
-import com.mylog.model.dto.auth.LoginRequest;
-import com.mylog.model.dto.auth.LoginResponse;
-import com.mylog.model.dto.auth.RefreshRequest;
-import com.mylog.model.dto.auth.RefreshResponse;
 import com.mylog.domain.entity.Member;
 import com.mylog.api.member.MemberReader;
 import lombok.RequiredArgsConstructor;
