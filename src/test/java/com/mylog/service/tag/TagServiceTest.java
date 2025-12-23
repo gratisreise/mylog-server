@@ -7,9 +7,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.mylog.api.tag.TagReader;
+import com.mylog.api.tag.TagService;
 import com.mylog.domain.entity.Article;
-import com.mylog.model.entity.ArticleTag;
-import com.mylog.model.entity.Tag;
+import com.mylog.domain.entity.ArticleTag;
+import com.mylog.domain.entity.Tag;
 import com.mylog.repository.tag.TagRepository;
 import com.mylog.service.articletag.ArticleTagWriter;
 import java.util.Arrays;

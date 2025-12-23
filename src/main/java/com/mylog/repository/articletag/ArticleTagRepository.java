@@ -1,8 +1,8 @@
 package com.mylog.repository.articletag;
 
 import com.mylog.domain.entity.Article;
-import com.mylog.model.entity.ArticleTag;
-import com.mylog.model.entity.compositekey.ArticleTagId;
+import com.mylog.domain.entity.ArticleTag;
+import com.mylog.domain.entity.ArticleTagId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

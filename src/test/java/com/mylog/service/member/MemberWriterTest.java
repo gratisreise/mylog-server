@@ -15,7 +15,7 @@ import com.mylog.api.member.MemberWriter;
 import com.mylog.exception.CDuplicatedException;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.classes.CustomUser;
-import com.mylog.api.member.SignUpRequest;
+import com.mylog.api.auth.SignUpRequest;
 import com.mylog.api.member.UpdateMemberRequest;
 import com.mylog.domain.entity.Member;
 import com.mylog.api.member.MemberRepository;

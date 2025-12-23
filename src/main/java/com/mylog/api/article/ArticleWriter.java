@@ -10,7 +10,7 @@ import com.mylog.service.S3Service;
 import com.mylog.service.articletag.ArticleTagWriter;
 import com.mylog.api.category.CategoryReader;
 import com.mylog.api.member.MemberReader;
-import com.mylog.service.tag.TagService;
+import com.mylog.api.tag.TagService;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

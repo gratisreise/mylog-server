@@ -8,6 +8,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.mylog.api.auth.AuthService;
+import com.mylog.api.auth.RefreshTokenService;
 import com.mylog.config.JwtUtil;
 import com.mylog.domain.enums.OauthProvider;
 import com.mylog.exception.CInvalidDataException;

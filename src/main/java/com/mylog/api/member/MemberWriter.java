@@ -1,5 +1,6 @@
 package com.mylog.api.member;
 
+import com.mylog.api.auth.SignUpRequest;
 import com.mylog.exception.CDuplicatedException;
 import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.model.dto.classes.CustomUser;

@@ -1,7 +1,7 @@
 package com.mylog.service.articletag;
 
 import com.mylog.domain.entity.Article;
-import com.mylog.model.entity.ArticleTag;
+import com.mylog.domain.entity.ArticleTag;
 import com.mylog.repository.articletag.ArticleTagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;

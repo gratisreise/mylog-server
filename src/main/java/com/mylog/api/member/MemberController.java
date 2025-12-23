@@ -1,5 +1,6 @@
 package com.mylog.api.member;
 
+import com.mylog.api.auth.SignUpRequest;
 import com.mylog.common.CommonResult;
 import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;

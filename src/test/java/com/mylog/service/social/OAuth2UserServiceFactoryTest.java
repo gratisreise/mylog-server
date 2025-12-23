@@ -3,11 +3,13 @@ package com.mylog.service.social;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.mylog.api.member.social.OAuth2UserService;
+import com.mylog.api.member.social.OAuth2UserServiceFactory;
 import com.mylog.domain.enums.OauthProvider;
 import com.mylog.exception.CInvalidDataException;
-import com.mylog.service.social.google.GoogleOAuth2UserService;
-import com.mylog.service.social.kakao.KakaoOAuth2UserService;
-import com.mylog.service.social.naver.NaverOAuth2UserService;
+import com.mylog.api.member.social.google.GoogleOAuth2UserService;
+import com.mylog.api.member.social.kakao.KakaoOAuth2UserService;
+import com.mylog.api.member.social.naver.NaverOAuth2UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

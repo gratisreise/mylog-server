@@ -5,7 +5,7 @@ import com.mylog.exception.CMissingDataException;
 import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.domain.entity.Member;
 import com.mylog.api.member.MemberReader;
-import com.mylog.service.tag.TagReader;
+import com.mylog.api.tag.TagReader;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

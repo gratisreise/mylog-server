@@ -2,7 +2,7 @@ package com.mylog.domain.entity;
 
 import com.mylog.api.member.UpdateMemberRequest;
 import com.mylog.domain.enums.OauthProvider;
-import com.mylog.model.dto.social.OAuth2UserInfo;
+import com.mylog.api.auth.social.OAuth2UserInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
