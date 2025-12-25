@@ -2,7 +2,7 @@ package com.mylog.service.articletag;
 
 import com.mylog.domain.entity.Article;
 import com.mylog.domain.entity.ArticleTag;
-import com.mylog.repository.articletag.ArticleTagRepository;
+import com.mylog.api.articletag.ArticleTagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

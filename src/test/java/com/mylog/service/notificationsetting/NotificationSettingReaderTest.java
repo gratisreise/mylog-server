@@ -10,8 +10,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.mylog.api.notificationsetting.NotificationSettingReader;
-import com.mylog.exception.CMissingDataException;
-import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.common.exception.CMissingDataException;
+import com.mylog.api.auth.CustomUser;
 import com.mylog.api.notification.NotificationSettingResponse;
 import com.mylog.domain.entity.Member;
 import com.mylog.domain.entity.NotificationSetting;

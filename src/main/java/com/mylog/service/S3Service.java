@@ -1,6 +1,6 @@
 package com.mylog.service;
 
-import com.mylog.exception.CMissingDataException;
+import com.mylog.common.exception.CMissingDataException;
 import java.io.IOException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

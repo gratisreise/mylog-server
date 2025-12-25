@@ -1,7 +1,7 @@
 package com.mylog.api.comment;
 
-import com.mylog.exception.CUnAuthorizedException;
-import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.common.exception.CUnAuthorizedException;
+import com.mylog.api.auth.CustomUser;
 import com.mylog.domain.entity.Article;
 import com.mylog.domain.entity.Comment;
 import com.mylog.domain.entity.Member;

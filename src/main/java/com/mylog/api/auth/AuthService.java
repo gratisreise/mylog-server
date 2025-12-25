@@ -1,7 +1,7 @@
 package com.mylog.api.auth;
 
 import com.mylog.config.JwtUtil;
-import com.mylog.exception.CInvalidDataException;
+import com.mylog.common.exception.CInvalidDataException;
 import com.mylog.domain.entity.Member;
 import com.mylog.api.member.MemberReader;
 import lombok.RequiredArgsConstructor;

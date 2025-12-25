@@ -12,9 +12,9 @@ import static org.mockito.Mockito.when;
 
 import com.mylog.api.member.MemberReader;
 import com.mylog.api.member.MemberWriter;
-import com.mylog.exception.CDuplicatedException;
-import com.mylog.exception.CMissingDataException;
-import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.common.exception.CDuplicatedException;
+import com.mylog.common.exception.CMissingDataException;
+import com.mylog.api.auth.CustomUser;
 import com.mylog.api.auth.SignUpRequest;
 import com.mylog.api.member.UpdateMemberRequest;
 import com.mylog.domain.entity.Member;

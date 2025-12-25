@@ -12,7 +12,7 @@ import com.mylog.api.member.social.kakao.KakaoTokenClient;
 import com.mylog.api.member.social.kakao.KakaoUserClient;
 import com.mylog.config.JwtUtil;
 import com.mylog.domain.enums.OauthProvider;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.common.exception.CMissingDataException;
 import com.mylog.api.auth.social.OAuth2UserInfo;
 import com.mylog.api.auth.social.OAuthRequest;
 import com.mylog.api.auth.social.kako.KakaoOAuth2UserInfo;

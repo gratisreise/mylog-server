@@ -1,4 +1,4 @@
-package com.mylog.exception;
+package com.mylog.common.exception;
 
 public class CReachedLimitException extends RuntimeException {
 

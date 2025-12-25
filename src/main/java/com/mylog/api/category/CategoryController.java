@@ -3,7 +3,7 @@ package com.mylog.api.category;
 import com.mylog.common.CommonResult;
 import com.mylog.common.ListResult;
 import com.mylog.common.ResponseService;
-import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.api.auth.CustomUser;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.mylog.model.dto.classes;
+package com.mylog.api.auth;
 
 import com.mylog.domain.entity.Member;
 import com.mylog.domain.enums.OauthProvider;

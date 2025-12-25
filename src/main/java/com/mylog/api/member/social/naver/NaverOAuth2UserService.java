@@ -4,7 +4,7 @@ package com.mylog.api.member.social.naver;
 import com.mylog.annotations.OAuth2ServiceType;
 import com.mylog.config.JwtUtil;
 import com.mylog.domain.enums.OauthProvider;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.common.exception.CMissingDataException;
 import com.mylog.api.auth.social.OAuth2UserInfo;
 import com.mylog.api.auth.social.OAuthRequest;
 import com.mylog.api.auth.social.naver.NaverOAuth2UserInfo;

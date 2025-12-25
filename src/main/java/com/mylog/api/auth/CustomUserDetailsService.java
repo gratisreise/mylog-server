@@ -1,6 +1,5 @@
 package com.mylog.api.auth;
 
-import com.mylog.model.dto.classes.CustomUser;
 import com.mylog.domain.entity.Member;
 import com.mylog.api.member.MemberReader;
 import java.util.Collections;

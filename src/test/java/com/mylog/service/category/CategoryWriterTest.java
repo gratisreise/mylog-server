@@ -9,11 +9,11 @@ import static org.mockito.Mockito.when;
 
 import com.mylog.api.category.CategoryReader;
 import com.mylog.api.category.CategoryWriter;
-import com.mylog.exception.CReachedLimitException;
-import com.mylog.exception.CUnAuthorizedException;
+import com.mylog.common.exception.CReachedLimitException;
+import com.mylog.common.exception.CUnAuthorizedException;
 import com.mylog.api.category.CategoryCreateRequest;
 import com.mylog.api.category.CategoryUpdateRequest;
-import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.api.auth.CustomUser;
 import com.mylog.domain.entity.Category;
 import com.mylog.domain.entity.Member;
 import com.mylog.api.category.CategoryRepository;

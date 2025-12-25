@@ -1,4 +1,4 @@
-package com.mylog.repository.articletag;
+package com.mylog.api.articletag;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

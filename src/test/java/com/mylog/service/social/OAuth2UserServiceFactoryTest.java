@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.mylog.api.member.social.OAuth2UserService;
 import com.mylog.api.member.social.OAuth2UserServiceFactory;
 import com.mylog.domain.enums.OauthProvider;
-import com.mylog.exception.CInvalidDataException;
+import com.mylog.common.exception.CInvalidDataException;
 import com.mylog.api.member.social.google.GoogleOAuth2UserService;
 import com.mylog.api.member.social.kakao.KakaoOAuth2UserService;
 import com.mylog.api.member.social.naver.NaverOAuth2UserService;

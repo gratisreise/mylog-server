@@ -8,8 +8,8 @@ import static org.mockito.Mockito.when;
 
 import com.mylog.api.auth.CustomUserDetailsService;
 import com.mylog.domain.enums.OauthProvider;
-import com.mylog.exception.CMissingDataException;
-import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.common.exception.CMissingDataException;
+import com.mylog.api.auth.CustomUser;
 import com.mylog.domain.entity.Member;
 import com.mylog.api.member.MemberReader;
 import java.util.Collection;

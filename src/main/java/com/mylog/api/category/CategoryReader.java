@@ -1,8 +1,8 @@
 package com.mylog.api.category;
 
 import com.mylog.common.CommonValue;
-import com.mylog.exception.CMissingDataException;
-import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.common.exception.CMissingDataException;
+import com.mylog.api.auth.CustomUser;
 import com.mylog.domain.entity.Category;
 import com.mylog.domain.entity.Member;
 import com.mylog.api.member.MemberReader;

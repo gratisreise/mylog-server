@@ -1,9 +1,9 @@
 package com.mylog.api.member;
 
 import com.mylog.api.auth.SignUpRequest;
-import com.mylog.exception.CDuplicatedException;
-import com.mylog.exception.CUnAuthorizedException;
-import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.common.exception.CDuplicatedException;
+import com.mylog.common.exception.CUnAuthorizedException;
+import com.mylog.api.auth.CustomUser;
 import com.mylog.domain.entity.Member;
 import com.mylog.service.S3Service;
 import com.mylog.api.category.CategoryWriter;

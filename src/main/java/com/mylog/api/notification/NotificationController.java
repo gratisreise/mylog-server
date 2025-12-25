@@ -3,7 +3,7 @@ package com.mylog.api.notification;
 import com.mylog.common.CommonResult;
 import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;
-import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.api.auth.CustomUser;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

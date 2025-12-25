@@ -1,11 +1,10 @@
 package com.mylog.api.comment;
 
 import com.mylog.api.article.ArticleReader;
-import com.mylog.exception.CMissingDataException;
-import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.common.exception.CMissingDataException;
+import com.mylog.api.auth.CustomUser;
 import com.mylog.domain.entity.Comment;
 import com.mylog.domain.entity.Member;
-import com.mylog.api.article.ArticleRepository;
 import com.mylog.api.member.MemberReader;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

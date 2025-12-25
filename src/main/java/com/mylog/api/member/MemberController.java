@@ -4,7 +4,7 @@ import com.mylog.api.auth.SignUpRequest;
 import com.mylog.common.CommonResult;
 import com.mylog.common.ResponseService;
 import com.mylog.common.SingleResult;
-import com.mylog.model.dto.classes.CustomUser;
+import com.mylog.api.auth.CustomUser;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.io.IOException;

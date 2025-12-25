@@ -1,4 +1,4 @@
-package com.mylog.repository.articletag;
+package com.mylog.api.articletag;
 
 import com.mylog.domain.entity.Article;
 import com.mylog.domain.entity.ArticleTag;

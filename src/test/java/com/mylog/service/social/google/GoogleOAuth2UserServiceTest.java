@@ -12,7 +12,7 @@ import com.mylog.api.member.social.google.GoogleTokenClient;
 import com.mylog.api.member.social.google.GoogleUserClient;
 import com.mylog.config.JwtUtil;
 import com.mylog.domain.enums.OauthProvider;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.common.exception.CMissingDataException;
 import com.mylog.api.auth.social.OAuth2UserInfo;
 import com.mylog.api.auth.social.OAuthRequest;
 import com.mylog.api.auth.social.google.GoogleOAuth2UserInfo;
