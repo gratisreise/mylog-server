@@ -15,23 +15,23 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.mylog.api.article.ArticleReader;
-import com.mylog.api.article.ArticleWriter;
-import com.mylog.domain.enums.OauthProvider;
-import com.mylog.common.exception.CMissingDataException;
-import com.mylog.common.exception.CUnAuthorizedException;
-import com.mylog.api.article.ArticleCreateRequest;
-import com.mylog.api.article.ArticleUpdateRequest;
+import com.mylog.api.article.service.ArticleReader;
+import com.mylog.api.article.service.ArticleWriter;
+import com.mylog.common.OauthProvider;
+import com.mylog.exception.CMissingDataException;
+import com.mylog.exception.CUnAuthorizedException;
+import com.mylog.api.article.dto.ArticleCreateRequest;
+import com.mylog.api.article.dto.ArticleUpdateRequest;
 import com.mylog.api.auth.CustomUser;
-import com.mylog.domain.entity.Article;
-import com.mylog.domain.entity.Category;
-import com.mylog.domain.entity.Member;
-import com.mylog.api.article.ArticleRepository;
-import com.mylog.api.articletag.ArticleTagRepository;
-import com.mylog.service.S3Service;
-import com.mylog.api.category.CategoryReader;
-import com.mylog.api.member.MemberReader;
-import com.mylog.api.tag.TagService;
+import com.mylog.api.article.entity.Article;
+import com.mylog.api.category.entity.Category;
+import com.mylog.api.member.entity.Member;
+import com.mylog.api.article.repository.ArticleRepository;
+import com.mylog.api.article.repository.ArticleTagRepository;
+import com.mylog.common.external.S3Service;
+import com.mylog.api.category.service.CategoryReader;
+import com.mylog.api.member.service.MemberReader;
+import com.mylog.api.tag.service.TagWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -68,7 +68,7 @@ class ArticleTagWriterTest {
     private ArticleTagRepository articleTagRepository;
 
     @Mock
-    private TagService tagService;
+    private TagWriter tagWriter;
 
     @Mock
     private S3Service s3Service;
@@ -176,7 +176,7 @@ class ArticleTagWriterTest {
             .thenReturn(testCategory);
         when(s3Service.upload(mockFile)).thenReturn(expectedImageUrl);
         when(articleRepository.save(any(Article.class))).thenReturn(testArticle);
-        doNothing().when(tagService).saveTag(anyList(), any(Article.class));
+        doNothing().when(tagWriter).saveTag(anyList(), any(Article.class));
 
         // When
         assertDoesNotThrow(() -> 
@@ -188,7 +188,7 @@ class ArticleTagWriterTest {
         verify(memberReader).getByCustomUser(customUser);
         verify(s3Service).upload(mockFile);
         verify(articleRepository).save(any(Article.class));
-        verify(tagService).saveTag(eq(createRequest.tags()), any(Article.class));
+        verify(tagWriter).saveTag(eq(createRequest.tags()), any(Article.class));
     }
 
     @Test
@@ -208,7 +208,7 @@ class ArticleTagWriterTest {
         verify(categoryReader).getByMemberIdAndCategoryName(testMember, "Test Category");
         verify(s3Service, never()).upload(any());
         verify(articleRepository, never()).save(any());
-        verify(tagService, never()).saveTag(any(List.class), any(Article.class));
+        verify(tagWriter, never()).saveTag(any(List.class), any(Article.class));
     }
 
     @Test
@@ -226,7 +226,7 @@ class ArticleTagWriterTest {
         verify(categoryReader, never()).getByMemberIdAndCategoryName(testMember, "Test Category");
         verify(s3Service, never()).upload(any());
         verify(articleRepository, never()).save(any());
-        verify(tagService, never()).saveTag(any(List.class), any(Article.class));
+        verify(tagWriter, never()).saveTag(any(List.class), any(Article.class));
     }
 
 
@@ -247,7 +247,7 @@ class ArticleTagWriterTest {
         verify(memberReader).getByCustomUser(customUser);
         verify(s3Service).upload(mockFile);
         verify(articleRepository, never()).save(any());
-        verify(tagService, never()).saveTag(any(List.class), any(Article.class));
+        verify(tagWriter, never()).saveTag(any(List.class), any(Article.class));
     }
 
     @Test
@@ -266,7 +266,7 @@ class ArticleTagWriterTest {
         when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
         when(s3Service.upload(mockFile)).thenReturn(expectedImageUrl);
         when(articleRepository.save(any(Article.class))).thenReturn(testArticle);
-        doNothing().when(tagService).saveTag(anyList(), any(Article.class));
+        doNothing().when(tagWriter).saveTag(anyList(), any(Article.class));
 
         // When
         assertDoesNotThrow(() -> 
@@ -274,7 +274,7 @@ class ArticleTagWriterTest {
         );
 
         // Then
-        verify(tagService).saveTag(eq(List.of()), any(Article.class));
+        verify(tagWriter).saveTag(eq(List.of()), any(Article.class));
     }
 
     @Test
@@ -294,7 +294,7 @@ class ArticleTagWriterTest {
         when(articleReader.getArticleById(articleId)).thenReturn(existingArticle);
         when(categoryReader.getByMemberIdAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         when(s3Service.upload(mockFile)).thenReturn(expectedImageUrl);
-        doNothing().when(tagService).saveTag(anyList(), any(Article.class));
+        doNothing().when(tagWriter).saveTag(anyList(), any(Article.class));
 
         // When
         assertDoesNotThrow(() -> 
@@ -306,7 +306,7 @@ class ArticleTagWriterTest {
         verify(articleReader).getArticleById(articleId);
         verify(categoryReader).getByMemberIdAndCategoryName(testMember,"Test Category");
         verify(s3Service).upload(mockFile);
-        verify(tagService).saveTag(eq(updateRequest.tags()), eq(existingArticle));
+        verify(tagWriter).saveTag(eq(updateRequest.tags()), eq(existingArticle));
         // Verify the update method was called by checking that the service completed successfully
         // The actual update method call verification is not possible without spying on the Article object
     }
@@ -332,7 +332,7 @@ class ArticleTagWriterTest {
         verify(articleReader, never()).getArticleById(anyLong());
         verify(categoryReader, never()).getByMemberIdAndCategoryName(any(Member.class), anyString());
         verify(s3Service, never()).upload(any());
-        verify(tagService, never()).saveTag(any(List.class), any(Article.class));
+        verify(tagWriter, never()).saveTag(any(List.class), any(Article.class));
     }
 
     @Test
@@ -353,7 +353,7 @@ class ArticleTagWriterTest {
         when(memberReader.getByNickname("testuser")).thenReturn(testMember);
         when(articleReader.getArticleById(articleId)).thenReturn(existingArticle);
         when(categoryReader.getByMemberIdAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
-        doNothing().when(tagService).saveTag(anyList(), any(Article.class));
+        doNothing().when(tagWriter).saveTag(anyList(), any(Article.class));
 
         // When
         assertDoesNotThrow(() -> 
@@ -362,7 +362,7 @@ class ArticleTagWriterTest {
 
         // Then
         verify(s3Service, never()).upload(any()); // 같은 파일명이므로 업로드 안함
-        verify(tagService).saveTag(eq(updateRequest.tags()), eq(existingArticle));
+        verify(tagWriter).saveTag(eq(updateRequest.tags()), eq(existingArticle));
         // Verify the update was called by checking service completed successfully
     }
 
@@ -385,7 +385,7 @@ class ArticleTagWriterTest {
         verify(articleReader).getArticleById(articleId);
         verify(categoryReader, never()).getByMemberIdAndCategoryName(any(Member.class), anyString());
         verify(s3Service, never()).upload(any());
-        verify(tagService, never()).saveTag(any(List.class), any(Article.class));
+        verify(tagWriter, never()).saveTag(any(List.class), any(Article.class));
     }
 
     @Test
@@ -408,7 +408,7 @@ class ArticleTagWriterTest {
         verify(articleReader).getArticleById(articleId);
         verify(categoryReader).getByMemberIdAndCategoryName(testMember, "Test Category");
         verify(s3Service, never()).upload(any());
-        verify(tagService, never()).saveTag(any(List.class), any(Article.class));
+        verify(tagWriter, never()).saveTag(any(List.class), any(Article.class));
     }
 
 
@@ -507,7 +507,7 @@ class ArticleTagWriterTest {
         when(memberReader.getByNickname("testuser")).thenReturn(testMember);
         when(articleReader.getArticleById(articleId)).thenReturn(existingArticle);
         when(categoryReader.getByMemberIdAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
-        doNothing().when(tagService).saveTag(anyList(), any(Article.class));
+        doNothing().when(tagWriter).saveTag(anyList(), any(Article.class));
 
         // When
         assertDoesNotThrow(() -> 
@@ -516,7 +516,7 @@ class ArticleTagWriterTest {
 
         // Then
         verify(s3Service, never()).upload(any()); // 같은 파일이므로 업로드 하지 않음
-        verify(tagService).saveTag(eq(updateRequest.tags()), eq(existingArticle));
+        verify(tagWriter).saveTag(eq(updateRequest.tags()), eq(existingArticle));
     }
 
     @Test
@@ -538,7 +538,7 @@ class ArticleTagWriterTest {
         when(articleReader.getArticleById(articleId)).thenReturn(existingArticle);
         when(categoryReader.getByMemberIdAndCategoryName(testMember, "Test Category")).thenReturn(testCategory);
         when(s3Service.upload(mockFile)).thenReturn(newImageUrl);
-        doNothing().when(tagService).saveTag(anyList(), any(Article.class));
+        doNothing().when(tagWriter).saveTag(anyList(), any(Article.class));
 
         // When
         assertDoesNotThrow(() -> 
@@ -547,7 +547,7 @@ class ArticleTagWriterTest {
 
         // Then
         verify(s3Service).upload(mockFile); // 다른 파일이므로 새로 업로드
-        verify(tagService).saveTag(eq(updateRequest.tags()), eq(existingArticle));
+        verify(tagWriter).saveTag(eq(updateRequest.tags()), eq(existingArticle));
     }
 
     @Test
@@ -567,7 +567,7 @@ class ArticleTagWriterTest {
         when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
         when(s3Service.upload(mockFile)).thenReturn(expectedImageUrl);
         when(articleRepository.save(any(Article.class))).thenReturn(testArticle);
-        doNothing().when(tagService).saveTag(eq(tags), any(Article.class));
+        doNothing().when(tagWriter).saveTag(eq(tags), any(Article.class));
 
         // When
         assertDoesNotThrow(() -> 
@@ -575,7 +575,7 @@ class ArticleTagWriterTest {
         );
 
         // Then
-        verify(tagService).saveTag(eq(tags), any(Article.class));
+        verify(tagWriter).saveTag(eq(tags), any(Article.class));
     }
 
     @Test
@@ -588,7 +588,7 @@ class ArticleTagWriterTest {
         when(memberReader.getByCustomUser(customUser)).thenReturn(testMember);
         when(s3Service.upload(mockFile)).thenReturn(expectedImageUrl);
         when(articleRepository.save(any(Article.class))).thenReturn(testArticle);
-        doThrow(new RuntimeException("태그 저장 실패")).when(tagService).saveTag(anyList(), any(Article.class));
+        doThrow(new RuntimeException("태그 저장 실패")).when(tagWriter).saveTag(anyList(), any(Article.class));
 
         // When & Then
         assertThrows(RuntimeException.class, () ->
@@ -599,7 +599,7 @@ class ArticleTagWriterTest {
         verify(memberReader).getByCustomUser(customUser);
         verify(s3Service).upload(mockFile);
         verify(articleRepository).save(any(Article.class));
-        verify(tagService).saveTag(eq(createRequest.tags()), any(Article.class));
+        verify(tagWriter).saveTag(eq(createRequest.tags()), any(Article.class));
     }
 
     @Test

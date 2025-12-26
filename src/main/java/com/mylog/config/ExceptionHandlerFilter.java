@@ -1,6 +1,6 @@
 package com.mylog.config;
 
-import com.mylog.common.exception.CUnAuthorizedException;
+import com.mylog.exception.CUnAuthorizedException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
