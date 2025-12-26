@@ -6,11 +6,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.mylog.api.tag.TagReader;
-import com.mylog.common.exception.CMissingDataException;
-import com.mylog.domain.entity.Article;
-import com.mylog.domain.entity.Tag;
-import com.mylog.repository.tag.TagRepository;
+import com.mylog.api.tag.service.TagReader;
+import com.mylog.exception.CMissingDataException;
+import com.mylog.api.article.entity.Article;
+import com.mylog.api.tag.entity.Tag;
+import com.mylog.api.tag.repository.TagRepository;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
