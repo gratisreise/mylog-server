@@ -1,7 +1,6 @@
 package com.mylog.config;
 
-import com.mylog.repository.MemberRepository;
-import com.mylog.service.CustomUserDetailsService;
+import com.mylog.api.auth.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,15 +23,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtUtil token;
-    private final MemberRepository memberRepository;
 
-    private static final String[] PUBLIC_MATCHERS = {
+    private static final String[] WHITELISTED_URLS = {
         "/api/auth/**",
         "/api/members/sign-up",
         "/swagger-ui/**",
         "/v3/api-docs/**",
         "/h2-console/**",
-        "/actuator/**"
+        "/actuator/**",
+        "/api/tests/**",
+        "/api/articles/all/**"
     };
 
     @Bean
@@ -50,16 +50,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, UserDetailsService userDetailsService) throws Exception {
         return http
-            .csrf(AbstractHttpConfigurer::disable)  // CSRF 보호 비활성화
+            .csrf(AbstractHttpConfigurer::disable)  // CSRF 비활성화
             .formLogin(AbstractHttpConfigurer::disable)  // 폼 로그인 비활성화
             .httpBasic(AbstractHttpConfigurer::disable)  // HTTP Basic 인증 비활성화
 
             // 요청 정책
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(PUBLIC_MATCHERS).permitAll() // 해당 url 허용
-                .anyRequest().authenticated() // 나머지 접근 방지
-            )
-
+//            .authorizeHttpRequests(auth -> auth
+//                .requestMatchers(WHITELISTED_URLS).permitAll() // 해당 url 허용
+//                .anyRequest().authenticated() // 나머지 접근 방지
+//            )
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
             //h2 콘솔 프레임 표시 허용
             .headers(headers -> headers
                 .frameOptions(FrameOptionsConfig::disable))
@@ -70,12 +70,11 @@ public class SecurityConfig {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             //jwt 커스텀필터 넣기
+            .addFilterBefore(new ExceptionHandlerFilter(),
+                UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(
-                new JwtAuthenticationFilter(token,
-                    userDetailsService,
-                    memberRepository),
-                UsernamePasswordAuthenticationFilter.class
-            )
+                new JwtAuthenticationFilter(token, userDetailsService),
+                UsernamePasswordAuthenticationFilter.class)
 
             //빌드
             .build();

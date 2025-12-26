@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CMissingDataException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public CommonResult handleInvalidDataException(CMissingDataException ex){
+    public CommonResult handleMissingDataException(CMissingDataException ex){
         return ResponseService.getFailResult(ResultCode.DATA_MISSED);
     }
 
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(CUnAuthorizedException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public CommonResult handleUnAuthorizedException(CUnAuthorizedException ex){
         return ResponseService.getFailResult(ResultCode.UNAUTHORIZED_ACCESS);
     }
