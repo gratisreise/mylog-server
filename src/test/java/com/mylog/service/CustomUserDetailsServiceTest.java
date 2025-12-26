@@ -6,12 +6,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.mylog.api.auth.CustomUserDetailsService;
-import com.mylog.domain.enums.OauthProvider;
-import com.mylog.common.exception.CMissingDataException;
+import com.mylog.api.auth.service.CustomUserDetailsService;
+import com.mylog.common.OauthProvider;
+import com.mylog.exception.CMissingDataException;
 import com.mylog.api.auth.CustomUser;
-import com.mylog.domain.entity.Member;
-import com.mylog.api.member.MemberReader;
+import com.mylog.api.member.entity.Member;
+import com.mylog.api.member.service.MemberReader;
 import java.util.Collection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

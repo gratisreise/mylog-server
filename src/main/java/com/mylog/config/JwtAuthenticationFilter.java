@@ -1,5 +1,6 @@
 package com.mylog.config;
 
+import com.mylog.api.auth.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,17 +29,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt = resolveToken(request);
 
         if (StringUtils.hasText(jwt) && tokenProvider.validateAccessToken(jwt)) {
-//            log.info("accessToken: {}", jwt);
             String username = tokenProvider.getUsername(jwt);
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-//            log.info("UserDetails 통과 username{}", username);
 
             //검증
             UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-//            log.info("스프링컨텍스트에 등록성공");
         }
         
         filterChain.doFilter(request, response);
