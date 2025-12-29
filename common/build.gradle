@@ -1,0 +1,13 @@
+// api/build.gradle
+plugins {
+    id 'org.springframework.boot' version '3.2.5' apply false
+}
+
+dependencies {
+    // common: jwt 정도??
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+    api 'org.apache.commons:commons-lang3'
+    api 'com.fasterxml.jackson.core:jackson-databind' // JSON 처리는 어디서나 쓰이니까요.
+}
