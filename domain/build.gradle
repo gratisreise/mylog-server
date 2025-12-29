@@ -1,0 +1,25 @@
+plugins {
+    id 'org.springframework.boot' version '3.2.5' apply true
+}
+
+
+dependencies {
+
+    implementation project(':common')
+
+    //database
+    runtimeOnly 'com.h2database:h2:2.2.224'
+    implementation 'org.postgresql:postgresql:42.7.3'
+
+    //JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    //Cache
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.2.2'
+
+    //QueryDSL
+    implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
+    annotationProcessor 'com.querydsl:querydsl-apt:5.1.0:jakarta'
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
+}
