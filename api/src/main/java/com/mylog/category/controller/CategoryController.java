@@ -35,6 +35,9 @@ public class CategoryController {
     public CommonResult createCategory(
         @RequestBody @Valid CategoryCreateRequest request,
         @AuthenticationPrincipal CustomUser customUser
+
+
+
     ){
         categoryWriter.createCategory(request, customUser);
         return ResponseService.getSuccessResult();
