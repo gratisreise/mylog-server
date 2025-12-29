@@ -1,7 +1,7 @@
 package com.mylog.api.auth;
 
 import com.mylog.api.member.entity.Member;
-import com.mylog.common.OauthProvider;
+import com.mylog.common.enums.OauthProvider;
 import java.util.Collection;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

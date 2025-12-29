@@ -1,4 +1,4 @@
-package com.mylog.common;
+package com.mylog.common.response;
 
 import lombok.Getter;
 import lombok.Setter;

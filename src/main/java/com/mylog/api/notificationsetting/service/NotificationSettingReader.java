@@ -1,7 +1,7 @@
 package com.mylog.api.notificationsetting.service;
 
 import com.mylog.api.notificationsetting.repository.NotificationSettingRepository;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.common.exception.CMissingDataException;
 import com.mylog.api.auth.CustomUser;
 import com.mylog.api.notification.dto.NotificationSettingResponse;
 import com.mylog.api.member.entity.Member;

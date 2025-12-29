@@ -3,7 +3,7 @@ package com.mylog.api.member.service;
 import com.mylog.api.member.dto.MemberResponse;
 import com.mylog.api.member.entity.Member;
 import com.mylog.api.member.repository.MemberRepository;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.common.exception.CMissingDataException;
 import com.mylog.api.auth.CustomUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

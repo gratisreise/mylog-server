@@ -1,4 +1,4 @@
-package com.mylog.common;
+package com.mylog.common.response;
 
 public class CommonValue {
 

@@ -9,8 +9,8 @@ import static org.mockito.Mockito.when;
 
 import com.mylog.api.notification.service.NotificationReader;
 import com.mylog.api.notification.service.NotificationWriter;
-import com.mylog.common.OauthProvider;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.common.enums.OauthProvider;
+import com.mylog.common.exception.CMissingDataException;
 import com.mylog.api.member.entity.Member;
 import com.mylog.api.notification.entity.Notification;
 import com.mylog.api.notification.repository.NotificationRepository;

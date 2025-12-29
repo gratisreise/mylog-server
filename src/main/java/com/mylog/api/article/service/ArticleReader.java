@@ -4,7 +4,7 @@ import com.mylog.api.article.dto.ArticleResponse;
 import com.mylog.api.article.dto.ArticleTestResponse;
 import com.mylog.api.article.entity.Article;
 import com.mylog.api.article.repository.ArticleRepository;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.common.exception.CMissingDataException;
 import com.mylog.api.auth.CustomUser;
 import com.mylog.api.member.entity.Member;
 import com.mylog.api.member.service.MemberReader;

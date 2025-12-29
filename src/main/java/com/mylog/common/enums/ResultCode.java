@@ -1,4 +1,4 @@
-package com.mylog.common;
+package com.mylog.common.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

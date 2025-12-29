@@ -1,6 +1,6 @@
 package com.mylog.api.auth.dto.social;
 
-import com.mylog.common.OauthProvider;
+import com.mylog.common.enums.OauthProvider;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

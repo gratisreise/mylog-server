@@ -1,6 +1,7 @@
-package com.mylog.common;
+package com.mylog.common.response;
 
 
+import com.mylog.common.enums.ResultCode;
 import java.util.List;
 import org.springframework.stereotype.Service;
 

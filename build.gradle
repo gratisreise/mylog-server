@@ -1,126 +1,63 @@
 plugins {
-    id 'org.springframework.boot' version '3.2.5'
+    id 'org.springframework.boot' version '3.2.5' apply false
     id 'io.spring.dependency-management' version '1.1.4'
     id 'jacoco'
     id 'java'
 }
 
-group = 'com'
-version = '0.0.1'
-sourceCompatibility = '17'
+subprojects {
+    group='com.mylog'
+    version='0.0.1'
+    sourceCompatibility = '17'
 
-repositories {
-    mavenCentral()
-}
+    apply plugin: 'jacoco'
+    apply plugin: 'java-library'
+    apply plugin: 'io.spring.dependency-management'
 
-dependencies {
-    // Spring Boot Starters
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-
-    //Spring Cloud
-    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-    // OpenFeign HTTP Client (Apache HttpClient 기반)
-    implementation 'io.github.openfeign:feign-httpclient:12.3'
-    implementation "io.github.openfeign.form:feign-form:3.8.0"
-    implementation "io.github.openfeign.form:feign-form-spring:3.8.0"
-
-    // Database
-    implementation 'org.postgresql:postgresql:42.7.3'
-    runtimeOnly 'com.h2database:h2:2.2.224'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'com.github.ben-manes.caffeine:caffeine:3.2.2'
-
-    // JWT
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
-
-    //querydsl
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
-    annotationProcessor 'com.querydsl:querydsl-apt:5.1.0:jakarta'
-    annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
-    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
-
-    // AWS S3
-    implementation 'software.amazon.awssdk:s3:2.25.16'
-
-    // Sentry
-    implementation 'io.sentry:sentry-spring-boot-starter-jakarta:8.19.0'
-
-    // Swagger (Springdoc OpenAPI)
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
-
-    // Monitoring
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
-
-    // Lombok
-    compileOnly 'org.projectlombok:lombok:1.18.32'
-    annotationProcessor 'org.projectlombok:lombok:1.18.32'
-
-    // Test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-}
-
-
-def querydslDir = "$buildDir/generated/querydsl"
-
-
-
-
-tasks.named('test') {
-    useJUnitPlatform()
-    finalizedBy jacocoTestReport
-}
-
-ext {
-    set('springCloudVersion', "2023.0.5")
-}
-
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-    }
-}
-
-
-jacocoTestReport {
-    reports {
-        html.required = true
-        xml.required = true
-        csv.required = false
+    repositories {
+        mavenCentral()
     }
 
-    getClassDirectories().setFrom(files(classDirectories.files.collect {
-        fileTree(dir: it, exclude: ['**/dto/**', '**/entity/**',
-                                    '**/MylogApplication',
-                                    '**/config/**', '**/enums/**',
-                                    '**/common/**', '**/exception/**',
-                                    '**/AbstractOAuth2UserService'
-        ])
-    }))
-}
+    dependencies{
+        //모듈에 공통으로 들어가는 라이브러리
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    }
 
-jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            enabled = true
-            element = 'CLASS'
-            limit {
-                counter = 'LINE'
-                value = 'COVEREDRATIO'
-                minimum = 0.80 // 예시: 라인 커버리지 80% 이상 요구
-            }
+    test {
+        useJUnitPlatform()
+    }
+
+    jacoco{
+        toolVersion = "0.8.14"
+    }
+
+    test{
+        finalizedBy jacocoTestReport
+    }
+
+    jacocoTestReport {
+        dependsOn test // 테스트가 먼저 실행되어야 리포트 작성 가능
+
+        reports {
+            xml.required = true
+            html.required = true // 사람이 보기 편한 HTML 리포트
+        }
+
+        afterEvaluate {
+            classDirectories.setFrom(files(classDirectories.files.collect {
+                fileTree(dir: it, exclude: [
+                        "**/*Application*",
+                        "**/*Request*",
+                        "**/*Response*",
+                        "**/entity/**",
+                        "**/test/**",
+                        "**/resources/**",
+                        "**/Q*"
+                ])
+            }))
         }
     }
 }

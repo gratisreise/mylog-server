@@ -7,8 +7,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.mylog.api.auth.service.CustomUserDetailsService;
-import com.mylog.common.OauthProvider;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.common.enums.OauthProvider;
+import com.mylog.common.exception.CMissingDataException;
 import com.mylog.api.auth.CustomUser;
 import com.mylog.api.member.entity.Member;
 import com.mylog.api.member.service.MemberReader;

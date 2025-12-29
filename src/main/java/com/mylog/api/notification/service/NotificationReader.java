@@ -3,7 +3,7 @@ package com.mylog.api.notification.service;
 import com.mylog.api.notification.dto.NotificationResponse;
 import com.mylog.api.notification.entity.Notification;
 import com.mylog.api.notification.repository.NotificationRepository;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.common.exception.CMissingDataException;
 import com.mylog.api.auth.CustomUser;
 import com.mylog.api.member.entity.Member;
 import com.mylog.api.member.service.MemberReader;

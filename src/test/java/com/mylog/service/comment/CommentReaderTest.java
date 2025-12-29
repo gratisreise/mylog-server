@@ -9,8 +9,8 @@ import static org.mockito.Mockito.when;
 
 import com.mylog.api.comment.service.CommentReader;
 import com.mylog.api.comment.Reply;
-import com.mylog.common.OauthProvider;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.common.enums.OauthProvider;
+import com.mylog.common.exception.CMissingDataException;
 import com.mylog.api.auth.CustomUser;
 import com.mylog.api.comment.dto.CommentArticleResponse;
 import com.mylog.api.comment.dto.CommentResponse;

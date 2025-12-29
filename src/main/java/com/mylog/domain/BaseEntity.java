@@ -1,4 +1,4 @@
-package com.mylog.common;
+package com.mylog.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

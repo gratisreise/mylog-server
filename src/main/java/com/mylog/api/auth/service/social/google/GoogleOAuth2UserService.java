@@ -1,9 +1,9 @@
 package com.mylog.api.auth.service.social.google;
 
-import com.mylog.annotations.OAuth2ServiceType;
+import com.mylog.common.annotations.OAuth2ServiceType;
 import com.mylog.api.auth.JwtUtil;
-import com.mylog.common.OauthProvider;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.common.enums.OauthProvider;
+import com.mylog.common.exception.CMissingDataException;
 import com.mylog.api.auth.dto.social.OAuth2UserInfo;
 import com.mylog.api.auth.dto.social.OAuthRequest;
 import com.mylog.api.auth.dto.social.google.GoogleOAuth2UserInfo;

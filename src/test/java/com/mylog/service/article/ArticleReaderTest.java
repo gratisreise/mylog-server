@@ -12,8 +12,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.mylog.api.article.service.ArticleReader;
-import com.mylog.common.OauthProvider;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.common.enums.OauthProvider;
+import com.mylog.common.exception.CMissingDataException;
 import com.mylog.api.article.dto.ArticleResponse;
 import com.mylog.api.auth.CustomUser;
 import com.mylog.api.article.entity.Article;

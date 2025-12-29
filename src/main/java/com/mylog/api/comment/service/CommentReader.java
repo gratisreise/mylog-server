@@ -6,7 +6,7 @@ import com.mylog.api.comment.dto.CommentResponse;
 import com.mylog.api.comment.Reply;
 import com.mylog.api.comment.entity.Comment;
 import com.mylog.api.comment.repository.CommentRepository;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.common.exception.CMissingDataException;
 import com.mylog.api.auth.CustomUser;
 import com.mylog.api.member.entity.Member;
 import com.mylog.api.member.service.MemberReader;

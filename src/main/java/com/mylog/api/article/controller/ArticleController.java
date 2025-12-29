@@ -7,10 +7,10 @@ import com.mylog.api.article.dto.ArticleResponse;
 import com.mylog.api.article.dto.ArticleTestResponse;
 import com.mylog.api.article.dto.ArticleUpdateRequest;
 import com.mylog.api.article.service.ArticleWriter;
-import com.mylog.common.CommonResult;
-import com.mylog.common.ListResult;
-import com.mylog.common.ResponseService;
-import com.mylog.common.SingleResult;
+import com.mylog.common.response.CommonResult;
+import com.mylog.common.response.ListResult;
+import com.mylog.common.response.ResponseService;
+import com.mylog.common.response.SingleResult;
 import com.mylog.api.auth.CustomUser;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -90,10 +90,6 @@ public class ArticleController {
 //        @PageableDefault(sort="id", direction = Direction.ASC, page=150) Pageable pageable){
 //        return ResponseService.getSingleResult(articleReader.getArticles(pageable));
 //    }
-
-
-
-
 
     @GetMapping("/all")
     @Operation(summary = "전체 게시글 목록 조회")

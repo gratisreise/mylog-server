@@ -5,7 +5,7 @@ import com.mylog.api.auth.dto.LoginRequest;
 import com.mylog.api.auth.dto.LoginResponse;
 import com.mylog.api.auth.dto.RefreshRequest;
 import com.mylog.api.auth.dto.RefreshResponse;
-import com.mylog.exception.CInvalidDataException;
+import com.mylog.common.exception.CInvalidDataException;
 import com.mylog.api.member.entity.Member;
 import com.mylog.api.member.service.MemberReader;
 import lombok.RequiredArgsConstructor;

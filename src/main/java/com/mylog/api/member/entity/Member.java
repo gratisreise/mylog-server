@@ -1,9 +1,9 @@
 package com.mylog.api.member.entity;
 
 import com.mylog.api.member.dto.UpdateMemberRequest;
-import com.mylog.common.OauthProvider;
+import com.mylog.common.enums.OauthProvider;
 import com.mylog.api.auth.dto.social.OAuth2UserInfo;
-import com.mylog.common.BaseEntity;
+import com.mylog.domain.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

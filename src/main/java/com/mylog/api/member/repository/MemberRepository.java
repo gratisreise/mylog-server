@@ -1,7 +1,7 @@
 package com.mylog.api.member.repository;
 
 import com.mylog.api.member.entity.Member;
-import com.mylog.common.OauthProvider;
+import com.mylog.common.enums.OauthProvider;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

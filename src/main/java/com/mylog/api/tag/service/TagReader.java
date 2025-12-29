@@ -2,7 +2,7 @@ package com.mylog.api.tag.service;
 
 import com.mylog.api.tag.entity.Tag;
 import com.mylog.api.tag.repository.TagRepository;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.common.exception.CMissingDataException;
 import com.mylog.api.article.entity.Article;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

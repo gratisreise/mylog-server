@@ -1,4 +1,4 @@
-package com.mylog;
+package com.mylog.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableFeignClients
 @EnableCaching
 @EnableAsync
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.mylog")
 public class MylogApplication {
     public static void main(String[] args) {
         SpringApplication.run(MylogApplication.class, args);

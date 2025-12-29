@@ -2,7 +2,7 @@ package com.mylog.api.category.entity;
 
 import com.mylog.api.category.dto.CategoryUpdateRequest;
 import com.mylog.api.member.entity.Member;
-import com.mylog.common.BaseEntity;
+import com.mylog.domain.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

@@ -12,14 +12,14 @@ import static org.mockito.Mockito.when;
 
 import com.mylog.api.member.service.MemberReader;
 import com.mylog.api.member.service.MemberWriter;
-import com.mylog.exception.CDuplicatedException;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.common.exception.CDuplicatedException;
+import com.mylog.common.exception.CMissingDataException;
 import com.mylog.api.auth.CustomUser;
 import com.mylog.api.auth.dto.SignUpRequest;
 import com.mylog.api.member.dto.UpdateMemberRequest;
 import com.mylog.api.member.entity.Member;
 import com.mylog.api.member.repository.MemberRepository;
-import com.mylog.common.external.S3Service;
+import com.mylog.infra.s3.S3Service;
 import com.mylog.api.category.service.CategoryWriter;
 import java.io.IOException;
 import java.util.Collections;

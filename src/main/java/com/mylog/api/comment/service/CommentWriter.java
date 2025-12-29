@@ -4,7 +4,7 @@ import com.mylog.api.comment.dto.CommentCreateRequest;
 import com.mylog.api.comment.dto.CommentUpdateRequest;
 import com.mylog.api.comment.entity.Comment;
 import com.mylog.api.comment.repository.CommentRepository;
-import com.mylog.exception.CUnAuthorizedException;
+import com.mylog.common.exception.CUnAuthorizedException;
 import com.mylog.api.auth.CustomUser;
 import com.mylog.api.article.entity.Article;
 import com.mylog.api.member.entity.Member;

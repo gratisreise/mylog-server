@@ -2,9 +2,9 @@ package com.mylog.api.notificationsetting.controller;
 
 import com.mylog.api.notificationsetting.service.NotificationSettingReader;
 import com.mylog.api.notificationsetting.service.NotificationSettingWriter;
-import com.mylog.common.CommonResult;
-import com.mylog.common.ListResult;
-import com.mylog.common.ResponseService;
+import com.mylog.common.response.CommonResult;
+import com.mylog.common.response.ListResult;
+import com.mylog.common.response.ResponseService;
 import com.mylog.api.auth.CustomUser;
 import com.mylog.api.notification.dto.NotificationSettingResponse;
 import io.swagger.v3.oas.annotations.Operation;

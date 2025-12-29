@@ -1,9 +1,9 @@
-package com.mylog.exception;
+package com.mylog.common.exception;
 
 
-import com.mylog.common.CommonResult;
-import com.mylog.common.ResponseService;
-import com.mylog.common.ResultCode;
+import com.mylog.common.response.CommonResult;
+import com.mylog.common.response.ResponseService;
+import com.mylog.common.enums.ResultCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

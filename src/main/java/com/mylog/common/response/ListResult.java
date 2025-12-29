@@ -1,4 +1,4 @@
-package com.mylog.common;
+package com.mylog.common.response;
 
 import java.util.List;
 import lombok.Getter;

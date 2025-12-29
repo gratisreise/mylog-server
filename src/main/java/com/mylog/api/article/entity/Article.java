@@ -2,7 +2,7 @@ package com.mylog.api.article.entity;
 
 
 import com.mylog.api.article.dto.ArticleUpdateRequest;
-import com.mylog.common.BaseEntity;
+import com.mylog.domain.BaseEntity;
 import com.mylog.api.category.entity.Category;
 import com.mylog.api.member.entity.Member;
 import jakarta.persistence.Column;

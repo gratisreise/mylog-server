@@ -8,8 +8,8 @@ import static org.mockito.Mockito.when;
 
 import com.mylog.api.comment.service.CommentReader;
 import com.mylog.api.comment.service.CommentWriter;
-import com.mylog.common.OauthProvider;
-import com.mylog.exception.CUnAuthorizedException;
+import com.mylog.common.enums.OauthProvider;
+import com.mylog.common.exception.CUnAuthorizedException;
 import com.mylog.api.auth.CustomUser;
 import com.mylog.api.comment.dto.CommentCreateRequest;
 import com.mylog.api.comment.dto.CommentUpdateRequest;
