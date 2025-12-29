@@ -1,0 +1,17 @@
+plugins {
+    id 'org.springframework.boot' version '3.2.5' apply true
+}
+
+dependencies {
+    //redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    //aws s3
+    implementation 'software.amazon.awssdk:s3:2.25.16'
+
+    //openfeign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    implementation 'io.github.openfeign:feign-okhttp'
+    implementation 'org.springframework:spring-web'
+
+}

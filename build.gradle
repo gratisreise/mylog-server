@@ -1,63 +1,59 @@
 plugins {
     id 'org.springframework.boot' version '3.2.5' apply false
     id 'io.spring.dependency-management' version '1.1.4'
-    id 'jacoco'
     id 'java'
 }
 
-subprojects {
-    group='com.mylog'
-    version='0.0.1'
+allprojects {
+    group = 'com.mylog'
+    version = '0.0.1'
     sourceCompatibility = '17'
-
-    apply plugin: 'jacoco'
-    apply plugin: 'java-library'
-    apply plugin: 'io.spring.dependency-management'
 
     repositories {
         mavenCentral()
     }
+}
 
-    dependencies{
-        //모듈에 공통으로 들어가는 라이브러리
+
+subprojects {
+
+
+    apply plugin: 'java-library'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'org.springframework.boot'
+
+    tasks.named('bootJar'){
+        bootJar.enabled = false
+    }
+
+    tasks.named('jar'){
+        bootJar.enabled = true
+    }
+
+    dependencies {
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
-        testImplementation 'org.junit.jupiter:junit-jupiter'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
 
-    test {
+    tasks.named('test') {
         useJUnitPlatform()
+        finalizedBy 'jacocoTestReport' // 테스트 성공 후에만 리포트 생성
     }
 
-    jacoco{
-        toolVersion = "0.8.14"
+    ext {
+        set('springCloudVersion', "2023.0.0")
     }
 
-    test{
-        finalizedBy jacocoTestReport
-    }
-
-    jacocoTestReport {
-        dependsOn test // 테스트가 먼저 실행되어야 리포트 작성 가능
-
-        reports {
-            xml.required = true
-            html.required = true // 사람이 보기 편한 HTML 리포트
-        }
-
-        afterEvaluate {
-            classDirectories.setFrom(files(classDirectories.files.collect {
-                fileTree(dir: it, exclude: [
-                        "**/*Application*",
-                        "**/*Request*",
-                        "**/*Response*",
-                        "**/entity/**",
-                        "**/test/**",
-                        "**/resources/**",
-                        "**/Q*"
-                ])
-            }))
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
         }
     }
+
 }
+
+
+
+

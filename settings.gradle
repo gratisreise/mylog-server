@@ -1,7 +1,4 @@
 rootProject.name = 'mylog'
 
-include 'common'
-include 'api'
-include 'infra'
-include 'domain'
 
+include('api', 'common', 'domain', 'infra')
