@@ -1,46 +1,23 @@
 
 package com.mylog.article.service;
 
-import com.mylog.api.article.dto.ArticleCreateRequest;
-import com.mylog.api.article.dto.ArticleUpdateRequest;
+
 import com.mylog.article.entity.Article;
 import com.mylog.article.repository.ArticleRepository;
-import com.mylog.common.exception.CUnAuthorizedException;
-import com.mylog.api.auth.CustomUser;
-import com.mylog.api.category.entity.Category;
-import com.mylog.api.member.entity.Member;
-import com.mylog.infra.s3.S3Service;
-import com.mylog.api.category.service.CategoryReader;
-import com.mylog.api.member.service.MemberReader;
-import com.mylog.api.tag.service.TagWriter;
+import com.mylog.exception.CUnAuthorizedException;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class ArticleWriter {
     private final ArticleRepository articleRepository;
-    private final ArticleReader articleReader;
-    private final CategoryReader categoryReader;
-    private final MemberReader memberReader;
-    private final ArticleTagWriter articleTagWriter;
-    private final TagWriter tagWriter;
-    private final S3Service s3Service;
 
-    public void createArticle(ArticleCreateRequest request, CustomUser customUser, MultipartFile file) throws IOException{
-        Member member =  memberReader.getByCustomUser(customUser);
-        Category category = categoryReader.getByMemberIdAndCategoryName(member.getId(), request.category());
-        String imageUrl = s3Service.upload(file);
-
-        Article article = request.toEntity(member, category, imageUrl);
-
-        Article savedArticle = articleRepository.save(article);
-
-        tagWriter.saveTag(request.tags(), savedArticle);
+    public void createArticle(Article article){
+        articleRepository.save(article);
     }
 
     public void updateArticle(

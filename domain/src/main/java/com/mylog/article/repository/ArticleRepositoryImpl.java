@@ -1,13 +1,7 @@
 package com.mylog.article.repository;
 
-import com.mylog.api.article.dto.ArticleResponse;
+
 import com.mylog.article.entity.Article;
-import com.mylog.api.member.entity.Member;
-import com.mylog.model.entity.QArticle;
-import com.mylog.model.entity.QArticleTag;
-import com.mylog.model.entity.QCategory;
-import com.mylog.model.entity.QMember;
-import com.mylog.model.entity.QTag;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +20,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<ArticleResponse> findAllCustom(Pageable pageable) {
+    public Page<Article> findAllCustom(Pageable pageable) {
         QArticle article = QArticle.article;
         QMember member = QMember.member;
         QCategory category = QCategory.category;

@@ -51,4 +51,7 @@ public class ResponseService {
         result.setCode(ResultCode.FAILED.getCode());
         result.setMessage(ResultCode.FAILED.getMsg());
     }
+
+
+    private ResponseService(){}
 }

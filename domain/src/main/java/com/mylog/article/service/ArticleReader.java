@@ -3,6 +3,7 @@ package com.mylog.article.service;
 import com.mylog.article.entity.Article;
 import com.mylog.article.repository.ArticleRepository;
 
+import com.mylog.member.entity.Member;
 import com.mylog.member.service.MemberReader;
 import com.mylog.tag.service.TagReader;
 import java.util.List;
@@ -24,7 +25,7 @@ public class ArticleReader {
     private final MemberReader memberReader;
 
     //내 게시글 목록조회
-    public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser) {
+    public Page<Article> getArticles(Pageable pageable, CustomUser customUser) {
         Member member = memberReader.getById(customUser.getMemberId());
         return articleRepository.findMineByMember(member, pageable);
     }

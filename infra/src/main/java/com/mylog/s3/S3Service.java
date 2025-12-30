@@ -1,5 +1,6 @@
 package com.mylog.s3;
 
+
 import com.mylog.exception.CMissingDataException;
 import java.io.IOException;
 import java.util.UUID;
@@ -23,7 +24,7 @@ public class S3Service {
     private String bucketName;
 
     //이미지 업로드
-    public String upload(MultipartFile file) throws IOException {
+    public String upload(MultipartFile file)  {
         String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
         String contentType = file.getContentType();
         String region = "ap-northeast-2";
@@ -34,11 +35,11 @@ public class S3Service {
             .contentType(contentType)
             .build();
 
+
         try{
-            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(
-                file.getInputStream(), file.getSize()
-            ));
-        } catch (RuntimeException e) {
+            s3Client.putObject(putObjectRequest,
+                RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+        } catch (RuntimeException | IOException e) {
             throw new CMissingDataException("s3 이미지 업로드에 실패했습니다.");
         }
 
