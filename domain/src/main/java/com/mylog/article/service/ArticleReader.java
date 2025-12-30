@@ -2,6 +2,7 @@ package com.mylog.article.service;
 
 import com.mylog.article.entity.Article;
 import com.mylog.article.repository.ArticleRepository;
+import com.mylog.exception.CMissingDataException;
 
 import com.mylog.member.entity.Member;
 import com.mylog.member.service.MemberReader;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -74,7 +76,7 @@ public class ArticleReader {
             articleRepository.searchAllByTagName(tag, pageable);
     }
 
-    public Article getArticleById(Long articleId) {
+    public Article getById(Long articleId) {
         return articleRepository.findById(articleId).orElseThrow(CMissingDataException::new);
     }
 
