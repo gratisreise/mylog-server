@@ -3,16 +3,17 @@ package com.mylog.article.service;
 
 import com.mylog.api.auth.CustomUser;
 import com.mylog.article.dto.ArticleCreateRequest;
+import com.mylog.article.dto.ArticleResponse;
 import com.mylog.article.entity.Article;
 import com.mylog.category.entity.Category;
 import com.mylog.category.service.CategoryReader;
 import com.mylog.member.entity.Member;
 import com.mylog.member.service.MemberReader;
-import com.mylog.s3.S3Service;
+import com.mylog.tag.service.TagReader;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +23,8 @@ public class ArticleService {
     private final ArticleWriter articleWriter;
     private final MemberReader memberReader;
     private final CategoryReader categoryReader;
-    private final S3Service s3Service;
+    private final TagReader tagReader;
+
 
     @Transactional
     public void createArticle(
@@ -42,4 +44,12 @@ public class ArticleService {
     }
 
 
+
+
+    //게시글 조회
+    public ArticleResponse getArticle(Long articleId) {
+        Article article  = articleReader.getById(articleId);
+        List<String> tags = tagReader.getTags(article);
+        return ArticleResponse.of(article, tags);
+    }
 }

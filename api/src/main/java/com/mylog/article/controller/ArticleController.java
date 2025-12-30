@@ -1,11 +1,11 @@
 package com.mylog.article.controller;
 
 
-import com.mylog.api.article.dto.ArticleResponse;
-import com.mylog.api.article.dto.ArticleTestResponse;
-import com.mylog.api.article.dto.ArticleUpdateRequest;
 import com.mylog.api.auth.CustomUser;
 import com.mylog.article.dto.ArticleCreateRequest;
+import com.mylog.article.dto.ArticleResponse;
+import com.mylog.article.dto.ArticleTestResponse;
+import com.mylog.article.dto.ArticleUpdateRequest;
 import com.mylog.article.service.ArticleService;
 import com.mylog.response.CommonResult;
 import com.mylog.response.ListResult;
@@ -49,16 +49,9 @@ public class ArticleController {
         @RequestPart(value = "request") @Valid ArticleCreateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        String imageUrl = s3Service.upload(file);
+        String imageUrl = s3Service.upload(file); //s3 이미지 생성
         articleService.createArticle(request, customUser, imageUrl);
         return ResponseService.getSuccessResult();
-    }
-
-    //게시글 조회
-    @GetMapping("/{articleId}")
-    @Operation(summary = "게시글 조회")
-    public SingleResult<ArticleResponse> getArticle(@PathVariable Long articleId){
-        return ResponseService.getSingleResult(articleService.getArticle(articleId));
     }
 
     //게시글 수정
@@ -83,6 +76,13 @@ public class ArticleController {
     ){
         articleService.deleteArticle(articleId, customUser);
         return ResponseService.getSuccessResult();
+    }
+
+    //게시글 조회
+    @GetMapping("/{articleId}")
+    @Operation(summary = "게시글 조회")
+    public SingleResult<ArticleResponse> getArticle(@PathVariable Long articleId){
+        return ResponseService.getSingleResult(articleService.getArticle(articleId));
     }
 
 //    //전체 게시글 목록 조회
