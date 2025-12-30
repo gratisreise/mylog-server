@@ -1,6 +1,6 @@
 package com.mylog.api.auth;
 
-import com.mylog.api.member.entity.Member;
+import com.mylog.member.entity.Member;
 import com.mylog.common.enums.OauthProvider;
 import java.util.Collection;
 import lombok.Getter;

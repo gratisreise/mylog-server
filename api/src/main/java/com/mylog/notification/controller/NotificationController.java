@@ -1,8 +1,8 @@
 package com.mylog.api.notification.controller;
 
-import com.mylog.api.notification.service.NotificationReader;
+import com.mylog.notification.service.NotificationReader;
 import com.mylog.api.notification.dto.NotificationResponse;
-import com.mylog.api.notification.service.NotificationWriter;
+import com.mylog.notification.service.NotificationWriter;
 import com.mylog.common.response.CommonResult;
 import com.mylog.common.response.ResponseService;
 import com.mylog.common.response.SingleResult;

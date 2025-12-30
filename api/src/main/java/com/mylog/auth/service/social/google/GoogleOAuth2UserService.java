@@ -1,7 +1,7 @@
 package com.mylog.api.auth.service.social.google;
 
 import com.mylog.common.annotations.OAuth2ServiceType;
-import com.mylog.api.auth.JwtUtil;
+import com.mylog.utils.JwtUtil;
 import com.mylog.common.enums.OauthProvider;
 import com.mylog.common.exception.CMissingDataException;
 import com.mylog.api.auth.dto.social.OAuth2UserInfo;
@@ -9,10 +9,10 @@ import com.mylog.api.auth.dto.social.OAuthRequest;
 import com.mylog.api.auth.dto.social.google.GoogleOAuth2UserInfo;
 import com.mylog.api.auth.dto.social.google.GoogleTokenResponse;
 import com.mylog.api.auth.dto.social.google.GoogleUserInfo;
-import com.mylog.api.member.entity.Member;
-import com.mylog.api.member.repository.MemberRepository;
+import com.mylog.member.entity.Member;
+import com.mylog.member.repository.MemberRepository;
 import com.mylog.api.auth.service.RefreshTokenService;
-import com.mylog.api.category.service.CategoryWriter;
+import com.mylog.category.service.CategoryWriter;
 import com.mylog.api.auth.service.social.AbstractOAuth2UserService;
 import java.util.HashMap;
 import java.util.Map;

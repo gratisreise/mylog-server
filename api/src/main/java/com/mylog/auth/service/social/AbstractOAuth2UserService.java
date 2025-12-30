@@ -1,13 +1,13 @@
 package com.mylog.api.auth.service.social;
 
-import com.mylog.api.auth.JwtUtil;
+import com.mylog.utils.JwtUtil;
 
 import com.mylog.api.auth.dto.LoginResponse;
 import com.mylog.api.auth.dto.social.OAuth2UserInfo;
 import com.mylog.api.auth.dto.social.OAuthRequest;
-import com.mylog.api.member.entity.Member;
+import com.mylog.member.entity.Member;
 import com.mylog.api.auth.service.RefreshTokenService;
-import com.mylog.api.category.service.CategoryWriter;
+import com.mylog.category.service.CategoryWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

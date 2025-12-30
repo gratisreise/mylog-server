@@ -1,7 +1,7 @@
 package com.mylog.api.comment.dto;
 
-import com.mylog.api.comment.Reply;
-import com.mylog.api.comment.entity.Comment;
+import com.mylog.comment.classes.Reply;
+import com.mylog.comment.entity.Comment;
 import java.time.LocalDateTime;
 import java.util.List;
 

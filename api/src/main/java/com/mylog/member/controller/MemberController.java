@@ -1,9 +1,9 @@
 package com.mylog.api.member.controller;
 
 import com.mylog.api.auth.dto.SignUpRequest;
-import com.mylog.api.member.service.MemberReader;
+import com.mylog.member.service.MemberReader;
 import com.mylog.api.member.dto.MemberResponse;
-import com.mylog.api.member.service.MemberWriter;
+import com.mylog.member.service.MemberWriter;
 import com.mylog.api.member.dto.UpdateMemberRequest;
 import com.mylog.common.response.CommonResult;
 import com.mylog.common.response.ResponseService;

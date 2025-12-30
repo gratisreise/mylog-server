@@ -1,11 +1,10 @@
 package com.mylog.response;
 
 
-import com.mylog.common.enums.ResultCode;
-import java.util.List;
-import org.springframework.stereotype.Service;
 
-@Service
+import com.mylog.enums.ResultCode;
+import java.util.List;
+
 public class ResponseService {
 
     public static <T> ListResult<T> getListResult(List<T> data) {

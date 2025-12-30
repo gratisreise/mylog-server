@@ -1,8 +1,8 @@
 package com.mylog.api.article.dto;
 
-import com.mylog.api.article.entity.Article;
-import com.mylog.api.category.entity.Category;
-import com.mylog.api.member.entity.Member;
+import com.mylog.article.entity.Article;
+import com.mylog.category.entity.Category;
+import com.mylog.member.entity.Member;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;

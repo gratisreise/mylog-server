@@ -1,7 +1,7 @@
 package com.mylog.api.category.dto;
 
 
-import com.mylog.api.category.entity.Category;
+import com.mylog.category.entity.Category;
 
 public record CategoryResponse(Long id, String categoryName, Long memberId) {
     public CategoryResponse (Category category) {

@@ -1,6 +1,6 @@
 package com.mylog.filter;
 
-import com.mylog.api.auth.JwtUtil;
+import com.mylog.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

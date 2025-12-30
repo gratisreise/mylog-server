@@ -1,8 +1,8 @@
 package com.mylog.api.auth.service;
 
 import com.mylog.api.auth.CustomUser;
-import com.mylog.api.member.entity.Member;
-import com.mylog.api.member.service.MemberReader;
+import com.mylog.member.entity.Member;
+import com.mylog.member.service.MemberReader;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

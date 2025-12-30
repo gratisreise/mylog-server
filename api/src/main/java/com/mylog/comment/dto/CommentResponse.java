@@ -1,6 +1,6 @@
 package com.mylog.api.comment.dto;
 
-import com.mylog.api.comment.entity.Comment;
+import com.mylog.comment.entity.Comment;
 import java.time.LocalDateTime;
 
 public record CommentResponse(

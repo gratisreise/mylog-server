@@ -1,13 +1,14 @@
 package com.mylog.handler;
 
 
-import com.mylog.common.response.CommonResult;
-import com.mylog.common.response.ResponseService;
-import com.mylog.common.enums.ResultCode;
+
+import com.mylog.enums.ResultCode;
 import com.mylog.exception.CDuplicatedException;
 import com.mylog.exception.CInvalidDataException;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.exception.CUnAuthorizedException;
+import com.mylog.response.CommonResult;
+import com.mylog.response.ResponseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
