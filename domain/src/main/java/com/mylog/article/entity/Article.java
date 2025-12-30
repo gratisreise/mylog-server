@@ -3,6 +3,7 @@ package com.mylog.article.entity;
 
 
 import com.mylog.BaseEntity;
+import com.mylog.category.entity.Category;
 import com.mylog.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

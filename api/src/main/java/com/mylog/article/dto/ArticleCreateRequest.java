@@ -1,4 +1,4 @@
-package com.mylog.api.article.dto;
+package com.mylog.article.dto;
 
 import com.mylog.article.entity.Article;
 import com.mylog.category.entity.Category;
