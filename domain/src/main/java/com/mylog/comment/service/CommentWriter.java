@@ -29,7 +29,7 @@ public class CommentWriter {
     private final NotificationSettingWriter notificationSettingWriter;
 
     public void createComment(Long articleId, CommentCreateRequest request, CustomUser customUser) {
-        Article article = articleReader.getArticleById(articleId);
+        Article article = articleReader.getById(articleId);
         Member member = memberReader.getById(customUser.getMemberId());
 
         Comment comment = request.toEntity(article, member);

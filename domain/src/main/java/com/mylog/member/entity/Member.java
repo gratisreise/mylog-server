@@ -1,9 +1,8 @@
 package com.mylog.member.entity;
 
-import com.mylog.api.member.dto.UpdateMemberRequest;
-import com.mylog.common.enums.OauthProvider;
-import com.mylog.api.auth.dto.social.OAuth2UserInfo;
-import com.mylog.domain.BaseEntity;
+
+import com.mylog.BaseEntity;
+import com.mylog.enums.OauthProvider;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -21,7 +20,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -61,30 +60,30 @@ public class Member extends BaseEntity {
     @Column(length = 200)
     private String providerId;
 
-    public void update(UpdateMemberRequest request, PasswordEncoder encoder) {
-        String password = request.password();
-        this.password = password == null ? this.password : encoder.encode(password);
-        this.memberName = request.memberName();
-        this.nickname = request.nickname();
-        this.bio = request.bio();
-    }
-
-    public void update(UpdateMemberRequest request, String profileImg) {
-        this.password = request.password();
-        this.memberName = request.memberName();
-        this.nickname = request.nickname();
-        this.bio = request.bio();
-        this.profileImg = profileImg;
-    }
-
-    public void update(OAuth2UserInfo userInfo, OauthProvider oauthProvider) {
-        this.provider = oauthProvider;
-        this.providerId = userInfo.getId();
-        this.memberName = userInfo.getName();
-        this.password = userInfo.getId() + UUID.randomUUID();
-        this.nickname = userInfo.getId() + oauthProvider;
-        this.profileImg = userInfo.getImageUrl();
-    }
+//    public void update(UpdateMemberRequest request, PasswordEncoder encoder) {
+//        String password = request.password();
+//        this.password = password == null ? this.password : encoder.encode(password);
+//        this.memberName = request.memberName();
+//        this.nickname = request.nickname();
+//        this.bio = request.bio();
+//    }
+//
+//    public void update(UpdateMemberRequest request, String profileImg) {
+//        this.password = request.password();
+//        this.memberName = request.memberName();
+//        this.nickname = request.nickname();
+//        this.bio = request.bio();
+//        this.profileImg = profileImg;
+//    }
+//
+//    public void update(OAuth2UserInfo userInfo, OauthProvider oauthProvider) {
+//        this.provider = oauthProvider;
+//        this.providerId = userInfo.getId();
+//        this.memberName = userInfo.getName();
+//        this.password = userInfo.getId() + UUID.randomUUID();
+//        this.nickname = userInfo.getId() + oauthProvider;
+//        this.profileImg = userInfo.getImageUrl();
+//    }
 
     public boolean isOwnedBy(Long memberId) {
         return Objects.equals(id, memberId);

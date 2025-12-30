@@ -1,9 +1,11 @@
-package com.mylog.api.article.dto;
+package com.mylog.article.dto;
 
 import com.mylog.article.entity.Article;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.Builder;
 
+@Builder
 public record ArticleResponse(
     Long id,
     String title,
@@ -15,16 +17,19 @@ public record ArticleResponse(
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {
 
-    public ArticleResponse(Article article, List<String> tags) {
-        this(article.getId(),
-            article.getTitle(),
-            article.getContent(),
-            article.getMember().getNickname(),
-            article.getCategory().getCategoryName(),
-            article.getArticleImg(),
-            tags,
-            article.getCreatedAt(),
-            article.getUpdatedAt());
+    public static ArticleResponse of(Article article, List<String> tags){
+        return ArticleResponse.builder()
+            .id(article.getId())
+            .title(article.getTitle())
+            .content(article.getContent())
+            .author(article.getMember().getMemberName())
+            .category(article.getCategory().getCategoryName())
+            .articleImg(article.getArticleImg())
+            .tags(tags)
+            .createdAt(article.getCreatedAt())
+            .updatedAt(article.getUpdatedAt())
+            .build();
     }
+
 
 }
