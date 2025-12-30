@@ -1,7 +1,7 @@
 package com.mylog.api.category.dto;
 
-import com.mylog.api.category.entity.Category;
-import com.mylog.api.member.entity.Member;
+import com.mylog.category.entity.Category;
+import com.mylog.member.entity.Member;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 

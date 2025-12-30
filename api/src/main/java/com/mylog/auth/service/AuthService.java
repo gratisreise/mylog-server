@@ -1,13 +1,13 @@
 package com.mylog.api.auth.service;
 
-import com.mylog.api.auth.JwtUtil;
+import com.mylog.utils.JwtUtil;
 import com.mylog.api.auth.dto.LoginRequest;
 import com.mylog.api.auth.dto.LoginResponse;
 import com.mylog.api.auth.dto.RefreshRequest;
 import com.mylog.api.auth.dto.RefreshResponse;
 import com.mylog.common.exception.CInvalidDataException;
-import com.mylog.api.member.entity.Member;
-import com.mylog.api.member.service.MemberReader;
+import com.mylog.member.entity.Member;
+import com.mylog.member.service.MemberReader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;

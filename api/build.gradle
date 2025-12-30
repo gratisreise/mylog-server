@@ -11,6 +11,7 @@ dependencies {
     // 1. 내부 모듈 의존성
     implementation project(':infra') // redis, s3, 외부통신
     implementation project(':common') // 응답형태나 예외
+    implementation project(':domain') // db
 
     // 2. Spring Boot Starters (재료)
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -20,18 +21,15 @@ dependencies {
     // 3. 모니터링 및 유틸 (선택사항)
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+
+    // jwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+
     // Sentry
-    implementation 'io.sentry:sentry-spring-boot-starter-jakarta:8.19.0'
+    implementation 'io.sentry:sentry-spring-boot-starter-jakarta'
 
     // Swagger (Springdoc OpenAPI)
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
-}
-
-// 4. 실행 설정 (가장 중요한 부분)
-bootJar {
-    enabled = true
-}
-
-jar {
-    enabled = false // 실행 모듈이므로 라이브러리용 jar는 생성하지 않음
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
 }

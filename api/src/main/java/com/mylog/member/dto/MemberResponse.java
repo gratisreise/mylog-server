@@ -1,7 +1,7 @@
 package com.mylog.api.member.dto;
 
 
-import com.mylog.api.member.entity.Member;
+import com.mylog.member.entity.Member;
 import com.mylog.common.enums.OauthProvider;
 import java.time.LocalDateTime;
 

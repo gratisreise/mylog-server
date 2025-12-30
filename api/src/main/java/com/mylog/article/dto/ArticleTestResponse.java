@@ -1,7 +1,7 @@
 package com.mylog.api.article.dto;
 
 
-import com.mylog.api.article.entity.Article;
+import com.mylog.article.entity.Article;
 import java.time.LocalDateTime;
 
 public record ArticleTestResponse(

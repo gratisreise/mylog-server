@@ -1,7 +1,7 @@
 package com.mylog.api.auth.dto;
 
 import com.mylog.common.enums.OauthProvider;
-import com.mylog.api.member.entity.Member;
+import com.mylog.member.entity.Member;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

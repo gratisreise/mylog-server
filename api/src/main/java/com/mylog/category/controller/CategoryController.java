@@ -1,10 +1,10 @@
 package com.mylog.api.category.controller;
 
 import com.mylog.api.category.dto.CategoryCreateRequest;
-import com.mylog.api.category.service.CategoryReader;
+import com.mylog.category.service.CategoryReader;
 import com.mylog.api.category.dto.CategoryResponse;
 import com.mylog.api.category.dto.CategoryUpdateRequest;
-import com.mylog.api.category.service.CategoryWriter;
+import com.mylog.category.service.CategoryWriter;
 import com.mylog.common.response.CommonResult;
 import com.mylog.common.response.ListResult;
 import com.mylog.common.response.ResponseService;

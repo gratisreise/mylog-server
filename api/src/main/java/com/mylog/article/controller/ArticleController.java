@@ -2,11 +2,11 @@ package com.mylog.api.article.controller;
 
 
 import com.mylog.api.article.dto.ArticleCreateRequest;
-import com.mylog.api.article.service.ArticleReader;
+import com.mylog.article.service.ArticleReader;
 import com.mylog.api.article.dto.ArticleResponse;
 import com.mylog.api.article.dto.ArticleTestResponse;
 import com.mylog.api.article.dto.ArticleUpdateRequest;
-import com.mylog.api.article.service.ArticleWriter;
+import com.mylog.article.service.ArticleWriter;
 import com.mylog.common.response.CommonResult;
 import com.mylog.common.response.ListResult;
 import com.mylog.common.response.ResponseService;

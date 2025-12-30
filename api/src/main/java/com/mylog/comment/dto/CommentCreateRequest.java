@@ -1,8 +1,8 @@
 package com.mylog.api.comment.dto;
 
-import com.mylog.api.article.entity.Article;
-import com.mylog.api.comment.entity.Comment;
-import com.mylog.api.member.entity.Member;
+import com.mylog.article.entity.Article;
+import com.mylog.comment.entity.Comment;
+import com.mylog.member.entity.Member;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 
