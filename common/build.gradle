@@ -1,0 +1,9 @@
+// api/build.gradle
+plugins {
+    id 'org.springframework.boot' version '3.2.5' apply false
+}
+
+dependencies {
+    api 'org.apache.commons:commons-lang3'
+    api 'com.fasterxml.jackson.core:jackson-databind' // JSON 처리는 어디서나 쓰이니까요.
+}
