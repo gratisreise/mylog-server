@@ -5,10 +5,11 @@ import com.mylog.category.service.CategoryReader;
 import com.mylog.api.category.dto.CategoryResponse;
 import com.mylog.api.category.dto.CategoryUpdateRequest;
 import com.mylog.category.service.CategoryWriter;
-import com.mylog.common.response.CommonResult;
-import com.mylog.common.response.ListResult;
-import com.mylog.common.response.ResponseService;
+
 import com.mylog.api.auth.CustomUser;
+import com.mylog.response.CommonResult;
+import com.mylog.response.ListResult;
+import com.mylog.response.ResponseService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -25,6 +25,4 @@ public class TagReader {
             .orElseThrow(CMissingDataException::new);
     }
 
-    public boolean
-
 }

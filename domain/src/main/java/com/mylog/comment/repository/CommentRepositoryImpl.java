@@ -1,10 +1,12 @@
-package com.mylog.api.comment.repository;
+package com.mylog.comment.repository;
 
+import com.mylog.article.entity.QArticle;
 import com.mylog.comment.entity.Comment;
-import com.mylog.api.member.entity.Member;
-import com.mylog.model.entity.QArticle;
-import com.mylog.model.entity.QComment;
-import com.mylog.model.entity.QMember;
+
+import com.mylog.comment.entity.QComment;
+import com.mylog.comment.repository.CommentRepositoryCustom;
+import com.mylog.member.entity.Member;
+import com.mylog.member.entity.QMember;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

@@ -1,17 +1,15 @@
-package com.mylog.api.comment.service;
+package com.mylog.comment.service;
 
-import com.mylog.api.comment.dto.CommentCreateRequest;
-import com.mylog.api.comment.dto.CommentUpdateRequest;
-import com.mylog.comment.entity.Comment;
-import com.mylog.api.comment.repository.CommentRepository;
-import com.mylog.common.exception.CUnAuthorizedException;
-import com.mylog.api.auth.CustomUser;
+
 import com.mylog.article.entity.Article;
-import com.mylog.api.member.entity.Member;
 import com.mylog.article.service.ArticleReader;
-import com.mylog.api.member.service.MemberReader;
-import com.mylog.api.notification.service.NotificationWriter;
-import com.mylog.api.notificationsetting.service.NotificationSettingWriter;
+import com.mylog.comment.repository.CommentRepository;
+import com.mylog.comment.service.CommentReader;
+import com.mylog.exception.CUnAuthorizedException;
+import com.mylog.member.entity.Member;
+import com.mylog.member.service.MemberReader;
+import com.mylog.notification.service.NotificationSettingWriter;
+import com.mylog.notification.service.NotificationWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,36 +26,36 @@ public class CommentWriter {
     private final NotificationWriter notificationWriter;
     private final NotificationSettingWriter notificationSettingWriter;
 
-    public void createComment(Long articleId, CommentCreateRequest request, CustomUser customUser) {
-        Article article = articleReader.getById(articleId);
-        Member member = memberReader.getById(customUser.getMemberId());
-
-        Comment comment = request.toEntity(article, member);
-        commentRepository.save(comment);
-
-        //게시글 작성자에게 알림을 보냄
-        Member articleMember = article.getMember();
-        notificationSettingWriter.createNotificationSetting(articleMember, "comment");
-        notificationWriter.sendNotification(articleMember, article.getId(), "comment");
-    }
-
-    public void updateComment(CommentUpdateRequest request, CustomUser customUser, Long commentId) {
-        Comment comment = commentReader.getById(commentId);
-
-        if (!comment.isOwnedBy(customUser.getMemberId())) {
-            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
-        }
-
-        comment.update(request.content());
-    }
-
-    public void deleteComment(Long commentId, CustomUser customUser){
-        Comment comment = commentReader.getById(commentId);
-
-        if (comment.isOwnedBy(customUser.getMemberId())) {
-            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
-        }
-
-        commentRepository.deleteById(commentId);
-    }
+//    public void createComment(Long articleId, CommentCreateRequest request, CustomUser customUser) {
+//        Article article = articleReader.getById(articleId);
+//        Member member = memberReader.getById(customUser.getMemberId());
+//
+//        Comment comment = request.toEntity(article, member);
+//        commentRepository.save(comment);
+//
+//        //게시글 작성자에게 알림을 보냄
+//        Member articleMember = article.getMember();
+//        notificationSettingWriter.createNotificationSetting(articleMember, "comment");
+//        notificationWriter.sendNotification(articleMember, article.getId(), "comment");
+//    }
+//
+//    public void updateComment(CommentUpdateRequest request, CustomUser customUser, Long commentId) {
+//        Comment comment = commentReader.getById(commentId);
+//
+//        if (!comment.isOwnedBy(customUser.getMemberId())) {
+//            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
+//        }
+//
+//        comment.update(request.content());
+//    }
+//
+//    public void deleteComment(Long commentId, CustomUser customUser){
+//        Comment comment = commentReader.getById(commentId);
+//
+//        if (comment.isOwnedBy(customUser.getMemberId())) {
+//            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
+//        }
+//
+//        commentRepository.deleteById(commentId);
+//    }
 }

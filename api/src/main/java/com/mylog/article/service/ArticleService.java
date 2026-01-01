@@ -6,8 +6,10 @@ import com.mylog.article.dto.ArticleCreateRequest;
 import com.mylog.article.dto.ArticleResponse;
 import com.mylog.article.dto.ArticleUpdateRequest;
 import com.mylog.article.entity.Article;
+import com.mylog.article.projections.ArticleProjection;
 import com.mylog.category.entity.Category;
 import com.mylog.category.service.CategoryReader;
+import com.mylog.common.PageResponse;
 import com.mylog.enums.ErrorMessage;
 import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.member.entity.Member;
@@ -18,6 +20,8 @@ import com.mylog.tag.service.TagReader;
 import com.mylog.tag.service.TagWriter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,6 +88,7 @@ public class ArticleService {
      * s3 이미지 삭제
      * article 삭제
      */
+    @Transactional
     public void deleteArticle(Long articleId, CustomUser customUser) {
 
         Article article = articleReader.getById(articleId);
@@ -104,6 +109,17 @@ public class ArticleService {
         return ArticleResponse.of(article, tags);
     }
 
+    /** 게시글 목록조회
+     * 게시글 리스트 가져오기
+     * 게시글 마다 태그 리스트 가져오기 => N+1 문제 발생
+     * 단순 jpa 사용으로는 안될 듯 => QueryDSL로 쿼리 작성하고 가져오기??
+     */
+    public PageResponse<ArticleResponse> getArticles(Pageable pageable) {
+        Page<ArticleResponse> response =  articleReader.getArticles(pageable)
+            .map(ArticleResponse::from);
+        return PageResponse.from(response);
+    }
+
 
     private void createTag(List<String> request, Article article) {
         //태그리스트
@@ -112,5 +128,4 @@ public class ArticleService {
         //게시글 태그 생성
         articleTagWriter.createArticleTag(article, tags);
     }
-
 }
