@@ -20,6 +20,10 @@ public class ArticleWriter {
         return articleRepository.save(article);
     }
 
+    public void deleteArticle(Long articleId){
+        articleRepository.deleteById(articleId);
+    }
+
     public void updateArticle(
         ArticleUpdateRequest request, CustomUser customUser,
         MultipartFile file, Long articleId) throws IOException {
