@@ -1,7 +1,8 @@
-package com.mylog.api.comment.repository;
+package com.mylog.comment.repository;
 
 import com.mylog.comment.entity.Comment;
-import com.mylog.api.member.entity.Member;
+
+import com.mylog.member.entity.Member;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +12,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comment, Long>, CommentRepositoryCustom{
+public interface CommentRepository extends JpaRepository<Comment, Long>,
+    CommentRepositoryCustom {
 
     //게시글 댓글 목록 조회
     @EntityGraph(attributePaths = {"article", "member"})
