@@ -8,6 +8,7 @@ import com.mylog.article.dto.ArticleUpdateRequest;
 import com.mylog.article.entity.Article;
 import com.mylog.category.entity.Category;
 import com.mylog.category.service.CategoryReader;
+import com.mylog.enums.ErrorMessage;
 import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.member.entity.Member;
 import com.mylog.member.service.MemberReader;
@@ -19,7 +20,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +60,7 @@ public class ArticleService {
         Long memberId = customUser.getMemberId();
 
         if(!article.isOwnedBy(memberId)){
-            throw new CUnAuthorizedException("게시글에 대한 권한이 없습니다.");
+            throw new CUnAuthorizedException(ErrorMessage.NOT_YOUR_ARICLE);
         }
 
         //기존 이미지 s3에서 삭제
@@ -77,6 +77,24 @@ public class ArticleService {
         articleTagWriter.deleteArticleTag(article);
 
         createTag(request.tagNames(), article);
+    }
+
+
+    /** 게시글 삭제
+     * s3 이미지 삭제
+     * article 삭제
+     */
+    public void deleteArticle(Long articleId, CustomUser customUser) {
+
+        Article article = articleReader.getById(articleId);
+        Long memberId = customUser.getMemberId();
+
+        if(article.isOwnedBy(memberId)){
+            throw new CUnAuthorizedException(ErrorMessage.NOT_YOUR_ARICLE);
+        }
+
+        s3Service.deleteImage(article.getArticleImg());
+        articleWriter.deleteArticle(articleId);
     }
 
     //게시글 조회
