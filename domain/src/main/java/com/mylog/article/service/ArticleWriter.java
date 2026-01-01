@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArticleWriter {
     private final ArticleRepository articleRepository;
 
-    public void createArticle(Article article){
-        articleRepository.save(article);
+    public Article createArticle(Article article){
+        return articleRepository.save(article);
     }
 
     public void updateArticle(

@@ -21,7 +21,7 @@ public record ArticleCreateRequest (
     String category,
 
     @NotNull
-    List<String> tags
+    List<String> tagNames
 
 ) {
     public Article toEntity(Member member, Category category, String imageUrl){
