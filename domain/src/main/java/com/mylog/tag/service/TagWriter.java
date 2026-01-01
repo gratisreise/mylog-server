@@ -4,7 +4,7 @@ package com.mylog.tag.service;
 import com.mylog.article.entity.Article;
 import com.mylog.article.entity.ArticleTag;
 import com.mylog.article.service.ArticleTagWriter;
-import com.mylog.api.tag.entity.Tag;
+import com.mylog.tag.entity.Tag;
 import com.mylog.tag.repository.TagRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +29,19 @@ public class TagWriter {
             }
 
             Tag savedTag = tagReader.getTagByTagName(tag);
+            ArticleTag articleTag = ArticleTag.builder()
+                .article(article)
+                .tag(savedTag)
+                .build();
             articleTagWriter.crateArticleTag(new ArticleTag(article, savedTag));
         }
+    }
+
+    public List<Tag> getTagsOrCreate(List<String> tagNames) {
+        List<Tag> tags = tagNames.stream()
+            .filter(name -> !tagRepository.existsByTagName(name))
+            .map(Tag::new).toList();
+        return tagRepository.saveAll(tags);
     }
 
 }

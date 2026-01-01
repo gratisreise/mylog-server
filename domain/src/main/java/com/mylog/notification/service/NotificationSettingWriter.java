@@ -2,8 +2,7 @@ package com.mylog.notification.service;
 
 import com.mylog.notification.entity.NotificationSetting;
 import com.mylog.notification.repository.NotificationSettingRepository;
-import com.mylog.common.exception.CMissingDataException;
-import com.mylog.api.auth.CustomUser;
+
 import com.mylog.member.entity.Member;
 import com.mylog.member.service.MemberReader;
 import lombok.RequiredArgsConstructor;
@@ -33,13 +32,13 @@ public class NotificationSettingWriter {
     }
 
     //알림끄기
-    public void toggleNotification(CustomUser customUser, String type){
-        Member member = memberReader.getByCustomUser(customUser);
-        notificationSettingRepository
-            .findByMemberAndType(member, type)
-            .orElseThrow(CMissingDataException::new)
-            .toggle();
-    };
+//    public void toggleNotification(CustomUser customUser, String type){
+//        Member member = memberReader.getByCustomUser(customUser);
+//        notificationSettingRepository
+//            .findByMemberAndType(member, type)
+//            .orElseThrow(CMissingDataException::new)
+//            .toggle();
+//    };
 
 
 

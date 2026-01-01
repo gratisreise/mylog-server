@@ -1,4 +1,4 @@
-package com.mylog;
+package com.mylog.common;
 
 import java.util.List;
 import org.springframework.data.domain.Page;

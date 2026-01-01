@@ -1,8 +1,9 @@
 package com.mylog.tag.repository;
 
 import com.mylog.article.entity.Article;
-import com.mylog.model.entity.QArticleTag;
-import com.mylog.model.entity.QTag;
+
+import com.mylog.article.entity.QArticleTag;
+import com.mylog.tag.entity.QTag;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
