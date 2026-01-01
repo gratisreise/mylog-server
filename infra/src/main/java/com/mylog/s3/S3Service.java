@@ -7,6 +7,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -49,6 +50,7 @@ public class S3Service {
     }
 
     // 이미지 삭제
+    @Async
     public void deleteImage(String url) {
         String fileKey = url.substring(url.lastIndexOf("/") + 1);
         log.info("fileKey: {}", fileKey);

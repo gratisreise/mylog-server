@@ -63,7 +63,8 @@ public class ArticleController {
         @AuthenticationPrincipal CustomUser customUser,
         @PathVariable Long articleId
     ) throws IOException {
-        articleService.updateArticle(request, customUser, file, articleId);
+        String imageUrl = s3Service.upload(file); //s3이미지 생성
+        articleService.updateArticle(request, customUser, imageUrl, articleId);
         return ResponseService.getSuccessResult();
     }
 

@@ -1,5 +1,7 @@
 package com.mylog.article.dto;
 
+import com.mylog.article.entity.Article;
+import com.mylog.category.entity.Category;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 import org.hibernate.validator.constraints.Length;
@@ -16,5 +18,14 @@ public record ArticleUpdateRequest(
      String category,
     @NotBlank
      String author,
-     List<String> tags
-) { }
+     List<String> tagNames
+) {
+    public Article toEntity(String image, Category category){
+        return Article.builder()
+            .title(title)
+            .content(content)
+            .articleImg(image)
+            .category(category)
+            .build();
+    }
+}
