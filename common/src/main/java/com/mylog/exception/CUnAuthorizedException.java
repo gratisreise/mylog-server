@@ -1,6 +1,8 @@
 package com.mylog.exception;
 
 
+import com.mylog.enums.ErrorMessage;
+
 public class CUnAuthorizedException extends RuntimeException{
     public CUnAuthorizedException(String message) {
         super(message);
@@ -11,5 +13,9 @@ public class CUnAuthorizedException extends RuntimeException{
     }
     public CUnAuthorizedException(Throwable cause) {
         super(cause);
+    }
+
+    public CUnAuthorizedException(ErrorMessage errorMessage) {
+        super(errorMessage.getMessage());
     }
 }

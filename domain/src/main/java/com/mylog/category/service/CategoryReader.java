@@ -22,13 +22,13 @@ public class CategoryReader {
 
 
 
-    public List<Category> getCategories(CustomUser customUser){
-        Member member = memberReader.getByCustomUser(customUser);
-        return categoryRepository.findByMember(member)
-            .stream()
-            .filter(this::isOriginCategory)
-            .toList();
-    }
+//    public List<Category> getCategories(CustomUser customUser){
+//        Member member = memberReader.getByCustomUser(customUser);
+//        return categoryRepository.findByMember(member)
+//            .stream()
+//            .filter(this::isOriginCategory)
+//            .toList();
+//    }
 
     private boolean isOriginCategory(Category category){
         return !category.getCategoryName().equals(CommonValue.ORIGIN_CATEGORY);

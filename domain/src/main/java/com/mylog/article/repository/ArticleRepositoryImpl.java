@@ -1,12 +1,17 @@
 package com.mylog.article.repository;
 
 
-import com.mylog.article.entity.Article;
+import com.mylog.article.entity.QArticle;
+import com.mylog.article.entity.QArticleTag;
+import com.mylog.article.projections.ArticleProjection;
+import com.mylog.category.entity.Category;
+import com.mylog.member.entity.Member;
+import com.mylog.tag.entity.QTag;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,209 +24,56 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
+    private final String TAG_FUNCTION = "STRING_AGG({0}, ',' ORDER_BY {0}) ASC";
+//    private Long id;
+//    private Member member;
+//    private Category category;
+//    private String content;
+//    private String articleImg;
+//    private List<String> tags;
+//    private LocalDateTime createdAt;
+//    private LocalDateTime updatedAt;
     @Override
-    public Page<Article> findAllCustom(Pageable pageable) {
-        QArticle article = QArticle.article;
-        QMember member = QMember.member;
-        QCategory category = QCategory.category;
-
-        List<Article> articles = queryFactory
-            .selectFrom(article)
-            .join(article.member, member).fetchJoin()
-            .join(article.category, category).fetchJoin()
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
-
-        List<Long> articleIds = getArticleIds(articles);
-
-        QArticleTag articleTag = QArticleTag.articleTag;
-        QTag tag = QTag.tag;
-
-        Map<Long, List<String>> articleTagMap = getMappedTags(articleTag, tag, articleIds);
-        List<ArticleResponse> content = getContent(articles, articleTagMap);
-
-        long total = queryFactory
-            .select(article.count())
-            .from(article)
-            .fetchOne();
-
-        return new PageImpl<>(content,pageable, total);
-    }
-
-    @Override
-    public Page<ArticleResponse> findMineByMember(Member member, Pageable pageable) {
-        QArticle article = QArticle.article;
-        QMember qmember = QMember.member;
-        QCategory category = QCategory.category;
-
-        List<Article> articles = queryFactory
-            .selectFrom(article)
-            .join(article.member, qmember).fetchJoin()
-            .join(article.category, category).fetchJoin()
-            .where(article.member.eq(member))
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
-
-        List<Long> articleIds = getArticleIds(articles);
-
-
-        QArticleTag articleTag = QArticleTag.articleTag;
-        QTag tag = QTag.tag;
-
-        Map<Long, List<String>> articleTagMap = getMappedTags(articleTag, tag, articleIds);
-
-        List<ArticleResponse> content = getContent(articles, articleTagMap);
-
-        long total = queryFactory
-            .select(article.count())
-            .from(article)
-            .where(article.member.eq(member))
-            .fetchOne();
-
-        return new PageImpl<>(content, pageable, total);
-    }
-
-    @Override
-    public Page<ArticleResponse> searchMineByTitle(Member member, String keyword,
-        Pageable pageable) {
-        QArticle article = QArticle.article;
-        QMember qmember = QMember.member;
-        QCategory category = QCategory.category;
-
-        List<Article> articles = queryFactory
-            .selectFrom(article)
-            .join(article.member, qmember).fetchJoin()
-            .join(article.category, category).fetchJoin()
-            .where(article.member.eq(member))
-            .where(article.title.containsIgnoreCase(keyword))
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
-
-        List<Long> articleIds = getArticleIds(articles);
-
-
-        QArticleTag articleTag = QArticleTag.articleTag;
-        QTag tag = QTag.tag;
-
-        Map<Long, List<String>> articleTagMap = getMappedTags(articleTag, tag, articleIds);
-
-        List<ArticleResponse> content = getContent(articles, articleTagMap);
-
-        long total = queryFactory
-            .select(article.count())
-            .from(article)
-            .where(article.member.eq(member))
-            .where(article.title.containsIgnoreCase(keyword))
-            .fetchOne();
-
-        return new PageImpl<>(content, pageable, total);
-    }
-
-    @Override
-    public Page<ArticleResponse> searchAllByTitle(String keyword, Pageable pageable) {
-        QArticle article = QArticle.article;
-        QMember qmember = QMember.member;
-        QCategory category = QCategory.category;
-
-        List<Article> articles = queryFactory
-            .selectFrom(article)
-            .join(article.member, qmember).fetchJoin()
-            .join(article.category, category).fetchJoin()
-            .where(article.title.containsIgnoreCase(keyword))
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
-
-        List<Long> articleIds = getArticleIds(articles);
-
-
-        QArticleTag articleTag = QArticleTag.articleTag;
-        QTag tag = QTag.tag;
-
-        Map<Long, List<String>> articleTagMap = getMappedTags(articleTag, tag, articleIds);
-
-        List<ArticleResponse> content = getContent(articles, articleTagMap);
-
-        long total = queryFactory
-            .select(article.count())
-            .from(article)
-            .where(article.title.containsIgnoreCase(keyword))
-            .fetchOne();
-
-        return new PageImpl<>(content, pageable, total);
-    }
-
-    @Override
-    public Page<ArticleResponse> searchAllByTagName(String tagName, Pageable pageable) {
+    public Page<ArticleProjection> findAllCustom(Pageable pageable) {
         QArticle article = QArticle.article;
         QArticleTag articleTag = QArticleTag.articleTag;
         QTag tag = QTag.tag;
-        QMember member = QMember.member;
-        QCategory category = QCategory.category;
 
-        List<Article> articles = queryFactory
-            .select(article).distinct()
-            .from(articleTag)
-            .join(articleTag.article, article)
-            .join(articleTag.tag, tag)
-            .join(article.member, member).fetchJoin()
-            .join(article.category, category).fetchJoin()
-            .where(tag.tagName.eq(tagName))
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
+        List<ArticleProjection> articleProjections =
+            getArticleProjections(pageable, article, tag, articleTag);
+        long total = countTotal(article);
 
-        List<Long> articleIds = getArticleIds(articles);
-
-        Map<Long, List<String>> articleTagMap = getMappedTags(articleTag, tag, articleIds);
-
-        List<ArticleResponse> content = getContent(articles, articleTagMap);
-
-        long total = queryFactory
-            .select(article.countDistinct())
-            .from(articleTag)
-            .join(articleTag.article, article)
-            .join(articleTag.tag, tag)
-            .where(tag.tagName.eq(tagName))
-            .fetchOne();
-
-        return new PageImpl<>(content, pageable, total);
+        return new PageImpl<>(articleProjections, pageable, total);
     }
 
-    private Map<Long, List<String>> getMappedTags(QArticleTag articleTag, QTag tag, List<Long> articleIds) {
+    private long countTotal(QArticle article){
         return queryFactory
-            .select(articleTag.article.id, tag.tagName)
-            .from(articleTag)
-            .join(articleTag.tag, tag)
-            .where(articleTag.article.id.in(articleIds))
-            .fetch()
-            .stream()
-            .collect(Collectors.groupingBy(
-                tuple -> tuple.get(articleTag.article.id),
-                Collectors.mapping(
-                    tuple -> tuple.get(tag.tagName),
-                    Collectors.toList()
-                )
-            ));
+            .select(article.count())
+            .from(article)
+            .fetchOne();
     }
 
-
-    private List<Long> getArticleIds(List<Article> articles) {
-        return articles.stream()
-            .map(Article::getId)
-            .toList();
+    private List<ArticleProjection> getArticleProjections(Pageable pageable, QArticle article, QTag tag,
+        QArticleTag articleTag) {
+        return queryFactory.select(Projections.constructor(
+                ArticleProjection.class,
+                article.id,
+                article.title,
+                article.member,
+                article.category,
+                article.content,
+                article.articleImg,
+                Expressions.stringTemplate(TAG_FUNCTION, tag.tagName),
+                article.createdAt,
+                article.updatedAt)
+            ).from(article)
+            .leftJoin(articleTag)
+            .on(article.id.eq(articleTag.article.id))
+            .on(articleTag.tag.id.eq(tag.id))
+            .groupBy(article.id)
+            .orderBy(article.createdAt.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
     }
-
-
-    private List<ArticleResponse> getContent(List<Article> articles,
-        Map<Long, List<String>> articleTagMap) {
-        return articles.stream()
-            .map(a -> new ArticleResponse(a,
-                articleTagMap.getOrDefault(a.getId(), new ArrayList<>())))
-            .collect(Collectors.toList());
-    }
-
 }

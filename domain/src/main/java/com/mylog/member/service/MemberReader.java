@@ -15,27 +15,27 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberReader {
     private final MemberRepository memberRepository;
 
-    public MemberResponse getMember(CustomUser customUser){
-        Member member = memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new);
-        return new MemberResponse(member);
-    }
-
-    public Member getById(Long memberId) {
-        return memberRepository.findById(memberId)
-            .orElseThrow(CMissingDataException::new);
-    }
-
-    public Member getByNickname(String author) {
-        return memberRepository.findByNickname(author).orElseThrow(CMissingDataException::new);
-    }
-
-    public Member getByEmail(String email) {
-        return memberRepository.findByEmail(email).orElseThrow(CMissingDataException::new);
-    }
-
-    public Member getByCustomUser(CustomUser customUser) {
-        return memberRepository.findById(customUser.getMemberId())
-            .orElseThrow(CMissingDataException::new);
-    }
+//    public MemberResponse getMember(CustomUser customUser){
+//        Member member = memberRepository.findById(customUser.getMemberId())
+//            .orElseThrow(CMissingDataException::new);
+//        return new MemberResponse(member);
+//    }
+//
+//    public Member getById(Long memberId) {
+//        return memberRepository.findById(memberId)
+//            .orElseThrow(CMissingDataException::new);
+//    }
+//
+//    public Member getByNickname(String author) {
+//        return memberRepository.findByNickname(author).orElseThrow(CMissingDataException::new);
+//    }
+//
+//    public Member getByEmail(String email) {
+//        return memberRepository.findByEmail(email).orElseThrow(CMissingDataException::new);
+//    }
+//
+//    public Member getByCustomUser(CustomUser customUser) {
+//        return memberRepository.findById(customUser.getMemberId())
+//            .orElseThrow(CMissingDataException::new);
+//    }
 }

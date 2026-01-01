@@ -4,11 +4,10 @@ package com.mylog.article.controller;
 import com.mylog.api.auth.CustomUser;
 import com.mylog.article.dto.ArticleCreateRequest;
 import com.mylog.article.dto.ArticleResponse;
-import com.mylog.article.dto.ArticleTestResponse;
 import com.mylog.article.dto.ArticleUpdateRequest;
 import com.mylog.article.service.ArticleService;
+import com.mylog.common.PageResponse;
 import com.mylog.response.CommonResult;
-import com.mylog.response.ListResult;
 import com.mylog.response.ResponseService;
 import com.mylog.response.SingleResult;
 import com.mylog.s3.S3Service;
@@ -63,7 +62,8 @@ public class ArticleController {
         @AuthenticationPrincipal CustomUser customUser,
         @PathVariable Long articleId
     ) throws IOException {
-        articleService.updateArticle(request, customUser, file, articleId);
+        String imageUrl = s3Service.upload(file); //s3이미지 생성
+        articleService.updateArticle(request, customUser, imageUrl, articleId);
         return ResponseService.getSuccessResult();
     }
 
@@ -85,20 +85,20 @@ public class ArticleController {
         return ResponseService.getSingleResult(articleService.getArticle(articleId));
     }
 
-//    //전체 게시글 목록 조회
-//    @GetMapping("/all")
-//    @Operation(summary = "전체 게시글 목록 조회")
-//    public SingleResult<PageResponse<ArticleResponse>> getArticles(
-//        @PageableDefault(sort="id", direction = Direction.ASC, page=150) Pageable pageable){
-//        return ResponseService.getSingleResult(articleReader.getArticles(pageable));
-//    }
-
+    //전체 게시글 목록 조회
     @GetMapping("/all")
     @Operation(summary = "전체 게시글 목록 조회")
-    public ListResult<ArticleTestResponse> getArticles(
-        @PageableDefault(sort="id", direction = Direction.ASC, page=80, size= 1000) Pageable pageable){
-        return ResponseService.getListResult(articleService.getArticles(pageable));
+    public SingleResult<PageResponse<ArticleResponse>> getArticles(
+        @PageableDefault(sort="id", direction = Direction.ASC, page=150) Pageable pageable){
+        return ResponseService.getSingleResult(articleService.getArticles(pageable));
     }
+
+//    @GetMapping("/all")
+//    @Operation(summary = "전체 게시글 목록 조회")
+//    public ListResult<ArticleTestResponse> getArticles(
+//        @PageableDefault(sort="id", direction = Direction.ASC, page=80, size= 1000) Pageable pageable){
+//        return ResponseService.getListResult(articleService.getArticles(pageable));
+//    }
 
     //내 게시글 목록 조회
     @GetMapping("/me")

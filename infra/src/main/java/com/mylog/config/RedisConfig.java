@@ -2,7 +2,7 @@ package com.mylog.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import java.time.Duration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,25 +23,25 @@ public class RedisConfig {
         return redisTemplate.opsForValue();
     }
 
-    @Bean
-    public RedisCacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
-        ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-        GenericJackson2JsonRedisSerializer serializer =
-            new GenericJackson2JsonRedisSerializer(objectMapper);
-
-
-        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-            .entryTtl(Duration.ofSeconds(10))
-            .serializeValuesWith(
-                RedisSerializationContext.SerializationPair.fromSerializer(serializer)
-            );
-
-        return RedisCacheManager.builder(connectionFactory)
-            .cacheDefaults(config)
-            .build();
-    }
+//    @Bean
+//    public RedisCacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
+//        ObjectMapper objectMapper = new ObjectMapper()
+//            .registerModule(new JavaTimeModule())
+//            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+//
+//        GenericJackson2JsonRedisSerializer serializer =
+//            new GenericJackson2JsonRedisSerializer(objectMapper);
+//
+//
+//        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+//            .entryTtl(Duration.ofSeconds(10))
+//            .serializeValuesWith(
+//                RedisSerializationContext.SerializationPair.fromSerializer(serializer)
+//            );
+//
+//        return RedisCacheManager.builder(connectionFactory)
+//            .cacheDefaults(config)
+//            .build();
+//    }
 
 }
