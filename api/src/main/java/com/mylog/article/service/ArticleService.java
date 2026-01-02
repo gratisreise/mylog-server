@@ -112,7 +112,7 @@ public class ArticleService {
     /** 게시글 목록조회
      * 게시글 리스트 가져오기
      * 게시글 마다 태그 리스트 가져오기 => N+1 문제 발생
-     * 단순 jpa 사용으로는 안될 듯 => QueryDSL로 쿼리 작성하고 가져오기??
+     * QueryDSL로 쿼리 작성으로 조회 => N+1 2개의 쿼리로 작성완료
      */
     public PageResponse<ArticleResponse> getArticles(Pageable pageable) {
         Page<ArticleResponse> response =  articleReader.getArticles(pageable)
