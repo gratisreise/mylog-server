@@ -6,7 +6,6 @@ import com.mylog.article.dto.ArticleCreateRequest;
 import com.mylog.article.dto.ArticleResponse;
 import com.mylog.article.dto.ArticleUpdateRequest;
 import com.mylog.article.entity.Article;
-import com.mylog.article.projections.ArticleProjection;
 import com.mylog.category.entity.Category;
 import com.mylog.category.service.CategoryReader;
 import com.mylog.common.PageResponse;
@@ -38,12 +37,10 @@ public class ArticleService {
     private final S3Service s3Service;
     private final TagWriter tagWriter;
 
-
     @Transactional
     public void createArticle(
         ArticleCreateRequest request, CustomUser customUser, String imageUrl
     ){
-
         //전처리 정보 모음
         Member member = memberReader.getById(customUser.getMemberId());
         Category category = categoryReader.getByMemberIdAndCategoryName(member.getId(), request.category());
@@ -83,11 +80,6 @@ public class ArticleService {
         createTag(request.tagNames(), article);
     }
 
-
-    /** 게시글 삭제
-     * s3 이미지 삭제
-     * article 삭제
-     */
     @Transactional
     public void deleteArticle(Long articleId, CustomUser customUser) {
 
@@ -102,24 +94,42 @@ public class ArticleService {
         articleWriter.deleteArticle(articleId);
     }
 
-    //게시글 조회
+    //게시글 상세
     public ArticleResponse getArticle(Long articleId) {
         Article article  = articleReader.getById(articleId);
         List<String> tags = tagReader.getTags(article);
         return ArticleResponse.of(article, tags);
     }
 
-    /** 게시글 목록조회
-     * 게시글 리스트 가져오기
-     * 게시글 마다 태그 리스트 가져오기 => N+1 문제 발생
-     * 단순 jpa 사용으로는 안될 듯 => QueryDSL로 쿼리 작성하고 가져오기??
-     */
+    //내 게시글 목록조회
+    public PageResponse<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser) {
+        Long memberId = customUser.getMemberId();
+        Page<ArticleResponse> response = articleReader.getArticles(memberId, pageable)
+            .map(ArticleResponse::from);
+        return PageResponse.from(response);
+    }
+
+    //내 게시글 검색
+    public PageResponse<ArticleResponse> getArticles(String keyword, String tag, Pageable pageable, CustomUser customUser) {
+        Long memberId = customUser.getMemberId();
+        Page<ArticleResponse> response = articleReader.getArticles(keyword, tag, pageable, memberId)
+            .map(ArticleResponse::from);
+        return PageResponse.from(response);
+    }
+
+    // 전체 게시글 목록 조회
     public PageResponse<ArticleResponse> getArticles(Pageable pageable) {
         Page<ArticleResponse> response =  articleReader.getArticles(pageable)
             .map(ArticleResponse::from);
         return PageResponse.from(response);
     }
 
+    // 전체 게시글 검색
+    public PageResponse<ArticleResponse> getArticles(String keyword, String tag, Pageable pageable) {
+        Page<ArticleResponse> response = articleReader.getArticles(keyword, tag, pageable)
+            .map(ArticleResponse::from);
+        return PageResponse.from(response);
+    }
 
     private void createTag(List<String> request, Article article) {
         //태그리스트
