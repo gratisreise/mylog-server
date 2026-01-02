@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.mylog.exception.CMissingDataException;
 
 @Service
 @Slf4j
@@ -21,10 +22,11 @@ public class MemberReader {
 //        return new MemberResponse(member);
 //    }
 //
-//    public Member getById(Long memberId) {
-//        return memberRepository.findById(memberId)
-//            .orElseThrow(CMissingDataException::new);
-//    }
+    public Member getById(Long memberId) {
+        return memberRepository.findById(memberId)
+            .orElseThrow(CMissingDataException::new);
+    }
+
 //
 //    public Member getByNickname(String author) {
 //        return memberRepository.findByNickname(author).orElseThrow(CMissingDataException::new);
