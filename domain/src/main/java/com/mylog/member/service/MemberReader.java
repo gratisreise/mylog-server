@@ -26,6 +26,7 @@ public class MemberReader {
         return memberRepository.findById(memberId)
             .orElseThrow(CMissingDataException::new);
     }
+
 //
 //    public Member getByNickname(String author) {
 //        return memberRepository.findByNickname(author).orElseThrow(CMissingDataException::new);

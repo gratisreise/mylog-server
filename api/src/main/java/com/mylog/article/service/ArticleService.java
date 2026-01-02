@@ -120,6 +120,14 @@ public class ArticleService {
         return PageResponse.from(response);
     }
 
+    //내 게시글 목록조회
+    public PageResponse<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser) {
+        Long memberId = customUser.getMemberId();
+        Page<ArticleResponse> response = articleReader.getArticles(memberId, pageable)
+            .map(ArticleResponse::from);
+        return PageResponse.from(response);
+    }
+
 
     private void createTag(List<String> request, Article article) {
         //태그리스트

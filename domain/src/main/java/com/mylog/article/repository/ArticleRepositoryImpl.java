@@ -5,6 +5,7 @@ import com.mylog.article.entity.QArticle;
 import com.mylog.article.entity.QArticleTag;
 import com.mylog.article.projections.ArticleProjection;
 import com.mylog.category.entity.QCategory;
+import com.mylog.member.entity.Member;
 import com.mylog.member.entity.QMember;
 import com.mylog.tag.entity.QTag;
 import com.querydsl.core.types.Projections;
@@ -33,18 +34,69 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
 //    private List<String> tags;
 //    private LocalDateTime createdAt;
 //    private LocalDateTime updatedAt;
-    @Override
+
+    @Override //게시글 전체 목록조회
     public Page<ArticleProjection> findAllCustom(Pageable pageable) {
         QArticle article = QArticle.article;
         QArticleTag articleTag = QArticleTag.articleTag;
         QTag tag = QTag.tag;
 
-        List<ArticleProjection> articleProjections =
-            findAll(pageable, article, tag, articleTag);
+        List<ArticleProjection> projections = findAll(pageable, article, tag, articleTag);
         long total = countTotal(article);
 
-        return new PageImpl<>(articleProjections, pageable, total);
+        return generatePage(pageable, projections, total);
     }
+
+
+    @Override // 내 게시글 목록조회
+    public Page<ArticleProjection> findMineByMember(Long memberId, Pageable pageable) {
+        QArticle article = QArticle.article;
+        QArticleTag articleTag = QArticleTag.articleTag;
+        QTag tag = QTag.tag;
+
+        List<ArticleProjection> projections = findMineByMemberId(memberId, pageable, article, tag,
+            articleTag);
+
+        long total = countMineTotal(article, memberId);
+
+        return generatePage(pageable, projections, total);
+    }
+
+
+
+
+    private long countMineTotal(QArticle article, Long memberId) {
+        return queryFactory
+            .select(article.count())
+            .from(article)
+            .where(article.member.id.eq(memberId))
+            .fetchOne();
+    }
+
+    private List<ArticleProjection> findMineByMemberId(Long memberId, Pageable pageable, QArticle article,
+        QTag tag, QArticleTag articleTag) {
+        return queryFactory.select(Projections.constructor(
+                ArticleProjection.class,
+                article.id,
+                article.title,
+                article.member.memberName,
+                article.category.categoryName,
+                article.content,
+                article.articleImg,
+                Expressions.stringTemplate(TAG_FUNCTION, tag.tagName),
+                article.createdAt,
+                article.updatedAt)
+            ).from(article)
+            .leftJoin(articleTag).on(article.id.eq(articleTag.article.id))
+            .leftJoin(tag).on(articleTag.tag.id.eq(tag.id))
+            .where(article.member.id.eq(memberId))
+            .groupBy(article.id)
+            .orderBy(article.createdAt.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+    }
+
 
     private long countTotal(QArticle article){
         return queryFactory
@@ -74,5 +126,10 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
+    }
+
+    private PageImpl<ArticleProjection> generatePage(Pageable pageable,
+        List<ArticleProjection> projections, long total) {
+        return new PageImpl<>(projections, pageable, total);
     }
 }
