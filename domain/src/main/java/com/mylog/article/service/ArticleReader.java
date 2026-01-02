@@ -28,10 +28,9 @@ public class ArticleReader {
     private final MemberReader memberReader;
 
     //내 게시글 목록조회
-//    public Page<Article> getArticles(Pageable pageable, CustomUser customUser) {
-//        Member member = memberReader.getById(customUser.getMemberId());
-//        return articleRepository.findMineByMember(member, pageable);
-//    }
+    public Page<ArticleProjection> getArticles(Long memberId, Pageable pageable) {
+        return articleRepository.findMineByMember(memberId, pageable);
+    }
 //
 //    //내 게시글 검색
 //    public Page<ArticleResponse> getArticles(Pageable pageable,

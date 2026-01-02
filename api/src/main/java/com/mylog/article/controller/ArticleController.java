@@ -78,32 +78,22 @@ public class ArticleController {
         return ResponseService.getSuccessResult();
     }
 
-    //게시글 조회
     @GetMapping("/{articleId}")
-    @Operation(summary = "게시글 조회")
+    @Operation(summary = "게시글 단건 조회")
     public SingleResult<ArticleResponse> getArticle(@PathVariable Long articleId){
         return ResponseService.getSingleResult(articleService.getArticle(articleId));
     }
 
-    //전체 게시글 목록 조회
     @GetMapping("/all")
     @Operation(summary = "전체 게시글 목록 조회")
     public SingleResult<PageResponse<ArticleResponse>> getArticles(
-        @PageableDefault(sort="id", direction = Direction.ASC, page=150) Pageable pageable){
+        @PageableDefault Pageable pageable){
         return ResponseService.getSingleResult(articleService.getArticles(pageable));
     }
 
-//    @GetMapping("/all")
-//    @Operation(summary = "전체 게시글 목록 조회")
-//    public ListResult<ArticleTestResponse> getArticles(
-//        @PageableDefault(sort="id", direction = Direction.ASC, page=80, size= 1000) Pageable pageable){
-//        return ResponseService.getListResult(articleService.getArticles(pageable));
-//    }
-
-    //내 게시글 목록 조회
     @GetMapping("/me")
     @Operation(summary = "내 게시글 목록 조회")
-    public SingleResult<Page<ArticleResponse>> getArticles(
+    public SingleResult<PageResponse<ArticleResponse>> getArticles(
         @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable,
         @AuthenticationPrincipal CustomUser customUser
     ){
