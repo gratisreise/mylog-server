@@ -1,9 +1,7 @@
 package com.mylog.article.repository;
 
 
-import com.mylog.article.entity.Article;
 import com.mylog.article.projections.ArticleProjection;
-import com.mylog.member.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,14 +12,11 @@ public interface ArticleRepositoryCustom  {
 
     //내 게시글 목록조회
     Page<ArticleProjection> findMineByMember(Long memberId, Pageable pageable);
-//
-//    //내 게시글 제목검색
-//    Page<ArticleResponse> searchMineByTitle(Member member, String keyword, Pageable pageable);
-//
-//    //전체 게시글 제목검색
-//    Page<ArticleResponse> searchAllByTitle(String keyword, Pageable pageable);
-//
-//    //전체 게시글 태그검색
-//    Page<ArticleResponse> searchAllByTagName(String tagName, Pageable pageable);
+
+    //전체 게시글 검색
+    Page<ArticleProjection> searchAll(String keyword, String tag, Pageable pageable);
+
+    //내 게시글 검색
+
 
 }

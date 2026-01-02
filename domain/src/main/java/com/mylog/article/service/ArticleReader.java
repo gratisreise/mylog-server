@@ -5,10 +5,6 @@ import com.mylog.article.projections.ArticleProjection;
 import com.mylog.article.repository.ArticleRepository;
 import com.mylog.exception.CMissingDataException;
 
-import com.mylog.member.entity.Member;
-import com.mylog.member.service.MemberReader;
-import com.mylog.tag.service.TagReader;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -24,31 +20,26 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class ArticleReader {
     private final ArticleRepository articleRepository;
-    private final TagReader tagReader;
-    private final MemberReader memberReader;
+
+
+    //게시글 단건조회
+    public Article getById(Long articleId) {
+        return articleRepository.findById(articleId)
+            .orElseThrow(CMissingDataException::new);
+    }
 
     //내 게시글 목록조회
     public Page<ArticleProjection> getArticles(Long memberId, Pageable pageable) {
         return articleRepository.findMineByMember(memberId, pageable);
     }
-//
-//    //내 게시글 검색
-//    public Page<ArticleResponse> getArticles(Pageable pageable,
-//        CustomUser customUser, String keyword) {
-//        log.info("userId:{}", customUser.getMemberId());
-//        Member member = memberReader.getById(customUser.getMemberId());
-//        return articleRepository.searchMineByTitle(member, keyword, pageable);
-//    }
-//
-//    //게시글 상세
-//    public ArticleResponse getArticle(Long id){
-//        Article article = articleRepository.findById(id).orElseThrow(CMissingDataException::new);
-//        List<String> tags = tagReader.getTags(article);
-//        return new ArticleResponse(article, tags);
-//    }
 
-    public boolean isExists(Long articleId){
-        return articleRepository.existsById(articleId);
+
+    //내 게시글 검색
+    public Page<ArticleResponse> getArticles(Pageable pageable,
+        CustomUser customUser, String keyword) {
+        log.info("userId:{}", customUser.getMemberId());
+        Member member = memberReader.getById(customUser.getMemberId());
+        return articleRepository.searchMineByTitle(member, keyword, pageable);
     }
 
     // 전체 게시글 목록조회
@@ -57,30 +48,12 @@ public class ArticleReader {
         return articleRepository.findAllCustom(pageable);
     }
 
-//    @Cacheable(value = "articles", key="#pageable.getPageNumber()")
-//    public List<ArticleTestResponse> getArticles(Pageable pageable){
-//        return articleRepository.findAll(pageable)
-//            .getContent()
-//            .stream().map(ArticleTestResponse::from)
-//            .toList();
-//    }
-
-
     // 전체 게시글 검색
-//    @Cacheable(value = "articles", key="'태그='+#tag")
-//    public Page<ArticleResponse> getArticles(String keyword, String tag, Pageable pageable){
-//        StringBuilder sb = new StringBuilder();
-//        return !isClear(keyword) ?
-//            articleRepository.searchAllByTitle(keyword, pageable) :
-//            articleRepository.searchAllByTagName(tag, pageable);
-//    }
-
-    public Article getById(Long articleId) {
-        return articleRepository.findById(articleId).orElseThrow(CMissingDataException::new);
+    @Cacheable(value = "articles", key="'태그='+#tag")
+    public Page<ArticleProjection> getArticles(String keyword, String tag, Pageable pageable){
+        return articleRepository.searchAll(keyword, tag, pageable);
     }
 
-    private boolean isClear(String s){
-        return s == null || s.isEmpty();
-    }
+
 
 }

@@ -102,7 +102,7 @@ public class ArticleService {
         articleWriter.deleteArticle(articleId);
     }
 
-    //게시글 조회
+    //게시글 조회 => 단건조회
     public ArticleResponse getArticle(Long articleId) {
         Article article  = articleReader.getById(articleId);
         List<String> tags = tagReader.getTags(article);
@@ -128,6 +128,19 @@ public class ArticleService {
         return PageResponse.from(response);
     }
 
+    //전체 게시글 검색
+    public PageResponse<ArticleResponse> getArticles(String keyword, String tag, Pageable pageable) {
+        Page<ArticleResponse> response = articleReader.getArticles(keyword, tag, pageable)
+            .map(ArticleResponse::from);
+        return PageResponse.from(response);
+    }
+
+    //내 게시글 검색
+    public PageResponse<ArticleResponse> getArticles(String tag, String keyword, Pageable pageable, CustomUser customUser) {
+        Page<ArticleResponse> response = articleReader.getArticles(tag, keyword, pageable)
+            .map(ArticleResponse::from);
+        return PageResponse.from(response);
+    }
 
     private void createTag(List<String> request, Article article) {
         //태그리스트
