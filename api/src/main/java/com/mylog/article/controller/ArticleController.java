@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
@@ -79,7 +78,7 @@ public class ArticleController {
     }
 
     @GetMapping("/{articleId}")
-    @Operation(summary = "게시글 단건 조회")
+    @Operation(summary = "게시글 상세")
     public SingleResult<ArticleResponse> getArticle(@PathVariable Long articleId){
         return ResponseService.getSingleResult(articleService.getArticle(articleId));
     }
@@ -113,14 +112,14 @@ public class ArticleController {
     //내 게시글 검색
     @GetMapping("/me/search")
     @Operation(summary = "내 게시글 검색")
-    public SingleResult<Page<ArticleResponse>> searchArticles(
+    public SingleResult<PageResponse<ArticleResponse>> searchArticles(
         @RequestParam(required = false) String keyword,
         @RequestParam(required = false) String tag,
         @PageableDefault Pageable pageable,
         @AuthenticationPrincipal CustomUser customUser
     ){
         return ResponseService
-            .getSingleResult(articleService.getArticles(pageable, customUser, keyword, customUser));
+            .getSingleResult(articleService.getArticles(keyword, tag, pageable, customUser));
     }
 
 }

@@ -4,7 +4,6 @@ import com.mylog.article.entity.Article;
 import com.mylog.article.projections.ArticleProjection;
 import com.mylog.article.repository.ArticleRepository;
 import com.mylog.exception.CMissingDataException;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArticleReader {
     private final ArticleRepository articleRepository;
 
-
     //게시글 단건조회
     public Article getById(Long articleId) {
         return articleRepository.findById(articleId)
@@ -35,11 +33,8 @@ public class ArticleReader {
 
 
     //내 게시글 검색
-    public Page<ArticleResponse> getArticles(Pageable pageable,
-        CustomUser customUser, String keyword) {
-        log.info("userId:{}", customUser.getMemberId());
-        Member member = memberReader.getById(customUser.getMemberId());
-        return articleRepository.searchMineByTitle(member, keyword, pageable);
+    public Page<ArticleProjection> getArticles(String keyword, String tag, Pageable pageable, Long memberId) {
+        return articleRepository.searchMine(keyword, tag, pageable, memberId);
     }
 
     // 전체 게시글 목록조회
@@ -53,7 +48,5 @@ public class ArticleReader {
     public Page<ArticleProjection> getArticles(String keyword, String tag, Pageable pageable){
         return articleRepository.searchAll(keyword, tag, pageable);
     }
-
-
 
 }
