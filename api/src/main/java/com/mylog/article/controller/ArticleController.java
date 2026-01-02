@@ -100,10 +100,9 @@ public class ArticleController {
         return ResponseService.getSingleResult(articleService.getArticles(pageable, customUser));
     }
 
-    //전체 게시글 검색
     @GetMapping("/all/search")
     @Operation(summary = "전체 게시글 검색")
-    public SingleResult<Page<ArticleResponse>> searchArticles(
+    public SingleResult<PageResponse<ArticleResponse>> searchArticles(
         @RequestParam(required = false) String keyword,
         @RequestParam(required = false) String tag,
         @PageableDefault Pageable pageable
@@ -115,12 +114,13 @@ public class ArticleController {
     @GetMapping("/me/search")
     @Operation(summary = "내 게시글 검색")
     public SingleResult<Page<ArticleResponse>> searchArticles(
-        @RequestParam String keyword,
+        @RequestParam(required = false) String keyword,
+        @RequestParam(required = false) String tag,
         @PageableDefault Pageable pageable,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        return ResponseService.getSingleResult(
-            articleService.getArticles(pageable, customUser, keyword));
+        return ResponseService
+            .getSingleResult(articleService.getArticles(pageable, customUser, keyword, customUser));
     }
 
 }
