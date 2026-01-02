@@ -14,11 +14,11 @@ import lombok.Setter;
 public class ArticleProjection {
     private Long id;
     private String title;
-    private Member member;
-    private Category category;
+    private String memberName;
+    private String categoryName;
     private String content;
     private String articleImg;
-    private List<String> tags;
+    private String tags;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
