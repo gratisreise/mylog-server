@@ -4,6 +4,7 @@ package com.mylog.member.service;
 import com.mylog.category.service.CategoryWriter;
 import com.mylog.exception.CDuplicatedException;
 import com.mylog.exception.CUnAuthorizedException;
+import com.mylog.member.entity.Member;
 import com.mylog.member.repository.MemberRepository;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -39,14 +40,16 @@ public class MemberWriter {
 //        categoryWriter.createCategory(member);
 //    }
 //
-//    public void updateMember(UpdateMemberRequest request,
-//        CustomUser customUser, MultipartFile file) throws IOException{
-//
-//        Member member = memberReader.getById(customUser.getMemberId());
-//
-//        if(validateNickname(member.getNickname(), request.nickname())){
-//            throw new CDuplicatedException("중복되는 닉네임 입니다.");
-//        }
+
+
+    public void updateMember(UpdateMemberRequest request,
+        CustomUser customUser, MultipartFile file) throws IOException{
+
+        Member member = memberReader.getById(customUser.getMemberId());
+
+        if(validateNickname(member.getNickname(), request.nickname())){
+            throw new CDuplicatedException("중복되는 닉네임 입니다.");
+        }
 //
 //        if(file == null){ //기존이랑 사진 동일
 //            member.update(request, passwordEncoder);
