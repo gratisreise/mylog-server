@@ -1,11 +1,12 @@
 package com.mylog.article.service;
 
 
-import com.mylog.api.auth.CustomUser;
+
 import com.mylog.article.dto.ArticleCreateRequest;
 import com.mylog.article.dto.ArticleResponse;
 import com.mylog.article.dto.ArticleUpdateRequest;
 import com.mylog.article.entity.Article;
+import com.mylog.auth.CustomUser;
 import com.mylog.category.entity.Category;
 import com.mylog.category.service.CategoryReader;
 import com.mylog.common.PageResponse;
@@ -41,7 +42,7 @@ public class ArticleService {
     public void createArticle(
         ArticleCreateRequest request, CustomUser customUser, String imageUrl
     ){
-        //전처리 정보 모음
+        //전처리 객체 생성
         Member member = memberReader.getById(customUser.getMemberId());
         Category category = categoryReader.getByMemberIdAndCategoryName(member.getId(), request.category());
 
@@ -49,7 +50,7 @@ public class ArticleService {
         Article article = request.toEntity(member, category, imageUrl);
         Article savedArticle = articleWriter.createArticle(article);
 
-        //태그리스트
+        //태그 생성
         createTag(request.tagNames(), savedArticle);
     }
 
@@ -61,7 +62,7 @@ public class ArticleService {
         Long memberId = customUser.getMemberId();
 
         if(!article.isOwnedBy(memberId)){
-            throw new CUnAuthorizedException(ErrorMessage.NOT_YOUR_ARICLE);
+            throw new CUnAuthorizedException(ErrorMessage.NOT_YOUR_ARTICLE);
         }
 
         //기존 이미지 s3에서 삭제
@@ -87,7 +88,7 @@ public class ArticleService {
         Long memberId = customUser.getMemberId();
 
         if(article.isOwnedBy(memberId)){
-            throw new CUnAuthorizedException(ErrorMessage.NOT_YOUR_ARICLE);
+            throw new CUnAuthorizedException(ErrorMessage.NOT_YOUR_ARTICLE);
         }
 
         s3Service.deleteImage(article.getArticleImg());
