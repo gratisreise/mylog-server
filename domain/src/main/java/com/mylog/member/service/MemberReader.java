@@ -1,6 +1,8 @@
 package com.mylog.member.service;
 
 
+import com.mylog.enums.ErrorMessage;
+import com.mylog.exception.CUnDeletedException;
 import com.mylog.member.entity.Member;
 import com.mylog.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,12 @@ public class MemberReader {
     public Member getById(Long memberId) {
         return memberRepository.findById(memberId)
             .orElseThrow(CMissingDataException::new);
+    }
+
+    public void isExists(Long memberId) {
+        if(memberRepository.existsById(memberId)){
+            throw new CUnDeletedException(ErrorMessage.UNDELTED_MEMBER);
+        }
     }
 
 //

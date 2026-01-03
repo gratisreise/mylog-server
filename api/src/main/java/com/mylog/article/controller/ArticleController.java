@@ -1,11 +1,12 @@
 package com.mylog.article.controller;
 
 
-import com.mylog.api.auth.CustomUser;
+
 import com.mylog.article.dto.ArticleCreateRequest;
 import com.mylog.article.dto.ArticleResponse;
 import com.mylog.article.dto.ArticleUpdateRequest;
 import com.mylog.article.service.ArticleService;
+import com.mylog.auth.CustomUser;
 import com.mylog.common.PageResponse;
 import com.mylog.response.CommonResult;
 import com.mylog.response.ResponseService;
@@ -60,7 +61,7 @@ public class ArticleController {
         @RequestPart(required = false, value = "file") MultipartFile file,
         @AuthenticationPrincipal CustomUser customUser,
         @PathVariable Long articleId
-    ) throws IOException {
+    ){
         String imageUrl = s3Service.upload(file); //s3이미지 생성
         articleService.updateArticle(request, customUser, imageUrl, articleId);
         return ResponseService.getSuccessResult();

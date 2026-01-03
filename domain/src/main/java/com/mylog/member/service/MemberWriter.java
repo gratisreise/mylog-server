@@ -2,10 +2,8 @@ package com.mylog.member.service;
 
 
 import com.mylog.category.service.CategoryWriter;
-import com.mylog.exception.CDuplicatedException;
-import com.mylog.exception.CUnAuthorizedException;
+import com.mylog.member.entity.Member;
 import com.mylog.member.repository.MemberRepository;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +24,16 @@ public class MemberWriter {
     @Value("${cloud.aws.s3.basic}")
     private String basicImageUrl;
 
+
+    public void updateMember(Member member, Long memberId) {
+        Member savedMember = memberReader.getById(memberId);
+        savedMember.update(member);
+    }
+
+    public void deleteMember(Long memberId) {
+        memberRepository.deleteById(memberId);
+    }
+
 //    public void saveMember(SignUpRequest request){
 //        if(isExists(request.email())){
 //            throw new CDuplicatedException("이미 존재하는 이메일입니다.");
@@ -39,14 +47,7 @@ public class MemberWriter {
 //        categoryWriter.createCategory(member);
 //    }
 //
-//    public void updateMember(UpdateMemberRequest request,
-//        CustomUser customUser, MultipartFile file) throws IOException{
-//
-//        Member member = memberReader.getById(customUser.getMemberId());
-//
-//        if(validateNickname(member.getNickname(), request.nickname())){
-//            throw new CDuplicatedException("중복되는 닉네임 입니다.");
-//        }
+
 //
 //        if(file == null){ //기존이랑 사진 동일
 //            member.update(request, passwordEncoder);
@@ -87,14 +88,10 @@ public class MemberWriter {
 //        }
 //    }
 
-    private boolean isExists(String email){
-        return memberRepository.existsByEmail(email);
-    }
-    private boolean validateNickname(String origin, String request){
-        return origin.equals(request) || memberRepository.existsByNickname(request);
-    }
 
 //    private void deleteImage(String memberImg) {
 //        if(!memberImg.equals(basicImageUrl)) s3Service.deleteImage(memberImg);
 //    }
 }
+
+
