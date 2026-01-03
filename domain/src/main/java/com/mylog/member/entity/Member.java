@@ -88,4 +88,12 @@ public class Member extends BaseEntity {
     public boolean isOwnedBy(Long memberId) {
         return Objects.equals(id, memberId);
     }
+
+    public void update(Member member) {
+        this.password = member.getPassword();
+        this.memberName = member.getMemberName();
+        this.nickname = member.getNickname();
+        this.bio = member.getBio();
+        this.profileImg = member.getProfileImg();
+    }
 }

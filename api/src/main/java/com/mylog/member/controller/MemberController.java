@@ -3,10 +3,12 @@ package com.mylog.member.controller;
 
 import com.mylog.auth.CustomUser;
 import com.mylog.member.dto.MemberResponse;
+import com.mylog.member.dto.MemberUpdateRequest;
 import com.mylog.member.service.MemberService;
 import com.mylog.response.CommonResult;
 import com.mylog.response.ResponseService;
 import com.mylog.response.SingleResult;
+import com.mylog.s3.S3Service;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -27,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class MemberController {
    private final MemberService memberService;
+   private final S3Service s3Service;
 
     //개인정보조회
     @GetMapping("/me")
@@ -39,11 +42,12 @@ public class MemberController {
     @PutMapping("/me")
     @Operation(summary = "개인정보수정")
     public CommonResult updateMember(
-        @RequestPart(value="request") @Valid com.mylog.api.member.dto.UpdateMemberRequest request,
+        @RequestPart(value="request") @Valid MemberUpdateRequest request,
         @RequestPart(required = false, value="file") MultipartFile file,
         @AuthenticationPrincipal CustomUser customUser
-    ) throws IOException {
-        memberService.updateMember(request, customUser, file);
+    ) {
+        String imageUrl = s3Service.upload(file);
+        memberService.updateMember(request, imageUrl, customUser);
         return ResponseService.getSuccessResult();
     }
 
@@ -54,6 +58,5 @@ public class MemberController {
         memberService.deleteMember(customUser);
         return ResponseService.getSuccessResult();
     }
-
 
 }
