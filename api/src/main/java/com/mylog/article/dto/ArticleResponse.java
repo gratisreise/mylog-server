@@ -1,7 +1,9 @@
 package com.mylog.article.dto;
 
 import com.mylog.article.entity.Article;
+import com.mylog.article.projections.ArticleProjection;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import lombok.Builder;
 
@@ -31,5 +33,19 @@ public record ArticleResponse(
             .build();
     }
 
+    public static ArticleResponse from(ArticleProjection projection){
+        String delimeter = ",";
+        return ArticleResponse.builder()
+            .id(projection.getId())
+            .title(projection.getTitle())
+            .content(projection.getContent())
+            .author(projection.getMemberName())
+            .category(projection.getCategoryName())
+            .articleImg(projection.getArticleImg())
+            .tags(Arrays.stream(projection.getTags().split(delimeter)).toList())
+            .createdAt(projection.getCreatedAt())
+            .updatedAt(projection.getUpdatedAt())
+            .build();
+    }
 
 }

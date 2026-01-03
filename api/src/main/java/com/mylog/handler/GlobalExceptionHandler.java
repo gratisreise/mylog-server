@@ -44,6 +44,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RestClientException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public CommonResult handle(RestClientException ex){
+        return ResponseService.getFailResult(ex);
+    }
+
+    @ExceptionHandler(RestClientException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public CommonResult handleRestClientException(RestClientException ex){
         return ResponseService.getFailResult(ex);
     }

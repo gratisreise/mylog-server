@@ -10,6 +10,8 @@ import com.mylog.common.response.SingleResult;
 import com.mylog.api.auth.dto.social.OAuthRequest;
 import com.mylog.api.auth.service.social.OAuth2UserService;
 import com.mylog.api.auth.service.social.OAuth2UserServiceFactory;
+import com.mylog.response.CommonResult;
+import com.mylog.response.ResponseService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
     private final OAuth2UserServiceFactory oAuth2UserServiceFactory;
+
+    //회원가입
+    @PostMapping("/sign-up")
+    @Operation(summary = "회원가입")
+    public CommonResult signUp(@RequestBody @Valid com.mylog.api.auth.dto.SignUpRequest request){
+        memberWriter.saveMember(request);
+        return com.mylog.response.ResponseService.getSuccessResult();
+    }
     
     @Operation(summary = "이메일 로그인")
     @PostMapping("/login")

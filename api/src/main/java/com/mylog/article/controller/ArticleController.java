@@ -1,14 +1,14 @@
 package com.mylog.article.controller;
 
 
-import com.mylog.api.auth.CustomUser;
+
 import com.mylog.article.dto.ArticleCreateRequest;
 import com.mylog.article.dto.ArticleResponse;
-import com.mylog.article.dto.ArticleTestResponse;
 import com.mylog.article.dto.ArticleUpdateRequest;
 import com.mylog.article.service.ArticleService;
+import com.mylog.auth.CustomUser;
+import com.mylog.common.PageResponse;
 import com.mylog.response.CommonResult;
-import com.mylog.response.ListResult;
 import com.mylog.response.ResponseService;
 import com.mylog.response.SingleResult;
 import com.mylog.s3.S3Service;
@@ -16,7 +16,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
@@ -62,8 +61,9 @@ public class ArticleController {
         @RequestPart(required = false, value = "file") MultipartFile file,
         @AuthenticationPrincipal CustomUser customUser,
         @PathVariable Long articleId
-    ) throws IOException {
-        articleService.updateArticle(request, customUser, file, articleId);
+    ){
+        String imageUrl = s3Service.upload(file); //s3이미지 생성
+        articleService.updateArticle(request, customUser, imageUrl, articleId);
         return ResponseService.getSuccessResult();
     }
 
@@ -78,42 +78,31 @@ public class ArticleController {
         return ResponseService.getSuccessResult();
     }
 
-    //게시글 조회
     @GetMapping("/{articleId}")
-    @Operation(summary = "게시글 조회")
+    @Operation(summary = "게시글 상세")
     public SingleResult<ArticleResponse> getArticle(@PathVariable Long articleId){
         return ResponseService.getSingleResult(articleService.getArticle(articleId));
     }
 
-//    //전체 게시글 목록 조회
-//    @GetMapping("/all")
-//    @Operation(summary = "전체 게시글 목록 조회")
-//    public SingleResult<PageResponse<ArticleResponse>> getArticles(
-//        @PageableDefault(sort="id", direction = Direction.ASC, page=150) Pageable pageable){
-//        return ResponseService.getSingleResult(articleReader.getArticles(pageable));
-//    }
-
     @GetMapping("/all")
     @Operation(summary = "전체 게시글 목록 조회")
-    public ListResult<ArticleTestResponse> getArticles(
-        @PageableDefault(sort="id", direction = Direction.ASC, page=80, size= 1000) Pageable pageable){
-        return ResponseService.getListResult(articleService.getArticles(pageable));
+    public SingleResult<PageResponse<ArticleResponse>> getArticles(
+        @PageableDefault Pageable pageable){
+        return ResponseService.getSingleResult(articleService.getArticles(pageable));
     }
 
-    //내 게시글 목록 조회
     @GetMapping("/me")
     @Operation(summary = "내 게시글 목록 조회")
-    public SingleResult<Page<ArticleResponse>> getArticles(
+    public SingleResult<PageResponse<ArticleResponse>> getArticles(
         @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable,
         @AuthenticationPrincipal CustomUser customUser
     ){
         return ResponseService.getSingleResult(articleService.getArticles(pageable, customUser));
     }
 
-    //전체 게시글 검색
     @GetMapping("/all/search")
     @Operation(summary = "전체 게시글 검색")
-    public SingleResult<Page<ArticleResponse>> searchArticles(
+    public SingleResult<PageResponse<ArticleResponse>> searchArticles(
         @RequestParam(required = false) String keyword,
         @RequestParam(required = false) String tag,
         @PageableDefault Pageable pageable
@@ -124,13 +113,14 @@ public class ArticleController {
     //내 게시글 검색
     @GetMapping("/me/search")
     @Operation(summary = "내 게시글 검색")
-    public SingleResult<Page<ArticleResponse>> searchArticles(
-        @RequestParam String keyword,
+    public SingleResult<PageResponse<ArticleResponse>> searchArticles(
+        @RequestParam(required = false) String keyword,
+        @RequestParam(required = false) String tag,
         @PageableDefault Pageable pageable,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        return ResponseService.getSingleResult(
-            articleService.getArticles(pageable, customUser, keyword));
+        return ResponseService
+            .getSingleResult(articleService.getArticles(keyword, tag, pageable, customUser));
     }
 
 }
