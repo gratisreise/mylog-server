@@ -7,12 +7,10 @@ import com.mylog.exception.CUnAuthorizedException;
 import com.mylog.member.dto.MemberResponse;
 import com.mylog.member.dto.MemberUpdateRequest;
 import com.mylog.member.entity.Member;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -30,14 +28,16 @@ public class MemberService {
     @Transactional
     public void updateMember(MemberUpdateRequest request, String imageUrl, CustomUser customUser) {
         Member member = request.toEntity(encoder, imageUrl);
-        Member savedMember = memberReader.getById(customUser.getMemberId());
-        if(!savedMember.isOwnedBy(customUser.getMemberId())){
-            throw new CUnAuthorizedException(ErrorMessage.NOT_YOUR_ACCOUNT);
-        }
-        savedMember.update(member);
+        Long memberId = customUser.getMemberId();
+        memberWriter.updateMember(member, memberId);
     }
 
-
+    @Transactional
+    public void deleteMember(CustomUser customUser) {
+        Long memberId = customUser.getMemberId();
+        memberWriter.deleteMember(memberId);
+        memberReader.isExists(memberId);
+    }
 
 
 }
