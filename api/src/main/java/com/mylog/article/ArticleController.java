@@ -1,11 +1,9 @@
-package com.mylog.article.controller;
-
+package com.mylog.article;
 
 
 import com.mylog.article.dto.ArticleCreateRequest;
 import com.mylog.article.dto.ArticleResponse;
 import com.mylog.article.dto.ArticleUpdateRequest;
-import com.mylog.article.service.ArticleService;
 import com.mylog.auth.CustomUser;
 import com.mylog.common.PageResponse;
 import com.mylog.response.CommonResult;
@@ -14,7 +12,6 @@ import com.mylog.response.SingleResult;
 import com.mylog.s3.S3Service;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;

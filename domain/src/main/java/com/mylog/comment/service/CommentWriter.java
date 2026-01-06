@@ -3,6 +3,7 @@ package com.mylog.comment.service;
 
 import com.mylog.article.entity.Article;
 import com.mylog.article.service.ArticleReader;
+import com.mylog.comment.entity.Comment;
 import com.mylog.comment.repository.CommentRepository;
 import com.mylog.comment.service.CommentReader;
 import com.mylog.exception.CUnAuthorizedException;
@@ -25,6 +26,11 @@ public class CommentWriter {
     private final ArticleReader articleReader;
     private final NotificationWriter notificationWriter;
     private final NotificationSettingWriter notificationSettingWriter;
+
+
+    public void create(Comment comment) {
+        commentRepository.save(comment);
+    }
 
 //    public void createComment(Long articleId, CommentCreateRequest request, CustomUser customUser) {
 //        Article article = articleReader.getById(articleId);

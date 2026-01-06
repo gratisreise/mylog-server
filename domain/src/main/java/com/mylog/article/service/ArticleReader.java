@@ -49,4 +49,8 @@ public class ArticleReader {
         return articleRepository.searchAll(keyword, tag, pageable);
     }
 
+    //게시글 존재 확인
+    public boolean isExists(Long articleId) {
+        return articleRepository.existsById(articleId);
+    }
 }
