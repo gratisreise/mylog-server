@@ -45,12 +45,23 @@ public class CommentController {
 
     @GetMapping("/articles/{articleId}/comments")
     @Operation(summary = "댓글 목록 조회")
-    public SingleResult<Page<CommentArticleResponse>> getComments(
+    public SingleResult<Page<CommentResponse>> getComments(
         @PathVariable Long articleId,
         @PageableDefault(sort="createdAt", direction = Direction.DESC)
         Pageable pageable
     ) {
         return ResponseService.getSingleResult(commentService.getComments(articleId, pageable));
+    }
+
+    @GetMapping("/articles/{articleId}/comments/{commentId}")
+    @Operation(summary = "대댓글 조회")
+    public SingleResult<Page<CommentResponse>> getComments(
+        @PathVariable Long articleId,
+        @PathVariable Long commentId,
+        @PageableDefault(sort="createdAt", direction = Direction.DESC)
+        Pageable pageable
+    ) {
+        return ResponseService.getSingleResult(commentService.getComments(articleId, commentId, pageable));
     }
 
     @PutMapping("/comments/{commentId}")
