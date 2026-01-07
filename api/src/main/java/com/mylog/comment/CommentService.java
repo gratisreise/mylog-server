@@ -46,22 +46,25 @@ public class CommentService {
         commentWriter.create(comment);
     }
 
+    //게시글 댓글 조회
+    public PageResponse<CommentResponse> getComments(Long articleId, Pageable pageable) {
+        Page<CommentResponse> comments = commentReader.getComments(articleId, pageable)
+            .map(CommentResponse::from);
+        return PageResponse.from(comments);
+    }
+
+    //대댓글 조회
+    public PageResponse<CommentResponse> getComments(Long articleId, Long parentId, Pageable pageable) {
+        Page<CommentResponse> comments = commentReader.getComments(articleId, parentId, pageable)
+            .map(CommentResponse::from);
+        return PageResponse.from(comments);
+    }
+
     private Comment generateComment(Long articleId, CommentCreateRequest request,
         CustomUser customUser) {
         Article article = articleReader.getById(articleId);
         Member member = memberReader.getById(customUser.getMemberId());
 
         return request.toEntity(article, member);
-    }
-
-    //게시글 댓글 조회
-    public Page<CommentResponse> getComments(Long articleId, Pageable pageable) {
-        Page<CommentResponse> comments = commentReader.getComments(articleId, pageable)
-            .map(CommentResponse::from);
-        return PageResponse.from(comments);
-    }
-
-    public Object getComments(Long articleId, Long commentId, Pageable pageable) {
-        return null;
     }
 }

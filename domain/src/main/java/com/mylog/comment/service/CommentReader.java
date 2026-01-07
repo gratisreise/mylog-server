@@ -5,6 +5,7 @@ import com.mylog.comment.entity.Comment;
 import com.mylog.comment.repository.CommentRepository;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.member.service.MemberReader;
+import java.nio.channels.FileChannel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +43,16 @@ public class CommentReader {
 
         return commentRepository.findByArticle_IdAndParentId(articleId, 0L, pageable);
     }
+
+    //대댓글 목록조회
+    public Page<Comment> getComments(Long articleId, Long parentId, Pageable pageable){
+        if(!articleReader.isExists(articleId)){
+            throw new CMissingDataException("존재하지 않는 게시글 입니다.");
+        }
+
+        return commentRepository.findByArticle_IdAndParentId(articleId, parentId, pageable);
+    }
+
 //
 //    public Comment getById(Long commentId) {
 //        return commentRepository.findById(commentId).orElseThrow(CMissingDataException::new);

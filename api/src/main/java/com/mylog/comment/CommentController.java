@@ -6,6 +6,7 @@ import com.mylog.comment.dto.CommentArticleResponse;
 import com.mylog.comment.dto.CommentCreateRequest;
 import com.mylog.comment.dto.CommentResponse;
 import com.mylog.comment.dto.CommentUpdateRequest;
+import com.mylog.common.PageResponse;
 import com.mylog.response.CommonResult;
 import com.mylog.response.ResponseService;
 import com.mylog.response.SingleResult;
@@ -45,7 +46,7 @@ public class CommentController {
 
     @GetMapping("/articles/{articleId}/comments")
     @Operation(summary = "댓글 목록 조회")
-    public SingleResult<Page<CommentResponse>> getComments(
+    public SingleResult<PageResponse<CommentResponse>> getComments(
         @PathVariable Long articleId,
         @PageableDefault(sort="createdAt", direction = Direction.DESC)
         Pageable pageable
@@ -53,15 +54,15 @@ public class CommentController {
         return ResponseService.getSingleResult(commentService.getComments(articleId, pageable));
     }
 
-    @GetMapping("/articles/{articleId}/comments/{commentId}")
+    @GetMapping("/articles/{articleId}/comments/{parentId}")
     @Operation(summary = "대댓글 조회")
-    public SingleResult<Page<CommentResponse>> getComments(
+    public SingleResult<PageResponse<CommentResponse>> getComments(
         @PathVariable Long articleId,
-        @PathVariable Long commentId,
+        @PathVariable Long parentId,
         @PageableDefault(sort="createdAt", direction = Direction.DESC)
         Pageable pageable
     ) {
-        return ResponseService.getSingleResult(commentService.getComments(articleId, commentId, pageable));
+        return ResponseService.getSingleResult(commentService.getComments(articleId, parentId, pageable));
     }
 
     @PutMapping("/comments/{commentId}")
