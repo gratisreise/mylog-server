@@ -1,4 +1,4 @@
-package com.mylog.api.comment.dto;
+package com.mylog.comment.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;

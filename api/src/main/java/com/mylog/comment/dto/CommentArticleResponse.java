@@ -1,4 +1,4 @@
-package com.mylog.api.comment.dto;
+package com.mylog.comment.dto;
 
 import com.mylog.comment.classes.Reply;
 import com.mylog.comment.entity.Comment;

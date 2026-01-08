@@ -1,8 +1,10 @@
-package com.mylog.api.comment.dto;
+package com.mylog.comment.dto;
 
 import com.mylog.comment.entity.Comment;
 import java.time.LocalDateTime;
+import lombok.Builder;
 
+@Builder
 public record CommentResponse(
     Long id,
     String content,
@@ -12,11 +14,13 @@ public record CommentResponse(
     LocalDateTime updatedAt
 ) {
     public static CommentResponse from(Comment comment) {
-        return new CommentResponse(
-            comment.getId(), comment.getContent(),
-            comment.getMember().getNickname(),
-            comment.getMember().getId(),
-            comment.getCreatedAt(), comment.getUpdatedAt()
-        );
+        return CommentResponse.builder()
+            .id(comment.getId())
+            .content(comment.getContent())
+            .author(comment.getContent())
+            .memberId(comment.getMember().getId())
+            .createdAt(comment.getCreatedAt())
+            .updatedAt(comment.getUpdatedAt())
+            .build();
     }
 }
