@@ -1,4 +1,4 @@
-package com.mylog.api.comment.dto;
+package com.mylog.comment.dto;
 
 import com.mylog.article.entity.Article;
 import com.mylog.comment.entity.Comment;
@@ -20,4 +20,5 @@ public record CommentCreateRequest (
             .parentId(parentCommentId)
             .build();
     }
+
 }

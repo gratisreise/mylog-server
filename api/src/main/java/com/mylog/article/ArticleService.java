@@ -1,4 +1,4 @@
-package com.mylog.article.service;
+package com.mylog.article;
 
 
 
@@ -6,6 +6,9 @@ import com.mylog.article.dto.ArticleCreateRequest;
 import com.mylog.article.dto.ArticleResponse;
 import com.mylog.article.dto.ArticleUpdateRequest;
 import com.mylog.article.entity.Article;
+import com.mylog.article.service.ArticleReader;
+import com.mylog.article.service.ArticleTagWriter;
+import com.mylog.article.service.ArticleWriter;
 import com.mylog.auth.CustomUser;
 import com.mylog.category.entity.Category;
 import com.mylog.category.service.CategoryReader;

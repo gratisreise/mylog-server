@@ -1,6 +1,5 @@
 package article.service;
 
-import com.mylog.article.service.ArticleService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
