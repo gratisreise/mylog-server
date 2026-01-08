@@ -2,6 +2,7 @@ package com.mylog.member.service;
 
 
 import com.mylog.enums.ErrorMessage;
+import com.mylog.exception.CMissingDataException;
 import com.mylog.exception.CUnDeletedException;
 import com.mylog.member.entity.Member;
 import com.mylog.member.repository.MemberRepository;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.mylog.exception.CMissingDataException;
 
 @Service
 @Slf4j
@@ -18,12 +18,6 @@ import com.mylog.exception.CMissingDataException;
 public class MemberReader {
     private final MemberRepository memberRepository;
 
-//    public MemberResponse getMember(CustomUser customUser){
-//        Member member = memberRepository.findById(customUser.getMemberId())
-//            .orElseThrow(CMissingDataException::new);
-//        return new MemberResponse(member);
-//    }
-//
     public Member getById(Long memberId) {
         return memberRepository.findById(memberId)
             .orElseThrow(CMissingDataException::new);
@@ -34,6 +28,13 @@ public class MemberReader {
             throw new CUnDeletedException(ErrorMessage.UNDELTED_MEMBER);
         }
     }
+
+    //    public MemberResponse getMember(CustomUser customUser){
+//        Member member = memberRepository.findById(customUser.getMemberId())
+//            .orElseThrow(CMissingDataException::new);
+//        return new MemberResponse(member);
+//    }
+//
 
 //
 //    public Member getByNickname(String author) {

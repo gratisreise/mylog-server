@@ -2,7 +2,6 @@ package com.mylog.comment;
 
 
 import com.mylog.auth.CustomUser;
-import com.mylog.comment.dto.CommentArticleResponse;
 import com.mylog.comment.dto.CommentCreateRequest;
 import com.mylog.comment.dto.CommentResponse;
 import com.mylog.comment.dto.CommentUpdateRequest;
@@ -13,7 +12,6 @@ import com.mylog.response.SingleResult;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
@@ -51,7 +49,7 @@ public class CommentController {
         @PageableDefault(sort="createdAt", direction = Direction.DESC)
         Pageable pageable
     ) {
-        return ResponseService.getSingleResult(commentService.getComments(articleId, pageable));
+        return ResponseService.getSingleResult(commentService.getMyArticlesComments(articleId, pageable));
     }
 
     @GetMapping("/articles/{articleId}/comments/{parentId}")
@@ -62,7 +60,25 @@ public class CommentController {
         @PageableDefault(sort="createdAt", direction = Direction.DESC)
         Pageable pageable
     ) {
-        return ResponseService.getSingleResult(commentService.getComments(articleId, parentId, pageable));
+        return ResponseService.getSingleResult(commentService.getMyArticlesComments(articleId, parentId, pageable));
+    }
+
+    @GetMapping("/comments/me")
+    @Operation(summary = "내가 작성한 댓글 조회")
+    public SingleResult<PageResponse<CommentResponse>> getComments(
+        @AuthenticationPrincipal CustomUser customUser,
+        @PageableDefault Pageable pageable
+    ) {
+        return ResponseService.getSingleResult(commentService.getMyComments(customUser, pageable));
+    }
+
+    @GetMapping("/articles/me/comments")
+    @Operation(summary = "내 게시글에 작성된 댓글 조회")
+    public SingleResult<PageResponse<CommentResponse>> getMyArticlesComments(
+        @AuthenticationPrincipal CustomUser customUser,
+        @PageableDefault Pageable pageable
+    ){
+        return ResponseService.getSingleResult(commentService.getMyArticlesComments(customUser, pageable));
     }
 
     @PutMapping("/comments/{commentId}")
@@ -85,23 +101,4 @@ public class CommentController {
         commentService.deleteComment(commentId, customUser);
         return ResponseService.getSuccessResult();
     }
-
-    @GetMapping("/comments/me")
-    @Operation(summary = "내가 작성한 댓글 조회")
-    public SingleResult<Page<CommentResponse>> getComments(
-        @AuthenticationPrincipal CustomUser customUser,
-        @PageableDefault Pageable pageable
-    ) {
-        return ResponseService.getSingleResult(commentService.getMyComments(customUser, pageable));
-    }
-
-    @GetMapping("/articles/me/comments")
-    @Operation(summary = "내게시글에 작성된 댓글 조회")
-    public SingleResult<Page<CommentResponse>> getMyArticlesComments(
-        @AuthenticationPrincipal CustomUser customUser,
-        @PageableDefault Pageable pageable
-    ){
-        return ResponseService.getSingleResult(commentService.getComments(customUser, pageable));
-    }
-
 }
