@@ -31,4 +31,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long>,
     @EntityGraph(attributePaths = {"article", "member"})
     List<Comment> findByArticle_IdAndParentId(Long articleId, Long parentId);
 
+    //내가 작성한 댓글 조회
+    Page<Comment> findByMemberId(Long memberId, Pageable pageable);
 }

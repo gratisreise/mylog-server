@@ -11,7 +11,6 @@ import com.mylog.response.SingleResult;
 import com.mylog.s3.S3Service;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
