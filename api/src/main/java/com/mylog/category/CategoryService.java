@@ -2,6 +2,7 @@ package com.mylog.category;
 
 import com.mylog.auth.CustomUser;
 import com.mylog.category.dto.CategoryCreateRequest;
+import com.mylog.category.dto.CategoryResponse;
 import com.mylog.category.entity.Category;
 import com.mylog.category.service.CategoryReader;
 import com.mylog.category.service.CategoryWriter;
@@ -10,6 +11,7 @@ import com.mylog.exception.ReachedLimitException;
 import com.mylog.member.entity.Member;
 import com.mylog.member.service.MemberReader;
 import com.mylog.response.CommonValue;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,5 +38,10 @@ public class CategoryService {
         categoryWriter.createCategory(category);
     }
 
-
+    public List<CategoryResponse> getCategories(CustomUser customUser) {
+        return categoryReader.getCategories(customUser.getMemberId())
+            .stream()
+            .map(CategoryResponse::from)
+            .toList();
+    }
 }

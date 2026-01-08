@@ -21,15 +21,9 @@ public class CategoryReader {
     private final CategoryRepository categoryRepository;
 
 
-
-
-//    public List<Category> getCategories(CustomUser customUser){
-//        Member member = memberReader.getByCustomUser(customUser);
-//        return categoryRepository.findByMember(member)
-//            .stream()
-//            .filter(this::isOriginCategory)
-//            .toList();
-//    }
+    public List<Category> getCategories(long memberId){
+        return categoryRepository.findByMemberId(memberId);
+    }
 
     public int categorySize(Member member){
         return categoryRepository.countByMember(member);
