@@ -1,6 +1,7 @@
 package com.mylog.category.service;
 
 
+import com.mylog.category.entity.Category;
 import com.mylog.category.repository.CategoryRepository;
 import com.mylog.member.service.MemberReader;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CategoryWriter {
 
-    private final MemberReader memberReader;
     private final CategoryRepository categoryRepository;
-    private final CategoryReader categoryReader;
+
+    public void createCategory(Category category) {
+        categoryRepository.save(category);
+    }
 
 //    public void createCategory(CategoryCreateRequest request, CustomUser customUser){
 //        Member member = memberReader.getById(customUser.getMemberId());
