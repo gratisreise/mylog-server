@@ -4,6 +4,7 @@ import com.mylog.category.entity.Category;
 import com.mylog.member.entity.Member;
 import java.util.List;
 import java.util.Optional;
+import java.util.zip.ZipFile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -19,4 +20,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long>, Categ
     List<Category> findByMember(Member member);
 
     int countByMember(Member member);
+
+    List<Category> findByMemberId(long memberId);
 }

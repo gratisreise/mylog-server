@@ -13,7 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Slf4j
-public abstract class AbstractOAuth2UserService implements OAuth2UserService {
+public abstract class AbstractOAuth2UserService implements
+    com.mylog.api.auth.service.social.OAuth2UserService {
     protected final JwtUtil jwtUtil;
     protected final RefreshTokenService refreshTokenService;
     private final CategoryWriter categoryWriter;
@@ -30,7 +31,7 @@ public abstract class AbstractOAuth2UserService implements OAuth2UserService {
         long memberId = member.getId();
         String username = String.valueOf(memberId);
 
-        categoryWriter.createCategory(member);
+//        categoryWriter.createCategory(member);
 
         String refreshToken = jwtUtil.createRefreshToken(username);
         refreshTokenService.saveRefreshToken(username, refreshToken);
