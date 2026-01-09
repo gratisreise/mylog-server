@@ -1,4 +1,4 @@
-package com.mylog.api.category.dto;
+package com.mylog.category.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

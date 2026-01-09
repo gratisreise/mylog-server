@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NotificationSettingRepository extends JpaRepository<NotificationSetting, Long>{
 
-    List<NotificationSetting> findByMember(Member member);
-    Optional<NotificationSetting> findByMemberAndType(Member member, String type);
+    Optional<NotificationSetting> findByMemberIdAndType(Long memberId, String type);
     boolean existsByMemberAndType(Member member, String type);
+    List<NotificationSetting> findByMemberId(Long memberId);
 }

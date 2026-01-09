@@ -21,14 +21,13 @@ public class CategoryReader {
     private final CategoryRepository categoryRepository;
 
 
+    public List<Category> getCategories(long memberId){
+        return categoryRepository.findByMemberId(memberId);
+    }
 
-//    public List<Category> getCategories(CustomUser customUser){
-//        Member member = memberReader.getByCustomUser(customUser);
-//        return categoryRepository.findByMember(member)
-//            .stream()
-//            .filter(this::isOriginCategory)
-//            .toList();
-//    }
+    public int categorySize(Member member){
+        return categoryRepository.countByMember(member);
+    }
 
     private boolean isOriginCategory(Category category){
         return !category.getCategoryName().equals(CommonValue.ORIGIN_CATEGORY);
