@@ -1,4 +1,4 @@
-package com.mylog.api.auth.dto.social.google;
+package com.mylog.auth.dto.social.google;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

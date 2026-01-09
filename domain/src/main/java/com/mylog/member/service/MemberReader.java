@@ -2,6 +2,7 @@ package com.mylog.member.service;
 
 
 import com.mylog.enums.ErrorMessage;
+import com.mylog.exception.CDuplicatedException;
 import com.mylog.exception.CMissingDataException;
 import com.mylog.exception.CUnDeletedException;
 import com.mylog.member.entity.Member;
@@ -23,7 +24,7 @@ public class MemberReader {
             .orElseThrow(CMissingDataException::new);
     }
 
-    public void isExists(Long memberId) {
+    public void isDeleted(Long memberId) {
         if(memberRepository.existsById(memberId)){
             throw new CUnDeletedException(ErrorMessage.UNDELTED_MEMBER);
         }
@@ -41,9 +42,15 @@ public class MemberReader {
 //        return memberRepository.findByNickname(author).orElseThrow(CMissingDataException::new);
 //    }
 //
-//    public Member getByEmail(String email) {
-//        return memberRepository.findByEmail(email).orElseThrow(CMissingDataException::new);
-//    }
+    public Member getByEmail(String email) {
+        return memberRepository.findByEmail(email).orElseThrow(CMissingDataException::new);
+    }
+
+    public void isDuplicated(String email) {
+        if(memberRepository.existsByEmail(email)){
+            throw new CDuplicatedException(ErrorMessage.DUPLICATED_EMAIL);
+        }
+    }
 //
 //    public Member getByCustomUser(CustomUser customUser) {
 //        return memberRepository.findById(customUser.getMemberId())

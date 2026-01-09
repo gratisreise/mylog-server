@@ -2,6 +2,7 @@ package com.mylog.member.service;
 
 
 import com.mylog.category.service.CategoryWriter;
+import com.mylog.exception.CDuplicatedException;
 import com.mylog.member.entity.Member;
 import com.mylog.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,9 @@ public class MemberWriter {
     @Value("${cloud.aws.s3.basic}")
     private String basicImageUrl;
 
+    public Member saveMember(Member member) {
+        return memberRepository.save(member);
+    }
 
     public void updateMember(Member member, Long memberId) {
         Member savedMember = memberReader.getById(memberId);
@@ -33,6 +37,8 @@ public class MemberWriter {
     public void deleteMember(Long memberId) {
         memberRepository.deleteById(memberId);
     }
+
+
 
 //    public void saveMember(SignUpRequest request){
 //        if(isExists(request.email())){

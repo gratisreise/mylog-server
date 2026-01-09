@@ -3,6 +3,7 @@ package com.mylog.category.entity;
 
 import com.mylog.BaseEntity;
 import com.mylog.member.entity.Member;
+import com.mylog.response.CommonValue;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -42,5 +43,13 @@ public class Category extends BaseEntity {
 
     public boolean isOwnedBy(Long memberId) {
         return Objects.equals(memberId, member.getId());
+    }
+
+    // 정적 팩토리 메서드: 비즈니스 의미를 담은 이름을 부여
+    public static Category createDefault(Member member) {
+        return Category.builder()
+            .member(member)
+            .categoryName(CommonValue.ORIGIN_CATEGORY)
+            .build();
     }
 }

@@ -1,13 +1,14 @@
-package com.mylog.api.auth.service;
+package com.mylog.auth.service;
 
-import com.mylog.utils.JwtUtil;
-import com.mylog.api.auth.dto.LoginRequest;
-import com.mylog.api.auth.dto.LoginResponse;
-import com.mylog.api.auth.dto.RefreshRequest;
-import com.mylog.api.auth.dto.RefreshResponse;
-import com.mylog.common.exception.CInvalidDataException;
+
+import com.mylog.auth.dto.LoginRequest;
+import com.mylog.auth.dto.LoginResponse;
+import com.mylog.auth.dto.RefreshRequest;
+import com.mylog.auth.dto.RefreshResponse;
+import com.mylog.exception.CInvalidDataException;
 import com.mylog.member.entity.Member;
 import com.mylog.member.service.MemberReader;
+import com.mylog.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,17 +28,12 @@ public class AuthService {
 
     //로그인
     public LoginResponse login(LoginRequest request) {
-//        log.info("email: {}", request.email());
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.email(), request.password())
-        );
-//        log.info("saved userInfo");
-        Member member = memberReader.getByEmail(request.email());
+        Authentication authentication = authenticationManager
+            .authenticate(new UsernamePasswordAuthenticationToken
+                (request.email(), request.password()));
 
-        long memberId = member.getId();
+        Long memberId = memberReader.getByEmail(request.email()).getId();
         String username = String.valueOf(memberId);
-
-//        log.info("{}", memberId);
 
         String refreshToken = jwtUtil.createRefreshToken(username);
         String accessToken = jwtUtil.createAccessToken(username, memberId);
@@ -59,6 +55,5 @@ public class AuthService {
         String accessToken = jwtUtil.createAccessToken(username, memberId);
         return new RefreshResponse(accessToken);
     }
-
 
 }

@@ -1,9 +1,9 @@
-package com.mylog.api.auth.service.social;
+package com.mylog.auth.service.social;
 
 
-import com.mylog.api.auth.dto.LoginResponse;
-import com.mylog.api.auth.dto.social.OAuth2UserInfo;
-import com.mylog.api.auth.dto.social.OAuthRequest;
+import com.mylog.auth.dto.LoginResponse;
+import com.mylog.auth.dto.social.OAuth2UserInfo;
+import com.mylog.auth.dto.social.OAuthRequest;
 import com.mylog.member.entity.Member;
 
 public interface OAuth2UserService {

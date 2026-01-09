@@ -1,8 +1,8 @@
-package com.mylog.api.auth.service;
+package com.mylog.auth.service;
 
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.ValueOperations;
+
 import org.springframework.stereotype.Service;
 
 @Service

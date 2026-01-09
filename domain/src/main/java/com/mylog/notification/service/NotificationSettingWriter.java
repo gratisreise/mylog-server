@@ -16,18 +16,18 @@ import com.mylog.exception.CMissingDataException;
 @Transactional
 public class NotificationSettingWriter {
     private final NotificationSettingRepository notificationSettingRepository;
-
+    private static String[] TYPES = {"comment"};
     @Async
-    public void createNotificationSetting(Member member, String type){
-        if(notificationSettingRepository.existsByMemberAndType(member, type)){
+    public void createNotificationSetting(Member member){
+        if(notificationSettingRepository.existsByMember(member)){
             return;
         }
-        NotificationSetting setting = NotificationSetting.builder()
-            .member(member)
-            .type(type)
-            .build();
 
-        notificationSettingRepository.save(setting);
+        for(String type : TYPES){
+            NotificationSetting setting = NotificationSetting.createDefault(member, type);
+            notificationSettingRepository.save(setting);
+        }
+
     }
 
     public void toggleNotification(Long memberId, String type) {

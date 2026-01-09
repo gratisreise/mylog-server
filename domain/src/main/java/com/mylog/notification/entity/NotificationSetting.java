@@ -43,6 +43,15 @@ public class NotificationSetting {
     @CreatedDate
     private LocalDateTime createdAt;
 
+
+    public static NotificationSetting createDefault(Member member, String type) {
+        return NotificationSetting.builder()
+            .member(member)
+            .type(type)
+            .disabled(false)
+            .build();
+    }
+
     public void toggle(){
         this.disabled = !this.disabled;
     }
