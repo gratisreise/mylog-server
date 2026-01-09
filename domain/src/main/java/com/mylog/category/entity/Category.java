@@ -38,9 +38,6 @@ public class Category extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-//    public void update(CategoryUpdateRequest request) {
-//        this.categoryName = request.categoryName();
-//    }
 
 
     public boolean isOwnedBy(Long memberId) {
