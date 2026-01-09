@@ -13,4 +13,5 @@ public interface NotificationSettingRepository extends JpaRepository<Notificatio
     List<NotificationSetting> findByMember(Member member);
     Optional<NotificationSetting> findByMemberAndType(Member member, String type);
     boolean existsByMemberAndType(Member member, String type);
+    List<NotificationSetting> findByMemberId(Long memberId);
 }

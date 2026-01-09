@@ -4,17 +4,18 @@ import com.mylog.auth.CustomUser;
 import com.mylog.common.PageResponse;
 import com.mylog.notification.NotificationService;
 import com.mylog.notification.dto.NotificationResponse;
+import com.mylog.notification.dto.NotificationSettingResponse;
 import com.mylog.response.CommonResult;
 import com.mylog.response.ListResult;
 import com.mylog.response.ResponseService;
 import com.mylog.response.SingleResult;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationService notificationService;
-
 
     //알림 조회
     @GetMapping
@@ -38,18 +38,16 @@ public class NotificationController {
     }
 
     //알림 읽기
-    @PutMapping("/{id}")
+    @PatchMapping("/{notificatoinId}")
     @Operation(summary = "알림 읽기")
-    public CommonResult readNotification(@PathVariable Long id){
-        notificationService.readNotification(id);
+    public CommonResult readNotification(@PathVariable Long notificatoinId){
+        notificationService.readNotification(notificatoinId);
         return ResponseService.getSuccessResult();
     }
 
-
-
-    @GetMapping
+    @GetMapping("/settings")
     @Operation(summary = "알림설정조회")
-    public ListResult<com.mylog.api.notification.dto.NotificationSettingResponse> getNotificationsSettings(
+    public ListResult<NotificationSettingResponse> getNotificationsSettings(
         @AuthenticationPrincipal CustomUser customUser
     ){
         return ResponseService.getListResult(notificationService.getNotificationSettings(customUser));

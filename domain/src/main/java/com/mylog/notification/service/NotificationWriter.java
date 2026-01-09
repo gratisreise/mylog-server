@@ -17,6 +17,10 @@ public class NotificationWriter {
     private final NotificationReader notificationReader;
     private final NotificationSettingReader notificationSettingReader;
 
+    public void readNotification(Long notificationId){
+        notificationReader.getById(notificationId).read();
+    };
+
 //    @Async
 //    public void sendNotification(Member member, Long relatedId, String type) {
 //        //알림 ON 확인
@@ -32,8 +36,6 @@ public class NotificationWriter {
 //        notificationRepository.save(notification);
 //    }
 //
-//    public void readNotification(Long notificationId){
-//        notificationReader.getById(notificationId).read();
-//    };
+
 
 }
