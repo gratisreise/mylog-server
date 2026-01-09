@@ -1,4 +1,4 @@
-package com.mylog.api.notification.dto;
+package com.mylog.notification.dto;
 
 
 import com.mylog.notification.entity.NotificationSetting;
