@@ -9,14 +9,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.mylog.exception.CMissingDataException;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class NotificationSettingWriter {
     private final NotificationSettingRepository notificationSettingRepository;
-    private final MemberReader memberReader;
-
 
     @Async
     public void createNotificationSetting(Member member, String type){
@@ -31,14 +30,13 @@ public class NotificationSettingWriter {
         notificationSettingRepository.save(setting);
     }
 
-    //알림끄기
-//    public void toggleNotification(CustomUser customUser, String type){
-//        Member member = memberReader.getByCustomUser(customUser);
-//        notificationSettingRepository
-//            .findByMemberAndType(member, type)
-//            .orElseThrow(CMissingDataException::new)
-//            .toggle();
-//    };
+    public void toggleNotification(Long memberId, String type) {
+        notificationSettingRepository
+            .findByMemberIdAndType(memberId, type)
+            .orElseThrow(CMissingDataException::new)
+            .toggle();
+    }
+
 
 
 

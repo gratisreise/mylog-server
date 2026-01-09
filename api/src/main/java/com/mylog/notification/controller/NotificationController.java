@@ -17,7 +17,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,7 +33,8 @@ public class NotificationController {
         @AuthenticationPrincipal CustomUser customUser,
         @PageableDefault Pageable pageable
     ){
-        return ResponseService.getSingleResult(notificationService.receiveNotification(customUser, pageable));
+        return ResponseService.getSingleResult(
+            notificationService.receiveNotification(customUser.getMemberId(), pageable));
     }
 
     //알림 읽기
@@ -50,17 +50,18 @@ public class NotificationController {
     public ListResult<NotificationSettingResponse> getNotificationsSettings(
         @AuthenticationPrincipal CustomUser customUser
     ){
-        return ResponseService.getListResult(notificationService.getNotificationSettings(customUser));
+        return ResponseService.getListResult(
+            notificationService.getNotificationSettings(customUser.getMemberId()));
     }
 
     //알림 끄기/켜기
-    @PutMapping("/{type}")
+    @PatchMapping("/{type}")
     @Operation(summary = "알림 토글")
     public CommonResult toggleNotification(
         @AuthenticationPrincipal CustomUser customUser,
         @PathVariable String type
     ){
-        notificationService.toggleNotification(customUser, type);
+        notificationService.toggleNotification(customUser.getMemberId(), type);
         return ResponseService.getSuccessResult();
     }
 

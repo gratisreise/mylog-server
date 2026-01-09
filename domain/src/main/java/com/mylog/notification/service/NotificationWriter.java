@@ -1,11 +1,7 @@
 package com.mylog.notification.service;
 
-import com.mylog.member.entity.Member;
-import com.mylog.notification.entity.Notification;
 import com.mylog.notification.repository.NotificationRepository;
-
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +31,5 @@ public class NotificationWriter {
 //
 //        notificationRepository.save(notification);
 //    }
-//
-
 
 }

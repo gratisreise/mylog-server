@@ -1,17 +1,14 @@
 package com.mylog.notification.service;
 
 
+import com.mylog.exception.CMissingDataException;
 import com.mylog.notification.entity.Notification;
 import com.mylog.notification.repository.NotificationRepository;
-
-import com.mylog.member.entity.Member;
-import com.mylog.member.service.MemberReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.mylog.exception.CMissingDataException;
 
 
 @Service

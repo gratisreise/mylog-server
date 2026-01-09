@@ -1,10 +1,8 @@
 package com.mylog.notification;
 
-import com.mylog.auth.CustomUser;
 import com.mylog.common.PageResponse;
 import com.mylog.notification.dto.NotificationResponse;
 import com.mylog.notification.dto.NotificationSettingResponse;
-import com.mylog.notification.entity.Notification;
 import com.mylog.notification.service.NotificationReader;
 import com.mylog.notification.service.NotificationSettingReader;
 import com.mylog.notification.service.NotificationSettingWriter;
@@ -26,8 +24,7 @@ public class NotificationService {
     private final NotificationSettingWriter notificationSettingWriter;
 
 
-    public PageResponse<NotificationResponse> receiveNotification(CustomUser customUser, Pageable pageable) {
-        Long memberId = customUser.getMemberId();
+    public PageResponse<NotificationResponse> receiveNotification(Long memberId, Pageable pageable) {
         Page<NotificationResponse> page =
             notificationReader.receiveNotification(memberId, pageable)
                 .map(NotificationResponse::from);
@@ -40,9 +37,13 @@ public class NotificationService {
     }
 
 
-    public List<NotificationSettingResponse> getNotificationSettings(CustomUser customUser) {
-        Long memberId = customUser.getMemberId();
+    public List<NotificationSettingResponse> getNotificationSettings(Long memberId) {
         return notificationSettingReader.getNotificationSettings(memberId)
             .stream().map(NotificationSettingResponse::from).toList();
+    }
+
+    @Transactional
+    public void toggleNotification(Long memberId, String type) {
+        notificationSettingWriter.toggleNotification(memberId, type);
     }
 }
