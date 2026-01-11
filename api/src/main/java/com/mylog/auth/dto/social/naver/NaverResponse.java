@@ -1,4 +1,4 @@
-package com.mylog.api.auth.dto.social.naver;
+package com.mylog.auth.dto.social.naver;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

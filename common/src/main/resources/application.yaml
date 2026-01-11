@@ -1,0 +1,3 @@
+aws:
+  s3:
+    basic-image: ${BASIC_IMAGE}

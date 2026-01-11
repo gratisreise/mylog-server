@@ -1,4 +1,4 @@
-package com.mylog.api.auth.dto.social;
+package com.mylog.auth.dto.social;
 
 public interface OAuth2UserInfo {
     String getId();

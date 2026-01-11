@@ -4,8 +4,6 @@ package com.mylog.article.service;
 
 import com.mylog.article.entity.Article;
 import com.mylog.article.repository.ArticleRepository;
-import com.mylog.exception.CUnAuthorizedException;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

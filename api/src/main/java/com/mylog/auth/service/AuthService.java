@@ -1,18 +1,20 @@
-package com.mylog.api.auth.service;
+package com.mylog.auth.service;
 
-import com.mylog.utils.JwtUtil;
-import com.mylog.api.auth.dto.LoginRequest;
-import com.mylog.api.auth.dto.LoginResponse;
-import com.mylog.api.auth.dto.RefreshRequest;
-import com.mylog.api.auth.dto.RefreshResponse;
-import com.mylog.common.exception.CInvalidDataException;
+
+import com.mylog.auth.dto.LoginRequest;
+import com.mylog.auth.dto.LoginResponse;
+import com.mylog.auth.dto.RefreshRequest;
+import com.mylog.auth.dto.RefreshResponse;
+import com.mylog.exception.common.CInvalidDataException;
+import com.mylog.exception.auth.AuthError;
+import com.mylog.exception.auth.LoginFailedException;
 import com.mylog.member.entity.Member;
 import com.mylog.member.service.MemberReader;
+import com.mylog.s3.S3Config;
+import com.mylog.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,28 +23,27 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final JwtUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
     private final MemberReader memberReader;
+    private final PasswordEncoder encoder;
     private final RefreshTokenService refreshTokenService;
 
     //로그인
     public LoginResponse login(LoginRequest request) {
-//        log.info("email: {}", request.email());
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.email(), request.password())
-        );
-//        log.info("saved userInfo");
+
+        // 유저 생성 및 검증
         Member member = memberReader.getByEmail(request.email());
 
-        long memberId = member.getId();
+        if(!encoder.matches(member.getPassword(), request.password())){
+            throw new CInvalidDataException(AuthError.PASSWORD_MISMATCH);
+        }
+
+        Long memberId = member.getId();
+
+        //토큰 생성
         String username = String.valueOf(memberId);
-
-//        log.info("{}", memberId);
-
         String refreshToken = jwtUtil.createRefreshToken(username);
         String accessToken = jwtUtil.createAccessToken(username, memberId);
         refreshTokenService.saveRefreshToken(username, refreshToken);
-
         return new LoginResponse(accessToken, refreshToken);
     }
 
@@ -59,6 +60,5 @@ public class AuthService {
         String accessToken = jwtUtil.createAccessToken(username, memberId);
         return new RefreshResponse(accessToken);
     }
-
 
 }

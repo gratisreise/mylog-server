@@ -1,6 +1,6 @@
 package com.mylog.utils;
 
-import com.mylog.exception.CUnAuthorizedException;
+import com.mylog.exception.common.CUnAuthorizedException;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Jwts.SIG;
