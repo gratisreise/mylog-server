@@ -1,11 +1,11 @@
-package com.mylog.api.auth.dto.social.google;
+package com.mylog.auth.dto.social.google;
 
 import com.mylog.api.auth.dto.social.OAuth2UserInfo;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class GoogleOAuth2UserInfo implements OAuth2UserInfo {
-    private final GoogleUserInfo googleUserInfo;
+    private final com.mylog.api.auth.dto.social.google.GoogleUserInfo googleUserInfo;
 
     @Override
     public String getId() {

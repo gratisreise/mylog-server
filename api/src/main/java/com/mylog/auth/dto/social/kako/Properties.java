@@ -1,4 +1,4 @@
-package com.mylog.api.auth.dto.social.kako;
+package com.mylog.auth.dto.social.kako;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
