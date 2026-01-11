@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.mylog.exception.common.CMissingDataException;
+import com.mylog.exception.CMissingDataException;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +17,6 @@ import com.mylog.exception.common.CMissingDataException;
 public class NotificationSettingWriter {
     private final NotificationSettingRepository notificationSettingRepository;
     private static String[] TYPES = {"comment"};
-
 
     @Async
     public void createNotificationSetting(Member member){
@@ -30,6 +30,14 @@ public class NotificationSettingWriter {
         }
 
     }
+
+    public void toggleNotification(Long memberId, String type) {
+        notificationSettingRepository
+            .findByMemberIdAndType(memberId, type)
+            .orElseThrow(CMissingDataException::new)
+            .toggle();
+    }
+
 
     public void toggleNotification(Long memberId, String type) {
         notificationSettingRepository
