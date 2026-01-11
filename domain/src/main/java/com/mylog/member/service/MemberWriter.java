@@ -2,7 +2,6 @@ package com.mylog.member.service;
 
 
 import com.mylog.category.service.CategoryWriter;
-import com.mylog.exception.CDuplicatedException;
 import com.mylog.member.entity.Member;
 import com.mylog.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MemberWriter {
     private final MemberRepository memberRepository;
-//    private final PasswordEncoder passwordEncoder;
-//    private final S3Service s3Service;
     private final CategoryWriter categoryWriter;
     private final MemberReader memberReader;
 

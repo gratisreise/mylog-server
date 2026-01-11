@@ -4,12 +4,11 @@ import com.mylog.notification.entity.NotificationSetting;
 import com.mylog.notification.repository.NotificationSettingRepository;
 
 import com.mylog.member.entity.Member;
-import com.mylog.member.service.MemberReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.exception.common.CMissingDataException;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +16,8 @@ import com.mylog.exception.CMissingDataException;
 public class NotificationSettingWriter {
     private final NotificationSettingRepository notificationSettingRepository;
     private static String[] TYPES = {"comment"};
+
+
     @Async
     public void createNotificationSetting(Member member){
         if(notificationSettingRepository.existsByMember(member)){

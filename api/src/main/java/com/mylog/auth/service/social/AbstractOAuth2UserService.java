@@ -1,20 +1,19 @@
-package com.mylog.api.auth.service.social;
+package com.mylog.auth.service.social;
 
-import com.mylog.utils.JwtUtil;
 
-import com.mylog.api.auth.dto.LoginResponse;
-import com.mylog.api.auth.dto.social.OAuth2UserInfo;
-import com.mylog.api.auth.dto.social.OAuthRequest;
-import com.mylog.member.entity.Member;
-import com.mylog.api.auth.service.RefreshTokenService;
+import com.mylog.auth.dto.LoginResponse;
+import com.mylog.auth.dto.social.OAuth2UserInfo;
+import com.mylog.auth.dto.social.OAuthRequest;
+import com.mylog.auth.service.RefreshTokenService;
 import com.mylog.category.service.CategoryWriter;
+import com.mylog.member.entity.Member;
+import com.mylog.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Slf4j
-public abstract class AbstractOAuth2UserService implements
-    com.mylog.api.auth.service.social.OAuth2UserService {
+public abstract class AbstractOAuth2UserService implements OAuth2UserService {
     protected final JwtUtil jwtUtil;
     protected final RefreshTokenService refreshTokenService;
     private final CategoryWriter categoryWriter;

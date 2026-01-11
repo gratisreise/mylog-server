@@ -1,7 +1,7 @@
 package com.mylog.notification.service;
 
 
-import com.mylog.exception.CMissingDataException;
+import com.mylog.exception.common.CMissingDataException;
 import com.mylog.notification.entity.Notification;
 import com.mylog.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;

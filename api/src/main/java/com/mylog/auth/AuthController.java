@@ -1,4 +1,4 @@
-package com.mylog.auth.controller;
+package com.mylog.auth;
 
 
 import com.mylog.auth.dto.LoginRequest;
@@ -14,7 +14,6 @@ import com.mylog.member.service.MemberService;
 import com.mylog.response.CommonResult;
 import com.mylog.response.ResponseService;
 import com.mylog.response.SingleResult;
-import com.mylog.s3.S3Service;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +32,6 @@ public class AuthController {
     private final OAuth2UserServiceFactory oAuth2UserServiceFactory;
     private final MemberService memberService;
 
-    //회원가입
     @PostMapping("/register")
     @Operation(summary = "회원가입")
     public CommonResult signUp(@RequestBody @Valid SignUpRequest request){

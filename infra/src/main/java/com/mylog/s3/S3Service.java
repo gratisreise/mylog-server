@@ -1,7 +1,9 @@
 package com.mylog.s3;
 
 
-import com.mylog.exception.CMissingDataException;
+import com.mylog.exception.ErrorCode;
+import com.mylog.exception.common.CMissingDataException;
+import com.mylog.exception.common.CommonError;
 import java.io.IOException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +44,7 @@ public class S3Service {
             s3Client.putObject(putObjectRequest,
                 RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
         } catch (RuntimeException | IOException e) {
-            throw new CMissingDataException("s3 이미지 업로드에 실패했습니다.");
+            throw new CMissingDataException(CommonError.FAILED_IMAGE_UPLOAD);
         }
 
         String result = String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, fileName);

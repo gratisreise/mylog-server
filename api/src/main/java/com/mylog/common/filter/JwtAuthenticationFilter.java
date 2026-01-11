@@ -1,4 +1,4 @@
-package com.mylog.filter;
+package com.mylog.common.filter;
 
 import com.mylog.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
