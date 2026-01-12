@@ -1,6 +1,5 @@
 package com.mylog.auth;
 
-
 import com.mylog.auth.classes.CustomUser;
 import com.mylog.auth.dto.LoginRequest;
 import com.mylog.auth.dto.LoginResponse;
