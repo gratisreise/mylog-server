@@ -1,7 +1,7 @@
 package com.mylog.member.controller;
 
 
-import com.mylog.auth.CustomUser;
+import com.mylog.auth.classes.CustomUser;
 import com.mylog.member.dto.MemberResponse;
 import com.mylog.member.dto.MemberUpdateRequest;
 import com.mylog.member.service.MemberService;

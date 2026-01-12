@@ -10,8 +10,8 @@ import lombok.Getter;
 public enum CommonError implements ErrorCode {
     DUPLICATED_EMAIL("COM001", "중복된 데이터가 존재합니다."),
     FAILED_IMAGE_UPLOAD("COM002", "이미지 업로드에 실패했습니다."),
-    REFRESH_TOKEN_UNDELETED("COM003", "리프레쉬 토큰이 삭제되지 않았습니다.")
-
+    REFRESH_TOKEN_UNDELETED("COM003", "리프레쉬 토큰이 삭제되지 않았습니다."),
+    INVALID_TOKEN("COM004", "유효하지 않은 토큰입니다.");
     ;
 
     private final String code;

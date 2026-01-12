@@ -9,7 +9,7 @@ import com.mylog.article.entity.Article;
 import com.mylog.article.service.ArticleReader;
 import com.mylog.article.service.ArticleTagWriter;
 import com.mylog.article.service.ArticleWriter;
-import com.mylog.auth.CustomUser;
+import com.mylog.auth.classes.CustomUser;
 import com.mylog.category.entity.Category;
 import com.mylog.category.service.CategoryReader;
 import com.mylog.common.PageResponse;

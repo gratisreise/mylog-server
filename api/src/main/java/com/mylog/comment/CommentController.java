@@ -1,7 +1,7 @@
 package com.mylog.comment;
 
 
-import com.mylog.auth.CustomUser;
+import com.mylog.auth.classes.CustomUser;
 import com.mylog.comment.dto.CommentCreateRequest;
 import com.mylog.comment.dto.CommentResponse;
 import com.mylog.comment.dto.CommentUpdateRequest;

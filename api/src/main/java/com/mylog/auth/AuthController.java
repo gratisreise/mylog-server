@@ -1,6 +1,7 @@
 package com.mylog.auth;
 
 
+import com.mylog.auth.classes.CustomUser;
 import com.mylog.auth.dto.LoginRequest;
 import com.mylog.auth.dto.LoginResponse;
 import com.mylog.auth.dto.RefreshRequest;
@@ -18,8 +19,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,6 +47,16 @@ public class AuthController {
     @PostMapping("/login")
     public SingleResult<LoginResponse> login(@RequestBody LoginRequest request){
         return ResponseService.getSingleResult(authService.login(request));
+    }
+
+    @Operation(summary = "로그아웃")
+    @PostMapping("/logout")
+    public CommonResult logout(
+        @RequestHeader("Authorization") String authHeader,
+        @AuthenticationPrincipal CustomUser customUser
+    ){
+        authService.logout(authHeader, customUser.getMemberId());
+        return ResponseService.getSuccessResult();
     }
 
     @Operation(summary = "토큰 리프레시")

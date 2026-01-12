@@ -1,5 +1,8 @@
 package com.mylog.common.filter;
 
+import com.mylog.auth.service.TokenBlackListService;
+import com.mylog.exception.auth.AuthError;
+import com.mylog.response.CommonValue;
 import com.mylog.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,6 +23,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil tokenProvider;
     private final UserDetailsService userDetailsService;
+    private final TokenBlackListService tokenBlackListService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -30,13 +34,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(jwt) && tokenProvider.validateAccessToken(jwt)) {
             String username = tokenProvider.getUsername(jwt);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if(!tokenBlackListService.isLogout(username, jwt)){
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                //검증
+                UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-            //검증
-            UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                log.warn("블랙 리스트에 등록된 토큰입니다.");
+            }
         }
         
         filterChain.doFilter(request, response);
@@ -44,11 +51,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-
-        String prefix = "Bearer ";
-        int start = prefix.length();
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(start);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(CommonValue.AUTH_PREFIX)) {
+            return bearerToken.substring(CommonValue.AUTH_PREFIX_LENGTH);
         }
         return null;
     }

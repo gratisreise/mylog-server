@@ -3,17 +3,15 @@ package com.mylog.auth.service;
 import com.mylog.exception.common.CUnDeletedException;
 import com.mylog.exception.common.CommonError;
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
-
-import lombok.Value;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
-    private static final String KEY_PREFIX = "refreshToken:";
+    private static final String KEY_PREFIX = "RT:";
 
     private static final long EXPIRATION_TIME = 604800000L;
 
