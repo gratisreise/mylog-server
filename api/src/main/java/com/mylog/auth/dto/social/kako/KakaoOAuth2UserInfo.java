@@ -1,6 +1,7 @@
 package com.mylog.auth.dto.social.kako;
 
-import com.mylog.api.auth.dto.social.OAuth2UserInfo;
+
+import com.mylog.auth.dto.social.OAuth2UserInfo;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

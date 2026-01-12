@@ -1,6 +1,6 @@
-package com.mylog.api.auth.service.social.naver;
+package com.mylog.auth.service.social.naver;
 
-import com.mylog.api.auth.dto.social.naver.NaverUserInfo;
+import com.mylog.auth.dto.social.naver.NaverUserInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;

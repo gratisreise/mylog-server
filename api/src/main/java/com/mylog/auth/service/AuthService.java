@@ -59,6 +59,7 @@ public class AuthService {
     public RefreshResponse refresh(RefreshRequest request) {
         String username = jwtUtil.getRefreshUsername(request.refreshToken());
         long memberId = Long.parseLong(username);
+
         if (!refreshTokenService.validateRefreshToken(username, request.refreshToken())) {
             throw new CInvalidDataException(CommonError.INVALID_TOKEN);
         }

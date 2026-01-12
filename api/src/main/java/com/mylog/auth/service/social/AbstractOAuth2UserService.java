@@ -21,24 +21,18 @@ public abstract class AbstractOAuth2UserService implements OAuth2UserService {
     @Override
     public LoginResponse login(OAuthRequest request){
         String accessToken = getAccessToken(request);
-//        log.info("{}", accessToken);
         OAuth2UserInfo userInfo = getUserInfo(accessToken);
-//        log.info("{}", userInfo);
         Member member = createOrUpdateMember(userInfo);
-//        log.info("{}", member);
 
         long memberId = member.getId();
         String username = String.valueOf(memberId);
 
-//        categoryWriter.createCategory(member);
+        categoryWriter.createCategory(member);
 
         String refreshToken = jwtUtil.createRefreshToken(username);
         refreshTokenService.saveRefreshToken(username, refreshToken);
 
         String jwtAccessToken = jwtUtil.createAccessToken(username, member.getId());
-        log.info("access: {}", jwtAccessToken);
-        log.info("refresh: {}", refreshToken);
-        log.info("소셜로그인 성공");
         return new LoginResponse(jwtAccessToken, refreshToken);
     }
 

@@ -1,20 +1,21 @@
-package com.mylog.api.auth.service.social.naver;
+package com.mylog.auth.service.social.naver;
 
-
-import com.mylog.common.annotations.OAuth2ServiceType;
-import com.mylog.utils.JwtUtil;
-import com.mylog.common.enums.OauthProvider;
-import com.mylog.common.exception.CMissingDataException;
-import com.mylog.api.auth.dto.social.OAuth2UserInfo;
-import com.mylog.api.auth.dto.social.OAuthRequest;
-import com.mylog.api.auth.dto.social.naver.NaverOAuth2UserInfo;
-import com.mylog.api.auth.dto.social.naver.NaverTokenResponse;
-import com.mylog.api.auth.dto.social.naver.NaverUserInfo;
+import com.mylog.annotations.OAuth2ServiceType;
+import com.mylog.auth.dto.social.OAuth2UserInfo;
+import com.mylog.auth.dto.social.OAuthRequest;
+import com.mylog.auth.dto.social.naver.NaverOAuth2UserInfo;
+import com.mylog.auth.dto.social.naver.NaverTokenResponse;
+import com.mylog.auth.dto.social.naver.NaverUserInfo;
+import com.mylog.auth.service.RefreshTokenService;
+import com.mylog.auth.service.social.AbstractOAuth2UserService;
+import com.mylog.auth.service.social.naver.NaverTokenClient;
+import com.mylog.auth.service.social.naver.NaverUserClient;
+import com.mylog.category.service.CategoryWriter;
+import com.mylog.enums.OauthProvider;
+import com.mylog.exception.common.CMissingDataException;
 import com.mylog.member.entity.Member;
 import com.mylog.member.repository.MemberRepository;
-import com.mylog.api.auth.service.RefreshTokenService;
-import com.mylog.category.service.CategoryWriter;
-import com.mylog.api.auth.service.social.AbstractOAuth2UserService;
+import com.mylog.utils.JwtUtil;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 @Slf4j
 @OAuth2ServiceType(OauthProvider.NAVER)
 public class NaverOAuth2UserService extends AbstractOAuth2UserService {
+
     private final MemberRepository memberRepository;
     private final NaverTokenClient naverTokenClient;
     private final NaverUserClient naverUserClient;

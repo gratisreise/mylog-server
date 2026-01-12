@@ -36,7 +36,6 @@ public class MemberWriter {
     }
 
 
-
 //    public void saveMember(SignUpRequest request){
 //        if(isExists(request.email())){
 //            throw new CDuplicatedException("이미 존재하는 이메일입니다.");
