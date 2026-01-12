@@ -1,5 +1,6 @@
 package com.mylog.config;
 
+import com.mylog.auth.service.TokenBlackListService;
 import com.mylog.common.filter.ExceptionHandlerFilter;
 import com.mylog.common.filter.JwtAuthenticationFilter;
 import com.mylog.utils.JwtUtil;
@@ -23,6 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtUtil token;
+    private final TokenBlackListService tokenBlackListService;
 
     private static final String[] WHITELISTED_URLS = {
         "/api/auth/**",
@@ -66,7 +68,7 @@ public class SecurityConfig {
             .addFilterBefore(new ExceptionHandlerFilter(),
                 UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(
-                new JwtAuthenticationFilter(token, userDetailsService),
+                new JwtAuthenticationFilter(token, userDetailsService, tokenBlackListService),
                 UsernamePasswordAuthenticationFilter.class)
 
             //빌드

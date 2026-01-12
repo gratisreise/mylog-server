@@ -1,4 +1,4 @@
-package com.mylog.auth;
+package com.mylog.auth.classes;
 
 import com.mylog.enums.OauthProvider;
 import com.mylog.member.entity.Member;

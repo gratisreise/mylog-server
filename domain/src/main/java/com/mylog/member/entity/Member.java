@@ -76,14 +76,22 @@ public class Member extends BaseEntity {
 //        this.profileImg = profileImg;
 //    }
 //
-//    public void update(OAuth2UserInfo userInfo, OauthProvider oauthProvider) {
-//        this.provider = oauthProvider;
-//        this.providerId = userInfo.getId();
-//        this.memberName = userInfo.getName();
-//        this.password = userInfo.getId() + UUID.randomUUID();
-//        this.nickname = userInfo.getId() + oauthProvider;
-//        this.profileImg = userInfo.getImageUrl();
-//    }
+    public void update(OAuth2UserInfo userInfo, OauthProvider oauthProvider) {
+        this.provider = oauthProvider;
+        this.providerId = userInfo.getId();
+        this.memberName = userInfo.getName();
+        this.password = userInfo.getId() + UUID.randomUUID();
+        this.nickname = userInfo.getId() + oauthProvider;
+        this.profileImg = userInfo.getImageUrl();
+    }
+
+    public void updateSocial(Member member){
+        this.provider = member.getProvider();
+        this.providerId = member.getProviderId();
+        this.memberName = member.getMemberName();
+        this.nickname = member.getNickname();
+        this.profileImg = member.getProfileImg();
+    }
 
     public boolean isOwnedBy(Long memberId) {
         return Objects.equals(id, memberId);

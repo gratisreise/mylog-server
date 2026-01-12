@@ -1,6 +1,7 @@
-package com.mylog.api.auth.service;
+package com.mylog.auth.service;
 
-import com.mylog.api.auth.CustomUser;
+
+import com.mylog.auth.classes.CustomUser;
 import com.mylog.member.entity.Member;
 import com.mylog.member.service.MemberReader;
 import java.util.Collections;
@@ -27,8 +28,6 @@ public class CustomUserDetailsService implements UserDetailsService {
             memberReader.getById(Long.parseLong(username));
         return createUserDetails(member);
     }
-
-
 
     private UserDetails createUserDetails(Member member) {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");
