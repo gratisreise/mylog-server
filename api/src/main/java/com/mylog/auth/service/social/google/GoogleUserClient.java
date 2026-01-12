@@ -1,7 +1,7 @@
-package com.mylog.api.auth.service.social.google;
+package com.mylog.auth.service.social.google;
 
+import com.mylog.auth.dto.social.google.GoogleUserInfo;
 import com.mylog.config.FeignConfig;
-import com.mylog.api.auth.dto.social.google.GoogleUserInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;

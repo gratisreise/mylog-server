@@ -1,29 +1,36 @@
-package com.mylog.api.auth.service.social.naver;
+package com.mylog.auth.service.social.naver;
 
-
-import com.mylog.common.annotations.OAuth2ServiceType;
-import com.mylog.utils.JwtUtil;
-import com.mylog.common.enums.OauthProvider;
-import com.mylog.common.exception.CMissingDataException;
-import com.mylog.api.auth.dto.social.OAuth2UserInfo;
-import com.mylog.api.auth.dto.social.OAuthRequest;
-import com.mylog.api.auth.dto.social.naver.NaverOAuth2UserInfo;
-import com.mylog.api.auth.dto.social.naver.NaverTokenResponse;
-import com.mylog.api.auth.dto.social.naver.NaverUserInfo;
+import com.mylog.annotations.OAuth2ServiceType;
+import com.mylog.auth.dto.social.OAuth2UserInfo;
+import com.mylog.auth.dto.social.OAuthRequest;
+import com.mylog.auth.dto.social.naver.NaverOAuth2UserInfo;
+import com.mylog.auth.dto.social.naver.NaverTokenResponse;
+import com.mylog.auth.dto.social.naver.NaverUserInfo;
+import com.mylog.auth.service.RefreshTokenService;
+import com.mylog.auth.service.social.AbstractOAuth2UserService;
+import com.mylog.auth.service.social.naver.NaverTokenClient;
+import com.mylog.auth.service.social.naver.NaverUserClient;
+import com.mylog.category.service.CategoryWriter;
+import com.mylog.enums.OauthProvider;
+import com.mylog.exception.common.CMissingDataException;
+import com.mylog.exception.common.CommonError;
 import com.mylog.member.entity.Member;
 import com.mylog.member.repository.MemberRepository;
-import com.mylog.api.auth.service.RefreshTokenService;
-import com.mylog.category.service.CategoryWriter;
-import com.mylog.api.auth.service.social.AbstractOAuth2UserService;
+import com.mylog.member.service.MemberReader;
+import com.mylog.member.service.MemberWriter;
+import com.mylog.utils.JwtUtil;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j
 @OAuth2ServiceType(OauthProvider.NAVER)
 public class NaverOAuth2UserService extends AbstractOAuth2UserService {
-    private final MemberRepository memberRepository;
+
+    private final MemberWriter memberWriter;
+    private final MemberReader memberReader;
     private final NaverTokenClient naverTokenClient;
     private final NaverUserClient naverUserClient;
 
@@ -40,10 +47,12 @@ public class NaverOAuth2UserService extends AbstractOAuth2UserService {
     public NaverOAuth2UserService(
         JwtUtil jwtUtil, RefreshTokenService refreshTokenService,
         CategoryWriter categoryWriter,
-        MemberRepository memberRepository,
+        MemberWriter memberWriter,
+        MemberReader memberReader,
         NaverTokenClient naverTokenClient, NaverUserClient naverUserClient) {
         super(jwtUtil, refreshTokenService, categoryWriter);
-        this.memberRepository = memberRepository;
+        this.memberWriter = memberWriter;
+        this.memberReader = memberReader;
         this.naverTokenClient = naverTokenClient;
         this.naverUserClient = naverUserClient;
     }
@@ -61,7 +70,7 @@ public class NaverOAuth2UserService extends AbstractOAuth2UserService {
         NaverTokenResponse response = naverTokenClient.getAccessToken(params);
 
         if (response == null || response.getAccessToken() == null) {
-            throw new CMissingDataException("토큰 응답이 비어있습니다.");
+            throw new CMissingDataException(CommonError.TOKEN_IS_EMPTY);
         }
 
         return response.getAccessToken();
@@ -72,7 +81,7 @@ public class NaverOAuth2UserService extends AbstractOAuth2UserService {
         NaverUserInfo data = naverUserClient.getUserInfo("Bearer " + accessToken);
 
         if (data == null || data.response() == null) {
-            throw new CMissingDataException("사용자 정보가 비어있습니다.");
+            throw new CMissingDataException(CommonError.USER_IS_EMPTY);
         }
 
         return new NaverOAuth2UserInfo(data);
@@ -80,13 +89,15 @@ public class NaverOAuth2UserService extends AbstractOAuth2UserService {
 
     @Override
     public Member createOrUpdateMember(OAuth2UserInfo userInfo) {
-        Member member = memberRepository.findByProviderAndProviderId(
+        Optional<Member> member = memberReader.findByProviderAndProviderId(
             OauthProvider.NAVER,
-            userInfo.getId())
-            .orElseGet(Member::new);
+            userInfo.getId());
 
-        member.update(userInfo, OauthProvider.NAVER);
+        if(member.isEmpty()){
+            Member newMember = userInfo.toEntity();
+            return memberWriter.saveMember(newMember);
+        }
 
-        return memberRepository.save(member);
+        return member.get();
     }
 }

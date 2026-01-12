@@ -3,6 +3,7 @@ package com.mylog.response;
 
 
 import com.mylog.enums.ResultCode;
+import com.mylog.exception.BusinessException;
 import java.util.List;
 
 public class ResponseService {
@@ -27,17 +28,22 @@ public class ResponseService {
         return result;
     }
 
-    // 커스텀 예외일 때 사용
-    public static CommonResult getFailResult(ResultCode resultCode) {
+    // 잡힌에러
+    public static CommonResult getFailResult(BusinessException ex) {
+        return CommonResult.catching(ex);
+    }
+
+    //못잡힌 에러
+    public static CommonResult getFailResult(RuntimeException e) {
         CommonResult result = new CommonResult();
-        result.setCode(resultCode.getCode());
-        result.setMessage(resultCode.getMsg());
+        setFailResult(result);
         return result;
     }
 
+
     public static CommonResult getFailResult(Exception e) {
         CommonResult result = new CommonResult();
-        result.setCode(-1);
+        result.setCode("-1");
         result.setMessage(e.getMessage());
         return result;
     }

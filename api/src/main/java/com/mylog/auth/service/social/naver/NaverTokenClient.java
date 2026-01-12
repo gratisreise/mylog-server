@@ -1,7 +1,7 @@
-package com.mylog.api.auth.service.social.naver;
+package com.mylog.auth.service.social.naver;
 
+import com.mylog.auth.dto.social.naver.NaverTokenResponse;
 import com.mylog.config.FeignConfig;
-import com.mylog.api.auth.dto.social.naver.NaverTokenResponse;
 import java.util.Map;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;

@@ -3,7 +3,7 @@ package com.mylog.article.service;
 import com.mylog.article.entity.Article;
 import com.mylog.article.projections.ArticleProjection;
 import com.mylog.article.repository.ArticleRepository;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.exception.common.CMissingDataException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;

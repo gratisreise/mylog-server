@@ -1,30 +1,42 @@
-package com.mylog.api.auth.service;
+package com.mylog.auth.service;
 
-import java.util.concurrent.TimeUnit;
+import com.mylog.exception.common.CUnDeletedException;
+import com.mylog.exception.common.CommonError;
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.ValueOperations;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
-    private static final String KEY_PREFIX = "refreshToken:";
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = 7L;
+    private static final String KEY_PREFIX = "RT:";
 
-    private final ValueOperations<String, String> valueOperations;
+    private static final long EXPIRATION_TIME = 604800000L;
+
+    private final StringRedisTemplate redisTemplate;
 
     public void saveRefreshToken(String username, String refreshToken) {
-        valueOperations.set(
+        redisTemplate.opsForValue().set(
             generateKey(username),
             refreshToken,
-            REFRESH_TOKEN_EXPIRE_TIME,
-            TimeUnit.DAYS
+            Duration.ofMillis(EXPIRATION_TIME)
         );
     }
 
     public boolean validateRefreshToken(String username, String refreshToken) {
-        String storedToken = valueOperations.get(generateKey(username));
+        String storedToken = redisTemplate.opsForValue().get(generateKey(username));
         return storedToken != null && storedToken.equals(refreshToken);
+    }
+
+    public void deleteRefreshToken(String username) {
+        String key = generateKey(username);
+        boolean result = redisTemplate.delete(key);
+
+        if(!result) {
+            throw new CUnDeletedException(CommonError.REFRESH_TOKEN_UNDELETED);
+        }
     }
 
     private String generateKey(String username) {

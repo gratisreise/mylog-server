@@ -1,4 +1,4 @@
-package com.mylog.config;
+package com.mylog.s3;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +14,7 @@ public class S3Config {
     private String accessKey;
     @Value("${cloud.aws.credentials.secret-key}")
     private String secretKey;
+
     @Bean
     public S3Client s3Client() {
         return S3Client.builder()

@@ -1,7 +1,7 @@
-package com.mylog.api.auth.service.social.kakao;
+package com.mylog.auth.service.social.kakao;
 
+import com.mylog.auth.dto.social.kako.KakaoTokenResponse;
 import com.mylog.config.FeignConfig;
-import com.mylog.api.auth.dto.social.kako.KakaoTokenResponse;
 import java.util.Map;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;

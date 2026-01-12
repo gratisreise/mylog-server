@@ -16,14 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MemberWriter {
     private final MemberRepository memberRepository;
-//    private final PasswordEncoder passwordEncoder;
-//    private final S3Service s3Service;
     private final CategoryWriter categoryWriter;
     private final MemberReader memberReader;
 
     @Value("${cloud.aws.s3.basic}")
     private String basicImageUrl;
 
+    public Member saveMember(Member member) {
+        return memberRepository.save(member);
+    }
 
     public void updateMember(Member member, Long memberId) {
         Member savedMember = memberReader.getById(memberId);
@@ -33,6 +34,7 @@ public class MemberWriter {
     public void deleteMember(Long memberId) {
         memberRepository.deleteById(memberId);
     }
+
 
 //    public void saveMember(SignUpRequest request){
 //        if(isExists(request.email())){

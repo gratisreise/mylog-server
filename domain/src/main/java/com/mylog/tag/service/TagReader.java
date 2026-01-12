@@ -7,7 +7,7 @@ import com.mylog.tag.repository.TagRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.exception.common.CMissingDataException;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service

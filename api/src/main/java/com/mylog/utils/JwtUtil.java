@@ -1,10 +1,12 @@
 package com.mylog.utils;
 
-import com.mylog.exception.CUnAuthorizedException;
+import com.mylog.exception.common.CUnAuthorizedException;
 
+import com.mylog.exception.common.CommonError;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Jwts.SIG;
 import io.jsonwebtoken.security.Keys;
+import java.time.Instant;
 import java.util.Date;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +30,19 @@ public class JwtUtil {
         this.refreshKey = Keys.hmacShaKeyFor(refreshKey.getBytes());
         this.accessValidity = accessValidity;
         this.refreshValidity = refreshValidity;
+    }
+
+    public long getExpiration(String accessToken) {
+        Date expiration = Jwts.parser()
+            .verifyWith(accessKey)
+            .build()
+            .parseSignedClaims(accessToken)
+            .getPayload()
+            .getExpiration();
+
+        // 2. 현재 시간과의 차이를 계산
+        long now = new Date().getTime();
+        return (expiration.getTime() - now);
     }
 
 
@@ -91,7 +106,7 @@ public class JwtUtil {
                 .parseSignedClaims(token);
             return true;
         } catch (RuntimeException e) {
-            throw new CUnAuthorizedException("유효하지 않은 토큰입니다.");
+            throw new CUnAuthorizedException(CommonError.INVALID_TOKEN);
         }
     }
 

@@ -3,7 +3,7 @@ package com.mylog.comment.service;
 import com.mylog.article.service.ArticleReader;
 import com.mylog.comment.entity.Comment;
 import com.mylog.comment.repository.CommentRepository;
-import com.mylog.exception.CMissingDataException;
+import com.mylog.exception.common.CMissingDataException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
