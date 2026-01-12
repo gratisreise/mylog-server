@@ -15,9 +15,12 @@ import com.mylog.exception.common.CMissingDataException;
 import com.mylog.exception.common.CommonError;
 import com.mylog.member.entity.Member;
 import com.mylog.member.repository.MemberRepository;
+import com.mylog.member.service.MemberReader;
+import com.mylog.member.service.MemberWriter;
 import com.mylog.utils.JwtUtil;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -25,7 +28,8 @@ import org.springframework.beans.factory.annotation.Value;
 @OAuth2ServiceType(OauthProvider.KAKAO)
 public class KakaoOAuth2UserService extends AbstractOAuth2UserService {
 
-    private final MemberRepository memberRepository;
+    private final MemberWriter memberWriter;
+    private final MemberReader memberReader;
     private final KakaoTokenClient kakaoTokenClient;
     private final KakaoUserClient kakaoUserClient;
 
@@ -41,12 +45,14 @@ public class KakaoOAuth2UserService extends AbstractOAuth2UserService {
     public KakaoOAuth2UserService(
         JwtUtil jwtUtil, RefreshTokenService refreshTokenService,
         CategoryWriter categoryWriter,
-        MemberRepository memberRepository,
+        MemberWriter memberWriter,
+        MemberReader memberReader,
         KakaoTokenClient kakaoTokenClient,
         KakaoUserClient kakaoUserClient
     ){
         super(jwtUtil, refreshTokenService, categoryWriter);
-        this.memberRepository = memberRepository;
+        this.memberWriter = memberWriter;
+        this.memberReader = memberReader;
         this.kakaoTokenClient = kakaoTokenClient;
         this.kakaoUserClient = kakaoUserClient;
     }
@@ -74,7 +80,7 @@ public class KakaoOAuth2UserService extends AbstractOAuth2UserService {
         KakaoUserInfo userInfo = kakaoUserClient.getUserInfo(setBearerAuth(accessToken));
 
         if (userInfo == null) {
-            throw new CMissingDataException("카카오 유저정보가 비어있습니다.");
+            throw new CMissingDataException(CommonError.USER_IS_EMPTY);
         }
 
         return new KakaoOAuth2UserInfo(userInfo);
@@ -82,13 +88,16 @@ public class KakaoOAuth2UserService extends AbstractOAuth2UserService {
 
     @Override
     public Member createOrUpdateMember(OAuth2UserInfo userInfo) {
-        Member member = memberRepository.findByProviderAndProviderId(
+        Optional<Member> member = memberReader.findByProviderAndProviderId(
             OauthProvider.KAKAO,
             userInfo.getId()
-        ).orElseGet(Member::new);
+        );
 
-        member.update(userInfo, OauthProvider.KAKAO);
+        if(member.isEmpty()){
+            Member newMember = userInfo.toEntity();
+            return memberWriter.saveMember(newMember);
+        }
 
-        return memberRepository.save(member);
+        return member.get();
     }
 }
