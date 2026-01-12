@@ -1,6 +1,6 @@
-package com.mylog.api.auth.service.social.kakao;
+package com.mylog.auth.service.social.kakao;
 
-import com.mylog.api.auth.dto.social.kako.KakaoUserInfo;
+import com.mylog.auth.dto.social.kako.KakaoUserInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;

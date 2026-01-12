@@ -1,14 +1,13 @@
 package com.mylog.member.service;
 
 
-import com.mylog.auth.CustomUser;
+import com.mylog.auth.classes.CustomUser;
 import com.mylog.auth.dto.SignUpRequest;
 import com.mylog.category.service.CategoryWriter;
 import com.mylog.member.dto.MemberResponse;
 import com.mylog.member.dto.MemberUpdateRequest;
 import com.mylog.member.entity.Member;
 import com.mylog.notification.service.NotificationSettingWriter;
-import com.mylog.notification.service.NotificationWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

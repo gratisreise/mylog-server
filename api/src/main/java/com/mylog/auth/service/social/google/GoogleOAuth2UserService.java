@@ -1,21 +1,25 @@
-package com.mylog.api.auth.service.social.google;
+package com.mylog.auth.service.social.google;
 
-import com.mylog.common.annotations.OAuth2ServiceType;
-import com.mylog.utils.JwtUtil;
-import com.mylog.common.enums.OauthProvider;
-import com.mylog.common.exception.CMissingDataException;
-import com.mylog.api.auth.dto.social.OAuth2UserInfo;
-import com.mylog.api.auth.dto.social.OAuthRequest;
-import com.mylog.api.auth.dto.social.google.GoogleOAuth2UserInfo;
-import com.mylog.api.auth.dto.social.google.GoogleTokenResponse;
-import com.mylog.api.auth.dto.social.google.GoogleUserInfo;
-import com.mylog.member.entity.Member;
-import com.mylog.member.repository.MemberRepository;
-import com.mylog.api.auth.service.RefreshTokenService;
+
+import com.mylog.annotations.OAuth2ServiceType;
+import com.mylog.auth.dto.social.OAuth2UserInfo;
+import com.mylog.auth.dto.social.OAuthRequest;
+import com.mylog.auth.dto.social.google.GoogleOAuth2UserInfo;
+import com.mylog.auth.dto.social.google.GoogleTokenResponse;
+import com.mylog.auth.dto.social.google.GoogleUserInfo;
+import com.mylog.auth.service.RefreshTokenService;
+import com.mylog.auth.service.social.AbstractOAuth2UserService;
 import com.mylog.category.service.CategoryWriter;
-import com.mylog.api.auth.service.social.AbstractOAuth2UserService;
+import com.mylog.enums.OauthProvider;
+import com.mylog.exception.common.CMissingDataException;
+import com.mylog.exception.common.CommonError;
+import com.mylog.member.entity.Member;
+import com.mylog.member.service.MemberReader;
+import com.mylog.member.service.MemberWriter;
+import com.mylog.utils.JwtUtil;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -31,19 +35,22 @@ public class GoogleOAuth2UserService extends AbstractOAuth2UserService {
     @Value("${oauth2.client.google.redirect-uri}")
     private String redirectUri;
 
-    private final MemberRepository memberRepository;
+    private final MemberWriter memberWriter;
+    private final MemberReader memberReader;
     private final GoogleTokenClient googleTokenClient;
     private final GoogleUserClient googleUserClient;
 
     public GoogleOAuth2UserService(
         JwtUtil jwtUtil, RefreshTokenService refreshTokenService,
         CategoryWriter categoryWriter,
-        MemberRepository memberRepository,
+        MemberWriter memberWriter,
+        MemberReader memberReader,
         GoogleTokenClient googleTokenClient,
         GoogleUserClient googleUserClient
     ) {
         super(jwtUtil, refreshTokenService, categoryWriter);
-        this.memberRepository = memberRepository;
+        this.memberWriter = memberWriter;
+        this.memberReader = memberReader;
         this.googleTokenClient = googleTokenClient;
         this.googleUserClient = googleUserClient;
     }
@@ -61,7 +68,7 @@ public class GoogleOAuth2UserService extends AbstractOAuth2UserService {
         GoogleTokenResponse response = googleTokenClient.getAccessToken(params);
 
         if(response == null){
-            throw new CMissingDataException("토큰 응답이 비어있습니다.");
+            throw new CMissingDataException(CommonError.TOKEN_IS_EMPTY);
         }
 
         return response.getAccessToken();
@@ -72,20 +79,22 @@ public class GoogleOAuth2UserService extends AbstractOAuth2UserService {
         GoogleUserInfo userInfo = googleUserClient.getUserInfo(setBearerAuth(accessToken));
         log.info("googleUserInfo: {}", userInfo);
         if(userInfo == null){
-            throw new CMissingDataException("사용자 정보가 비어있습니다.");
+            throw new CMissingDataException(CommonError.USER_IS_EMPTY);
         }
         return new GoogleOAuth2UserInfo(userInfo);
     }
 
     @Override
     public Member createOrUpdateMember(OAuth2UserInfo userInfo) {
-        Member member = memberRepository.findByProviderAndProviderId(
+        Optional<Member> member = memberReader.findByProviderAndProviderId(
             OauthProvider.GOOGLE,
             userInfo.getId()
-        ).orElseGet(Member::new);
+        );
 
-        member.update(userInfo, OauthProvider.GOOGLE);
-
-        return memberRepository.save(member);
+        if(member.isEmpty()){
+            Member newMember = userInfo.toEntity();
+            return memberWriter.saveMember(newMember);
+        }
+        return member.get();
     }
 }

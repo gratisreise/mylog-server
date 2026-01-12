@@ -1,6 +1,9 @@
 package com.mylog.auth.dto.social.kako;
 
-import com.mylog.api.auth.dto.social.OAuth2UserInfo;
+
+import com.mylog.auth.dto.social.OAuth2UserInfo;
+import com.mylog.enums.OauthProvider;
+import com.mylog.member.entity.Member;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -20,5 +23,16 @@ public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
     @Override
     public String getImageUrl() {
         return kakaoUserInfo.properties().profileImage();
+    }
+
+    @Override
+    public Member toEntity(){
+        return Member.builder()
+            .provider(OauthProvider.KAKAO)
+            .providerId(getId())
+            .memberName(getName())
+            .nickname(getId() + OauthProvider.KAKAO)
+            .profileImg(getImageUrl())
+            .build();
     }
 }

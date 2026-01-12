@@ -1,6 +1,6 @@
 package com.mylog.category;
 
-import com.mylog.auth.CustomUser;
+import com.mylog.auth.classes.CustomUser;
 import com.mylog.category.dto.CategoryCreateRequest;
 import com.mylog.category.dto.CategoryResponse;
 import com.mylog.category.entity.Category;
