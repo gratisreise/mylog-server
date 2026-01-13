@@ -15,7 +15,7 @@ public record PageResponse<T>(
     boolean hasPrevious
 ) {
     @Builder
-    public PageResponse { /* 자동생성 생성자로 인하 컴파일 에러를 피하기 위해 생성 */ }
+    public PageResponse { /* 자동생성 생성자로 인한 컴파일 에러를 피하기 위해 생성 */ }
     public static <T> PageResponse<T> from(Page<T> page) {
         return PageResponse.<T>builder()
             .content(page.getContent())

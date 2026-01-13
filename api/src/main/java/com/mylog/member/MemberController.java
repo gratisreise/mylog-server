@@ -1,10 +1,9 @@
-package com.mylog.member.controller;
+package com.mylog.member;
 
 
 import com.mylog.auth.classes.CustomUser;
 import com.mylog.member.dto.MemberResponse;
 import com.mylog.member.dto.MemberUpdateRequest;
-import com.mylog.member.service.MemberService;
 import com.mylog.response.CommonResult;
 import com.mylog.response.ResponseService;
 import com.mylog.response.SingleResult;

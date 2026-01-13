@@ -52,4 +52,8 @@ public class Category extends BaseEntity {
             .categoryName(CommonValue.ORIGIN_CATEGORY)
             .build();
     }
+
+    public void updateCategorName(String categoryName) {
+        this.categoryName = categoryName;
+    }
 }
