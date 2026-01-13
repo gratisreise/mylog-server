@@ -1,5 +1,6 @@
 package com.mylog.notification.service;
 
+import com.mylog.exception.common.CommonError;
 import com.mylog.notification.entity.NotificationSetting;
 import com.mylog.notification.repository.NotificationSettingRepository;
 
@@ -34,19 +35,8 @@ public class NotificationSettingWriter {
     public void toggleNotification(Long memberId, String type) {
         notificationSettingRepository
             .findByMemberIdAndType(memberId, type)
-            .orElseThrow(CMissingDataException::new)
+            .orElseThrow(() -> new CMissingDataException(CommonError.NOTIFICATION_SETTING_IS_EMPTY))
             .toggle();
     }
-
-
-    public void toggleNotification(Long memberId, String type) {
-        notificationSettingRepository
-            .findByMemberIdAndType(memberId, type)
-            .orElseThrow(CMissingDataException::new)
-            .toggle();
-    }
-
-
-
 
 }

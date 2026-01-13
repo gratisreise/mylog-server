@@ -19,7 +19,10 @@ public enum CommonError implements ErrorCode {
     ARTICLE_IS_EMPTY("COM00", "존재하지 않는 게시글입니다."),
     COMMENT_IS_EMPTY("COM000", "존재하지 않는 댓글입니다."),
     NOT_YOUR_COMMENT("COM005", "댓글에 대한 권한이 없습니다."),
-    NOT_YOUR_CATEGORY("COM005", "카테고리에 대한 권한이 없습니다.")
+    NOT_YOUR_CATEGORY("COM005", "카테고리에 대한 권한이 없습니다."),
+    CATEGORY_IS_EMPTY("COM000", "회원정보 조회에 실패했습니다."),
+    NOT_YOUR_ARTICLE("COM005", "게시글에 대한 권한이 없습니다."),
+    NOTIFICATION_SETTING_IS_EMPTY("COM000", "존재하지 않는 알림설정입니다.")
     ;
 
     private final String code;

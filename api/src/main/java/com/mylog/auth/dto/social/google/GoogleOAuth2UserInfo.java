@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class GoogleOAuth2UserInfo implements OAuth2UserInfo {
-    private final com.mylog.api.auth.dto.social.google.GoogleUserInfo googleUserInfo;
+    private final GoogleUserInfo googleUserInfo;
 
     @Override
     public String getId() {

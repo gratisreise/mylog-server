@@ -26,43 +26,7 @@ public class CategoryWriter {
         categoryRepository.save(category);
     }
 
-
     public void deleteCategoryById(Long id) {
         categoryRepository.deleteById(id);
     }
-
-//    public void createCategory(CategoryCreateRequest request, CustomUser customUser){
-//        Member member = memberReader.getById(customUser.getMemberId());
-//        int categorySize = categoryRepository.countByMember(member);
-//
-//        if(categorySize == CommonValue.CATEGORY_LIMIT){
-//            throw new CReachedLimitException("카테고리 갯수가 한도에 도달했습니다.");
-//        }
-//
-//        Category category = request.toEntity(member);
-//
-//        categoryRepository.save(category);
-//    }
-//
-
-//
-//    public void updateCategory(CategoryUpdateRequest request,Long categoryId, CustomUser customUser){
-//        Category category = categoryReader.getById(categoryId);
-//
-//        if(!category.isOwnedBy(customUser.getMemberId())){
-//            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
-//        }
-//
-//        category.update(request);
-//    }
-//
-//    public void deleteCategory(Long categoryId, CustomUser customUser){
-//        Category category = categoryReader.getById(categoryId);
-//
-//        if(!category.isOwnedBy(customUser.getMemberId())){
-//            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
-//        }
-//
-//        categoryRepository.deleteById(categoryId);
-//    }
 }

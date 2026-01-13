@@ -89,7 +89,7 @@ public class CommentService {
         Comment comment = commentReader.getById(commentId);
         Long memberId = customUser.getMemberId();
         if(!comment.isOwnedBy(memberId)){
-            throw new CUnAuthorizedException(ErrorMessage.NOT_YOUR_COMMENT);
+            throw new CUnAuthorizedException(CommonError.NOT_YOUR_CATEGORY);
         }
         comment.update(request.content());
     }
@@ -99,7 +99,7 @@ public class CommentService {
         Comment comment = commentReader.getById(commentId);
         Long memberId = customUser.getMemberId();
         if(!comment.isOwnedBy(memberId)){
-            throw new CUnAuthorizedException(ErrorMessage.NOT_YOUR_COMMENT);
+            throw new CUnAuthorizedException(CommonError.NOT_YOUR_COMMENT);
         }
         commentWriter.deleteById(commentId);
     }
