@@ -4,6 +4,7 @@ import com.mylog.article.service.ArticleReader;
 import com.mylog.comment.entity.Comment;
 import com.mylog.comment.repository.CommentRepository;
 import com.mylog.exception.common.CMissingDataException;
+import com.mylog.exception.common.CommonError;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,7 +48,8 @@ public class CommentReader {
     }
 
     public Comment getById(Long commentId) {
-        return commentRepository.findById(commentId).orElseThrow(CMissingDataException::new);
+        return commentRepository.findById(commentId)
+            .orElseThrow(() -> new CMissingDataException(CommonError.COMMENT_IS_EMPTY));
     }
 
 }

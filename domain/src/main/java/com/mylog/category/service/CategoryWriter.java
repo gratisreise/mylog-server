@@ -26,6 +26,11 @@ public class CategoryWriter {
         categoryRepository.save(category);
     }
 
+
+    public void deleteCategoryById(Long id) {
+        categoryRepository.deleteById(id);
+    }
+
 //    public void createCategory(CategoryCreateRequest request, CustomUser customUser){
 //        Member member = memberReader.getById(customUser.getMemberId());
 //        int categorySize = categoryRepository.countByMember(member);

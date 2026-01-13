@@ -13,6 +13,7 @@ import com.mylog.common.PageResponse;
 import com.mylog.enums.ErrorMessage;
 import com.mylog.exception.common.CMissingDataException;
 import com.mylog.exception.common.CUnAuthorizedException;
+import com.mylog.exception.common.CommonError;
 import com.mylog.member.entity.Member;
 import com.mylog.member.service.MemberReader;
 import lombok.RequiredArgsConstructor;
@@ -30,14 +31,13 @@ public class CommentService {
     private final ArticleReader articleReader;
     private final MemberReader memberReader;
 
-
     @Transactional
     public void createComment(Long articleId, CommentCreateRequest request,
         CustomUser customUser) {
 
         // 게시글 존재 확인
         if(!articleReader.isExists(articleId)){
-            throw new CMissingDataException(ErrorMessage.INVALID_ARTICLE);
+            throw new CMissingDataException(CommonError.ARTICLE_IS_EMPTY);
         }
 
         //저장할 댓글 생성

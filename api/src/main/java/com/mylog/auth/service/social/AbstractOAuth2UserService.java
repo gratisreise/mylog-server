@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public abstract class AbstractOAuth2UserService implements
-    com.mylog.api.auth.service.social.OAuth2UserService {
+    OAuth2UserService {
     protected final JwtUtil jwtUtil;
     protected final RefreshTokenService refreshTokenService;
     private final CategoryWriter categoryWriter;
