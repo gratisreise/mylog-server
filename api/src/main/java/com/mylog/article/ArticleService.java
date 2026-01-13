@@ -15,6 +15,7 @@ import com.mylog.category.service.CategoryReader;
 import com.mylog.common.PageResponse;
 import com.mylog.enums.ErrorMessage;
 import com.mylog.exception.common.CUnAuthorizedException;
+import com.mylog.exception.common.CommonError;
 import com.mylog.member.entity.Member;
 import com.mylog.member.service.MemberReader;
 import com.mylog.s3.S3Service;
@@ -65,7 +66,7 @@ public class ArticleService {
         Long memberId = customUser.getMemberId();
 
         if(!article.isOwnedBy(memberId)){
-            throw new CUnAuthorizedException(ErrorMessage.NOT_YOUR_ARTICLE);
+            throw new CUnAuthorizedException(CommonError.NOT_YOUR_ARTICLE);
         }
 
         //기존 이미지 s3에서 삭제
@@ -91,7 +92,7 @@ public class ArticleService {
         Long memberId = customUser.getMemberId();
 
         if(article.isOwnedBy(memberId)){
-            throw new CUnAuthorizedException(ErrorMessage.NOT_YOUR_ARTICLE);
+            throw new CUnAuthorizedException(CommonError.NOT_YOUR_ARTICLE);
         }
 
         s3Service.deleteImage(article.getArticleImg());
