@@ -15,9 +15,9 @@ public class AsyncConfig implements AsyncConfigurer, AsyncUncaughtExceptionHandl
     @Override
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5); // 기본 스레드 수
-        executor.setMaxPoolSize(10); // 최대 스레드 수
-        executor.setQueueCapacity(25); // 큐 용량
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(25);
         executor.setThreadNamePrefix("Async");
         executor.initialize();
         return executor;
