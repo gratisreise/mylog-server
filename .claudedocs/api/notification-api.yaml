@@ -1,0 +1,354 @@
+openapi: 3.0.3
+info:
+  title: MyLog Notification API
+  description: MyLog 알림 관리 API 명세서
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: 개발 서버
+  - url: https://api.mylog.com
+    description: 프로덕션 서버
+
+tags:
+  - name: Notifications
+    description: 알림 관리
+
+paths:
+  /api/notifications:
+    get:
+      tags:
+        - Notifications
+      summary: 알림 조회
+      description: 로그인한 사용자의 알림 목록을 페이지네이션하여 조회합니다.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: '페이지 번호 (0부터 시작)'
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name: size
+          in: query
+          description: '페이지당 항목 수'
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: sort
+          in: query
+          description: '정렬 기준 (예: id,desc)'
+          schema:
+            type: string
+            example: "id,desc"
+      responses:
+        '200':
+          description: 알림 목록 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleResultPageNotificationResponse'
+              examples:
+                success:
+                  value:
+                    code: "1"
+                    message: "success"
+                    data:
+                      content:
+                        - message: "새로운 댓글이 작성되었습니다."
+                          notificationId: 1
+                          articleId: 10
+                          type: "COMMENT"
+                        - message: "새로운 댓글이 작성되었습니다."
+                          notificationId: 2
+                          articleId: 15
+                          type: "COMMENT"
+                      page: 0
+                      size: 20
+                      totalElements: 2
+                      totalPages: 1
+                      hasNext: false
+                      hasPrevious: false
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/notifications/{notificationId}:
+    patch:
+      tags:
+        - Notifications
+      summary: 알림 읽기
+      description: 특정 알림을 읽음 상태로 변경합니다.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: notificationId
+          in: path
+          description: '알림 ID'
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: 알림 읽기 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonResult'
+              examples:
+                success:
+                  value:
+                    code: "1"
+                    message: "success"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/notifications/settings:
+    get:
+      tags:
+        - Notifications
+      summary: 알림 설정 조회
+      description: 로그인한 사용자의 알림 설정 목록을 조회합니다.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: 알림 설정 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListResultNotificationSettingResponse'
+              examples:
+                success:
+                  value:
+                    code: "1"
+                    message: "success"
+                    data:
+                      - type: "COMMENT"
+                        disabled: false
+                      - type: "LIKE"
+                        disabled: true
+                      - type: "FOLLOW"
+                        disabled: false
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/notifications/{type}:
+    patch:
+      tags:
+        - Notifications
+      summary: 알림 토글
+      description: 특정 타입의 알림을 켜거나 끕니다.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: type
+          in: path
+          description: '알림 타입 (COMMENT, LIKE, FOLLOW 등)'
+          required: true
+          schema:
+            type: string
+            enum: [COMMENT, LIKE, FOLLOW]
+            example: COMMENT
+      responses:
+        '200':
+          description: 알림 토글 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonResult'
+              examples:
+                success:
+                  value:
+                    code: "1"
+                    message: "success"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'JWT Access Token (Authorization: Bearer {token})'
+
+  schemas:
+    CommonResult:
+      type: object
+      properties:
+        code:
+          type: string
+          description: '응답 코드 (1: 성공, -1: 실패)'
+          example: "1"
+        message:
+          type: string
+          description: '응답 메시지'
+          example: "success"
+
+    SingleResultPageNotificationResponse:
+      allOf:
+        - $ref: '#/components/schemas/CommonResult'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/PageNotificationResponse'
+
+    ListResultNotificationSettingResponse:
+      allOf:
+        - $ref: '#/components/schemas/CommonResult'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/NotificationSettingResponse'
+
+    PageNotificationResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationResponse'
+        page:
+          type: integer
+          description: '현재 페이지 번호'
+          example: 0
+        size:
+          type: integer
+          description: '페이지당 항목 수'
+          example: 20
+        totalElements:
+          type: integer
+          format: int64
+          description: '전체 항목 수'
+          example: 100
+        totalPages:
+          type: integer
+          description: '전체 페이지 수'
+          example: 5
+        hasNext:
+          type: boolean
+          description: '다음 페이지 존재 여부'
+          example: true
+        hasPrevious:
+          type: boolean
+          description: '이전 페이지 존재 여부'
+          example: false
+
+    NotificationResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: '알림 메시지'
+          example: "새로운 댓글이 작성되었습니다."
+        notificationId:
+          type: integer
+          format: int64
+          description: '알림 ID'
+          example: 1
+        articleId:
+          type: integer
+          format: int64
+          description: '관련 게시글 ID'
+          example: 10
+        type:
+          type: string
+          description: '알림 타입'
+          enum: [COMMENT, LIKE, FOLLOW]
+          example: "COMMENT"
+
+    NotificationSettingResponse:
+      type: object
+      properties:
+        type:
+          type: string
+          description: '알림 타입'
+          enum: [COMMENT, LIKE, FOLLOW]
+          example: "COMMENT"
+        disabled:
+          type: boolean
+          description: '알림 비활성화 여부'
+          example: false
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          description: '에러 코드'
+          example: "-1"
+        message:
+          type: string
+          description: '에러 메시지'
+          example: "에러가 발생했습니다."
+
+  responses:
+    BadRequest:
+      description: 잘못된 요청
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            invalidRequest:
+              value:
+                code: "-1"
+                message: "잘못된 요청입니다."
+
+    Unauthorized:
+      description: 인증 실패
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            unauthorized:
+              value:
+                code: "-5"
+                message: "허용되지 않는 접근입니다."
+
+    NotFound:
+      description: 리소스를 찾을 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            notFound:
+              value:
+                code: "-3"
+                message: "해당 알림을 찾을 수 없습니다."
+
+    InternalServerError:
+      description: 서버 내부 오류
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            serverError:
+              value:
+                code: "-1"
+                message: "서버 오류가 발생했습니다."
