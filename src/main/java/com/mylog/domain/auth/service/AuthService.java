@@ -1,10 +1,10 @@
 package com.mylog.domain.auth.service;
 
 import com.mylog.common.security.JwtUtil;
-import com.mylog.domain.auth.dto.LoginRequest;
-import com.mylog.domain.auth.dto.LoginResponse;
-import com.mylog.domain.auth.dto.RefreshRequest;
-import com.mylog.domain.auth.dto.RefreshResponse;
+import com.mylog.domain.auth.dto.request.LoginRequest;
+import com.mylog.domain.auth.dto.response.LoginResponse;
+import com.mylog.domain.auth.dto.request.RefreshRequest;
+import com.mylog.domain.auth.dto.response.RefreshResponse;
 import com.mylog.common.exception.CInvalidDataException;
 import com.mylog.domain.member.Member;
 import com.mylog.domain.member.service.MemberReader;
@@ -27,17 +27,13 @@ public class AuthService {
 
     //로그인
     public LoginResponse login(LoginRequest request) {
-//        log.info("email: {}", request.email());
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
-//        log.info("saved userInfo");
         Member member = memberReader.getByEmail(request.email());
 
         long memberId = member.getId();
         String username = String.valueOf(memberId);
-
-//        log.info("{}", memberId);
 
         String refreshToken = jwtUtil.createRefreshToken(username);
         String accessToken = jwtUtil.createAccessToken(username, memberId);

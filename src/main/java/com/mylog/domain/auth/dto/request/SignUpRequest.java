@@ -1,4 +1,4 @@
-package com.mylog.domain.auth.dto;
+package com.mylog.domain.auth.dto.request;
 
 import com.mylog.common.enums.OauthProvider;
 import com.mylog.domain.member.Member;

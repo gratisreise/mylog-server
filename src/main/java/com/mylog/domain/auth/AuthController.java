@@ -1,10 +1,10 @@
 package com.mylog.domain.auth;
 
 import com.mylog.domain.auth.service.AuthService;
-import com.mylog.domain.auth.dto.LoginRequest;
-import com.mylog.domain.auth.dto.LoginResponse;
-import com.mylog.domain.auth.dto.RefreshRequest;
-import com.mylog.domain.auth.dto.RefreshResponse;
+import com.mylog.domain.auth.dto.request.LoginRequest;
+import com.mylog.domain.auth.dto.response.LoginResponse;
+import com.mylog.domain.auth.dto.request.RefreshRequest;
+import com.mylog.domain.auth.dto.response.RefreshResponse;
 import com.mylog.common.response.ResponseService;
 import com.mylog.common.response.SingleResult;
 import com.mylog.domain.auth.dto.social.OAuthRequest;

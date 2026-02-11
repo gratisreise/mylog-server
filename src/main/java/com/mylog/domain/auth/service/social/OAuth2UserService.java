@@ -1,6 +1,7 @@
 package com.mylog.domain.auth.service.social;
 
-import com.mylog.model.dto.auth.LoginResponse;
+
+import com.mylog.domain.auth.dto.response.LoginResponse;
 import com.mylog.domain.auth.dto.social.OAuth2UserInfo;
 import com.mylog.domain.auth.dto.social.OAuthRequest;
 import com.mylog.domain.member.Member;
