@@ -1,6 +1,6 @@
-package com.mylog.common.external;
+package com.mylog.external.s3;
 
-import com.mylog.exception.CMissingDataException;
+import com.mylog.common.exception.CMissingDataException;
 import java.io.IOException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

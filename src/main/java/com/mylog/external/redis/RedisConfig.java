@@ -1,4 +1,4 @@
-package com.mylog.config;
+package com.mylog.external.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
