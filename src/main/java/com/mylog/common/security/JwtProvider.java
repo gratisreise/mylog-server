@@ -1,6 +1,9 @@
 package com.mylog.common.security;
 
-import com.mylog.common.exception.CUnAuthorizedException;
+
+import com.mylog.common.exception.BusinessException;
+import com.mylog.common.exception.ErrorCode;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Jwts.SIG;
 import io.jsonwebtoken.security.Keys;
@@ -10,13 +13,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JwtUtil {
+public class JwtProvider {
     private final SecretKey accessKey;
     private final SecretKey refreshKey;
     private final long accessValidity;
     private final long refreshValidity;
 
-    public JwtUtil(
+    public JwtProvider(
         @Value("${jwt.access_secret}") String accessKey,
         @Value("${jwt.refresh_secret}") String refreshKey,
         @Value("${jwt.access_expiration}") long accessValidity,
@@ -30,6 +33,8 @@ public class JwtUtil {
     }
 
 
+
+    //[ AccessToken ]
     public String createAccessToken(String subject, long memberId) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + accessValidity);
@@ -41,26 +46,6 @@ public class JwtUtil {
             .expiration(validity)
             .signWith(accessKey, Jwts.SIG.HS512)
             .compact();
-    }
-
-    public String createRefreshToken(String username) {
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + refreshValidity);
-
-        return Jwts.builder()
-            .subject(username)
-            .issuedAt(now)
-            .expiration(validity)
-            .signWith(refreshKey, SIG.HS512)
-            .compact();
-    }
-    public String getRefreshUsername(String token) {
-        return Jwts.parser()
-            .verifyWith(refreshKey)
-            .build()
-            .parseSignedClaims(token)
-            .getPayload()
-            .getSubject();
     }
 
     public String getUsername(String token) {
@@ -81,7 +66,6 @@ public class JwtUtil {
             .get("memberId", Long.class);
     }
 
-
     public boolean validateAccessToken(String token) {
         try {
             Jwts.parser()
@@ -89,8 +73,46 @@ public class JwtUtil {
                 .build()
                 .parseSignedClaims(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
         } catch (RuntimeException e) {
-            throw new CUnAuthorizedException("유효하지 않은 토큰입니다.");
+            throw new BusinessException(ErrorCode.TOKEN_INVALID);
+        }
+    }
+
+    // [ RefreshToken ]
+    public String createRefreshToken(String username) {
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + refreshValidity);
+
+        return Jwts.builder()
+            .subject(username)
+            .issuedAt(now)
+            .expiration(validity)
+            .signWith(refreshKey, SIG.HS512)
+            .compact();
+    }
+
+    public String getRefreshMemberId(String token) {
+        return Jwts.parser()
+            .verifyWith(refreshKey)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload()
+            .getSubject();
+    }
+
+    public boolean validateRefreshToken(String token) {
+        try {
+            Jwts.parser()
+                .verifyWith(refreshKey)
+                .build()
+                .parseSignedClaims(token);
+            return true;
+        } catch (ExpiredJwtException e) {
+            throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
+        } catch (RuntimeException e) {
+            throw new BusinessException(ErrorCode.TOKEN_INVALID);
         }
     }
 
