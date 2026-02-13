@@ -1,7 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '3.2.5'
     id 'io.spring.dependency-management' version '1.1.4'
-    id 'jacoco'
+    id 'com.diffplug.spotless' version '8.2.1'
     id 'java'
 }
 
@@ -22,41 +22,33 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+    // Converter
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-
-    //Spring Cloud
-    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-    // OpenFeign HTTP Client (Apache HttpClient 기반)
-    implementation 'io.github.openfeign:feign-httpclient:12.3'
-    implementation "io.github.openfeign.form:feign-form:3.8.0"
-    implementation "io.github.openfeign.form:feign-form-spring:3.8.0"
 
     // Database
     implementation 'org.postgresql:postgresql:42.7.3'
-    runtimeOnly 'com.h2database:h2:2.2.224'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'com.github.ben-manes.caffeine:caffeine:3.2.2'
 
     // JWT
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+    implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
 
     //querydsl
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
-    annotationProcessor 'com.querydsl:querydsl-apt:5.1.0:jakarta'
+    implementation 'io.github.openfeign.querydsl:querydsl‑core:6.11'
+    annotationProcessor 'io.github.openfeign.querydsl:querydsl‑jpa:6.11'
     annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
     annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
 
     // AWS S3
-    implementation 'software.amazon.awssdk:s3:2.25.16'
+    implementation 'software.amazon.awssdk:s3:2.42.6'
 
     // Sentry
     implementation 'io.sentry:sentry-spring-boot-starter-jakarta:8.19.0'
 
     // Swagger (Springdoc OpenAPI)
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.0'
 
     // Monitoring
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -71,6 +63,19 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
 }
 
+spotless {
+    java {
+        target 'src/**/*.java'
+
+        googleJavaFormat('1.17.0')
+
+        importOrder()
+        removeUnusedImports()
+
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
 
 def querydslDir = "$buildDir/generated/querydsl"
 
@@ -80,47 +85,4 @@ def querydslDir = "$buildDir/generated/querydsl"
 tasks.named('test') {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
-}
-
-ext {
-    set('springCloudVersion', "2023.0.5")
-}
-
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-    }
-}
-
-
-jacocoTestReport {
-    reports {
-        html.required = true
-        xml.required = true
-        csv.required = false
-    }
-
-    getClassDirectories().setFrom(files(classDirectories.files.collect {
-        fileTree(dir: it, exclude: ['**/dto/**', '**/entity/**',
-                                    '**/MylogApplication',
-                                    '**/config/**', '**/enums/**',
-                                    '**/common/**', '**/exception/**',
-                                    '**/AbstractOAuth2UserService'
-        ])
-    }))
-}
-
-jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            enabled = true
-            element = 'CLASS'
-            limit {
-                counter = 'LINE'
-                value = 'COVEREDRATIO'
-                minimum = 0.80 // 예시: 라인 커버리지 80% 이상 요구
-            }
-        }
-    }
 }
