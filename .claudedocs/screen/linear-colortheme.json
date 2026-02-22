@@ -1,0 +1,125 @@
+{
+  "source": "https://linear.app/",
+  "extractedAt": "2025-02-26",
+  "theme": "dark",
+  "brand": {
+    "name": "Linear",
+    "primary": "#5e6ad2",
+    "primaryHover": "#828fff",
+    "accent": "#7170ff",
+    "accentTint": "#18182f"
+  },
+  "colors": {
+    "background": {
+      "primary": "#08090a",
+      "secondary": "#1c1c1f",
+      "tertiary": "#232326",
+      "quaternary": "#28282c",
+      "quinary": "#282828",
+      "level0": "#08090a",
+      "level1": "#0f1011",
+      "level2": "#141516",
+      "level3": "#191a1b",
+      "panel": "#0f1011",
+      "marketing": "#010102",
+      "tint": "#141516",
+      "translucent": "rgba(255,255,255,0.05)"
+    },
+    "text": {
+      "primary": "#f7f8f8",
+      "secondary": "#d0d6e0",
+      "tertiary": "#8a8f98",
+      "quaternary": "#62666d",
+      "brand": "#ffffff"
+    },
+    "border": {
+      "primary": "#23252a",
+      "secondary": "#34343a",
+      "tertiary": "#3e3e44",
+      "translucent": "rgba(255,255,255,0.05)",
+      "translucentStrong": "rgba(255,255,255,0.08)"
+    },
+    "line": {
+      "primary": "#37393a",
+      "secondary": "#202122",
+      "tertiary": "#18191a",
+      "quaternary": "#141515",
+      "tint": "#141516"
+    },
+    "semantic": {
+      "blue": "#4ea7fc",
+      "green": "#27a644",
+      "yellow": "#f0bf00",
+      "orange": "#fc7840",
+      "red": "#eb5757",
+      "indigo": "#5e6ad2",
+      "teal": "#00b8cc",
+      "purple": "#99102, 241)",
+      "linkPrimary": "#828fff",
+      "linkHover": "#ffffff"
+    },
+    "button": {
+      "background": {
+        "level1": "rgba(255,255,255,0.02)",
+        "level2": "rgba(255,255,255,0.03)",
+        "level3": "rgba(255,255,255,0.04)",
+        "level4": "rgba(255,255,255,0.05)"
+      },
+      "text": {
+        "primary": "rgb(247, 248, 248)",
+        "secondary": "rgb(226, 228, 231)",
+        "tertiary": "rgb(208, 214, 224)",
+        "disabled": "rgb(98, 102, 109)"
+      }
+    },
+    "header": {
+      "background": "rgba(11,11,11,0.8)",
+      "border": "rgba(255,255,255,0.08)"
+    },
+    "selection": {
+      "background": "color-mix(in lch,#5e6ad2,black 10%)",
+      "text": "#ffffff",
+      "dim": "color-mix(in lch,#5e6ad2,transparent 80%)"
+    },
+    "overlay": {
+      "primary": "rgba(0,0,0,0.85)"
+    }
+  },
+  "shadows": {
+    "low": "0px 2px 4px rgba(0,0,0,0.1)",
+    "medium": "0px 4px 24px rgba(0,0,0,0.2)",
+    "high": "0px 7px 32px rgba(0,0,0,0.35)",
+    "stackLow": "0px 8px 2px 0px rgba(0,0,0,0),0px 5px 2px 0px rgba(0,0,0,0.01),0px 3px 2px 0px rgba(0,0,0,0.04),0px 1px 1px 0px rgba(0,0,0,0.07),0px 0px 1px 0px rgba(0,0,0,0.08)"
+  },
+  "scrollbar": {
+    "color": "rgba(255,255,255,0.1)",
+    "colorHover": "rgba(255,255,255,0.2)",
+    "colorActive": "rgba(255,255,255,0.4)"
+  },
+  "focusRing": {
+    "color": "#5e6ad2",
+    "outline": "2px solid #5e6ad2"
+  },
+  "neutralGrays": {
+    "50": "#fefeff",
+    "100": "#e4e5e9",
+    "200": "#d0d6e0",
+    "300": "#8a8f98",
+    "400": "#62666d",
+    "500": "#373940",
+    "600": "#32343d",
+    "700": "#282a30",
+    "800": "#23252a",
+    "900": "#202122",
+    "950": "#141516"
+  },
+  "statusColors": {
+    "plan": "#68cc58",
+    "build": "#d4b144",
+    "security": "#7a7fad"
+  },
+  "additionalColors": {
+    "white": "#ffffff",
+    "black": "#000000"
+  }
+}
