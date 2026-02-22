@@ -9,7 +9,7 @@ import com.mylog.common.exception.CUnAuthorizedException;
 import com.mylog.common.security.CustomUser;
 import com.mylog.domain.category.Category;
 import com.mylog.domain.member.Member;
-import com.mylog.external.s3.S3Service;
+import com.mylog.external.s3.S3Provider;
 import com.mylog.domain.category.service.CategoryReader;
 import com.mylog.domain.member.service.MemberReader;
 import com.mylog.domain.tag.service.TagWriter;
@@ -29,12 +29,12 @@ public class ArticleWriter {
     private final MemberReader memberReader;
     private final ArticleTagWriter articleTagWriter;
     private final TagWriter tagWriter;
-    private final S3Service s3Service;
+    private final S3Provider s3Provider;
 
     public void createArticle(ArticleCreateRequest request, CustomUser customUser, MultipartFile file) throws IOException{
         Member member =  memberReader.getByCustomUser(customUser);
         Category category = categoryReader.getByMemberIdAndCategoryName(member.getId(), request.category());
-        String imageUrl = s3Service.upload(file);
+        String imageUrl = s3Provider.upload(file);
 
         Article article = request.toEntity(member, category, imageUrl);
 
@@ -72,7 +72,7 @@ public class ArticleWriter {
 
         articleTagWriter.deleteArticleTag(article);
 
-        s3Service.deleteImage(article.getArticleImg());
+        s3Provider.deleteImage(article.getArticleImg());
 
         articleRepository.deleteById(articleId);
     }
@@ -80,7 +80,7 @@ public class ArticleWriter {
     private String getArticleImg(MultipartFile file, Article article) throws IOException {
         String articleImg;
         if(!isSame(article.getArticleImg(), file)){
-            articleImg = s3Service.upload(file);
+            articleImg = s3Provider.upload(file);
         } else {
             articleImg = article.getArticleImg();
         }

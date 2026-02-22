@@ -1,3 +1,4 @@
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/article/entity/Article.java
 package com.mylog.domain.article.entity;
 
 
@@ -5,6 +6,15 @@ import com.mylog.domain.article.dto.ArticleUpdateRequest;
 import com.mylog.common.db.BaseEntity;
 import com.mylog.domain.category.Category;
 import com.mylog.domain.member.Member;
+========
+package com.mylog.article.entity;
+
+
+
+import com.mylog.BaseEntity;
+import com.mylog.category.entity.Category;
+import com.mylog.member.entity.Member;
+>>>>>>>> origin/main:domain/src/main/java/com/mylog/article/entity/Article.java
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -55,11 +65,11 @@ public class Article extends BaseEntity {
         return Objects.equals(this.member.getId(), userId);
     }
 
-    public void update(ArticleUpdateRequest request, Category category, String articleImg) {
-        this.title = request.title();
-        this.content = request.content();
-        this.category = category;
-        this.articleImg = articleImg;
+    public void update(Article article){
+        this.category = article.getCategory();
+        this.title = article.getTitle();
+        this.content = article.getContent();
+        this.articleImg = article.getArticleImg();
     }
 
 }

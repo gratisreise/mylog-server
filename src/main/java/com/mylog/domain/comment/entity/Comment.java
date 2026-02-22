@@ -1,8 +1,17 @@
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/comment/entity/Comment.java
 package com.mylog.domain.comment.entity;
 
 import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.member.Member;
-import com.mylog.common.BaseEntity;
+import com.mylog.common.db.BaseEntity;
+========
+package com.mylog.comment.entity;
+
+import com.mylog.BaseEntity;
+import com.mylog.article.entity.Article;
+
+import com.mylog.member.entity.Member;
+>>>>>>>> origin/main:domain/src/main/java/com/mylog/comment/entity/Comment.java
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

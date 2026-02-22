@@ -1,3 +1,4 @@
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/tag/service/TagWriter.java
 package com.mylog.domain.tag.service;
 
 
@@ -6,6 +7,16 @@ import com.mylog.domain.article.entity.ArticleTag;
 import com.mylog.domain.article.service.ArticleTagWriter;
 import com.mylog.domain.tag.entity.Tag;
 import com.mylog.domain.tag.repository.TagRepository;
+========
+package com.mylog.tag.service;
+
+
+import com.mylog.article.entity.Article;
+import com.mylog.article.entity.ArticleTag;
+import com.mylog.article.service.ArticleTagWriter;
+import com.mylog.tag.entity.Tag;
+import com.mylog.tag.repository.TagRepository;
+>>>>>>>> origin/main:domain/src/main/java/com/mylog/tag/service/TagWriter.java
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
@@ -29,8 +40,19 @@ public class TagWriter {
             }
 
             Tag savedTag = tagReader.getTagByTagName(tag);
+            ArticleTag articleTag = ArticleTag.builder()
+                .article(article)
+                .tag(savedTag)
+                .build();
             articleTagWriter.crateArticleTag(new ArticleTag(article, savedTag));
         }
+    }
+
+    public List<Tag> getTagsOrCreate(List<String> tagNames) {
+        List<Tag> tags = tagNames.stream()
+            .filter(name -> !tagRepository.existsByTagName(name))
+            .map(Tag::new).toList();
+        return tagRepository.saveAll(tags);
     }
 
 }

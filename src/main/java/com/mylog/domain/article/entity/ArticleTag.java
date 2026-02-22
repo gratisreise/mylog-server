@@ -1,6 +1,12 @@
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/article/entity/ArticleTag.java
 package com.mylog.domain.article.entity;
 
 import com.mylog.domain.tag.entity.Tag;
+========
+package com.mylog.article.entity;
+
+import com.mylog.tag.entity.Tag;
+>>>>>>>> origin/main:domain/src/main/java/com/mylog/article/entity/ArticleTag.java
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -8,9 +14,12 @@ import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @NoArgsConstructor
@@ -18,11 +27,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class ArticleTag {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Article article;
 
     @Id

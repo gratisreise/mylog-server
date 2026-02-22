@@ -1,8 +1,17 @@
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/category/Category.java
 package com.mylog.domain.category;
 
 import com.mylog.domain.category.dto.CategoryUpdateRequest;
 import com.mylog.domain.member.Member;
-import com.mylog.common.BaseEntity;
+import com.mylog.common.db.BaseEntity;
+========
+package com.mylog.category.entity;
+
+
+import com.mylog.BaseEntity;
+import com.mylog.member.entity.Member;
+import com.mylog.response.CommonValue;
+>>>>>>>> origin/main:domain/src/main/java/com/mylog/category/entity/Category.java
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -38,12 +47,21 @@ public class Category extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public void update(CategoryUpdateRequest request) {
-        this.categoryName = request.categoryName();
-    }
 
 
     public boolean isOwnedBy(Long memberId) {
         return Objects.equals(memberId, member.getId());
+    }
+
+    // 정적 팩토리 메서드: 비즈니스 의미를 담은 이름을 부여
+    public static Category createDefault(Member member) {
+        return Category.builder()
+            .member(member)
+            .categoryName(CommonValue.ORIGIN_CATEGORY)
+            .build();
+    }
+
+    public void updateCategorName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }

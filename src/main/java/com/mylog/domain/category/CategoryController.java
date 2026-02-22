@@ -1,3 +1,4 @@
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/category/CategoryController.java
 package com.mylog.domain.category;
 
 import com.mylog.domain.category.dto.CategoryCreateRequest;
@@ -9,6 +10,18 @@ import com.mylog.common.response.CommonResult;
 import com.mylog.common.response.ListResult;
 import com.mylog.common.response.ResponseService;
 import com.mylog.common.security.CustomUser;
+========
+package com.mylog.category;
+
+
+import com.mylog.auth.classes.CustomUser;
+import com.mylog.category.dto.CategoryCreateRequest;
+import com.mylog.category.dto.CategoryResponse;
+import com.mylog.category.dto.CategoryUpdateRequest;
+import com.mylog.response.CommonResult;
+import com.mylog.response.ListResult;
+import com.mylog.response.ResponseService;
+>>>>>>>> origin/main:api/src/main/java/com/mylog/category/CategoryController.java
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/categories")
 public class CategoryController {
-    private final CategoryReader categoryReader;
-    private final CategoryWriter categoryWriter;
+    private final CategoryService categoryService;
 
     //카테고리 생성
     @PostMapping
@@ -36,7 +48,7 @@ public class CategoryController {
         @RequestBody @Valid CategoryCreateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        categoryWriter.createCategory(request, customUser);
+        categoryService.createCategory(request, customUser);
         return ResponseService.getSuccessResult();
     }
 
@@ -46,7 +58,7 @@ public class CategoryController {
     public ListResult<CategoryResponse> getCategories(
         @AuthenticationPrincipal CustomUser customUser
     ){
-        return ResponseService.getListResult(categoryReader.getCategories(customUser));
+        return ResponseService.getListResult(categoryService.getCategories(customUser));
     }
 
     //카테고리 수정
@@ -57,7 +69,7 @@ public class CategoryController {
         @RequestBody @Valid CategoryUpdateRequest request,
         @AuthenticationPrincipal CustomUser customUser
     ){
-        categoryWriter.updateCategory(request, categoryId, customUser);
+        categoryService.updateCategory(request, categoryId, customUser);
         return ResponseService.getSuccessResult();
     }
 
@@ -68,7 +80,7 @@ public class CategoryController {
         @PathVariable Long categoryId,
         @AuthenticationPrincipal CustomUser customUser
     ) {
-        categoryWriter.deleteCategory(categoryId, customUser);
+        categoryService.deleteCategory(categoryId, customUser);
         return ResponseService.getSuccessResult();
     }
 

@@ -1,5 +1,7 @@
-package com.mylog.common.security;
+package com.mylog.common.resolver;
 
+import com.mylog.common.annotations.MemberId;
+import com.mylog.common.security.CustomUserDetails;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

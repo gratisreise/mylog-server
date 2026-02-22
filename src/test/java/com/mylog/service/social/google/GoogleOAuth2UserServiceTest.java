@@ -7,20 +7,20 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.mylog.api.auth.service.social.google.GoogleOAuth2UserService;
-import com.mylog.api.auth.service.social.google.GoogleTokenClient;
-import com.mylog.api.auth.service.social.google.GoogleUserClient;
-import com.mylog.api.auth.JwtUtil;
-import com.mylog.common.OauthProvider;
-import com.mylog.exception.CMissingDataException;
-import com.mylog.api.auth.dto.social.OAuth2UserInfo;
-import com.mylog.api.auth.dto.social.OAuthRequest;
-import com.mylog.api.auth.dto.social.google.GoogleOAuth2UserInfo;
-import com.mylog.api.auth.dto.social.google.GoogleTokenResponse;
-import com.mylog.api.auth.dto.social.google.GoogleUserInfo;
-import com.mylog.api.member.entity.Member;
-import com.mylog.api.member.repository.MemberRepository;
-import com.mylog.api.auth.service.RefreshTokenService;
+import com.mylog.common.security.JwtProvider;
+import com.mylog.domain.auth.service.social.google.GoogleOAuth2UserService;
+import com.mylog.domain.auth.service.social.google.GoogleTokenClient;
+import com.mylog.domain.auth.service.social.google.GoogleUserClient;
+import com.mylog.common.enums.OauthProvider;
+import com.mylog.common.exception.CMissingDataException;
+import com.mylog.domain.auth.dto.social.OAuth2UserInfo;
+import com.mylog.domain.auth.dto.social.OAuthRequest;
+import com.mylog.domain.auth.dto.social.google.GoogleOAuth2UserInfo;
+import com.mylog.domain.auth.dto.social.google.GoogleTokenResponse;
+import com.mylog.domain.auth.dto.social.google.GoogleUserInfo;
+import com.mylog.domain.member.Member;
+import com.mylog.domain.member.repository.MemberRepository;
+import com.mylog.domain.auth.service.RefreshTokenService;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +46,7 @@ public class GoogleOAuth2UserServiceTest {
     private GoogleOAuth2UserService googleOAuth2UserService;
 
     @Mock
-    private JwtUtil jwtUtil;
+    private JwtProvider jwtProvider;
 
     @Mock
     private RefreshTokenService refreshTokenService;

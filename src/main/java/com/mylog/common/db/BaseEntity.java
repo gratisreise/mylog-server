@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:src/main/java/com/mylog/common/db/BaseEntity.java
 package com.mylog.common.db;
+========
+package com.mylog;
+>>>>>>>> origin/main:domain/src/main/java/com/mylog/BaseEntity.java
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

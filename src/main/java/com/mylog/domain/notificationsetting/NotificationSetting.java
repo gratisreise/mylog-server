@@ -1,7 +1,14 @@
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/notificationsetting/NotificationSetting.java
 package com.mylog.domain.notificationsetting;
 
 
 import com.mylog.domain.member.Member;
+========
+package com.mylog.notification.entity;
+
+
+import com.mylog.member.entity.Member;
+>>>>>>>> origin/main:domain/src/main/java/com/mylog/notification/entity/NotificationSetting.java
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -42,6 +49,15 @@ public class NotificationSetting {
 
     @CreatedDate
     private LocalDateTime createdAt;
+
+
+    public static NotificationSetting createDefault(Member member, String type) {
+        return NotificationSetting.builder()
+            .member(member)
+            .type(type)
+            .disabled(false)
+            .build();
+    }
 
     public void toggle(){
         this.disabled = !this.disabled;

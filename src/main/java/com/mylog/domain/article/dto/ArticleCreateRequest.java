@@ -1,8 +1,16 @@
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/article/dto/ArticleCreateRequest.java
 package com.mylog.domain.article.dto;
 
 import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.category.Category;
 import com.mylog.domain.member.Member;
+========
+package com.mylog.article.dto;
+
+import com.mylog.article.entity.Article;
+import com.mylog.category.entity.Category;
+import com.mylog.member.entity.Member;
+>>>>>>>> origin/main:api/src/main/java/com/mylog/article/dto/ArticleCreateRequest.java
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -21,7 +29,7 @@ public record ArticleCreateRequest (
     String category,
 
     @NotNull
-    List<String> tags
+    List<String> tagNames
 
 ) {
     public Article toEntity(Member member, Category category, String imageUrl){

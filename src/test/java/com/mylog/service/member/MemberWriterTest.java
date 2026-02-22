@@ -10,17 +10,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.mylog.api.member.service.MemberReader;
-import com.mylog.api.member.service.MemberWriter;
-import com.mylog.exception.CDuplicatedException;
-import com.mylog.exception.CMissingDataException;
-import com.mylog.api.auth.CustomUser;
-import com.mylog.api.auth.dto.SignUpRequest;
-import com.mylog.api.member.dto.UpdateMemberRequest;
-import com.mylog.api.member.entity.Member;
-import com.mylog.api.member.repository.MemberRepository;
-import com.mylog.common.external.S3Service;
-import com.mylog.api.category.service.CategoryWriter;
+import com.mylog.domain.member.service.MemberReader;
+import com.mylog.domain.member.service.MemberWriter;
+import com.mylog.common.exception.CDuplicatedException;
+import com.mylog.common.exception.CMissingDataException;
+import com.mylog.common.security.CustomUser;
+import com.mylog.domain.auth.dto.request.SignUpRequest;
+import com.mylog.domain.member.dto.UpdateMemberRequest;
+import com.mylog.domain.member.Member;
+import com.mylog.domain.member.repository.MemberRepository;
+import com.mylog.external.s3.S3Provider;
+import com.mylog.domain.category.service.CategoryWriter;
 import java.io.IOException;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +49,7 @@ class MemberWriterTest {
     private PasswordEncoder passwordEncoder;
 
     @Mock
-    private S3Service s3Service;
+    private S3Provider s3Provider;
 
     @Mock
     private CategoryWriter categoryWriter;
@@ -129,15 +129,15 @@ class MemberWriterTest {
         when(memberReader.getById(1L)).thenReturn(member);
         when(memberRepository.existsByNickname(anyString())).thenReturn(false);
         when(passwordEncoder.encode(anyString())).thenReturn("newEncodedPassword");
-        when(s3Service.upload(any(MultipartFile.class))).thenReturn("http\\://example.com/new.jpg");
+        when(s3Provider.upload(any(MultipartFile.class))).thenReturn("http\\://example.com/new.jpg");
 
         // When
         memberWriter.updateMember(request, customUser, file);
 
         // Then
         verify(passwordEncoder, times(1)).encode("newPassword123!");
-        verify(s3Service, times(1)).upload(eq(file));
-        verify(s3Service, times(1)).deleteImage(originalProfileImg);
+        verify(s3Provider, times(1)).upload(eq(file));
+        verify(s3Provider, times(1)).deleteImage(originalProfileImg);
     }
 
     @Test
@@ -156,8 +156,8 @@ class MemberWriterTest {
 
         // Then
         verify(passwordEncoder, times(1)).encode("newPassword123!");
-        verify(s3Service, never()).upload(any(MultipartFile.class));
-        verify(s3Service, never()).deleteImage(anyString());
+        verify(s3Provider, never()).upload(any(MultipartFile.class));
+        verify(s3Provider, never()).deleteImage(anyString());
     }
 
     @Test
@@ -169,15 +169,15 @@ class MemberWriterTest {
         when(memberReader.getById(1L)).thenReturn(member);
         when(memberRepository.existsByNickname(anyString())).thenReturn(false);
         when(passwordEncoder.encode(anyString())).thenReturn("newEncodedPassword");
-        when(s3Service.upload(any(MultipartFile.class))).thenReturn("http\\://example.com/new.jpg");
+        when(s3Provider.upload(any(MultipartFile.class))).thenReturn("http\\://example.com/new.jpg");
 
         // When
         memberWriter.updateMember(request, customUser, file);
 
         // Then
         verify(passwordEncoder, times(1)).encode("newPassword123!");
-        verify(s3Service, times(1)).upload(file);
-        verify(s3Service, never()).deleteImage(anyString());
+        verify(s3Provider, times(1)).upload(file);
+        verify(s3Provider, never()).deleteImage(anyString());
     }
 
     @Test
@@ -201,14 +201,14 @@ class MemberWriterTest {
     void deleteMember_성공() {
         // Given
         when(memberReader.getById(1L)).thenReturn(member);
-        doNothing().when(s3Service).deleteImage(anyString());
+        doNothing().when(s3Provider).deleteImage(anyString());
 
         // When
         memberWriter.deleteMember(customUser);
 
         // Then
         verify(memberRepository, times(1)).deleteById(1L);
-        verify(s3Service, times(1)).deleteImage(member.getProfileImg());
+        verify(s3Provider, times(1)).deleteImage(member.getProfileImg());
     }
 
     @Test
@@ -222,6 +222,6 @@ class MemberWriterTest {
 
         // Then
         verify(memberRepository, times(1)).deleteById(1L);
-        verify(s3Service, never()).deleteImage(anyString());
+        verify(s3Provider, never()).deleteImage(anyString());
     }
 }
