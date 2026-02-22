@@ -1,0 +1,62 @@
+language: "ko-KR"
+
+reviews:
+  profile: "chill"
+
+tone_instructions: |
+  정적분석(린팅, 포맷팅)은 무시하고 다음에만 집중:
+  1. 보안 취약점 (SQL Injection, XSS, S3 권한, Spring Security)
+  2. 비즈니스 로직 오류 및 엣지케이스 누락
+  3. 성능 병목 (N+1, 대용량 파일 처리)
+  4. Spring Boot 베스트프랙티스 위반
+  5. 에러 핸들링 및 예외 처리 개선점
+  
+  코드 스타일, 변수명, 공백 등은 전혀 언급하지 마세요.
+
+# 정적분석 도구들 완전 비활성화
+linters:
+  pmd:
+    enabled: false
+  eslint:
+    enabled: false
+  flake8:
+    enabled: false
+  rubocop:
+    enabled: false
+  yamllint:
+    enabled: false
+  markdownlint:
+    enabled: false
+
+# 보안 분석만 남기기
+tools:
+  semgrep:
+    enabled: true  # 보안 취약점만 검사
+  shellcheck:
+    enabled: false
+
+pre_merge_checks:
+  docstrings:
+    mode: off
+  title:
+    mode: off
+  description:
+    mode: off
+
+# Spring Boot 프로젝트 특화 경로 설정
+path_filters:
+  - "src/main/java/**"
+  - "src/main/resources/**"
+  - "!src/test/**"
+  - "!src/main/resources/application*.yml"  # 설정파일 제외
+
+path_instructions:
+  - path: "**/controller/**"
+    instructions: |
+      컨트롤러에서 @Valid 검증, 예외처리, HTTP 상태코드 사용 여부 확인
+  - path: "**/service/**"
+    instructions: |
+      서비스 계층의 트랜잭션 경계, N+1 문제, 비동기 처리 필요성 검토
+  - path: "**/repository/**"
+    instructions: |
+      JPA 쿼리 최적화, 페이징 처리, null 체크 여부 확인

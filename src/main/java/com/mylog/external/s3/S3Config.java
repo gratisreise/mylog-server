@@ -1,0 +1,34 @@
+<<<<<<<< HEAD:src/main/java/com/mylog/external/s3/S3Config.java
+<<<<<<<< HEAD:src/main/java/com/mylog/external/s3/S3Config.java
+package com.mylog.external.s3;
+========
+package com.mylog.s3;
+>>>>>>>> origin/main:infra/src/main/java/com/mylog/s3/S3Config.java
+========
+package com.mylog.s3;
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:infra/src/main/java/com/mylog/s3/S3Config.java
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+
+@Configuration
+public class S3Config {
+    @Value("${cloud.aws.credentials.access-key}")
+    private String accessKey;
+    @Value("${cloud.aws.credentials.secret-key}")
+    private String secretKey;
+
+    @Bean
+    public S3Client s3Client() {
+        AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKey, secretKey);
+        return S3Client.builder()
+            .region(Region.AP_NORTHEAST_2)
+            .credentialsProvider(StaticCredentialsProvider.create(credentials))
+            .build();
+    }
+}

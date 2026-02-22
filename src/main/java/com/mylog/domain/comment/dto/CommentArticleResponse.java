@@ -1,0 +1,41 @@
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/comment/dto/CommentArticleResponse.java
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/comment/dto/CommentArticleResponse.java
+package com.mylog.domain.comment.dto;
+
+import com.mylog.domain.comment.entity.Comment;
+========
+package com.mylog.comment.dto;
+
+import com.mylog.comment.classes.Reply;
+import com.mylog.comment.entity.Comment;
+>>>>>>>> origin/main:api/src/main/java/com/mylog/comment/dto/CommentArticleResponse.java
+========
+package com.mylog.comment.dto;
+
+import com.mylog.comment.classes.Reply;
+import com.mylog.comment.entity.Comment;
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:api/src/main/java/com/mylog/comment/dto/CommentArticleResponse.java
+import java.time.LocalDateTime;
+import java.util.List;
+
+public record CommentArticleResponse(
+    Long id,
+    String content,
+    String author,
+    Long memberId,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt,
+    List<Reply> replies
+) {
+    public static CommentArticleResponse of(Comment comment, List<Reply> replies){
+        return new CommentArticleResponse(
+            comment.getId(),
+            comment.getContent(),
+            comment.getMember().getNickname(),
+            comment.getMember().getId(),
+            comment.getCreatedAt(),
+            comment.getUpdatedAt(),
+            replies
+        );
+    }
+}
