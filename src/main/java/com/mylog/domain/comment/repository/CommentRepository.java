@@ -1,4 +1,5 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/domain/comment/repository/CommentRepository.java
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/comment/repository/CommentRepository.java
 package com.mylog.domain.comment.repository;
 
 import com.mylog.domain.comment.entity.Comment;
@@ -10,6 +11,13 @@ import com.mylog.comment.entity.Comment;
 
 import com.mylog.member.entity.Member;
 >>>>>>>> origin/main:domain/src/main/java/com/mylog/comment/repository/CommentRepository.java
+========
+package com.mylog.comment.repository;
+
+import com.mylog.comment.entity.Comment;
+
+import com.mylog.member.entity.Member;
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:domain/src/main/java/com/mylog/comment/repository/CommentRepository.java
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

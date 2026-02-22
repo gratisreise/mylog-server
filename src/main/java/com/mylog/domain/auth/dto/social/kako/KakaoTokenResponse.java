@@ -1,8 +1,12 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/domain/auth/dto/social/kako/KakaoTokenResponse.java
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/auth/dto/social/kako/KakaoTokenResponse.java
 package com.mylog.domain.auth.dto.social.kako;
 ========
 package com.mylog.auth.dto.social.kako;
 >>>>>>>> origin/main:api/src/main/java/com/mylog/auth/dto/social/kako/KakaoTokenResponse.java
+========
+package com.mylog.auth.dto.social.kako;
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:api/src/main/java/com/mylog/auth/dto/social/kako/KakaoTokenResponse.java
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

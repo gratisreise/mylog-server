@@ -1,4 +1,5 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/domain/notification/Notification.java
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/notification/Notification.java
 package com.mylog.domain.notification;
 
 import com.mylog.domain.member.Member;
@@ -7,6 +8,11 @@ package com.mylog.notification.entity;
 
 import com.mylog.member.entity.Member;
 >>>>>>>> origin/main:domain/src/main/java/com/mylog/notification/entity/Notification.java
+========
+package com.mylog.notification.entity;
+
+import com.mylog.member.entity.Member;
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:domain/src/main/java/com/mylog/notification/entity/Notification.java
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

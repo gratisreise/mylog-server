@@ -1,4 +1,5 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/domain/article/ArticleController.java
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/article/ArticleController.java
 package com.mylog.domain.article;
 
 
@@ -17,6 +18,11 @@ import com.mylog.common.security.CustomUser;
 package com.mylog.article;
 
 
+========
+package com.mylog.article;
+
+
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:api/src/main/java/com/mylog/article/ArticleController.java
 import com.mylog.article.dto.ArticleCreateRequest;
 import com.mylog.article.dto.ArticleResponse;
 import com.mylog.article.dto.ArticleUpdateRequest;
@@ -26,7 +32,10 @@ import com.mylog.response.CommonResult;
 import com.mylog.response.ResponseService;
 import com.mylog.response.SingleResult;
 import com.mylog.s3.S3Service;
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/article/ArticleController.java
 >>>>>>>> origin/main:api/src/main/java/com/mylog/article/ArticleController.java
+========
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:api/src/main/java/com/mylog/article/ArticleController.java
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

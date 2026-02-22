@@ -1,4 +1,5 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/common/security/JwtProvider.java
+<<<<<<<< HEAD:src/main/java/com/mylog/common/security/JwtProvider.java
 package com.mylog.common.security;
 
 
@@ -12,6 +13,13 @@ import com.mylog.exception.common.CUnAuthorizedException;
 
 import com.mylog.exception.common.CommonError;
 >>>>>>>> origin/main:api/src/main/java/com/mylog/utils/JwtUtil.java
+========
+package com.mylog.utils;
+
+import com.mylog.exception.common.CUnAuthorizedException;
+
+import com.mylog.exception.common.CommonError;
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:api/src/main/java/com/mylog/utils/JwtUtil.java
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Jwts.SIG;
 import io.jsonwebtoken.security.Keys;
@@ -48,6 +56,15 @@ public class JwtProvider {
             .parseSignedClaims(accessToken)
             .getPayload()
             .getExpiration();
+<<<<<<<< HEAD:src/main/java/com/mylog/common/security/JwtProvider.java
+========
+
+        // 2. 현재 시간과의 차이를 계산
+        long now = new Date().getTime();
+        return (expiration.getTime() - now);
+    }
+
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:api/src/main/java/com/mylog/utils/JwtUtil.java
 
         // 2. 현재 시간과의 차이를 계산
         long now = new Date().getTime();
@@ -99,6 +116,7 @@ public class JwtProvider {
             throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
         } catch (RuntimeException e) {
 <<<<<<<< HEAD:src/main/java/com/mylog/common/security/JwtProvider.java
+<<<<<<<< HEAD:src/main/java/com/mylog/common/security/JwtProvider.java
             throw new BusinessException(ErrorCode.TOKEN_INVALID);
         }
     }
@@ -139,6 +157,9 @@ public class JwtProvider {
 ========
             throw new CUnAuthorizedException(CommonError.INVALID_TOKEN);
 >>>>>>>> origin/main:api/src/main/java/com/mylog/utils/JwtUtil.java
+========
+            throw new CUnAuthorizedException(CommonError.INVALID_TOKEN);
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:api/src/main/java/com/mylog/utils/JwtUtil.java
         }
     }
 

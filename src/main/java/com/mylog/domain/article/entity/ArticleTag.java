@@ -1,4 +1,5 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/domain/article/entity/ArticleTag.java
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/article/entity/ArticleTag.java
 package com.mylog.domain.article.entity;
 
 import com.mylog.domain.tag.entity.Tag;
@@ -7,6 +8,11 @@ package com.mylog.article.entity;
 
 import com.mylog.tag.entity.Tag;
 >>>>>>>> origin/main:domain/src/main/java/com/mylog/article/entity/ArticleTag.java
+========
+package com.mylog.article.entity;
+
+import com.mylog.tag.entity.Tag;
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:domain/src/main/java/com/mylog/article/entity/ArticleTag.java
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
