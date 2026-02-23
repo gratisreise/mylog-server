@@ -4,11 +4,7 @@ package com.mylog.common.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mylog.common.exception.BusinessException;
 import com.mylog.common.response.ErrorResponse;
-========
-package com.mylog.common.filter;
-
 import com.mylog.exception.common.CUnAuthorizedException;
->>>>>>>> origin/main:api/src/main/java/com/mylog/common/filter/ExceptionHandlerFilter.java
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

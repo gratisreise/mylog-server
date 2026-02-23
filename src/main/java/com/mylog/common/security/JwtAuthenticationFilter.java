@@ -7,7 +7,6 @@ package com.mylog.common.filter;
 import com.mylog.auth.service.TokenBlackListService;
 import com.mylog.response.CommonValue;
 import com.mylog.utils.JwtUtil;
->>>>>>>> origin/main:api/src/main/java/com/mylog/common/filter/JwtAuthenticationFilter.java
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -58,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.warn("블랙 리스트에 등록된 토큰입니다.");
             }
         }
-        
+
         filterChain.doFilter(request, response);
     }
 
