@@ -1,23 +1,6 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/domain/auth/service/social/kakao/KakaoOAuth2UserService.java
 package com.mylog.domain.auth.service.social.kakao;
 
-import com.mylog.common.annotations.OAuth2ServiceType;
-import com.mylog.common.security.JwtProvider;
-import com.mylog.common.enums.OauthProvider;
-import com.mylog.common.exception.CMissingDataException;
-import com.mylog.domain.auth.dto.social.OAuth2UserInfo;
-import com.mylog.domain.auth.dto.social.OAuthRequest;
-import com.mylog.domain.auth.dto.social.kako.KakaoOAuth2UserInfo;
-import com.mylog.domain.auth.dto.social.kako.KakaoTokenResponse;
-import com.mylog.domain.auth.dto.social.kako.KakaoUserInfo;
-import com.mylog.domain.member.Member;
-import com.mylog.domain.member.repository.MemberRepository;
-import com.mylog.domain.auth.service.RefreshTokenService;
-import com.mylog.domain.category.service.CategoryWriter;
-import com.mylog.domain.auth.service.social.AbstractOAuth2UserService;
-========
-package com.mylog.auth.service.social.kakao;
-
 import com.mylog.annotations.OAuth2ServiceType;
 import com.mylog.auth.dto.social.OAuth2UserInfo;
 import com.mylog.auth.dto.social.OAuthRequest;
@@ -28,6 +11,20 @@ import com.mylog.auth.service.RefreshTokenService;
 import com.mylog.auth.service.social.AbstractOAuth2UserService;
 import com.mylog.auth.service.social.kakao.KakaoUserClient;
 import com.mylog.category.service.CategoryWriter;
+import com.mylog.common.annotations.OAuth2ServiceType;
+import com.mylog.common.enums.OauthProvider;
+import com.mylog.common.exception.CMissingDataException;
+import com.mylog.common.security.JwtProvider;
+import com.mylog.domain.auth.dto.social.OAuth2UserInfo;
+import com.mylog.domain.auth.dto.social.OAuthRequest;
+import com.mylog.domain.auth.dto.social.kako.KakaoOAuth2UserInfo;
+import com.mylog.domain.auth.dto.social.kako.KakaoTokenResponse;
+import com.mylog.domain.auth.dto.social.kako.KakaoUserInfo;
+import com.mylog.domain.auth.service.RefreshTokenService;
+import com.mylog.domain.auth.service.social.AbstractOAuth2UserService;
+import com.mylog.domain.category.service.CategoryWriter;
+import com.mylog.domain.member.Member;
+import com.mylog.domain.member.repository.MemberRepository;
 import com.mylog.enums.OauthProvider;
 import com.mylog.exception.common.CMissingDataException;
 import com.mylog.exception.common.CommonError;
@@ -36,7 +33,6 @@ import com.mylog.member.repository.MemberRepository;
 import com.mylog.member.service.MemberReader;
 import com.mylog.member.service.MemberWriter;
 import com.mylog.utils.JwtUtil;
->>>>>>>> origin/main:api/src/main/java/com/mylog/auth/service/social/kakao/KakaoOAuth2UserService.java
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

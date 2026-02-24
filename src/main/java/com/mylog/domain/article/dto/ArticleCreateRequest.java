@@ -2,23 +2,12 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/domain/article/dto/ArticleCreateRequest.java
 package com.mylog.domain.article.dto;
 
+import com.mylog.article.entity.Article;
+import com.mylog.category.entity.Category;
 import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.category.Category;
 import com.mylog.domain.member.Member;
-========
-package com.mylog.article.dto;
-
-import com.mylog.article.entity.Article;
-import com.mylog.category.entity.Category;
 import com.mylog.member.entity.Member;
->>>>>>>> origin/main:api/src/main/java/com/mylog/article/dto/ArticleCreateRequest.java
-========
-package com.mylog.article.dto;
-
-import com.mylog.article.entity.Article;
-import com.mylog.category.entity.Category;
-import com.mylog.member.entity.Member;
->>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:api/src/main/java/com/mylog/article/dto/ArticleCreateRequest.java
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;

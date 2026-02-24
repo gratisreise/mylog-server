@@ -1,19 +1,6 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/domain/auth/AuthController.java
 package com.mylog.domain.auth;
 
-import com.mylog.domain.auth.service.AuthService;
-import com.mylog.domain.auth.dto.request.LoginRequest;
-import com.mylog.domain.auth.dto.response.LoginResponse;
-import com.mylog.domain.auth.dto.request.RefreshRequest;
-import com.mylog.domain.auth.dto.response.RefreshResponse;
-import com.mylog.common.response.ResponseService;
-import com.mylog.common.response.SingleResult;
-import com.mylog.domain.auth.dto.social.OAuthRequest;
-import com.mylog.domain.auth.service.social.OAuth2UserService;
-import com.mylog.domain.auth.service.social.OAuth2UserServiceFactory;
-========
-package com.mylog.auth;
-
 import com.mylog.auth.classes.CustomUser;
 import com.mylog.auth.dto.LoginRequest;
 import com.mylog.auth.dto.LoginResponse;
@@ -24,11 +11,20 @@ import com.mylog.auth.dto.social.OAuthRequest;
 import com.mylog.auth.service.AuthService;
 import com.mylog.auth.service.social.OAuth2UserService;
 import com.mylog.auth.service.social.OAuth2UserServiceFactory;
+import com.mylog.common.response.ResponseService;
+import com.mylog.common.response.SingleResult;
+import com.mylog.domain.auth.dto.request.LoginRequest;
+import com.mylog.domain.auth.dto.request.RefreshRequest;
+import com.mylog.domain.auth.dto.response.LoginResponse;
+import com.mylog.domain.auth.dto.response.RefreshResponse;
+import com.mylog.domain.auth.dto.social.OAuthRequest;
+import com.mylog.domain.auth.service.AuthService;
+import com.mylog.domain.auth.service.social.OAuth2UserService;
+import com.mylog.domain.auth.service.social.OAuth2UserServiceFactory;
 import com.mylog.member.MemberService;
 import com.mylog.response.CommonResult;
 import com.mylog.response.ResponseService;
 import com.mylog.response.SingleResult;
->>>>>>>> origin/main:api/src/main/java/com/mylog/auth/AuthController.java
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +51,7 @@ public class AuthController {
         memberService.saveMember(request);
         return ResponseService.getSuccessResult();
     }
-    
+
     @Operation(summary = "이메일 로그인")
     @PostMapping("/login")
     public SingleResult<LoginResponse> login(@RequestBody LoginRequest request){

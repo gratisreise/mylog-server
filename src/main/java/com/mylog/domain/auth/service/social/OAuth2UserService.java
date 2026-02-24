@@ -2,17 +2,13 @@
 package com.mylog.domain.auth.service.social;
 
 
+import com.mylog.auth.dto.LoginResponse;
+import com.mylog.auth.dto.social.OAuth2UserInfo;
+import com.mylog.auth.dto.social.OAuthRequest;
 import com.mylog.domain.auth.dto.response.LoginResponse;
 import com.mylog.domain.auth.dto.social.OAuth2UserInfo;
 import com.mylog.domain.auth.dto.social.OAuthRequest;
 import com.mylog.domain.member.Member;
-========
-package com.mylog.auth.service.social;
-
-
-import com.mylog.auth.dto.LoginResponse;
-import com.mylog.auth.dto.social.OAuth2UserInfo;
-import com.mylog.auth.dto.social.OAuthRequest;
 import com.mylog.member.entity.Member;
 >>>>>>>> origin/main:api/src/main/java/com/mylog/auth/service/social/OAuth2UserService.java
 

@@ -1,25 +1,20 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/domain/auth/service/social/AbstractOAuth2UserService.java
 package com.mylog.domain.auth.service.social;
 
-import com.mylog.common.security.JwtProvider;
-import com.mylog.model.dto.auth.LoginResponse;
-import com.mylog.domain.auth.dto.social.OAuth2UserInfo;
-import com.mylog.domain.auth.dto.social.OAuthRequest;
-import com.mylog.domain.member.Member;
-import com.mylog.domain.auth.service.RefreshTokenService;
-import com.mylog.domain.category.service.CategoryWriter;
-========
-package com.mylog.auth.service.social;
-
-
 import com.mylog.auth.dto.LoginResponse;
 import com.mylog.auth.dto.social.OAuth2UserInfo;
 import com.mylog.auth.dto.social.OAuthRequest;
 import com.mylog.auth.service.RefreshTokenService;
 import com.mylog.category.service.CategoryWriter;
+import com.mylog.common.security.JwtProvider;
+import com.mylog.domain.auth.dto.social.OAuth2UserInfo;
+import com.mylog.domain.auth.dto.social.OAuthRequest;
+import com.mylog.domain.auth.service.RefreshTokenService;
+import com.mylog.domain.category.service.CategoryWriter;
+import com.mylog.domain.member.Member;
 import com.mylog.member.entity.Member;
+import com.mylog.model.dto.auth.LoginResponse;
 import com.mylog.utils.JwtUtil;
->>>>>>>> origin/main:api/src/main/java/com/mylog/auth/service/social/AbstractOAuth2UserService.java
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

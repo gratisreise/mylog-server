@@ -1,8 +1,8 @@
 package com.mylog.domain.member.dto;
 
 
-import com.mylog.domain.member.Member;
 import com.mylog.common.enums.OauthProvider;
+import com.mylog.domain.member.Member;
 import java.time.LocalDateTime;
 
 public record MemberResponse(
@@ -26,5 +26,3 @@ public record MemberResponse(
         );
     }
 }
-
-
