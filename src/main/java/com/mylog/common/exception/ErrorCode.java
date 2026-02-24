@@ -13,6 +13,7 @@ public enum ErrorCode {
     INVALID_CREDENTIALS(401, "AUTH_001", "이메일 또는 비밀번호가 올바르지 않습니다."),
     TOKEN_EXPIRED(401, "AUTH_002", "액세스 토큰이 만료되었습니다."),
     TOKEN_INVALID(401, "AUTH_003", "유효하지 않은 토큰입니다."),
+    TOKEN_EMPTY(401,"AUTH_004","토큰이 비어있습니다." ),
     REFRESH_TOKEN_INVALID(401, "AUTH_004", "리프레시 토큰이 유효하지 않습니다."),
     OAUTH_TOKEN_FAILED(401, "AUTH_005", "소셜 로그인 토큰 검증에 실패했습니다."),
     OAUTH_UNSUPPORTED_PROVIDER(400, "AUTH_006", "지원하지 않는 소셜 로그인 제공자입니다."),

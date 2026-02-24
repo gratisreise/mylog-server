@@ -1,6 +1,7 @@
-package com.mylog.domain.article.repository;
+package com.mylog.domain.article.repository.impl;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import com.mylog.domain.article.repository.ArticleTagRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

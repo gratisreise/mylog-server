@@ -1,9 +1,9 @@
-package com.mylog.domain.article.repository;
+package com.mylog.domain.article.repository.impl;
 
-import com.mylog.domain.article.dto.ArticleResponse;
+import com.mylog.domain.article.dto.response.ArticleResponse;
 import com.mylog.domain.article.entity.Article;
+import com.mylog.domain.article.repository.ArticleRepositoryCustom;
 import com.mylog.domain.member.Member;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

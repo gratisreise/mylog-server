@@ -1,9 +1,7 @@
 package com.mylog.common.annotations;
 
-<<<<<<<< HEAD:src/main/java/com/mylog/common/annotations/OAuth2ServiceType.java
-<<<<<<<< HEAD:src/main/java/com/mylog/common/annotations/OAuth2ServiceType.java
+
 import com.mylog.common.enums.OauthProvider;
-import com.mylog.enums.OauthProvider;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
