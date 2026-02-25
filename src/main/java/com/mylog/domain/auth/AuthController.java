@@ -1,35 +1,20 @@
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/auth/AuthController.java
 package com.mylog.domain.auth;
 
-import com.mylog.auth.classes.CustomUser;
-import com.mylog.auth.dto.LoginRequest;
-import com.mylog.auth.dto.LoginResponse;
-import com.mylog.auth.dto.RefreshRequest;
-import com.mylog.auth.dto.RefreshResponse;
-import com.mylog.auth.dto.SignUpRequest;
-import com.mylog.auth.dto.social.OAuthRequest;
-import com.mylog.auth.service.AuthService;
-import com.mylog.auth.service.social.OAuth2UserService;
-import com.mylog.auth.service.social.OAuth2UserServiceFactory;
-import com.mylog.common.response.ResponseService;
-import com.mylog.common.response.SingleResult;
+import com.mylog.common.annotations.MemberId;
+import com.mylog.common.response.SuccessResponse;
 import com.mylog.domain.auth.dto.request.LoginRequest;
+import com.mylog.domain.auth.dto.request.OAuthRequest;
 import com.mylog.domain.auth.dto.request.RefreshRequest;
+import com.mylog.domain.auth.dto.request.SignUpRequest;
 import com.mylog.domain.auth.dto.response.LoginResponse;
 import com.mylog.domain.auth.dto.response.RefreshResponse;
-import com.mylog.domain.auth.dto.social.OAuthRequest;
 import com.mylog.domain.auth.service.AuthService;
-import com.mylog.domain.auth.service.social.OAuth2UserService;
-import com.mylog.domain.auth.service.social.OAuth2UserServiceFactory;
-import com.mylog.member.MemberService;
-import com.mylog.response.CommonResult;
-import com.mylog.response.ResponseService;
-import com.mylog.response.SingleResult;
+import com.mylog.domain.auth.service.oauth.OAuthUserServiceFactory;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -42,43 +27,47 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AuthController {
     private final AuthService authService;
-    private final OAuth2UserServiceFactory oAuth2UserServiceFactory;
-    private final MemberService memberService;
+    private final OAuthUserServiceFactory oAuth2UserServiceFactory;
+
 
     @PostMapping("/register")
     @Operation(summary = "회원가입")
-    public CommonResult signUp(@RequestBody @Valid SignUpRequest request){
-        memberService.saveMember(request);
-        return ResponseService.getSuccessResult();
+    public ResponseEntity<SuccessResponse<Void>> signUp(@RequestBody @Valid SignUpRequest request){
+        authService.signUp(request);
+        return SuccessResponse.toOk(null);
     }
 
     @Operation(summary = "이메일 로그인")
     @PostMapping("/login")
-    public SingleResult<LoginResponse> login(@RequestBody LoginRequest request){
-        return ResponseService.getSingleResult(authService.login(request));
+    public ResponseEntity<SuccessResponse<LoginResponse>> login(@RequestBody LoginRequest request){
+        LoginResponse response = authService.login(request);
+        return SuccessResponse.toOk(response);
     }
 
     @Operation(summary = "로그아웃")
     @PostMapping("/logout")
-    public CommonResult logout(
+    public ResponseEntity<SuccessResponse<Void>> logout(
         @RequestHeader("Authorization") String authHeader,
-        @AuthenticationPrincipal CustomUser customUser
+        @MemberId Long memberId
     ){
-        authService.logout(authHeader, customUser.getMemberId());
-        return ResponseService.getSuccessResult();
+        authService.logout(authHeader, memberId);
+        return SuccessResponse.toOk(null);
     }
 
     @Operation(summary = "토큰 리프레시")
     @PostMapping("/refresh")
-    public SingleResult<RefreshResponse> refresh(@RequestBody RefreshRequest request){
-        return ResponseService.getSingleResult(authService.refresh(request));
+    public ResponseEntity<SuccessResponse<RefreshResponse>> refresh(@RequestBody RefreshRequest request){
+        RefreshResponse response = authService.refresh(request);
+        return SuccessResponse.toOk(response);
     }
 
     @Operation(summary = "소셜 로그인")
     @PostMapping("/oauth/login")
-    public SingleResult<LoginResponse> socialLogin(@RequestBody @Valid OAuthRequest request){
-        OAuth2UserService service = oAuth2UserServiceFactory.getOAuth2UserService(request.getProvider());
-        return ResponseService.getSingleResult(service.login(request));
+    public ResponseEntity<SuccessResponse<LoginResponse>> socialLogin(@RequestBody @Valid OAuthRequest request){
+        LoginResponse response = oAuth2UserServiceFactory
+            .getOAuth2UserService(request.provider())
+            .authenticate(request);
+        return SuccessResponse.toOk(response);
     }
 
 }
