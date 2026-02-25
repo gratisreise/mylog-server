@@ -1,23 +1,16 @@
 
 package com.mylog.domain.article.service;
 
-import com.mylog.common.exception.CUnAuthorizedException;
-import com.mylog.common.security.CustomUser;
-import com.mylog.domain.article.dto.ArticleCreateRequest;
-import com.mylog.domain.article.dto.ArticleUpdateRequest;
-import com.mylog.domain.article.entity.Article;
+
+import com.mylog.domain.article.reader.ArticleReader;
 import com.mylog.domain.article.repository.ArticleRepository;
-import com.mylog.domain.category.Category;
 import com.mylog.domain.category.service.CategoryReader;
-import com.mylog.domain.member.Member;
 import com.mylog.domain.member.service.MemberReader;
-import com.mylog.domain.tag.service.TagWriter;
-import com.mylog.external.s3.S3Provider;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.tags.form.TagWriter;
 
 @Service
 @RequiredArgsConstructor

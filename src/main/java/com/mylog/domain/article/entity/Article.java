@@ -1,15 +1,8 @@
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/article/entity/Article.java
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/article/entity/Article.java
 package com.mylog.domain.article.entity;
 
-
-import com.mylog.BaseEntity;
-import com.mylog.category.entity.Category;
 import com.mylog.common.db.BaseEntity;
-import com.mylog.domain.article.dto.ArticleUpdateRequest;
 import com.mylog.domain.category.Category;
 import com.mylog.domain.member.Member;
-import com.mylog.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -19,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,7 +30,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 public class Article extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

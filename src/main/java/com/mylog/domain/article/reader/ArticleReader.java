@@ -1,15 +1,18 @@
-package com.mylog.domain.article.service;
+package com.mylog.domain.article.reader;
 
 
-import com.mylog.domain.article.dto.ArticleResponse;
-import com.mylog.domain.article.dto.ArticleTestResponse;
+import com.mylog.domain.article.dto.response.ArticleResponse;
+import com.mylog.domain.article.dto.response.ArticleTestResponse;
+import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.article.repository.ArticleRepository;
+import com.mylog.domain.member.Member;
 import com.mylog.domain.member.service.MemberReader;
 
+import com.mylog.domain.tag.service.TagReader;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,22 +25,21 @@ public class ArticleReader {
     private final MemberReader memberReader;
 
     //내 게시글 목록조회
-    public Page<ArticleResponse> getArticles(Pageable pageable, CustomUser customUser) {
-        Member member = memberReader.getById(customUser.getMemberId());
+    public Page<ArticleResponse> getArticles(Pageable pageable, Long memberId) {
+        Member member = memberReader.getById(memberId);
         return articleRepository.findMineByMember(member, pageable);
     }
 
     //내 게시글 검색
     public Page<ArticleResponse> getArticles(Pageable pageable,
-        CustomUser customUser, String keyword) {
-        log.info("userId:{}", customUser.getMemberId());
-        Member member = memberReader.getById(customUser.getMemberId());
+        Long memberId, String keyword) {
+        Member member = memberReader.getById(memberId);
         return articleRepository.searchMineByTitle(member, keyword, pageable);
     }
 
     //게시글 상세
     public ArticleResponse getArticle(Long id){
-        Article article = articleRepository.findById(id).orElseThrow(CMissingDataException::new);
+        Article article = articleRepository.findById(id).orElse(null);
         List<String> tags = tagReader.getTags(article);
         return new ArticleResponse(article, tags);
     }
@@ -63,7 +65,8 @@ public class ArticleReader {
     }
 
     public Article getArticleById(Long articleId) {
-        return articleRepository.findById(articleId).orElseThrow(CMissingDataException::new);
+        return articleRepository.findById(articleId)
+            .orElse(null);
     }
 
     private boolean isClear(String s){

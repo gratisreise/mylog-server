@@ -1,6 +1,6 @@
 package com.mylog.domain.article.repository;
 
-import com.mylog.domain.article.dto.ArticleResponse;
+import com.mylog.domain.article.dto.response.ArticleResponse;
 import com.mylog.domain.member.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
