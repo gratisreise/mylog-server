@@ -1,8 +1,7 @@
 package com.mylog.domain.category.service;
 
+
 import com.mylog.common.CommonValue;
-import com.mylog.common.exception.CMissingDataException;
-import com.mylog.common.security.CustomUser;
 import com.mylog.domain.category.Category;
 import com.mylog.domain.category.dto.CategoryResponse;
 import com.mylog.domain.category.repository.CategoryRepository;
@@ -22,8 +21,8 @@ public class CategoryReader {
     private final CategoryRepository categoryRepository;
 
 
-    public List<CategoryResponse> getCategories(CustomUser customUser){
-        Member member = memberReader.getByCustomUser(customUser);
+    public List<CategoryResponse> getCategories(long memberId){
+        Member member = memberReader.getById(memberId);
         return categoryRepository.findByMember(member)
             .stream()
             .filter(this::isOriginCategory)
@@ -32,7 +31,7 @@ public class CategoryReader {
     }
 
     private boolean isOriginCategory(Category category){
-        return !category.getCategoryName().equals(CommonValue.ORIGIN_CATEGORY);
+        return !category.getCategoryName().equals(CommonValue.BASIC_CATEGORY);
     }
 
     public Category getByMemberIdAndCategoryName(Long memberId, String categoryName) {

@@ -1,13 +1,8 @@
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/category/Category.java
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/category/Category.java
 package com.mylog.domain.category;
 
-import com.mylog.BaseEntity;
+import com.mylog.common.CommonValue;
 import com.mylog.common.db.BaseEntity;
-import com.mylog.domain.category.dto.CategoryUpdateRequest;
 import com.mylog.domain.member.Member;
-import com.mylog.member.entity.Member;
-import com.mylog.response.CommonValue;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -33,7 +28,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Builder
 @AllArgsConstructor
 public class Category extends BaseEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(length = 12)
@@ -53,7 +49,7 @@ public class Category extends BaseEntity {
     public static Category createDefault(Member member) {
         return Category.builder()
             .member(member)
-            .categoryName(CommonValue.ORIGIN_CATEGORY)
+            .categoryName(CommonValue.BASIC_CATEGORY)
             .build();
     }
 
