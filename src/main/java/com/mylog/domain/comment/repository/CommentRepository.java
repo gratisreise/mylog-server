@@ -1,11 +1,7 @@
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/comment/repository/CommentRepository.java
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/comment/repository/CommentRepository.java
 package com.mylog.domain.comment.repository;
 
-import com.mylog.comment.entity.Comment;
 import com.mylog.domain.comment.entity.Comment;
 import com.mylog.domain.member.Member;
-import com.mylog.member.entity.Member;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
