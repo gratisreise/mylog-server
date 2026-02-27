@@ -1,15 +1,11 @@
 package com.mylog.domain.notification.service;
 
-import com.mylog.common.exception.CMissingDataException;
-import com.mylog.common.security.CustomUser;
-import com.mylog.domain.member.Member;
+
 import com.mylog.domain.member.service.MemberReader;
-import com.mylog.domain.notification.Notification;
 import com.mylog.domain.notification.dto.NotificationResponse;
 import com.mylog.domain.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +22,7 @@ public class NotificationReader {
     }
 
     //알림목록조회
-    public Page<NotificationResponse> receiveNotification(CustomUser customUser, Pageable pageable){
+    public Page<NotificationResponse> receiveNotification(long  memberId, Pageable pageable){
         Member member = memberReader.getByCustomUser(customUser);
         return notificationRepository
             .findByMemberAndRead(member, pageable)
