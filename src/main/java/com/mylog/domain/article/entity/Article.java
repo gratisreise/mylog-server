@@ -1,32 +1,28 @@
 package com.mylog.domain.article.entity;
 
 import com.mylog.common.db.BaseEntity;
+import com.mylog.common.enums.AnalyzeStatus;
 import com.mylog.domain.category.Category;
 import com.mylog.domain.member.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Builder
 @Getter
-@Setter
 @AllArgsConstructor
 public class Article extends BaseEntity {
 
@@ -51,15 +47,26 @@ public class Article extends BaseEntity {
     @Column(length = 300)
     private String articleImg;
 
-    public boolean isOwnedBy(Long userId){
-        return Objects.equals(this.member.getId(), userId);
+    @Column(columnDefinition = "TEXT")
+    private String aiSummary;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private AnalyzeStatus aiSummaryStatus;
+
+    public void update(String title, String content, String articleImg, Category category) {
+        this.title = title;
+        this.content = content;
+        this.articleImg = articleImg;
+        this.category = category;
     }
 
-    public void update(Article article){
-        this.category = article.getCategory();
-        this.title = article.getTitle();
-        this.content = article.getContent();
-        this.articleImg = article.getArticleImg();
+    public void updateAiSummary(String aiSummary) {
+        this.aiSummary = aiSummary;
+        this.aiSummaryStatus = AnalyzeStatus.COMPLETED;
     }
 
+    public void markAiSummaryFailed() {
+        this.aiSummaryStatus = AnalyzeStatus.FAILED;
+    }
 }
