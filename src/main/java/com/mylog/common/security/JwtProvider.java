@@ -121,6 +121,17 @@ public class JwtProvider {
             .get(MEMBER_ID, Long.class);
     }
 
+    public long getRefreshExpiration(String accessToken) {
+        Date expiration = Jwts.parser()
+            .verifyWith(accessKey)
+            .build()
+            .parseSignedClaims(accessToken)
+            .getPayload()
+            .getExpiration();
+        long now = new Date().getTime();
+        return (expiration.getTime() - now);
+    }
+
     public boolean validateRefreshToken(String token) {
         try {
             Jwts.parser()
