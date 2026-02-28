@@ -2,15 +2,19 @@ package com.mylog.domain.article;
 
 import com.mylog.common.annotations.MemberId;
 import com.mylog.common.response.PageResponse;
+import com.mylog.common.response.SuccessResponse;
+import com.mylog.domain.article.dto.request.ArticleCreateRequest;
+import com.mylog.domain.article.dto.request.ArticleUpdateRequest;
 import com.mylog.domain.article.dto.response.ArticleResponse;
 import com.mylog.external.s3.S3Service;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,84 +37,83 @@ public class ArticleController {
     //게시글 생성
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "게시글 생성")
-    public CommonResult createArticle(
+    public ResponseEntity<SuccessResponse<Void>> createArticle(
         @RequestPart(value = "file") MultipartFile file,
         @RequestPart(value = "request") @Valid ArticleCreateRequest request,
         @MemberId Long memberId
     ){
         String imageUrl = s3Service.upload(file); //s3 이미지 생성
         articleService.createArticle(request, memberId, imageUrl);
-        return ResponseService.getSuccessResult();
+        return SuccessResponse.toCreated(null);
     }
 
     //게시글 수정
     @PutMapping("/{articleId}")
     @Operation(summary = "게시글 수정")
-    public CommonResult updateArticle(
+    public ResponseEntity<SuccessResponse<Void>> updateArticle(
         @RequestPart(value = "request") @Valid ArticleUpdateRequest request,
         @RequestPart(required = false, value = "file") MultipartFile file,
-        @AuthenticationPrincipal CustomUser customUser,
+        @MemberId Long memberId,
         @PathVariable Long articleId
     ){
         String imageUrl = s3Service.upload(file); //s3이미지 생성
-        articleService.updateArticle(request, customUser, imageUrl, articleId);
-        return ResponseService.getSuccessResult();
+        articleService.updateArticle(request, memberId, imageUrl, articleId);
+        return SuccessResponse.toOk(null);
     }
 
     //게시글 삭제
     @DeleteMapping("/{articleId}")
     @Operation(summary = "게시글 삭제")
-    public CommonResult deleteArticle(
-        @AuthenticationPrincipal CustomUser customUser,
+    public ResponseEntity<SuccessResponse<Void>> deleteArticle(
+        @MemberId Long memberId,
         @PathVariable Long articleId
     ){
-        articleService.deleteArticle(articleId, customUser);
-        return ResponseService.getSuccessResult();
+        articleService.deleteArticle(articleId, memberId);
+        return SuccessResponse.toOk(null);
     }
 
     @GetMapping("/{articleId}")
     @Operation(summary = "게시글 상세")
-    public SingleResult<ArticleResponse> getArticle(@PathVariable Long articleId){
-        return ResponseService.getSingleResult(articleService.getArticle(articleId));
+    public ResponseEntity<SuccessResponse<ArticleResponse>> getArticle(@PathVariable Long articleId){
+        return SuccessResponse.toOk(articleService.getArticle(articleId));
     }
 
     @GetMapping("/all")
     @Operation(summary = "전체 게시글 목록 조회")
-    public SingleResult<PageResponse<ArticleResponse>> getArticles(
+    public ResponseEntity<SuccessResponse<PageResponse<ArticleResponse>>> getArticles(
         @PageableDefault Pageable pageable){
-        return ResponseService.getSingleResult(articleService.getArticles(pageable));
+        return SuccessResponse.toOk(articleService.getArticles(pageable));
     }
 
     @GetMapping("/me")
     @Operation(summary = "내 게시글 목록 조회")
-    public SingleResult<PageResponse<ArticleResponse>> getArticles(
+    public ResponseEntity<SuccessResponse<PageResponse<ArticleResponse>>> getMyArticles(
         @PageableDefault(sort="id", direction = Direction.ASC) Pageable pageable,
-        @AuthenticationPrincipal CustomUser customUser
+        @MemberId Long memberId
     ){
-        return ResponseService.getSingleResult(articleService.getArticles(pageable, customUser));
+        return SuccessResponse.toOk(articleService.getArticles(pageable, memberId));
     }
 
     @GetMapping("/all/search")
     @Operation(summary = "전체 게시글 검색")
-    public SingleResult<PageResponse<ArticleResponse>> searchArticles(
+    public ResponseEntity<SuccessResponse<PageResponse<ArticleResponse>>> searchArticles(
         @RequestParam(required = false) String keyword,
         @RequestParam(required = false) String tag,
         @PageableDefault Pageable pageable
     ){
-        return ResponseService.getSingleResult(articleService.getArticles(keyword, tag, pageable));
+        return SuccessResponse.toOk(articleService.getArticles(keyword, tag, pageable));
     }
 
     //내 게시글 검색
     @GetMapping("/me/search")
     @Operation(summary = "내 게시글 검색")
-    public SingleResult<PageResponse<ArticleResponse>> searchArticles(
+    public ResponseEntity<SuccessResponse<PageResponse<ArticleResponse>>> searchMyArticles(
         @RequestParam(required = false) String keyword,
         @RequestParam(required = false) String tag,
         @PageableDefault Pageable pageable,
-        @AuthenticationPrincipal CustomUser customUser
+        @MemberId Long memberId
     ){
-        return ResponseService
-            .getSingleResult(articleService.getArticles(keyword, tag, pageable, customUser));
+        return SuccessResponse.toOk(articleService.getArticles(keyword, tag, pageable, memberId));
     }
 
 }
