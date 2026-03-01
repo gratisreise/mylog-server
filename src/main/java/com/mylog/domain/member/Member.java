@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,10 +61,27 @@ public class Member extends BaseEntity {
     @Column(length = 200)
     private String providerId;
 
+    private LocalDateTime deletedAt;
 
     public void validatePassword(String rawPassword, PasswordEncoder encoder) {
         if (!encoder.matches(rawPassword, this.password)) {
             throw new BusinessException(ErrorCode.INVALID_CREDENTIALS);
         }
+    }
+
+    public void updateProfile(String nickname, String bio, String profileImg) {
+        if (nickname != null) {
+            this.nickname = nickname;
+        }
+        if (bio != null) {
+            this.bio = bio;
+        }
+        if (profileImg != null) {
+            this.profileImg = profileImg;
+        }
+    }
+
+    public void delete() {
+        this.deletedAt = LocalDateTime.now();
     }
 }
