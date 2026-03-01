@@ -1,8 +1,10 @@
 package com.mylog.domain.comment.service;
 
-import com.mylog.common.exception.CUnAuthorizedException;
+
+import com.mylog.common.exception.BusinessException;
+import com.mylog.common.exception.ErrorCode;
 import com.mylog.domain.article.entity.Article;
-import com.mylog.domain.article.reader.ArticleReader;
+import com.mylog.domain.article.ArticleReader;
 import com.mylog.domain.comment.dto.CommentCreateRequest;
 import com.mylog.domain.comment.dto.CommentUpdateRequest;
 import com.mylog.domain.comment.entity.Comment;
@@ -27,7 +29,7 @@ public class CommentWriter {
     private final NotificationWriter notificationWriter;
     private final NotificationSettingWriter notificationSettingWriter;
 
-    public void createComment(Long articleId, CommentCreateRequest request, Long memberId) {
+    public Long createComment(Long articleId, CommentCreateRequest request, Long memberId) {
         Article article = articleReader.getArticleById(articleId);
         Member member = memberReader.getById(memberId);
 
@@ -38,13 +40,15 @@ public class CommentWriter {
         Member articleMember = article.getMember();
         notificationSettingWriter.createNotificationSetting(articleMember, "comment");
         notificationWriter.sendNotification(articleMember, article.getId(), "comment");
+
+        return comment.getId();
     }
 
     public void updateComment(CommentUpdateRequest request, Long memberId, Long commentId) {
         Comment comment = commentReader.getById(commentId);
 
         if (!comment.isOwnedBy(memberId)) {
-            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
+            throw new BusinessException(ErrorCode.COMMENT_FORBIDDEN);
         }
 
         comment.update(request.content());
@@ -54,7 +58,7 @@ public class CommentWriter {
         Comment comment = commentReader.getById(commentId);
 
         if (!comment.isOwnedBy(memberId)) {
-            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
+            throw new BusinessException(ErrorCode.COMMENT_FORBIDDEN);
         }
 
         commentRepository.deleteById(commentId);
