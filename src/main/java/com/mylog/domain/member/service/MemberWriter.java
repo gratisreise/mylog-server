@@ -1,7 +1,8 @@
 package com.mylog.domain.member.service;
 
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.dto.UpdateMemberRequest;
+import com.mylog.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,12 +11,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class MemberWriter {
+    private final MemberRepository memberRepository;
 
     public void update(Member member, UpdateMemberRequest request, String imageUrl) {
         member.updateProfile(request.nickname(), request.bio(), imageUrl);
     }
 
-    public void delete(Member member) {
-        member.delete();
+    public void deleteById(Long memberId) {
+        memberRepository.deleteById(memberId);
+    }
+
+    public void save(Member member) {
+
     }
 }

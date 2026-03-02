@@ -2,12 +2,10 @@ package com.mylog.domain.member.service;
 
 import com.mylog.common.exception.BusinessException;
 import com.mylog.common.exception.ErrorCode;
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component

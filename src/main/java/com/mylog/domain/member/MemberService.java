@@ -2,6 +2,7 @@ package com.mylog.domain.member;
 
 import com.mylog.domain.member.dto.MemberResponse;
 import com.mylog.domain.member.dto.UpdateMemberRequest;
+import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.service.MemberReader;
 import com.mylog.domain.member.service.MemberWriter;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,7 @@ public class MemberService {
         memberWriter.update(member, request, imageUrl);
     }
 
-    public void deleteMember(Long memberId) {
-        Member member = memberReader.getById(memberId);
-        memberWriter.delete(member);
+    public void delete(Long memberId) {
+        memberWriter.deleteById(memberId);
     }
 }
