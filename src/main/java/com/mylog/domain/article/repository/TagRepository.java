@@ -1,6 +1,6 @@
-package com.mylog.domain.tag.repository;
+package com.mylog.domain.article.repository;
 
-import com.mylog.domain.tag.entity.Tag;
+import com.mylog.domain.article.entity.Tag;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

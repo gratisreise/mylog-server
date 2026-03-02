@@ -1,7 +1,9 @@
-package com.mylog.domain.tag.service;
+package com.mylog.domain.article.service;
+
 
 import com.mylog.domain.article.entity.Article;
-import com.mylog.domain.tag.entity.Tag;
+import com.mylog.domain.article.entity.Tag;
+import com.mylog.domain.article.repository.TagRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

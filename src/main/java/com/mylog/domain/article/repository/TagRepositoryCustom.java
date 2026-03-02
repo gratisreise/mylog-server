@@ -1,4 +1,4 @@
-package com.mylog.domain.tag.repository;
+package com.mylog.domain.article.repository;
 
 import com.mylog.domain.article.entity.Article;
 import java.util.List;

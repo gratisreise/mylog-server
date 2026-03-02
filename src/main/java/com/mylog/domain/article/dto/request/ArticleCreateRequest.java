@@ -2,7 +2,7 @@ package com.mylog.domain.article.dto.request;
 
 import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.category.Category;
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;

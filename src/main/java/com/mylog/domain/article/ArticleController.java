@@ -37,12 +37,12 @@ public class ArticleController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "게시글 생성")
     public ResponseEntity<SuccessResponse<Void>> createArticle(
-        @RequestPart(required = false, value = "file") MultipartFile file,
+        @RequestPart(value = "file") MultipartFile file,
         @RequestPart(value = "request") @Valid ArticleCreateRequest request,
         @MemberId Long memberId
     ) {
         articleService.createArticle(request, memberId, file);
-        return SuccessResponse.toCreated(null);
+        return SuccessResponse.toNoContent();
     }
 
     @PutMapping(value = "/{articleId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -54,7 +54,7 @@ public class ArticleController {
         @PathVariable Long articleId
     ) {
         articleService.updateArticle(request, memberId, file, articleId);
-        return SuccessResponse.toOk(null);
+        return SuccessResponse.toNoContent();
     }
 
     @DeleteMapping("/{articleId}")
@@ -64,7 +64,7 @@ public class ArticleController {
         @PathVariable Long articleId
     ) {
         articleService.deleteArticle(articleId, memberId);
-        return SuccessResponse.toOk(null);
+        return SuccessResponse.toNoContent();
     }
 
     // === 조회 ===
@@ -102,39 +102,5 @@ public class ArticleController {
             return SuccessResponse.toOk(articleService.getArticles(pageable, memberId));
         }
         return SuccessResponse.toOk(articleService.searchMyArticles(keyword, tag, categoryId, pageable, memberId));
-    }
-
-    // === Deprecated (하위 호환성) ===
-
-    @Deprecated(since = "1.1", forRemoval = true)
-    @GetMapping("/all")
-    @Operation(summary = "전체 게시글 목록 조회 (deprecated)", description = "GET /api/articles 사용 권장")
-    public ResponseEntity<SuccessResponse<PageResponse<ArticleResponse>>> getArticlesDeprecated(
-        @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable
-    ) {
-        return SuccessResponse.toOk(articleService.getArticles(pageable));
-    }
-
-    @Deprecated(since = "1.1", forRemoval = true)
-    @GetMapping("/all/search")
-    @Operation(summary = "전체 게시글 검색 (deprecated)", description = "GET /api/articles?keyword=&tag= 사용 권장")
-    public ResponseEntity<SuccessResponse<PageResponse<ArticleResponse>>> searchArticlesDeprecated(
-        @RequestParam(required = false) String keyword,
-        @RequestParam(required = false) String tag,
-        @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable
-    ) {
-        return SuccessResponse.toOk(articleService.searchArticles(keyword, tag, null, pageable));
-    }
-
-    @Deprecated(since = "1.1", forRemoval = true)
-    @GetMapping("/me/search")
-    @Operation(summary = "내 게시글 검색 (deprecated)", description = "GET /api/articles/me?keyword=&tag= 사용 권장")
-    public ResponseEntity<SuccessResponse<PageResponse<ArticleResponse>>> searchMyArticlesDeprecated(
-        @RequestParam(required = false) String keyword,
-        @RequestParam(required = false) String tag,
-        @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable,
-        @MemberId Long memberId
-    ) {
-        return SuccessResponse.toOk(articleService.searchMyArticles(keyword, tag, null, pageable, memberId));
     }
 }
