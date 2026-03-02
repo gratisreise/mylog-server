@@ -1,6 +1,8 @@
 package com.mylog.domain.article.service;
 
 
+import com.mylog.common.exception.BusinessException;
+import com.mylog.common.exception.ErrorCode;
 import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.article.entity.Tag;
 import com.mylog.domain.article.repository.TagRepository;
@@ -21,7 +23,7 @@ public class TagReader {
 
     public Tag getTagByTagName(String tagName){
         return tagRepository.findByTagName(tagName)
-            .orElseThrow(CMissingDataException::new);
+            .orElseThrow(() -> BusinessException(ErrorCode.TAG));
     }
 
 }
