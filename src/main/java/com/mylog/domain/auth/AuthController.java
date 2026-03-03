@@ -26,48 +26,46 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
-    private final AuthService authService;
-    private final OAuthUserServiceFactory oAuth2UserServiceFactory;
+  private final AuthService authService;
+  private final OAuthUserServiceFactory oAuth2UserServiceFactory;
 
+  @PostMapping("/register")
+  @Operation(summary = "회원가입")
+  public ResponseEntity<SuccessResponse<Void>> signUp(@RequestBody @Valid SignUpRequest request) {
+    authService.signUp(request);
+    return SuccessResponse.toNoContent();
+  }
 
-    @PostMapping("/register")
-    @Operation(summary = "회원가입")
-    public ResponseEntity<SuccessResponse<Void>> signUp(@RequestBody @Valid SignUpRequest request){
-        authService.signUp(request);
-        return SuccessResponse.toNoContent();
-    }
+  @Operation(summary = "이메일 로그인")
+  @PostMapping("/login")
+  public ResponseEntity<SuccessResponse<LoginResponse>> login(
+      @RequestBody @Valid LoginRequest request) {
+    LoginResponse response = authService.login(request);
+    return SuccessResponse.toOk(response);
+  }
 
-    @Operation(summary = "이메일 로그인")
-    @PostMapping("/login")
-    public ResponseEntity<SuccessResponse<LoginResponse>> login(@RequestBody @Valid LoginRequest request){
-        LoginResponse response = authService.login(request);
-        return SuccessResponse.toOk(response);
-    }
+  @Operation(summary = "로그아웃")
+  @PostMapping("/logout")
+  public ResponseEntity<SuccessResponse<Void>> logout(
+      @RequestHeader("Authorization") String authHeader, @MemberId Long memberId) {
+    authService.logout(authHeader, memberId);
+    return SuccessResponse.toNoContent();
+  }
 
-    @Operation(summary = "로그아웃")
-    @PostMapping("/logout")
-    public ResponseEntity<SuccessResponse<Void>> logout(
-        @RequestHeader("Authorization") String authHeader,
-        @MemberId Long memberId
-    ){
-        authService.logout(authHeader, memberId);
-        return SuccessResponse.toNoContent();
-    }
+  @Operation(summary = "토큰 리프레시")
+  @PostMapping("/refresh")
+  public ResponseEntity<SuccessResponse<RefreshResponse>> refresh(
+      @RequestBody RefreshRequest request) {
+    RefreshResponse response = authService.refresh(request);
+    return SuccessResponse.toOk(response);
+  }
 
-    @Operation(summary = "토큰 리프레시")
-    @PostMapping("/refresh")
-    public ResponseEntity<SuccessResponse<RefreshResponse>> refresh(@RequestBody RefreshRequest request){
-        RefreshResponse response = authService.refresh(request);
-        return SuccessResponse.toOk(response);
-    }
-
-    @Operation(summary = "소셜 로그인")
-    @PostMapping("/oauth/login")
-    public ResponseEntity<SuccessResponse<LoginResponse>> socialLogin(@RequestBody @Valid OAuthRequest request){
-        LoginResponse response = oAuth2UserServiceFactory
-            .getOAuth2UserService(request.provider())
-            .authenticate(request);
-        return SuccessResponse.toOk(response);
-    }
-
+  @Operation(summary = "소셜 로그인")
+  @PostMapping("/oauth/login")
+  public ResponseEntity<SuccessResponse<LoginResponse>> socialLogin(
+      @RequestBody @Valid OAuthRequest request) {
+    LoginResponse response =
+        oAuth2UserServiceFactory.getOAuthUserService(request.provider()).authenticate(request);
+    return SuccessResponse.toOk(response);
+  }
 }

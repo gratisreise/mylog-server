@@ -5,25 +5,17 @@ import com.mylog.common.enums.OauthProvider;
 import com.mylog.domain.member.entity.Member;
 import com.mylog.external.oauth.OAuthUserInfo;
 
-
 public record GoogleUserInfoResponse(
-        String id,
+    String id, String name, @JsonProperty("picture") String profileImage) implements OAuthUserInfo {
 
-        String name,
-
-        @JsonProperty("picture")
-        String profileImage
-) implements OAuthUserInfo {
-
-        @Override
-        public Member toEntity() {
-                return Member.builder()
-                    .email(this.id() + "@google.com")
-                    .memberName(this.name() != null ? this.name() : "User")
-                    .profileImg(this.profileImage())
-                    .provider(OauthProvider.GOOGLE)
-                    .providerId(this.id())
-                    .build();
-        }
-
+  @Override
+  public Member toEntity() {
+    return Member.builder()
+        .email(this.id() + "@google.com")
+        .memberName(this.name() != null ? this.name() : "User")
+        .profileImg(this.profileImage())
+        .provider(OauthProvider.GOOGLE)
+        .providerId(this.id())
+        .build();
+  }
 }
