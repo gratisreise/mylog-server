@@ -1,7 +1,7 @@
 package com.mylog.external.oauth;
 
 
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 
 public interface OAuthUserInfo {
 

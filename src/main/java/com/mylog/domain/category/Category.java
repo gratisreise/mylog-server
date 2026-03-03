@@ -2,7 +2,7 @@ package com.mylog.domain.category;
 
 import com.mylog.common.CommonValue;
 import com.mylog.common.db.BaseEntity;
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

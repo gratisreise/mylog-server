@@ -24,4 +24,10 @@ public class MemberWriter {
     public void save(Member member) {
 
     }
+
+    public Member saveOrUpdate(Member entity) {
+        return memberRepository.findByProviderAndProviderId(entity.getProvider(),
+            entity.getProviderId())
+            .orElseGet(() -> memberRepository.save(entity));
+    }
 }

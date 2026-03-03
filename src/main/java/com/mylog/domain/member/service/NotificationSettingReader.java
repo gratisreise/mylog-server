@@ -1,8 +1,9 @@
 package com.mylog.domain.member.service;
 
-import com.mylog.common.exception.CMissingDataException;
-import com.mylog.domain.member.entity.Member;
+import com.mylog.common.exception.BusinessException;
+import com.mylog.common.exception.ErrorCode;
 import com.mylog.domain.member.dto.NotificationSettingResponse;
+import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.repository.NotificationSettingRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class NotificationSettingReader {
 
     public boolean isDisabled(Member member, String type) {
         return notificationSettingRepository.findByMemberIdAndType(member.getId(), type)
-            .orElseThrow(CMissingDataException::new)
+            .orElseThrow(()-> new BusinessException(ErrorCode.NOTIFICATION_NOT_FOUND))
             .isDisabled();
     }
 

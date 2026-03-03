@@ -8,7 +8,7 @@ import com.mylog.domain.category.Category;
 import com.mylog.domain.category.dto.CategoryCreateRequest;
 import com.mylog.domain.category.dto.CategoryUpdateRequest;
 import com.mylog.domain.category.repository.CategoryRepository;
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.service.MemberReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;

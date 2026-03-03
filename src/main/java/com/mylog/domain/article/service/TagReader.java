@@ -23,7 +23,7 @@ public class TagReader {
 
     public Tag getTagByTagName(String tagName){
         return tagRepository.findByTagName(tagName)
-            .orElseThrow(() -> BusinessException(ErrorCode.TAG));
+            .orElseThrow(() -> new BusinessException(ErrorCode.TAG_NOT_FOUND));
     }
 
 }

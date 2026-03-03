@@ -3,7 +3,7 @@ package com.mylog.external.oauth.naver;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mylog.common.enums.OauthProvider;
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 import com.mylog.external.oauth.OAuthUserInfo;
 
 public record NaverUserInfoResponse(

@@ -6,7 +6,7 @@ import com.mylog.domain.auth.dto.request.OAuthRequest;
 import com.mylog.domain.auth.dto.response.LoginResponse;
 import com.mylog.domain.auth.service.TokenService;
 import com.mylog.domain.auth.service.oauth.OAuthUserService;
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.service.MemberWriter;
 import com.mylog.external.oauth.google.GoogleApiClient;
 import com.mylog.external.oauth.google.GoogleTokenResponse;

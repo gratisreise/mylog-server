@@ -42,12 +42,12 @@ public class NotificationController {
     //알림 읽음 처리
     @PutMapping("/{id}")
     @Operation(summary = "알림 읽음 처리", description = "특정 알림을 읽음 상태로 변경")
-    public ResponseEntity<Void> readNotification(
+    public ResponseEntity<SuccessResponse<Void>> readNotification(
         @MemberId Long memberId,
         @PathVariable @Positive Long id
     ) {
         notificationWriter.readNotification(memberId, id);
-        return ResponseEntity.noContent().build();
+        return SuccessResponse.toNoContent();
     }
 
 }

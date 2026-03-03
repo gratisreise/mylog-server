@@ -1,7 +1,7 @@
 package com.mylog.domain.category.repository;
 
 import com.mylog.domain.category.Category;
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

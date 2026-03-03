@@ -1,6 +1,7 @@
 package com.mylog.domain.member.service;
 
-import com.mylog.common.exception.CMissingDataException;
+import com.mylog.common.exception.BusinessException;
+import com.mylog.common.exception.ErrorCode;
 import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.entity.NotificationSetting;
 import com.mylog.domain.member.repository.NotificationSettingRepository;
@@ -33,7 +34,7 @@ public class NotificationSettingWriter {
     public void toggleNotification(Long memberId, String type){
         notificationSettingRepository
             .findByMemberIdAndType(memberId, type)
-            .orElseThrow(CMissingDataException::new)
+            .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND))
             .toggle();
     }
 

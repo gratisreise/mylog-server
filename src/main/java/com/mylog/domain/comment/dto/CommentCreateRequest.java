@@ -2,7 +2,7 @@ package com.mylog.domain.comment.dto;
 
 import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.comment.entity.Comment;
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 

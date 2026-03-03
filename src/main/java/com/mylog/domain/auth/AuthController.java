@@ -34,7 +34,7 @@ public class AuthController {
     @Operation(summary = "회원가입")
     public ResponseEntity<SuccessResponse<Void>> signUp(@RequestBody @Valid SignUpRequest request){
         authService.signUp(request);
-        return SuccessResponse.toOk(null);
+        return SuccessResponse.toNoContent();
     }
 
     @Operation(summary = "이메일 로그인")
@@ -51,7 +51,7 @@ public class AuthController {
         @MemberId Long memberId
     ){
         authService.logout(authHeader, memberId);
-        return SuccessResponse.toOk(null);
+        return SuccessResponse.toNoContent();
     }
 
     @Operation(summary = "토큰 리프레시")

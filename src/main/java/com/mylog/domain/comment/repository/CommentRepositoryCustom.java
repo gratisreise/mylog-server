@@ -1,7 +1,7 @@
 package com.mylog.domain.comment.repository;
 
 import com.mylog.domain.comment.entity.Comment;
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

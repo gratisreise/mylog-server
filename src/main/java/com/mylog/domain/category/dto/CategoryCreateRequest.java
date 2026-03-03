@@ -1,7 +1,7 @@
 package com.mylog.domain.category.dto;
 
 import com.mylog.domain.category.Category;
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 

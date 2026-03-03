@@ -2,10 +2,10 @@ package com.mylog.domain.notification.service;
 
 import com.mylog.common.exception.BusinessException;
 import com.mylog.common.exception.ErrorCode;
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.notification.Notification;
 import com.mylog.domain.notification.repository.NotificationRepository;
-import com.mylog.domain.notificationsetting.service.NotificationSettingReader;
+import com.mylog.domain.member.service.NotificationSettingReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

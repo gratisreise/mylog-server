@@ -69,7 +69,7 @@ public class CategoryController {
         @MemberId Long memberId
     ) {
         categoryWriter.updateCategory(request, categoryId, memberId);
-        return SuccessResponse.toOk(null);
+        return SuccessResponse.toNoContent();
     }
 
     //카테고리 삭제
@@ -80,6 +80,6 @@ public class CategoryController {
         @MemberId Long memberId
     ) {
         categoryWriter.deleteCategory(categoryId, memberId);
-        return SuccessResponse.toOk(null);
+        return SuccessResponse.toNoContent();
     }
 }

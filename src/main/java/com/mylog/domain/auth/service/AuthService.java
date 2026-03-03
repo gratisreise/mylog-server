@@ -8,7 +8,7 @@ import com.mylog.domain.auth.dto.request.RefreshRequest;
 import com.mylog.domain.auth.dto.request.SignUpRequest;
 import com.mylog.domain.auth.dto.response.LoginResponse;
 import com.mylog.domain.auth.dto.response.RefreshResponse;
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.service.MemberReader;
 import com.mylog.domain.member.service.MemberWriter;
 import lombok.RequiredArgsConstructor;
