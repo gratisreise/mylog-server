@@ -28,30 +28,26 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Builder
 @AllArgsConstructor
 public class Category extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(length = 12)
-    private String categoryName;
+  @Column(length = 12)
+  private String categoryName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "member_id")
+  private Member member;
 
-    public boolean isOwnedBy(Long memberId) {
-        return Objects.equals(memberId, member.getId());
-    }
+  public boolean isOwnedBy(Long memberId) {
+    return Objects.equals(memberId, member.getId());
+  }
 
+  public static Category createDefault(Member member) {
+    return Category.builder().member(member).categoryName(CommonValue.BASIC_CATEGORY).build();
+  }
 
-    public static Category createDefault(Member member) {
-        return Category.builder()
-            .member(member)
-            .categoryName(CommonValue.BASIC_CATEGORY)
-            .build();
-    }
-
-    public void updateCategorName(String categoryName) {
-        this.categoryName = categoryName;
-    }
+  public void updateCategorName(String categoryName) {
+    this.categoryName = categoryName;
+  }
 }

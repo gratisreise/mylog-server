@@ -1,6 +1,5 @@
 package com.mylog.domain.category;
 
-
 import com.mylog.common.annotations.MemberId;
 import com.mylog.common.response.SuccessResponse;
 import com.mylog.domain.category.dto.CategoryCreateRequest;
@@ -27,59 +26,51 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/categories")
 public class CategoryController {
-    private final CategoryReader categoryReader;
-    private final CategoryWriter categoryWriter;
+  private final CategoryReader categoryReader;
+  private final CategoryWriter categoryWriter;
 
-    //카테고리 생성
-    @PostMapping
-    @Operation(summary = "카테고리 생성")
-    public ResponseEntity<SuccessResponse<Long>> createCategory(
-        @RequestBody @Valid CategoryCreateRequest request,
-        @MemberId Long memberId
-    ) {
-        Long categoryId = categoryWriter.createCategory(request, memberId);
-        return SuccessResponse.toCreated(categoryId);
-    }
+  // 카테고리 생성
+  @PostMapping
+  @Operation(summary = "카테고리 생성")
+  public ResponseEntity<SuccessResponse<Long>> createCategory(
+      @RequestBody @Valid CategoryCreateRequest request, @MemberId Long memberId) {
+    Long categoryId = categoryWriter.createCategory(request, memberId);
+    return SuccessResponse.toCreated(categoryId);
+  }
 
-    //카테고리 조회
-    @GetMapping
-    @Operation(summary = "카테고리 목록 조회")
-    public ResponseEntity<SuccessResponse<List<CategoryResponse>>> getCategories(
-        @MemberId Long memberId
-    ) {
-        return SuccessResponse.toOk(categoryReader.getCategories(memberId));
-    }
+  // 카테고리 조회
+  @GetMapping
+  @Operation(summary = "카테고리 목록 조회")
+  public ResponseEntity<SuccessResponse<List<CategoryResponse>>> getCategories(
+      @MemberId Long memberId) {
+    return SuccessResponse.toOk(categoryReader.getCategories(memberId));
+  }
 
-    //카테고리 단일 조회
-    @GetMapping("/{categoryId}")
-    @Operation(summary = "카테고리 단일 조회")
-    public ResponseEntity<SuccessResponse<CategoryResponse>> getCategory(
-        @PathVariable @Min(1) Long categoryId,
-        @MemberId Long memberId
-    ) {
-        return SuccessResponse.toOk(categoryReader.getCategory(categoryId, memberId));
-    }
+  // 카테고리 단일 조회
+  @GetMapping("/{categoryId}")
+  @Operation(summary = "카테고리 단일 조회")
+  public ResponseEntity<SuccessResponse<CategoryResponse>> getCategory(
+      @PathVariable @Min(1) Long categoryId, @MemberId Long memberId) {
+    return SuccessResponse.toOk(categoryReader.getCategory(categoryId, memberId));
+  }
 
-    //카테고리 수정
-    @PutMapping("/{categoryId}")
-    @Operation(summary = "카테고리 수정")
-    public ResponseEntity<SuccessResponse<Void>> updateCategory(
-        @PathVariable @Min(1) Long categoryId,
-        @RequestBody @Valid CategoryUpdateRequest request,
-        @MemberId Long memberId
-    ) {
-        categoryWriter.updateCategory(request, categoryId, memberId);
-        return SuccessResponse.toNoContent();
-    }
+  // 카테고리 수정
+  @PutMapping("/{categoryId}")
+  @Operation(summary = "카테고리 수정")
+  public ResponseEntity<SuccessResponse<Void>> updateCategory(
+      @PathVariable @Min(1) Long categoryId,
+      @RequestBody @Valid CategoryUpdateRequest request,
+      @MemberId Long memberId) {
+    categoryWriter.updateCategory(request, categoryId, memberId);
+    return SuccessResponse.toNoContent();
+  }
 
-    //카테고리 삭제
-    @DeleteMapping("/{categoryId}")
-    @Operation(summary = "카테고리 삭제")
-    public ResponseEntity<SuccessResponse<Void>> deleteCategory(
-        @PathVariable @Min(1) Long categoryId,
-        @MemberId Long memberId
-    ) {
-        categoryWriter.deleteCategory(categoryId, memberId);
-        return SuccessResponse.toNoContent();
-    }
+  // 카테고리 삭제
+  @DeleteMapping("/{categoryId}")
+  @Operation(summary = "카테고리 삭제")
+  public ResponseEntity<SuccessResponse<Void>> deleteCategory(
+      @PathVariable @Min(1) Long categoryId, @MemberId Long memberId) {
+    categoryWriter.deleteCategory(categoryId, memberId);
+    return SuccessResponse.toNoContent();
+  }
 }
