@@ -1,6 +1,5 @@
 package com.mylog.domain.notification.service;
 
-
 import com.mylog.common.exception.BusinessException;
 import com.mylog.common.exception.ErrorCode;
 import com.mylog.domain.member.entity.Member;
@@ -18,20 +17,21 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class NotificationReader {
-    private final NotificationRepository notificationRepository;
-    private final MemberReader memberReader;
+  private final NotificationRepository notificationRepository;
+  private final MemberReader memberReader;
 
-    public Notification getById(long notificationId){
-        return notificationRepository.findById(notificationId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.NOTIFICATION_NOT_FOUND));
-    }
+  public Notification getById(long notificationId) {
+    return notificationRepository
+        .findById(notificationId)
+        .orElseThrow(() -> new BusinessException(ErrorCode.NOTIFICATION_NOT_FOUND));
+  }
 
-    //알림목록조회
-    public Page<NotificationResponse> receiveNotification(Long  memberId, Pageable pageable){
-        Member member = memberReader.getById(memberId);
-        return notificationRepository
-            .findByMemberAndRead(member, pageable)
-            .map(NotificationResponse::from);
-    };
-
+  // 알림목록조회
+  public Page<NotificationResponse> receiveNotification(Long memberId, Pageable pageable) {
+    Member member = memberReader.getById(memberId);
+    return notificationRepository
+        .findByMemberAndRead(member, pageable)
+        .map(NotificationResponse::from);
+  }
+  ;
 }

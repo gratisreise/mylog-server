@@ -27,33 +27,32 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @Setter
 public class Notification {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "member_id")
+  private Member member;
 
-    @Column(nullable = false)
-    private String type;
+  @Column(nullable = false)
+  private String type;
 
-    @Column(nullable = false)
-    private Long relatedId;
+  @Column(nullable = false)
+  private Long relatedId;
 
-    @Column(nullable = false)
-    private boolean read;
+  @Column(nullable = false)
+  private boolean read;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
+  @CreatedDate private LocalDateTime createdAt;
 
-    public Notification(Member member, Long relatedId, String type) {
-        this.member = member;
-        this.type = type;
-        this.relatedId = relatedId;
-    }
+  public Notification(Member member, Long relatedId, String type) {
+    this.member = member;
+    this.type = type;
+    this.relatedId = relatedId;
+  }
 
-    public void read() {
-        this.read = true;
-    }
+  public void read() {
+    this.read = true;
+  }
 }

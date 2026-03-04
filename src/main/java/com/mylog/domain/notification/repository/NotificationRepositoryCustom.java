@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface NotificationRepositoryCustom {
 
-    Page<Notification> findByMemberAndRead(Member member, Pageable pageable);
+  Page<Notification> findByMemberAndRead(Member member, Pageable pageable);
 }
