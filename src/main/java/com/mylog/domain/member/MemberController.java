@@ -29,55 +29,47 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @Slf4j
 public class MemberController {
-    private final MemberService memberService;
-    private final S3Service s3Service;
-    private final NotificationSettingReader notificationSettingReader;
-    private final NotificationSettingWriter notificationSettingWriter;
+  private final MemberService memberService;
+  private final S3Service s3Service;
+  private final NotificationSettingReader notificationSettingReader;
+  private final NotificationSettingWriter notificationSettingWriter;
 
-    @GetMapping("/me")
-    @Operation(summary = "개인정보조회")
-    public ResponseEntity<SuccessResponse<MemberResponse>> getMember(
-        @MemberId Long memberId
-    ) {
-        return SuccessResponse.toOk(memberService.getMember(memberId));
-    }
+  @GetMapping("/me")
+  @Operation(summary = "개인정보조회")
+  public ResponseEntity<SuccessResponse<MemberResponse>> getMember(@MemberId Long memberId) {
+    return SuccessResponse.toOk(memberService.getMember(memberId));
+  }
 
-    @PatchMapping("/me")
-    @Operation(summary = "개인정보수정")
-    public ResponseEntity<SuccessResponse<Void>> updateMember(
-        @RequestPart(value = "request") @Valid UpdateMemberRequest request,
-        @RequestPart(required = false, value = "file") MultipartFile file,
-        @MemberId Long memberId
-    ) {
-        String imageUrl = (file != null && !file.isEmpty()) ? s3Service.upload(file) : null;
-        memberService.updateMember(request, imageUrl, memberId);
-        return SuccessResponse.toNoContent();
-    }
+  @PatchMapping("/me")
+  @Operation(summary = "개인정보수정")
+  public ResponseEntity<SuccessResponse<Void>> updateMember(
+      @RequestPart(value = "request") @Valid UpdateMemberRequest request,
+      @RequestPart(required = false, value = "file") MultipartFile file,
+      @MemberId Long memberId) {
+    String imageUrl = (file != null && !file.isEmpty()) ? s3Service.upload(file) : null;
+    memberService.updateMember(request, imageUrl, memberId);
+    return SuccessResponse.toNoContent();
+  }
 
-    @DeleteMapping("/me")
-    @Operation(summary = "개인정보삭제")
-    public ResponseEntity<SuccessResponse<Void>> deleteMember(
-        @MemberId Long memberId
-    ) {
-        memberService.delete(memberId);
-        return SuccessResponse.toNoContent();
-    }
+  @DeleteMapping("/me")
+  @Operation(summary = "개인정보삭제")
+  public ResponseEntity<SuccessResponse<Void>> deleteMember(@MemberId Long memberId) {
+    memberService.delete(memberId);
+    return SuccessResponse.toNoContent();
+  }
 
-    @GetMapping("/me/notification-settings")
-    @Operation(summary = "알림 설정 조회")
-    public ResponseEntity<SuccessResponse<List<NotificationSettingResponse>>> getNotificationSettings(
-        @MemberId Long memberId
-    ) {
-        return SuccessResponse.toOk(notificationSettingReader.getNotificationSettings(memberId));
-    }
+  @GetMapping("/me/notification-settings")
+  @Operation(summary = "알림 설정 조회")
+  public ResponseEntity<SuccessResponse<List<NotificationSettingResponse>>> getNotificationSettings(
+      @MemberId Long memberId) {
+    return SuccessResponse.toOk(notificationSettingReader.getNotificationSettings(memberId));
+  }
 
-    @PutMapping("/me/notification-settings/{type}")
-    @Operation(summary = "알림 토글")
-    public ResponseEntity<SuccessResponse<Void>> toggleNotification(
-        @MemberId Long memberId,
-        @PathVariable String type
-    ) {
-        notificationSettingWriter.toggleNotification(memberId, type);
-        return SuccessResponse.toNoContent();
-    }
+  @PutMapping("/me/notification-settings/{type}")
+  @Operation(summary = "알림 토글")
+  public ResponseEntity<SuccessResponse<Void>> toggleNotification(
+      @MemberId Long memberId, @PathVariable String type) {
+    notificationSettingWriter.toggleNotification(memberId, type);
+    return SuccessResponse.toNoContent();
+  }
 }

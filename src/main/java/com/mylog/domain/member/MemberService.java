@@ -11,20 +11,20 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-    private final MemberReader memberReader;
-    private final MemberWriter memberWriter;
+  private final MemberReader memberReader;
+  private final MemberWriter memberWriter;
 
-    public MemberResponse getMember(Long memberId) {
-        Member member = memberReader.getById(memberId);
-        return new MemberResponse(member);
-    }
+  public MemberResponse getMember(Long memberId) {
+    Member member = memberReader.getById(memberId);
+    return new MemberResponse(member);
+  }
 
-    public void updateMember(UpdateMemberRequest request, String imageUrl, Long memberId) {
-        Member member = memberReader.getById(memberId);
-        memberWriter.update(member, request, imageUrl);
-    }
+  public void updateMember(UpdateMemberRequest request, String imageUrl, Long memberId) {
+    Member member = memberReader.getById(memberId);
+    memberWriter.update(member, request, imageUrl);
+  }
 
-    public void delete(Long memberId) {
-        memberWriter.deleteById(memberId);
-    }
+  public void delete(Long memberId) {
+    memberWriter.deleteById(memberId);
+  }
 }

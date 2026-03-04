@@ -28,60 +28,61 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(indexes = {
-    @Index(name = "idx_provider_providerId", columnList = "provider,providerId", unique = true)
-})
+@Table(
+    indexes = {
+      @Index(name = "idx_provider_providerId", columnList = "provider,providerId", unique = true)
+    })
 public class Member extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(length = 30)
-    private String email;
+  @Column(length = 30)
+  private String email;
 
-    @Column(length = 150)
-    private String password;
+  @Column(length = 150)
+  private String password;
 
-    @Column(length = 30, nullable = false)
-    private String memberName;
+  @Column(length = 30, nullable = false)
+  private String memberName;
 
-    @Column(length = 100, unique = true)
-    private String nickname;
+  @Column(length = 100, unique = true)
+  private String nickname;
 
-    @Column(length = 300, nullable = false)
-    private String profileImg;
+  @Column(length = 300, nullable = false)
+  private String profileImg;
 
-    @Column(length = 200)
-    private String bio;
+  @Column(length = 200)
+  private String bio;
 
-    @Column(length = 20, nullable = false)
-    @Enumerated(EnumType.STRING)
-    private OauthProvider provider;
+  @Column(length = 20, nullable = false)
+  @Enumerated(EnumType.STRING)
+  private OauthProvider provider;
 
-    @Column(length = 200)
-    private String providerId;
+  @Column(length = 200)
+  private String providerId;
 
-    private LocalDateTime deletedAt;
+  private LocalDateTime deletedAt;
 
-    public void validatePassword(String rawPassword, PasswordEncoder encoder) {
-        if (!encoder.matches(rawPassword, this.password)) {
-            throw new BusinessException(ErrorCode.INVALID_CREDENTIALS);
-        }
+  public void validatePassword(String rawPassword, PasswordEncoder encoder) {
+    if (!encoder.matches(rawPassword, this.password)) {
+      throw new BusinessException(ErrorCode.INVALID_CREDENTIALS);
     }
+  }
 
-    public void updateProfile(String nickname, String bio, String profileImg) {
-        if (nickname != null) {
-            this.nickname = nickname;
-        }
-        if (bio != null) {
-            this.bio = bio;
-        }
-        if (profileImg != null) {
-            this.profileImg = profileImg;
-        }
+  public void updateProfile(String nickname, String bio, String profileImg) {
+    if (nickname != null) {
+      this.nickname = nickname;
     }
+    if (bio != null) {
+      this.bio = bio;
+    }
+    if (profileImg != null) {
+      this.profileImg = profileImg;
+    }
+  }
 
-    public void delete() {
-        this.deletedAt = LocalDateTime.now();
-    }
+  public void delete() {
+    this.deletedAt = LocalDateTime.now();
+  }
 }
