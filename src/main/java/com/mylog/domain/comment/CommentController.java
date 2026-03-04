@@ -31,69 +31,61 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class CommentController {
-    private final CommentReader commentReader;
-    private final CommentWriter commentWriter;
+  private final CommentReader commentReader;
+  private final CommentWriter commentWriter;
 
-    @PostMapping("/articles/{articleId}/comments")
-    @Operation(summary = "댓글 생성")
-    public ResponseEntity<SuccessResponse<Long>> createComment(
-        @PathVariable @Min(1) Long articleId,
-        @RequestBody @Valid CommentCreateRequest request,
-        @MemberId Long memberId
-    ) {
-        Long commentId = commentWriter.createComment(articleId, request, memberId);
-        return SuccessResponse.toCreated(commentId);
-    }
+  @PostMapping("/articles/{articleId}/comments")
+  @Operation(summary = "댓글 생성")
+  public ResponseEntity<SuccessResponse<Long>> createComment(
+      @PathVariable @Min(1) Long articleId,
+      @RequestBody @Valid CommentCreateRequest request,
+      @MemberId Long memberId) {
+    Long commentId = commentWriter.createComment(articleId, request, memberId);
+    return SuccessResponse.toCreated(commentId);
+  }
 
-    @GetMapping("/articles/{articleId}/comments")
-    @Operation(summary = "댓글 목록 조회")
-    public ResponseEntity<SuccessResponse<PageResponse<CommentArticleResponse>>> getComments(
-        @PathVariable @Min(1) Long articleId,
-        @PageableDefault(sort = "createdAt", direction = Direction.DESC)
-        Pageable pageable
-    ) {
-        Page<CommentArticleResponse> comments = commentReader.getComments1(articleId, pageable);
-        return SuccessResponse.toOk(PageResponse.from(comments));
-    }
+  @GetMapping("/articles/{articleId}/comments")
+  @Operation(summary = "댓글 목록 조회")
+  public ResponseEntity<SuccessResponse<PageResponse<CommentArticleResponse>>> getComments(
+      @PathVariable @Min(1) Long articleId,
+      @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
+    Page<CommentArticleResponse> comments = commentReader.getComments1(articleId, pageable);
+    return SuccessResponse.toOk(PageResponse.from(comments));
+  }
 
-    @GetMapping("/comments/me")
-    @Operation(summary = "내가 작성한 댓글 조회")
-    public ResponseEntity<SuccessResponse<PageResponse<CommentResponse>>> getMyComments(
-        @MemberId Long memberId,
-        @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable
-    ) {
-        Page<CommentResponse> comments = commentReader.getMyComments(memberId, pageable);
-        return SuccessResponse.toOk(PageResponse.from(comments));
-    }
+  @GetMapping("/comments/me")
+  @Operation(summary = "내가 작성한 댓글 조회")
+  public ResponseEntity<SuccessResponse<PageResponse<CommentResponse>>> getMyComments(
+      @MemberId Long memberId,
+      @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
+    Page<CommentResponse> comments = commentReader.getMyComments(memberId, pageable);
+    return SuccessResponse.toOk(PageResponse.from(comments));
+  }
 
-    @GetMapping("/comments/me/received")
-    @Operation(summary = "내 게시글에 작성된 댓글 조회")
-    public ResponseEntity<SuccessResponse<PageResponse<CommentResponse>>> getReceivedComments(
-        @MemberId Long memberId,
-        @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable
-    ) {
-        Page<CommentResponse> comments = commentReader.getComments(memberId, pageable);
-        return SuccessResponse.toOk(PageResponse.from(comments));
-    }
+  @GetMapping("/comments/me/received")
+  @Operation(summary = "내 게시글에 작성된 댓글 조회")
+  public ResponseEntity<SuccessResponse<PageResponse<CommentResponse>>> getReceivedComments(
+      @MemberId Long memberId,
+      @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
+    Page<CommentResponse> comments = commentReader.getComments(memberId, pageable);
+    return SuccessResponse.toOk(PageResponse.from(comments));
+  }
 
-    @PatchMapping("/comments/{commentId}")
-    @Operation(summary = "댓글 수정")
-    public ResponseEntity<SuccessResponse<Void>> updateComment(
-        @RequestBody @Valid CommentUpdateRequest request,
-        @PathVariable @Min(1) Long commentId,
-        @MemberId Long memberId
-    ) {
-        commentWriter.updateComment(request, memberId, commentId);
-        return SuccessResponse.toNoContent();
-    }
+  @PatchMapping("/comments/{commentId}")
+  @Operation(summary = "댓글 수정")
+  public ResponseEntity<SuccessResponse<Void>> updateComment(
+      @RequestBody @Valid CommentUpdateRequest request,
+      @PathVariable @Min(1) Long commentId,
+      @MemberId Long memberId) {
+    commentWriter.updateComment(request, memberId, commentId);
+    return SuccessResponse.toNoContent();
+  }
 
-    @DeleteMapping("/comments/{commentId}")
-    @Operation(summary = "댓글 삭제")
-    public ResponseEntity<SuccessResponse<Void>> deleteComment(
-        @PathVariable @Min(1) Long commentId,
-        @MemberId Long memberId
-    ) {
-        commentWriter.deleteComment(commentId, memberId);
-        return SuccessResponse.toNoContent();
-    }
+  @DeleteMapping("/comments/{commentId}")
+  @Operation(summary = "댓글 삭제")
+  public ResponseEntity<SuccessResponse<Void>> deleteComment(
+      @PathVariable @Min(1) Long commentId, @MemberId Long memberId) {
+    commentWriter.deleteComment(commentId, memberId);
+    return SuccessResponse.toNoContent();
+  }
 }
