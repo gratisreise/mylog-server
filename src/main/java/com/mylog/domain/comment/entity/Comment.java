@@ -1,4 +1,5 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/domain/comment/entity/Comment.java
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/comment/entity/Comment.java
 package com.mylog.domain.comment.entity;
 
 import com.mylog.domain.article.entity.Article;
@@ -7,11 +8,18 @@ import com.mylog.common.db.BaseEntity;
 ========
 package com.mylog.comment.entity;
 
+========
+package com.mylog.comment.entity;
+
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:domain/src/main/java/com/mylog/comment/entity/Comment.java
 import com.mylog.BaseEntity;
 import com.mylog.article.entity.Article;
 
 import com.mylog.member.entity.Member;
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/comment/entity/Comment.java
 >>>>>>>> origin/main:domain/src/main/java/com/mylog/comment/entity/Comment.java
+========
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:domain/src/main/java/com/mylog/comment/entity/Comment.java
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

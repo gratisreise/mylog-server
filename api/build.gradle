@@ -1,0 +1,38 @@
+// api/build.gradle
+tasks.named('bootJar'){
+    bootJar.enabled = true
+}
+
+tasks.named('jar'){
+    jar.enabled = false
+}
+
+dependencies {
+    // 1. 내부 모듈 의존성
+    implementation project(':infra') // redis, s3, 외부통신
+    implementation project(':common') // 응답형태나 예외
+    implementation project(':domain') // db
+
+    // 2. Spring Boot Starters (재료)
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // 3. 모니터링 및 유틸 (선택사항)
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // jwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+
+    // Sentry
+    implementation 'io.sentry:sentry-spring-boot-starter:8.12.0'
+
+    // Swagger (Springdoc OpenAPI)
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+
+    //openfeign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    implementation 'io.github.openfeign:feign-okhttp'
+}

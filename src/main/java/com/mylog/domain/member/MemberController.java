@@ -1,4 +1,5 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/domain/member/MemberController.java
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/member/MemberController.java
 package com.mylog.domain.member;
 
 import com.mylog.domain.auth.dto.request.SignUpRequest;
@@ -13,6 +14,10 @@ import com.mylog.common.security.CustomUser;
 ========
 package com.mylog.member;
 
+========
+package com.mylog.member;
+
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:api/src/main/java/com/mylog/member/MemberController.java
 
 import com.mylog.auth.classes.CustomUser;
 import com.mylog.member.dto.MemberResponse;
@@ -21,7 +26,10 @@ import com.mylog.response.CommonResult;
 import com.mylog.response.ResponseService;
 import com.mylog.response.SingleResult;
 import com.mylog.s3.S3Service;
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/member/MemberController.java
 >>>>>>>> origin/main:api/src/main/java/com/mylog/member/MemberController.java
+========
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:api/src/main/java/com/mylog/member/MemberController.java
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

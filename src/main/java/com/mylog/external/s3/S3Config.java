@@ -1,8 +1,12 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/external/s3/S3Config.java
+<<<<<<<< HEAD:src/main/java/com/mylog/external/s3/S3Config.java
 package com.mylog.external.s3;
 ========
 package com.mylog.s3;
 >>>>>>>> origin/main:infra/src/main/java/com/mylog/s3/S3Config.java
+========
+package com.mylog.s3;
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:infra/src/main/java/com/mylog/s3/S3Config.java
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

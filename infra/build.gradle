@@ -1,0 +1,17 @@
+
+
+dependencies {
+
+    implementation project(':common')
+
+    //redis
+    api 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    //aws s3
+    api 'software.amazon.awssdk:s3:2.25.16'
+
+    //openfeign
+
+    implementation 'org.springframework:spring-web'
+
+}

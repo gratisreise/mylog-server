@@ -1,4 +1,5 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/domain/member/Member.java
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/member/Member.java
 package com.mylog.domain.member;
 
 import com.mylog.domain.member.dto.UpdateMemberRequest;
@@ -12,6 +13,13 @@ package com.mylog.member.entity;
 import com.mylog.BaseEntity;
 import com.mylog.enums.OauthProvider;
 >>>>>>>> origin/main:domain/src/main/java/com/mylog/member/entity/Member.java
+========
+package com.mylog.member.entity;
+
+
+import com.mylog.BaseEntity;
+import com.mylog.enums.OauthProvider;
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:domain/src/main/java/com/mylog/member/entity/Member.java
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

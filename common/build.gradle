@@ -1,0 +1,5 @@
+// api/build.gradle
+dependencies {
+    api 'org.apache.commons:commons-lang3'
+    api 'com.fasterxml.jackson.core:jackson-databind' // JSON 처리는 어디서나 쓰이니까요.
+}

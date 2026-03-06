@@ -1,4 +1,5 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/domain/comment/CommentController.java
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/comment/CommentController.java
 package com.mylog.domain.comment;
 
 import com.mylog.domain.comment.dto.CommentArticleResponse;
@@ -14,6 +15,10 @@ import com.mylog.common.security.CustomUser;
 ========
 package com.mylog.comment;
 
+========
+package com.mylog.comment;
+
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:api/src/main/java/com/mylog/comment/CommentController.java
 
 import com.mylog.auth.classes.CustomUser;
 import com.mylog.comment.dto.CommentCreateRequest;
@@ -23,7 +28,10 @@ import com.mylog.common.PageResponse;
 import com.mylog.response.CommonResult;
 import com.mylog.response.ResponseService;
 import com.mylog.response.SingleResult;
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/comment/CommentController.java
 >>>>>>>> origin/main:api/src/main/java/com/mylog/comment/CommentController.java
+========
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:api/src/main/java/com/mylog/comment/CommentController.java
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

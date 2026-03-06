@@ -1,4 +1,5 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/domain/category/Category.java
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/category/Category.java
 package com.mylog.domain.category;
 
 import com.mylog.domain.category.dto.CategoryUpdateRequest;
@@ -7,11 +8,18 @@ import com.mylog.common.db.BaseEntity;
 ========
 package com.mylog.category.entity;
 
+========
+package com.mylog.category.entity;
+
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:domain/src/main/java/com/mylog/category/entity/Category.java
 
 import com.mylog.BaseEntity;
 import com.mylog.member.entity.Member;
 import com.mylog.response.CommonValue;
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/category/Category.java
 >>>>>>>> origin/main:domain/src/main/java/com/mylog/category/entity/Category.java
+========
+>>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:domain/src/main/java/com/mylog/category/entity/Category.java
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
