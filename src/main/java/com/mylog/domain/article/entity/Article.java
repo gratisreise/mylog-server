@@ -3,27 +3,13 @@
 package com.mylog.domain.article.entity;
 
 
-import com.mylog.domain.article.dto.ArticleUpdateRequest;
-import com.mylog.common.db.BaseEntity;
-import com.mylog.domain.category.Category;
-import com.mylog.domain.member.Member;
-========
-package com.mylog.article.entity;
-
-
-========
-package com.mylog.article.entity;
-
-
->>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:domain/src/main/java/com/mylog/article/entity/Article.java
-
 import com.mylog.BaseEntity;
 import com.mylog.category.entity.Category;
+import com.mylog.common.db.BaseEntity;
+import com.mylog.domain.article.dto.ArticleUpdateRequest;
+import com.mylog.domain.category.Category;
+import com.mylog.domain.member.Member;
 import com.mylog.member.entity.Member;
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/article/entity/Article.java
->>>>>>>> origin/main:domain/src/main/java/com/mylog/article/entity/Article.java
-========
->>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:domain/src/main/java/com/mylog/article/entity/Article.java
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

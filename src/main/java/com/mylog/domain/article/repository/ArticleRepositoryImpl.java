@@ -3,7 +3,6 @@ package com.mylog.domain.article.repository;
 import com.mylog.domain.article.dto.ArticleResponse;
 import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.member.Member;
-
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.ArrayList;
 import java.util.List;

@@ -2,20 +2,10 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/domain/auth/service/social/OAuth2UserServiceFactory.java
 package com.mylog.domain.auth.service.social;
 
+import com.mylog.annotations.OAuth2ServiceType;
 import com.mylog.common.annotations.OAuth2ServiceType;
 import com.mylog.common.enums.OauthProvider;
-========
-========
->>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:api/src/main/java/com/mylog/auth/service/social/OAuth2UserServiceFactory.java
-package com.mylog.auth.service.social;
-
-
-import com.mylog.annotations.OAuth2ServiceType;
 import com.mylog.enums.OauthProvider;
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/auth/service/social/OAuth2UserServiceFactory.java
->>>>>>>> origin/main:api/src/main/java/com/mylog/auth/service/social/OAuth2UserServiceFactory.java
-========
->>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:api/src/main/java/com/mylog/auth/service/social/OAuth2UserServiceFactory.java
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

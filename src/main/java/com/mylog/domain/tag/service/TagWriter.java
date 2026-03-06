@@ -2,21 +2,16 @@
 package com.mylog.domain.tag.service;
 
 
+import com.mylog.article.entity.Article;
+import com.mylog.article.entity.ArticleTag;
+import com.mylog.article.service.ArticleTagWriter;
 import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.article.entity.ArticleTag;
 import com.mylog.domain.article.service.ArticleTagWriter;
 import com.mylog.domain.tag.entity.Tag;
 import com.mylog.domain.tag.repository.TagRepository;
-========
-package com.mylog.tag.service;
-
-
-import com.mylog.article.entity.Article;
-import com.mylog.article.entity.ArticleTag;
-import com.mylog.article.service.ArticleTagWriter;
 import com.mylog.tag.entity.Tag;
 import com.mylog.tag.repository.TagRepository;
->>>>>>>> origin/main:domain/src/main/java/com/mylog/tag/service/TagWriter.java
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;

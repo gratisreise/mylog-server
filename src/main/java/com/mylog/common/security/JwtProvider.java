@@ -5,21 +5,9 @@ package com.mylog.common.security;
 
 import com.mylog.common.exception.BusinessException;
 import com.mylog.common.exception.ErrorCode;
+import com.mylog.exception.common.CUnAuthorizedException;
+import com.mylog.exception.common.CommonError;
 import io.jsonwebtoken.ExpiredJwtException;
-========
-package com.mylog.utils;
-
-import com.mylog.exception.common.CUnAuthorizedException;
-
-import com.mylog.exception.common.CommonError;
->>>>>>>> origin/main:api/src/main/java/com/mylog/utils/JwtUtil.java
-========
-package com.mylog.utils;
-
-import com.mylog.exception.common.CUnAuthorizedException;
-
-import com.mylog.exception.common.CommonError;
->>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:api/src/main/java/com/mylog/utils/JwtUtil.java
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Jwts.SIG;
 import io.jsonwebtoken.security.Keys;

@@ -13,23 +13,13 @@ package com.mylog.s3;
 import com.mylog.exception.ErrorCode;
 import com.mylog.exception.common.CMissingDataException;
 import com.mylog.exception.common.CommonError;
-<<<<<<<< HEAD:src/main/java/com/mylog/external/s3/S3Provider.java
->>>>>>>> origin/main:infra/src/main/java/com/mylog/s3/S3Service.java
-========
->>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:infra/src/main/java/com/mylog/s3/S3Service.java
 import java.io.IOException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-<<<<<<<< HEAD:src/main/java/com/mylog/external/s3/S3Provider.java
-<<<<<<<< HEAD:src/main/java/com/mylog/external/s3/S3Provider.java
-import org.springframework.stereotype.Component;
-========
-========
->>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:infra/src/main/java/com/mylog/s3/S3Service.java
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
->>>>>>>> origin/main:infra/src/main/java/com/mylog/s3/S3Service.java
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;

@@ -1,12 +1,12 @@
 package com.mylog.domain.notificationsetting;
 
-import com.mylog.domain.notificationsetting.service.NotificationSettingReader;
-import com.mylog.domain.notificationsetting.service.NotificationSettingWriter;
 import com.mylog.common.response.CommonResult;
 import com.mylog.common.response.ListResult;
 import com.mylog.common.response.ResponseService;
 import com.mylog.common.security.CustomUser;
 import com.mylog.domain.notification.dto.NotificationSettingResponse;
+import com.mylog.domain.notificationsetting.service.NotificationSettingReader;
+import com.mylog.domain.notificationsetting.service.NotificationSettingWriter;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

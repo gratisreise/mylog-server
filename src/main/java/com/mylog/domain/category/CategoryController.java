@@ -2,34 +2,22 @@
 <<<<<<<< HEAD:src/main/java/com/mylog/domain/category/CategoryController.java
 package com.mylog.domain.category;
 
-import com.mylog.domain.category.dto.CategoryCreateRequest;
-import com.mylog.domain.category.service.CategoryReader;
-import com.mylog.domain.category.dto.CategoryResponse;
-import com.mylog.domain.category.dto.CategoryUpdateRequest;
-import com.mylog.domain.category.service.CategoryWriter;
-import com.mylog.common.response.CommonResult;
-import com.mylog.common.response.ListResult;
-import com.mylog.common.response.ResponseService;
-import com.mylog.common.security.CustomUser;
-========
-package com.mylog.category;
-
-========
-package com.mylog.category;
-
->>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:api/src/main/java/com/mylog/category/CategoryController.java
-
 import com.mylog.auth.classes.CustomUser;
 import com.mylog.category.dto.CategoryCreateRequest;
 import com.mylog.category.dto.CategoryResponse;
 import com.mylog.category.dto.CategoryUpdateRequest;
+import com.mylog.common.response.CommonResult;
+import com.mylog.common.response.ListResult;
+import com.mylog.common.response.ResponseService;
+import com.mylog.common.security.CustomUser;
+import com.mylog.domain.category.dto.CategoryCreateRequest;
+import com.mylog.domain.category.dto.CategoryResponse;
+import com.mylog.domain.category.dto.CategoryUpdateRequest;
+import com.mylog.domain.category.service.CategoryReader;
+import com.mylog.domain.category.service.CategoryWriter;
 import com.mylog.response.CommonResult;
 import com.mylog.response.ListResult;
 import com.mylog.response.ResponseService;
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/category/CategoryController.java
->>>>>>>> origin/main:api/src/main/java/com/mylog/category/CategoryController.java
-========
->>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:api/src/main/java/com/mylog/category/CategoryController.java
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

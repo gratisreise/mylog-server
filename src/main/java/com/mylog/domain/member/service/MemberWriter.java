@@ -1,14 +1,14 @@
 package com.mylog.domain.member.service;
 
-import com.mylog.domain.auth.dto.request.SignUpRequest;
-import com.mylog.domain.member.dto.UpdateMemberRequest;
-import com.mylog.domain.member.Member;
-import com.mylog.domain.member.repository.MemberRepository;
 import com.mylog.common.exception.CDuplicatedException;
 import com.mylog.common.exception.CUnAuthorizedException;
 import com.mylog.common.security.CustomUser;
-import com.mylog.external.s3.S3Provider;
+import com.mylog.domain.auth.dto.request.SignUpRequest;
 import com.mylog.domain.category.service.CategoryWriter;
+import com.mylog.domain.member.Member;
+import com.mylog.domain.member.dto.UpdateMemberRequest;
+import com.mylog.domain.member.repository.MemberRepository;
+import com.mylog.external.s3.S3Provider;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

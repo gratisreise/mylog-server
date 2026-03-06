@@ -6,7 +6,6 @@ import com.mylog.auth.service.TokenBlackListService;
 import com.mylog.common.filter.ExceptionHandlerFilter;
 import com.mylog.common.filter.JwtAuthenticationFilter;
 import com.mylog.utils.JwtUtil;
->>>>>>>> origin/main:api/src/main/java/com/mylog/config/SecurityConfig.java
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
