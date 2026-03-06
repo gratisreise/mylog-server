@@ -1,6 +1,6 @@
 package com.mylog.domain.auth.service;
 
-import com.mylog.common.security.JwtUtil;
+import com.mylog.common.security.JwtProvider;
 import com.mylog.domain.auth.dto.request.LoginRequest;
 import com.mylog.domain.auth.dto.response.LoginResponse;
 import com.mylog.domain.auth.dto.request.RefreshRequest;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class AuthService {
 
-    private final JwtUtil jwtUtil;
+    private final JwtProvider jwtProvider;
     private final AuthenticationManager authenticationManager;
     private final MemberReader memberReader;
     private final RefreshTokenService refreshTokenService;
@@ -35,8 +35,8 @@ public class AuthService {
         long memberId = member.getId();
         String username = String.valueOf(memberId);
 
-        String refreshToken = jwtUtil.createRefreshToken(username);
-        String accessToken = jwtUtil.createAccessToken(username, memberId);
+        String refreshToken = jwtProvider.createRefreshToken(username);
+        String accessToken = jwtProvider.createAccessToken(username, memberId);
         refreshTokenService.saveRefreshToken(username, refreshToken);
 
         return new LoginResponse(accessToken, refreshToken);
@@ -45,14 +45,14 @@ public class AuthService {
 
     //리프레쉬
     public RefreshResponse refresh(RefreshRequest request) {
-        String username = jwtUtil.getRefreshUsername(request.refreshToken());
+        String username = jwtProvider.getRefreshMemberId(request.refreshToken());
         log.info("{}", username);
         long memberId = Long.parseLong(username);
         if (!refreshTokenService.validateRefreshToken(username, request.refreshToken())) {
             throw new CInvalidDataException("유효하지 않은 토큰입니다.");
         }
 
-        String accessToken = jwtUtil.createAccessToken(username, memberId);
+        String accessToken = jwtProvider.createAccessToken(username, memberId);
         return new RefreshResponse(accessToken);
     }
 

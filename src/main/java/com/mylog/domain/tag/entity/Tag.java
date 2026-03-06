@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/tag/entity/Tag.java
 package com.mylog.domain.tag.entity;
+========
+package com.mylog.tag.entity;
+>>>>>>>> origin/main:domain/src/main/java/com/mylog/tag/entity/Tag.java
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

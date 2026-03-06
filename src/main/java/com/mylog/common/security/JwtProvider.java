@@ -1,12 +1,21 @@
+<<<<<<<< HEAD:src/main/java/com/mylog/common/security/JwtProvider.java
 package com.mylog.common.security;
 
 
 import com.mylog.common.exception.BusinessException;
 import com.mylog.common.exception.ErrorCode;
 import io.jsonwebtoken.ExpiredJwtException;
+========
+package com.mylog.utils;
+
+import com.mylog.exception.common.CUnAuthorizedException;
+
+import com.mylog.exception.common.CommonError;
+>>>>>>>> origin/main:api/src/main/java/com/mylog/utils/JwtUtil.java
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Jwts.SIG;
 import io.jsonwebtoken.security.Keys;
+import java.time.Instant;
 import java.util.Date;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +39,19 @@ public class JwtProvider {
         this.refreshKey = Keys.hmacShaKeyFor(refreshKey.getBytes());
         this.accessValidity = accessValidity;
         this.refreshValidity = refreshValidity;
+    }
+
+    public long getExpiration(String accessToken) {
+        Date expiration = Jwts.parser()
+            .verifyWith(accessKey)
+            .build()
+            .parseSignedClaims(accessToken)
+            .getPayload()
+            .getExpiration();
+
+        // 2. 현재 시간과의 차이를 계산
+        long now = new Date().getTime();
+        return (expiration.getTime() - now);
     }
 
 
@@ -76,6 +98,7 @@ public class JwtProvider {
         } catch (ExpiredJwtException e) {
             throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
         } catch (RuntimeException e) {
+<<<<<<<< HEAD:src/main/java/com/mylog/common/security/JwtProvider.java
             throw new BusinessException(ErrorCode.TOKEN_INVALID);
         }
     }
@@ -113,6 +136,9 @@ public class JwtProvider {
             throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
         } catch (RuntimeException e) {
             throw new BusinessException(ErrorCode.TOKEN_INVALID);
+========
+            throw new CUnAuthorizedException(CommonError.INVALID_TOKEN);
+>>>>>>>> origin/main:api/src/main/java/com/mylog/utils/JwtUtil.java
         }
     }
 

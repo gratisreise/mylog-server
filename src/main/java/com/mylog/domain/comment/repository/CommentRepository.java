@@ -1,7 +1,15 @@
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/comment/repository/CommentRepository.java
 package com.mylog.domain.comment.repository;
 
 import com.mylog.domain.comment.entity.Comment;
 import com.mylog.domain.member.Member;
+========
+package com.mylog.comment.repository;
+
+import com.mylog.comment.entity.Comment;
+
+import com.mylog.member.entity.Member;
+>>>>>>>> origin/main:domain/src/main/java/com/mylog/comment/repository/CommentRepository.java
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +19,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comment, Long>, CommentRepositoryCustom{
+public interface CommentRepository extends JpaRepository<Comment, Long>,
+    CommentRepositoryCustom {
 
     //게시글 댓글 목록 조회
     @EntityGraph(attributePaths = {"article", "member"})
@@ -29,4 +38,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Comment
     @EntityGraph(attributePaths = {"article", "member"})
     List<Comment> findByArticle_IdAndParentId(Long articleId, Long parentId);
 
+    //내가 작성한 댓글 조회
+    Page<Comment> findByMemberId(Long memberId, Pageable pageable);
 }

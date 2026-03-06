@@ -1,8 +1,17 @@
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/tag/repository/TagRepositoryImpl.java
 package com.mylog.domain.tag.repository;
 
 import com.mylog.domain.article.entity.Article;
 import com.mylog.model.entity.QArticleTag;
 import com.mylog.model.entity.QTag;
+========
+package com.mylog.tag.repository;
+
+import com.mylog.article.entity.Article;
+
+import com.mylog.article.entity.QArticleTag;
+import com.mylog.tag.entity.QTag;
+>>>>>>>> origin/main:domain/src/main/java/com/mylog/tag/repository/TagRepositoryImpl.java
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

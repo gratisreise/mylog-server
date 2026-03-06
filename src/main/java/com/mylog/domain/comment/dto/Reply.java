@@ -1,7 +1,14 @@
+<<<<<<<< HEAD:src/main/java/com/mylog/domain/comment/dto/Reply.java
 package com.mylog.domain.comment.dto;
 
 import com.mylog.domain.comment.entity.Comment;
 import com.mylog.domain.member.Member;
+========
+package com.mylog.comment.classes;
+
+import com.mylog.comment.entity.Comment;
+import com.mylog.member.entity.Member;
+>>>>>>>> origin/main:domain/src/main/java/com/mylog/comment/classes/Reply.java
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;

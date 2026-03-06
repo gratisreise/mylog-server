@@ -1,4 +1,4 @@
-package com.mylog.common.security;
+package com.mylog.common.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

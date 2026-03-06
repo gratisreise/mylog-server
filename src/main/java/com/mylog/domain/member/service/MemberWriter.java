@@ -1,13 +1,13 @@
 package com.mylog.domain.member.service;
 
-import com.mylog.domain.auth.dto.SignUpRequest;
+import com.mylog.domain.auth.dto.request.SignUpRequest;
 import com.mylog.domain.member.dto.UpdateMemberRequest;
 import com.mylog.domain.member.Member;
 import com.mylog.domain.member.repository.MemberRepository;
 import com.mylog.common.exception.CDuplicatedException;
 import com.mylog.common.exception.CUnAuthorizedException;
 import com.mylog.common.security.CustomUser;
-import com.mylog.external.s3.S3Service;
+import com.mylog.external.s3.S3Provider;
 import com.mylog.domain.category.service.CategoryWriter;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class MemberWriter {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final S3Service s3Service;
+    private final S3Provider s3Provider;
     private final CategoryWriter categoryWriter;
     private final MemberReader memberReader;
 
@@ -87,7 +87,7 @@ public class MemberWriter {
         if(profileImg.equals(originMemberImg)){
             member.update(request, passwordEncoder);
         } else {
-            profileImg = s3Service.upload(file);
+            profileImg = s3Provider.upload(file);
             deleteImage(memberImg);
             member.update(request, profileImg);
         }
@@ -101,6 +101,6 @@ public class MemberWriter {
     }
 
     private void deleteImage(String memberImg) {
-        if(!memberImg.equals(basicImageUrl)) s3Service.deleteImage(memberImg);
+        if(!memberImg.equals(basicImageUrl)) s3Provider.deleteImage(memberImg);
     }
 }
