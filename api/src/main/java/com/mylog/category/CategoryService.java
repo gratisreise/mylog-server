@@ -3,11 +3,14 @@ package com.mylog.category;
 import com.mylog.auth.classes.CustomUser;
 import com.mylog.category.dto.CategoryCreateRequest;
 import com.mylog.category.dto.CategoryResponse;
+import com.mylog.category.dto.CategoryUpdateRequest;
 import com.mylog.category.entity.Category;
 import com.mylog.category.service.CategoryReader;
 import com.mylog.category.service.CategoryWriter;
 import com.mylog.enums.ErrorMessage;
 import com.mylog.exception.ReachedLimitException;
+import com.mylog.exception.common.CUnAuthorizedException;
+import com.mylog.exception.common.CommonError;
 import com.mylog.member.entity.Member;
 import com.mylog.member.service.MemberReader;
 import com.mylog.response.CommonValue;
@@ -43,5 +46,30 @@ public class CategoryService {
             .stream()
             .map(CategoryResponse::from)
             .toList();
+    }
+
+    @Transactional
+    public void updateCategory(CategoryUpdateRequest request, Long categoryId,
+        CustomUser customUser) {
+
+        Category category = categoryReader.getById(categoryId);
+
+        if(category.isOwnedBy(customUser.getMemberId())){
+            throw new CUnAuthorizedException(CommonError.NOT_YOUR_CATEGORY);
+        }
+
+        category.updateCategorName(request.categoryName());
+    }
+
+
+    @Transactional
+    public void deleteCategory(Long categoryId, CustomUser customUser) {
+        Category category = categoryReader.getById(categoryId);
+
+        if(category.isOwnedBy(customUser.getMemberId())){
+            throw new CUnAuthorizedException(CommonError.NOT_YOUR_CATEGORY);
+        }
+
+        categoryWriter.deleteCategoryById(category.getId());
     }
 }

@@ -1,8 +1,7 @@
-package com.mylog.notification.controller;
+package com.mylog.notification;
 
 import com.mylog.auth.classes.CustomUser;
 import com.mylog.common.PageResponse;
-import com.mylog.notification.NotificationService;
 import com.mylog.notification.dto.NotificationResponse;
 import com.mylog.notification.dto.NotificationSettingResponse;
 import com.mylog.response.CommonResult;

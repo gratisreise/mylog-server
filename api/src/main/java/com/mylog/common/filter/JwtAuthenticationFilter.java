@@ -1,7 +1,6 @@
 package com.mylog.common.filter;
 
 import com.mylog.auth.service.TokenBlackListService;
-import com.mylog.exception.auth.AuthError;
 import com.mylog.response.CommonValue;
 import com.mylog.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
