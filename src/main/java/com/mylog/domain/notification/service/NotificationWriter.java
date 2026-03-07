@@ -32,8 +32,4 @@ public class NotificationWriter {
         notificationRepository.save(notification);
     }
 
-    public void readNotification(Long notificationId){
-        notificationReader.getById(notificationId).read();
-    };
-
 }

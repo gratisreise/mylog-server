@@ -1,9 +1,6 @@
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/notification/Notification.java
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/notification/Notification.java
 package com.mylog.domain.notification;
 
 import com.mylog.domain.member.Member;
-import com.mylog.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -30,7 +27,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @Setter
 public class Notification {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
