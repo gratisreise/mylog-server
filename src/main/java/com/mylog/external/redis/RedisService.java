@@ -13,10 +13,14 @@ public class RedisService {
     private static final String RT_PREFIX = "RT:";
     private static final String BL_PREFIX = "BL:";
 
+
+
     // [ RefreshToken ]
-    public void saveRefreshToken(Long memberId, String refreshToken, Duration duration) {
+    private static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(7);
+
+    public void saveRefreshToken(Long memberId, String refreshToken) {
         String key = RT_PREFIX + memberId;
-        redisTemplate.opsForValue().set(key, refreshToken, duration);
+        redisTemplate.opsForValue().set(key, refreshToken, REFRESH_TOKEN_DURATION);
     }
 
     public String getRefreshToken(Long memberId) {

@@ -1,8 +1,8 @@
 package com.mylog.domain.article;
 
-import com.mylog.domain.article.entity.Article;
+import com.mylog.domain.article.dto.request.ArticleCreateRequest;
 import com.mylog.domain.article.reader.ArticleReader;
-import com.mylog.domain.article.service.ArticleWriter;
+import com.mylog.domain.article.writer.ArticleWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

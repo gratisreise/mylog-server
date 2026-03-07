@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final MemberReader memberReader;
-    private final RefreshTokenService refreshTokenService;
     private final TokenService tokenService;
     private final PasswordEncoder encoder;
     private final MemberWriter memberWriter;
@@ -43,16 +42,14 @@ public class AuthService {
 
     //리프레쉬
     public RefreshResponse refresh(RefreshRequest request) {
-
-        String accessToken = jwtProvider.createAccessToken(username, memberId);
-        return new RefreshResponse(accessToken);
+        String refreshToken = request.refreshToken();
+        return tokenService.reissueToken(refreshToken);
     }
 
     //로그아웃
     public void logout(String authHeader, Long memberId) {
 
     }
-
 
     private void validateDuplicateMember(String email) {
         if(memberReader.existsByEmail(email)){
