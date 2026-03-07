@@ -1,9 +1,8 @@
 package com.mylog.domain.comment.service;
 
 import com.mylog.common.exception.CUnAuthorizedException;
-import com.mylog.common.security.CustomUser;
 import com.mylog.domain.article.entity.Article;
-import com.mylog.domain.article.service.ArticleReader;
+import com.mylog.domain.article.reader.ArticleReader;
 import com.mylog.domain.comment.dto.CommentCreateRequest;
 import com.mylog.domain.comment.dto.CommentUpdateRequest;
 import com.mylog.domain.comment.entity.Comment;
@@ -28,9 +27,9 @@ public class CommentWriter {
     private final NotificationWriter notificationWriter;
     private final NotificationSettingWriter notificationSettingWriter;
 
-    public void createComment(Long articleId, CommentCreateRequest request, CustomUser customUser) {
+    public void createComment(Long articleId, CommentCreateRequest request, Long memberId) {
         Article article = articleReader.getArticleById(articleId);
-        Member member = memberReader.getById(customUser.getMemberId());
+        Member member = memberReader.getById(memberId);
 
         Comment comment = request.toEntity(article, member);
         commentRepository.save(comment);
@@ -41,20 +40,20 @@ public class CommentWriter {
         notificationWriter.sendNotification(articleMember, article.getId(), "comment");
     }
 
-    public void updateComment(CommentUpdateRequest request, CustomUser customUser, Long commentId) {
+    public void updateComment(CommentUpdateRequest request, Long memberId, Long commentId) {
         Comment comment = commentReader.getById(commentId);
 
-        if (!comment.isOwnedBy(customUser.getMemberId())) {
+        if (!comment.isOwnedBy(memberId)) {
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         }
 
         comment.update(request.content());
     }
 
-    public void deleteComment(Long commentId, CustomUser customUser){
+    public void deleteComment(Long commentId, Long memberId) {
         Comment comment = commentReader.getById(commentId);
 
-        if (comment.isOwnedBy(customUser.getMemberId())) {
+        if (!comment.isOwnedBy(memberId)) {
             throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
         }
 

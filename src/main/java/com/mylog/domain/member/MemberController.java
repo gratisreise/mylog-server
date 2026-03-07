@@ -1,28 +1,15 @@
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/member/MemberController.java
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/member/MemberController.java
 package com.mylog.domain.member;
 
-import com.mylog.auth.classes.CustomUser;
-import com.mylog.common.response.CommonResult;
-import com.mylog.common.response.ResponseService;
-import com.mylog.common.response.SingleResult;
-import com.mylog.common.security.CustomUser;
-import com.mylog.domain.auth.dto.request.SignUpRequest;
+
+import com.mylog.common.annotations.MemberId;
+import com.mylog.common.response.SuccessResponse;
 import com.mylog.domain.member.dto.MemberResponse;
-import com.mylog.domain.member.dto.UpdateMemberRequest;
-import com.mylog.domain.member.service.MemberReader;
-import com.mylog.domain.member.service.MemberWriter;
-import com.mylog.member.dto.MemberResponse;
-import com.mylog.member.dto.MemberUpdateRequest;
-import com.mylog.response.CommonResult;
-import com.mylog.response.ResponseService;
-import com.mylog.response.SingleResult;
-import com.mylog.s3.S3Service;
+import com.mylog.external.s3.S3Service;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -36,35 +23,38 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @Slf4j
 public class MemberController {
-   private final MemberService memberService;
-   private final S3Service s3Service;
+    private final MemberService memberService;
+    private final S3Service s3Service;
 
     //개인정보조회
     @GetMapping("/me")
     @Operation(summary = "개인정보조회")
-    public SingleResult<MemberResponse> getMember(@AuthenticationPrincipal CustomUser customUser){
-        return ResponseService.getSingleResult(memberService.getMember(customUser));
+    public ResponseEntity<SuccessResponse<MemberResponse>> getMember(
+        @MemberId Long memberId
+    ) {
+        return SuccessResponse.toOk(memberService.getMember(customUser));
     }
 
     //개인정보 수정
     @PutMapping("/me")
     @Operation(summary = "개인정보수정")
-    public CommonResult updateMember(
-        @RequestPart(value="request") @Valid MemberUpdateRequest request,
-        @RequestPart(required = false, value="file") MultipartFile file,
-        @AuthenticationPrincipal CustomUser customUser
+    public ResponseEntity<SuccessResponse<Void>> updateMember(
+        @RequestPart(value = "request") @Valid MemberUpdateRequest request,
+        @RequestPart(required = false, value = "file") MultipartFile file,
+        @MemberId Long memberId
     ) {
         String imageUrl = s3Service.upload(file);
         memberService.updateMember(request, imageUrl, customUser);
-        return ResponseService.getSuccessResult();
+        return SuccessResponse.toOk(null);
     }
 
     //개인정보 삭제
     @DeleteMapping("/me")
     @Operation(summary = "개인정보삭제")
-    public CommonResult deleteMember(@AuthenticationPrincipal CustomUser customUser){
+    public ResponseEntity<SuccessResponse<Void>> deleteMember(
+        @MemberId Long memberId
+    ) {
         memberService.deleteMember(customUser);
-        return ResponseService.getSuccessResult();
+        return SuccessResponse.toOk(null);
     }
-
 }
