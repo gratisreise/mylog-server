@@ -17,6 +17,7 @@ public class JwtProvider {
     private final SecretKey refreshKey;
     private final long accessValidity;
     private final long refreshValidity;
+    private final static String MEMBER_ID = "memberId";
 
     public JwtProvider(
         @Value("${jwt.access_secret}") String accessKey,
@@ -32,13 +33,13 @@ public class JwtProvider {
     }
 
     //[ AccessToken ]
-    public String createAccessToken(String subject, long memberId) {
+    public String createAccessToken(long memberId) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + accessValidity);
 
         return Jwts.builder()
-            .subject(subject)
-            .claim("memberId", memberId)
+            .subject(String.valueOf(memberId))
+            .claim(MEMBER_ID, memberId)
             .issuedAt(now)
             .expiration(validity)
             .signWith(accessKey, Jwts.SIG.HS512)
@@ -60,7 +61,7 @@ public class JwtProvider {
             .build()
             .parseSignedClaims(token)
             .getPayload()
-            .get("memberId", Long.class);
+            .get(MEMBER_ID, Long.class);
     }
 
     public long getExpiration(String accessToken) {
@@ -89,25 +90,35 @@ public class JwtProvider {
     }
 
     // [ RefreshToken ]
-    public String createRefreshToken(String username) {
+    public String createRefreshToken(long memberId) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + refreshValidity);
 
         return Jwts.builder()
-            .subject(username)
+            .subject(String.valueOf(memberId))
+            .claim(MEMBER_ID, memberId)
             .issuedAt(now)
             .expiration(validity)
             .signWith(refreshKey, SIG.HS512)
             .compact();
     }
 
-    public String getRefreshMemberId(String token) {
+    public String getRefreshSubject(String token){
         return Jwts.parser()
             .verifyWith(refreshKey)
             .build()
             .parseSignedClaims(token)
             .getPayload()
             .getSubject();
+    }
+
+    public long getRefreshMemberId(String token) {
+        return Jwts.parser()
+            .verifyWith(refreshKey)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload()
+            .get(MEMBER_ID, Long.class);
     }
 
     public boolean validateRefreshToken(String token) {

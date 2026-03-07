@@ -18,6 +18,7 @@ public class SuccessResponse<T> extends BaseResponse {
         return new SuccessResponse<>(data);
     }
 
+
     public static <T> ResponseEntity<SuccessResponse<T>> toOk(T data) {
         return ResponseEntity.ok(of(data));
     }

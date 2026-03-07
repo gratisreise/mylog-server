@@ -1,20 +1,15 @@
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/category/repository/CategoryRepository.java
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/category/repository/CategoryRepository.java
 package com.mylog.domain.category.repository;
 
-import com.mylog.category.entity.Category;
 import com.mylog.domain.category.Category;
 import com.mylog.domain.member.Member;
-import com.mylog.member.entity.Member;
 import java.util.List;
 import java.util.Optional;
-import java.util.zip.ZipFile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, Long>, CategoryRepositoryCustom {
+public interface CategoryRepository extends JpaRepository<Category, Long>{
 
     Optional<Category> findByMemberIdAndCategoryName(Long memberId, String category);
 

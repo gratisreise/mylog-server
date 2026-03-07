@@ -1,0 +1,41 @@
+spring:
+  profiles:
+    active: dev
+
+# oauth
+oauth:
+  google:
+    client-id: ${GOOGLE_CLIENT_ID:dummy}
+    client-secret: ${GOOGLE_CLIENT_SECRET:dummy}
+    token-url: https://oauth2.googleapis.com/token
+    user-info-url: https://www.googleapis.com/oauth2/v2/userinfo
+    redirect-uri: ${OAUTH_REDIRECT_URI}
+  naver:
+    client-id: ${NAVER_CLIENT_ID:dummy}
+    client-secret: ${NAVER_CLIENT_SECRET:dummy}
+    token-url: https://nid.naver.com/oauth2.0/token
+    user-info-url: https://openapi.naver.com/v1/nid/me
+    redirect-uri: ${OAUTH_REDIRECT_URI}
+  kakao:
+    client-id: ${KAKAO_CLIENT_ID}
+    client-secret: ${KAKAO_CLIENT_SECRET}
+    token-url: https://kauth.kakao.com/oauth/token
+    user-info-url: https://kapi.kakao.com/v2/user/me
+    redirect-uri: ${OAUTH_REDIRECT_URI}
+
+jwt:
+  access_secret: ${ACCESS_TOKEN_SECRET}
+  access_expiration: 86400000  # 1hours
+  refresh_secret: ${REFRESH_TOKEN_SECRET}
+  refresh_expiration: 604800000 #1주
+
+# aws.s3.bucket
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: mylog-imgsource
