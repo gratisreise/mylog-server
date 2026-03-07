@@ -1,32 +1,12 @@
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/article/ArticleController.java
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/article/ArticleController.java
 package com.mylog.domain.article;
 
-
-import com.mylog.article.dto.ArticleCreateRequest;
-import com.mylog.article.dto.ArticleResponse;
-import com.mylog.article.dto.ArticleUpdateRequest;
-import com.mylog.auth.classes.CustomUser;
-import com.mylog.common.PageResponse;
-import com.mylog.common.response.CommonResult;
-import com.mylog.common.response.ListResult;
-import com.mylog.common.response.ResponseService;
-import com.mylog.common.response.SingleResult;
-import com.mylog.common.security.CustomUser;
-import com.mylog.domain.article.dto.ArticleCreateRequest;
-import com.mylog.domain.article.dto.ArticleResponse;
-import com.mylog.domain.article.dto.ArticleTestResponse;
-import com.mylog.domain.article.dto.ArticleUpdateRequest;
-import com.mylog.domain.article.service.ArticleReader;
-import com.mylog.domain.article.service.ArticleWriter;
-import com.mylog.response.CommonResult;
-import com.mylog.response.ResponseService;
-import com.mylog.response.SingleResult;
-import com.mylog.s3.S3Service;
+import com.mylog.common.annotations.MemberId;
+import com.mylog.common.response.PageResponse;
+import com.mylog.domain.article.dto.response.ArticleResponse;
+import com.mylog.external.s3.S3Service;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
@@ -56,10 +36,10 @@ public class ArticleController {
     public CommonResult createArticle(
         @RequestPart(value = "file") MultipartFile file,
         @RequestPart(value = "request") @Valid ArticleCreateRequest request,
-        @AuthenticationPrincipal CustomUser customUser
+        @MemberId Long memberId
     ){
         String imageUrl = s3Service.upload(file); //s3 이미지 생성
-        articleService.createArticle(request, customUser, imageUrl);
+        articleService.createArticle(request, memberId, imageUrl);
         return ResponseService.getSuccessResult();
     }
 

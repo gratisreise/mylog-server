@@ -1,4 +1,4 @@
-package com.mylog.domain.article.dto;
+package com.mylog.domain.article.dto.response;
 
 
 import com.mylog.domain.article.entity.Article;

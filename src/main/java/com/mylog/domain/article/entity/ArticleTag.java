@@ -1,9 +1,6 @@
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/article/entity/ArticleTag.java
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/article/entity/ArticleTag.java
 package com.mylog.domain.article.entity;
 
 import com.mylog.domain.tag.entity.Tag;
-import com.mylog.tag.entity.Tag;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;

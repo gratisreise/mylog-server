@@ -1,25 +1,12 @@
-<<<<<<<< HEAD:src/main/java/com/mylog/external/s3/S3Provider.java
-<<<<<<<< HEAD:src/main/java/com/mylog/external/s3/S3Provider.java
 package com.mylog.external.s3;
 
-========
-package com.mylog.s3;
-
-========
-package com.mylog.s3;
-
->>>>>>>> df0a55de6d27f9fdc5dd1d7257f9e30801976b60:infra/src/main/java/com/mylog/s3/S3Service.java
-
-import com.mylog.exception.ErrorCode;
-import com.mylog.exception.common.CMissingDataException;
-import com.mylog.exception.common.CommonError;
-import java.io.IOException;
+import com.mylog.common.exception.BusinessException;
+import com.mylog.common.exception.ErrorCode;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -28,7 +15,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Component
 @RequiredArgsConstructor
-public class S3Provider {
+public class S3Service {
 
     private final S3Client s3Client;
 
@@ -49,20 +36,13 @@ public class S3Provider {
             .contentType(contentType)
             .build();
 
-<<<<<<<< HEAD:src/main/java/com/mylog/external/s3/S3Provider.java
-========
         try{
-            s3Client.putObject(putObjectRequest,
-                RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-        } catch (RuntimeException | IOException e) {
-            throw new CMissingDataException(CommonError.FAILED_IMAGE_UPLOAD);
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(
+                file.getInputStream(), file.getSize()
+            ));
+        } catch(Exception e){
+            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
->>>>>>>> origin/main:infra/src/main/java/com/mylog/s3/S3Service.java
-
-        s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(
-            file.getInputStream(), file.getSize()
-        ));
-
 
         return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, fileName);
     }

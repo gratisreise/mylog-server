@@ -1,7 +1,6 @@
-package com.mylog.domain.article.repository.impl;
+package com.mylog.domain.article.repository;
 
 
-import com.mylog.domain.article.repository.ArticleTagRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

@@ -1,11 +1,7 @@
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/article/dto/ArticleUpdateRequest.java
-package com.mylog.domain.article.dto;
-========
-package com.mylog.article.dto;
->>>>>>>> origin/main:api/src/main/java/com/mylog/article/dto/ArticleUpdateRequest.java
+package com.mylog.domain.article.dto.request;
 
-import com.mylog.article.entity.Article;
-import com.mylog.category.entity.Category;
+import com.mylog.domain.article.entity.Article;
+import com.mylog.domain.category.Category;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 import org.hibernate.validator.constraints.Length;
