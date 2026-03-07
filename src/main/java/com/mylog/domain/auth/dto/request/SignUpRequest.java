@@ -1,15 +1,11 @@
-<<<<<<<< HEAD:src/main/java/com/mylog/domain/auth/dto/request/SignUpRequest.java
 package com.mylog.domain.auth.dto.request;
 
-import com.mylog.annotations.Password;
+import com.mylog.common.CommonValue;
 import com.mylog.common.enums.OauthProvider;
+import com.mylog.common.validation.Password;
 import com.mylog.domain.member.Member;
-import com.mylog.enums.OauthProvider;
-import com.mylog.member.entity.Member;
-import com.mylog.response.CommonValue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
