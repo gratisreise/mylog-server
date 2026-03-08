@@ -39,13 +39,11 @@ public class Category extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-
-
     public boolean isOwnedBy(Long memberId) {
         return Objects.equals(memberId, member.getId());
     }
 
-    // 정적 팩토리 메서드: 비즈니스 의미를 담은 이름을 부여
+
     public static Category createDefault(Member member) {
         return Category.builder()
             .member(member)

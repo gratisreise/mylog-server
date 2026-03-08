@@ -2,6 +2,8 @@ package com.mylog.domain.category.service;
 
 
 import com.mylog.common.CommonValue;
+import com.mylog.common.exception.BusinessException;
+import com.mylog.common.exception.ErrorCode;
 import com.mylog.domain.category.Category;
 import com.mylog.domain.category.dto.CategoryCreateRequest;
 import com.mylog.domain.category.dto.CategoryUpdateRequest;
@@ -22,24 +24,25 @@ public class CategoryWriter {
     private final CategoryRepository categoryRepository;
     private final CategoryReader categoryReader;
 
-    public void createCategory(CategoryCreateRequest request, long memberId){
+    public Long createCategory(CategoryCreateRequest request, long memberId){
         Member member = memberReader.getById(memberId);
         int categorySize = categoryRepository.countByMember(member);
 
         if(categorySize == CommonValue.CATEGORY_LIMIT){
-            throw new CReachedLimitException("카테고리 갯수가 한도에 도달했습니다.");
+            throw new BusinessException(ErrorCode.CATEGORY_LIMIT_REACHED);
         }
 
         Category category = request.toEntity(member);
 
         categoryRepository.save(category);
+        return category.getId();
     }
 
     @Async
     public void createCategory(Member member){
         Category category = Category.builder()
             .member(member)
-            .categoryName(CommonValue.ORIGIN_CATEGORY)
+            .categoryName(CommonValue.BASIC_CATEGORY)
             .build();
         categoryRepository.save(category);
     }
@@ -48,7 +51,7 @@ public class CategoryWriter {
         Category category = categoryReader.getById(categoryId);
 
         if(!category.isOwnedBy(memberId)){
-            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
+            throw new BusinessException(ErrorCode.CATEGORY_FORBIDDEN);
         }
 
         category.updateCategorName(request.categoryName());
@@ -58,7 +61,7 @@ public class CategoryWriter {
         Category category = categoryReader.getById(categoryId);
 
         if(!category.isOwnedBy(memberId)){
-            throw new CUnAuthorizedException("허용되지 않는 유저입니다.");
+            throw new BusinessException(ErrorCode.CATEGORY_FORBIDDEN);
         }
 
         categoryRepository.deleteById(categoryId);
