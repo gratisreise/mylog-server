@@ -3,7 +3,7 @@ package com.mylog.domain.article.entity;
 import com.mylog.common.db.BaseEntity;
 import com.mylog.common.enums.AnalyzeStatus;
 import com.mylog.domain.category.Category;
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

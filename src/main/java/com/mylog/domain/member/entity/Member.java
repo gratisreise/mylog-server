@@ -1,4 +1,4 @@
-package com.mylog.domain.member;
+package com.mylog.domain.member.entity;
 
 import com.mylog.common.db.BaseEntity;
 import com.mylog.common.enums.OauthProvider;

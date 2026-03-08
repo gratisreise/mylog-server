@@ -17,24 +17,27 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @EnableCaching
 public class RedisConfig {
 
-    @Bean
-    public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-        // 기본 캐시 설정
-        RedisCacheConfiguration rootConfig = RedisCacheConfiguration.defaultCacheConfig()
+  @Bean
+  public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+    // 기본 캐시 설정
+    RedisCacheConfiguration rootConfig =
+        RedisCacheConfiguration.defaultCacheConfig()
             .disableCachingNullValues()
             .entryTtl(Duration.ofMinutes(30L)) // 기본 만료 시간 30분
-            .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+            .serializeKeysWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    new StringRedisSerializer()))
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    new GenericJackson2JsonRedisSerializer()));
 
-        Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
-        cacheConfigurations.put("userCache", rootConfig.entryTtl(Duration.ofHours(1)));
-        cacheConfigurations.put("postCache", rootConfig.entryTtl(Duration.ofMinutes(10)));
+    Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
+    cacheConfigurations.put("userCache", rootConfig.entryTtl(Duration.ofHours(1)));
+    cacheConfigurations.put("postCache", rootConfig.entryTtl(Duration.ofMinutes(10)));
 
-        return RedisCacheManager.RedisCacheManagerBuilder
-            .fromConnectionFactory(connectionFactory)
-            .cacheDefaults(rootConfig) //기본 설정
-            .withInitialCacheConfigurations(cacheConfigurations) //캐시별 설정
-            .build();
-    }
-
+    return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(connectionFactory)
+        .cacheDefaults(rootConfig) // 기본 설정
+        .withInitialCacheConfigurations(cacheConfigurations) // 캐시별 설정
+        .build();
+  }
 }

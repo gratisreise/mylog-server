@@ -3,7 +3,7 @@ package com.mylog.domain.article.repository.impl;
 import com.mylog.domain.article.dto.response.ArticleResponse;
 import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.article.repository.ArticleRepositoryCustom;
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

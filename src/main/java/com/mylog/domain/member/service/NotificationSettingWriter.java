@@ -1,11 +1,10 @@
-package com.mylog.domain.notificationsetting.service;
+package com.mylog.domain.member.service;
 
-import com.mylog.common.exception.CMissingDataException;
-import com.mylog.common.security.CustomUser;
-import com.mylog.domain.member.Member;
-import com.mylog.domain.member.service.MemberReader;
-import com.mylog.domain.notificationsetting.NotificationSetting;
-import com.mylog.domain.notificationsetting.repository.NotificationSettingRepository;
+import com.mylog.common.exception.BusinessException;
+import com.mylog.common.exception.ErrorCode;
+import com.mylog.domain.member.entity.Member;
+import com.mylog.domain.member.entity.NotificationSetting;
+import com.mylog.domain.member.repository.NotificationSettingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class NotificationSettingWriter {
     private final NotificationSettingRepository notificationSettingRepository;
-    private final MemberReader memberReader;
 
 
     @Async
@@ -33,14 +31,11 @@ public class NotificationSettingWriter {
     }
 
     //알림끄기
-    public void toggleNotification(CustomUser customUser, String type){
-        Member member = memberReader.getByCustomUser(customUser);
+    public void toggleNotification(Long memberId, String type){
         notificationSettingRepository
-            .findByMemberAndType(member, type)
-            .orElseThrow(CMissingDataException::new)
+            .findByMemberIdAndType(memberId, type)
+            .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND))
             .toggle();
-    };
-
-
+    }
 
 }

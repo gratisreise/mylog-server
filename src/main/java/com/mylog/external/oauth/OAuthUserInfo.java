@@ -1,15 +1,14 @@
 package com.mylog.external.oauth;
 
-
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 
 public interface OAuthUserInfo {
 
-    String id();
+  String id();
 
-    String name();
+  String name();
 
-    String profileImage();
+  String profileImage();
 
-    Member toEntity();
+  Member toEntity();
 }

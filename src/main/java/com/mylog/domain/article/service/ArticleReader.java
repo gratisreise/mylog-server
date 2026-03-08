@@ -1,13 +1,13 @@
-package com.mylog.domain.article;
+package com.mylog.domain.article.service;
 
 import com.mylog.domain.article.dto.request.ArticleSearchRequest;
 import com.mylog.domain.article.dto.response.ArticleResponse;
 import com.mylog.domain.article.dto.response.ArticleTestResponse;
 import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.article.repository.ArticleRepository;
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.service.MemberReader;
-import com.mylog.domain.tag.service.TagReader;
+import com.mylog.domain.article.service.TagReader;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

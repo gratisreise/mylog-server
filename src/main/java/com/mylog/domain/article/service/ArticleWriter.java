@@ -1,4 +1,4 @@
-package com.mylog.domain.article;
+package com.mylog.domain.article.service;
 
 import com.mylog.common.exception.BusinessException;
 import com.mylog.common.exception.ErrorCode;
@@ -8,9 +8,9 @@ import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.article.repository.ArticleRepository;
 import com.mylog.domain.category.Category;
 import com.mylog.domain.category.service.CategoryReader;
-import com.mylog.domain.member.Member;
+import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.service.MemberReader;
-import com.mylog.domain.tag.service.TagWriter;
+import com.mylog.domain.article.service.TagWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

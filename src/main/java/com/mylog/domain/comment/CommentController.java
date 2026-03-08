@@ -52,7 +52,7 @@ public class CommentController {
         @PageableDefault(sort = "createdAt", direction = Direction.DESC)
         Pageable pageable
     ) {
-        Page<CommentArticleResponse> comments = commentReader.getComments(articleId, pageable);
+        Page<CommentArticleResponse> comments = commentReader.getComments1(articleId, pageable);
         return SuccessResponse.toOk(PageResponse.from(comments));
     }
 
@@ -84,7 +84,7 @@ public class CommentController {
         @MemberId Long memberId
     ) {
         commentWriter.updateComment(request, memberId, commentId);
-        return SuccessResponse.toOk(null);
+        return SuccessResponse.toNoContent();
     }
 
     @DeleteMapping("/comments/{commentId}")
@@ -94,6 +94,6 @@ public class CommentController {
         @MemberId Long memberId
     ) {
         commentWriter.deleteComment(commentId, memberId);
-        return SuccessResponse.toNoContent(null);
+        return SuccessResponse.toNoContent();
     }
 }

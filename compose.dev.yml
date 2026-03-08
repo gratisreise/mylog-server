@@ -1,0 +1,30 @@
+# 실행: docker compose -f compose.dev.yml up -d --force-recreate
+# 중지: docker compose -f compose.dev.yml down
+name: mylog-dev
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-dev-data:/data
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-dev-data:/var/lib/postgresql/data
+
+volumes:
+  redis-dev-data:
+  postgres-dev-data:

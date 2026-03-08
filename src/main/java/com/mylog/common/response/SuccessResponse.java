@@ -27,10 +27,11 @@ public class SuccessResponse<T> extends BaseResponse {
         return ResponseEntity.status(HttpStatus.CREATED).body(of(data));
     }
 
-    public static <T> ResponseEntity<SuccessResponse<T>> toNoContent(T data) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(of(data));
+    public static <T> ResponseEntity<SuccessResponse<T>> toNoContent() {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(of(null));
     }
 
+    //임시용도 확장성 위해 임시로 설정
     public static <T> ResponseEntity<SuccessResponse<T>> to(HttpStatus status, T data) {
         return ResponseEntity.status(status).body(of(data));
     }

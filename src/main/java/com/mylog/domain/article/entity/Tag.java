@@ -1,28 +1,24 @@
-package com.mylog.domain.tag.entity;
+package com.mylog.domain.article.entity;
 
+import com.mylog.common.db.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
 @Getter
 @Setter
-public class Tag {
+public class Tag extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,10 +26,9 @@ public class Tag {
     @Column(length = 10, unique = true)
     private String tagName;
 
-    @CreatedDate
-    private LocalDate createdAt;
-
-    public Tag(String tagName) {
-        this.tagName = tagName;
+    public static Tag from(String tagname){
+        return Tag.builder()
+            .tagName(tagname)
+            .build();
     }
 }

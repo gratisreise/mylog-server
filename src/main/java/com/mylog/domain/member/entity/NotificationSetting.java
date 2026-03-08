@@ -1,6 +1,5 @@
-package com.mylog.domain.notificationsetting;
+package com.mylog.domain.member.entity;
 
-import com.mylog.domain.member.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

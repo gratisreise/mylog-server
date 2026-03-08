@@ -5,6 +5,8 @@ import com.mylog.domain.article.dto.request.ArticleCreateRequest;
 import com.mylog.domain.article.dto.request.ArticleSearchRequest;
 import com.mylog.domain.article.dto.request.ArticleUpdateRequest;
 import com.mylog.domain.article.dto.response.ArticleResponse;
+import com.mylog.domain.article.service.ArticleReader;
+import com.mylog.domain.article.service.ArticleWriter;
 import com.mylog.external.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +27,10 @@ public class ArticleService {
 
     public void updateArticle(ArticleUpdateRequest request, Long memberId,
                               MultipartFile file, Long articleId) {
-        String imageUrl = s3Service.upload(file);
+        String imageUrl = null;
+        if (file != null && !file.isEmpty()) {
+            imageUrl = s3Service.upload(file);
+        }
         articleWriter.update(request, memberId, imageUrl, articleId);
     }
 

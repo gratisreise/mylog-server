@@ -1,7 +1,7 @@
-package com.mylog.domain.notificationsetting.repository;
+package com.mylog.domain.member.repository;
 
-import com.mylog.domain.member.Member;
-import com.mylog.domain.notificationsetting.NotificationSetting;
+import com.mylog.domain.member.entity.Member;
+import com.mylog.domain.member.entity.NotificationSetting;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

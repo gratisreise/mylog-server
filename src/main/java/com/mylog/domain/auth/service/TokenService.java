@@ -1,39 +1,55 @@
 package com.mylog.domain.auth.service;
 
+import com.mylog.common.CommonValue;
 import com.mylog.common.exception.BusinessException;
 import com.mylog.common.exception.ErrorCode;
 import com.mylog.common.security.JwtProvider;
 import com.mylog.domain.auth.dto.response.LoginResponse;
 import com.mylog.domain.auth.dto.response.RefreshResponse;
 import com.mylog.external.redis.RedisService;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class TokenService {
-    private final JwtProvider jwtProvider;
-    private final RedisService redisService;
+  private final JwtProvider jwtProvider;
+  private final RedisService redisService;
 
+  // 로그인 토큰 생성
+  public LoginResponse generateToken(long memberId) {
+    String accessToken = jwtProvider.createAccessToken(memberId);
+    String refreshToken = jwtProvider.createRefreshToken(memberId);
+    redisService.saveRefreshToken(memberId, refreshToken);
+    return LoginResponse.of(accessToken, refreshToken);
+  }
 
-    //로그인 토큰 생성
-    public LoginResponse generateToken(long  memberId){
-        String accessToken = jwtProvider.createAccessToken(memberId);
-        String refreshToken = jwtProvider.createRefreshToken(memberId);
-        redisService.saveRefreshToken(memberId, refreshToken);
-        return new LoginResponse(accessToken, refreshToken);
+  // 토큰재발급
+  public RefreshResponse reissueToken(String refreshToken) {
+    // 1. 토큰 검증
+    jwtProvider.validateRefreshToken(refreshToken);
+
+    // 2. memberId 추출
+    Long memberId = jwtProvider.getRefreshMemberId(refreshToken);
+
+    // 3. Redis 대조 (저장된 RT와 일치하는지)
+    String storedRT = redisService.getRefreshToken(memberId);
+    if (!refreshToken.equals(storedRT)) {
+      throw new BusinessException(ErrorCode.TOKEN_INVALID);
     }
 
-    //토큰재발급
-    public RefreshResponse reissueToken(String token) {
-        if(redisService.isBlacklisted(token)){
-            throw new BusinessException(ErrorCode.TOKEN_INVALID);
-        }
-        long memberId = jwtProvider.getRefreshMemberId(token);
-        String accessToken = jwtProvider.createAccessToken(memberId);
-        String refreshToken = jwtProvider.createRefreshToken(memberId);
-        redisService.addBlacklist(token, jwtProvider.getRefreshExpiration(token));
-        return new RefreshResponse(accessToken, refreshToken);
-    }
+    // 4. 기존 RT 삭제 (블랙리스트 대신)
+    redisService.deleteRefreshToken(memberId);
+
+    // 5. 새 토큰 발급
+    String newAT = jwtProvider.createAccessToken(memberId);
+    String newRT = jwtProvider.createRefreshToken(memberId);
+    redisService.saveRefreshToken(memberId, newRT);
+
+    return RefreshResponse.of(newAT, newRT);
+  }
+
+  public static String extractToken(String token) {
+    return token.replace(CommonValue.AUTH_PREFIX, "");
+  }
 }

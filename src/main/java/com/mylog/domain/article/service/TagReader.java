@@ -1,7 +1,11 @@
-package com.mylog.domain.tag.service;
+package com.mylog.domain.article.service;
 
+
+import com.mylog.common.exception.BusinessException;
+import com.mylog.common.exception.ErrorCode;
 import com.mylog.domain.article.entity.Article;
-import com.mylog.domain.tag.entity.Tag;
+import com.mylog.domain.article.entity.Tag;
+import com.mylog.domain.article.repository.TagRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +23,7 @@ public class TagReader {
 
     public Tag getTagByTagName(String tagName){
         return tagRepository.findByTagName(tagName)
-            .orElseThrow(CMissingDataException::new);
+            .orElseThrow(() -> new BusinessException(ErrorCode.TAG_NOT_FOUND));
     }
 
 }

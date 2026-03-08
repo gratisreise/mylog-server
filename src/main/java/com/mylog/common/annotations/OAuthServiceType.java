@@ -1,6 +1,5 @@
 package com.mylog.common.annotations;
 
-
 import com.mylog.common.enums.OauthProvider;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,5 +11,5 @@ import org.springframework.stereotype.Component;
 @Retention(RetentionPolicy.RUNTIME)
 @Component
 public @interface OAuth2ServiceType {
-    OauthProvider value();
+  OauthProvider value();
 }
