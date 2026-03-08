@@ -2,6 +2,8 @@ package com.mylog.domain.category.service;
 
 
 import com.mylog.common.CommonValue;
+import com.mylog.common.exception.BusinessException;
+import com.mylog.common.exception.ErrorCode;
 import com.mylog.domain.category.Category;
 import com.mylog.domain.category.dto.CategoryResponse;
 import com.mylog.domain.category.repository.CategoryRepository;
@@ -36,11 +38,19 @@ public class CategoryReader {
 
     public Category getByMemberIdAndCategoryName(Long memberId, String categoryName) {
         return categoryRepository.findByMemberIdAndCategoryName(memberId, categoryName)
-            .orElseThrow(CMissingDataException::new);
+            .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND));
     }
 
     public Category getById(Long categoryId) {
         return categoryRepository.findById(categoryId)
-            .orElseThrow(CMissingDataException::new);
+            .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND));
+    }
+
+    public CategoryResponse getCategory(Long categoryId, Long memberId) {
+        Category category = getById(categoryId);
+        if (!category.isOwnedBy(memberId)) {
+            throw new BusinessException(ErrorCode.CATEGORY_FORBIDDEN);
+        }
+        return new CategoryResponse(category);
     }
 }

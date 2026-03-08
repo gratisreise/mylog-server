@@ -1,8 +1,8 @@
 package com.mylog.domain.category;
 
+
 import com.mylog.common.annotations.MemberId;
 import com.mylog.common.response.SuccessResponse;
-import com.mylog.common.security.CustomUser;
 import com.mylog.domain.category.dto.CategoryCreateRequest;
 import com.mylog.domain.category.dto.CategoryResponse;
 import com.mylog.domain.category.dto.CategoryUpdateRequest;
@@ -10,10 +10,10 @@ import com.mylog.domain.category.service.CategoryReader;
 import com.mylog.domain.category.service.CategoryWriter;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,12 +33,12 @@ public class CategoryController {
     //카테고리 생성
     @PostMapping
     @Operation(summary = "카테고리 생성")
-    public ResponseEntity<SuccessResponse<Void>> createCategory(
+    public ResponseEntity<SuccessResponse<Long>> createCategory(
         @RequestBody @Valid CategoryCreateRequest request,
         @MemberId Long memberId
     ) {
-        categoryWriter.createCategory(request, memberId);
-        return SuccessResponse.toCreated(null);
+        Long categoryId = categoryWriter.createCategory(request, memberId);
+        return SuccessResponse.toCreated(categoryId);
     }
 
     //카테고리 조회
@@ -50,11 +50,21 @@ public class CategoryController {
         return SuccessResponse.toOk(categoryReader.getCategories(memberId));
     }
 
+    //카테고리 단일 조회
+    @GetMapping("/{categoryId}")
+    @Operation(summary = "카테고리 단일 조회")
+    public ResponseEntity<SuccessResponse<CategoryResponse>> getCategory(
+        @PathVariable @Min(1) Long categoryId,
+        @MemberId Long memberId
+    ) {
+        return SuccessResponse.toOk(categoryReader.getCategory(categoryId, memberId));
+    }
+
     //카테고리 수정
     @PutMapping("/{categoryId}")
     @Operation(summary = "카테고리 수정")
     public ResponseEntity<SuccessResponse<Void>> updateCategory(
-        @PathVariable Long categoryId,
+        @PathVariable @Min(1) Long categoryId,
         @RequestBody @Valid CategoryUpdateRequest request,
         @MemberId Long memberId
     ) {
@@ -66,7 +76,7 @@ public class CategoryController {
     @DeleteMapping("/{categoryId}")
     @Operation(summary = "카테고리 삭제")
     public ResponseEntity<SuccessResponse<Void>> deleteCategory(
-        @PathVariable Long categoryId,
+        @PathVariable @Min(1) Long categoryId,
         @MemberId Long memberId
     ) {
         categoryWriter.deleteCategory(categoryId, memberId);

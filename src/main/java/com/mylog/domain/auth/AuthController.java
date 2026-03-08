@@ -39,7 +39,7 @@ public class AuthController {
 
     @Operation(summary = "이메일 로그인")
     @PostMapping("/login")
-    public ResponseEntity<SuccessResponse<LoginResponse>> login(@RequestBody LoginRequest request){
+    public ResponseEntity<SuccessResponse<LoginResponse>> login(@RequestBody @Valid LoginRequest request){
         LoginResponse response = authService.login(request);
         return SuccessResponse.toOk(response);
     }
