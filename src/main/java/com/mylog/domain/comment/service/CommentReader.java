@@ -1,7 +1,9 @@
 package com.mylog.domain.comment.service;
 
-import com.mylog.common.exception.CMissingDataException;
-import com.mylog.domain.article.reader.ArticleReader;
+
+import com.mylog.common.exception.BusinessException;
+import com.mylog.common.exception.ErrorCode;
+import com.mylog.domain.article.ArticleReader;
 import com.mylog.domain.comment.dto.CommentArticleResponse;
 import com.mylog.domain.comment.dto.CommentResponse;
 import com.mylog.domain.comment.dto.Reply;
@@ -42,7 +44,7 @@ public class CommentReader {
     //게시글 상세 댓글 목록조회
     public Page<CommentArticleResponse> getComments(Long articleId, Pageable pageable) {
         if (!articleReader.isExists(articleId)) {
-            throw new CMissingDataException("존재하지 않는 게시글 입니다.");
+            throw new BusinessException(ErrorCode.COMMENT_ARTICLE_NOT_FOUND);
         }
 
         return commentRepository.findByArticle_IdAndParentId(articleId, 0L, pageable)
@@ -50,7 +52,8 @@ public class CommentReader {
     }
 
     public Comment getById(Long commentId) {
-        return commentRepository.findById(commentId).orElseThrow(CMissingDataException::new);
+        return commentRepository.findById(commentId)
+            .orElseThrow(() -> new BusinessException(ErrorCode.COMMENT_NOT_FOUND));
     }
 
     private CommentArticleResponse getCommentArticleResponse(Comment comment) {

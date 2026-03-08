@@ -1,5 +1,7 @@
 package com.mylog.domain.notification.service;
 
+import com.mylog.common.exception.BusinessException;
+import com.mylog.common.exception.ErrorCode;
 import com.mylog.domain.member.Member;
 import com.mylog.domain.notification.Notification;
 import com.mylog.domain.notification.repository.NotificationRepository;
@@ -30,6 +32,18 @@ public class NotificationWriter {
             .build();
 
         notificationRepository.save(notification);
+    }
+
+    //알림 읽음 처리
+    public void readNotification(Long memberId, Long notificationId) {
+        Notification notification = notificationReader.getById(notificationId);
+
+        //소유권 검증
+        if (!notification.getMember().getId().equals(memberId)) {
+            throw new BusinessException(ErrorCode.ACCESS_DENIED);
+        }
+
+        notification.read();
     }
 
 }
