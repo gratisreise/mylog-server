@@ -30,23 +30,24 @@ class CommentWriterTest {
 
   @Mock private CommentRepository commentRepository;
   @Mock private CommentReader commentReader;
-    @Mock private MemberReader memberReader;
-    @Mock private ArticleReader articleReader;
-    @Mock private NotificationWriter notificationWriter;
-    @Mock private NotificationSettingWriter notificationSettingWriter;
+  @Mock private MemberReader memberReader;
+  @Mock private ArticleReader articleReader;
+  @Mock private NotificationWriter notificationWriter;
+  @Mock private NotificationSettingWriter notificationSettingWriter;
 
-    @InjectMocks private CommentWriter commentWriter;
-    private static final Long MEMBER_ID = 1L;
-    private static final Long OTHER_MEMBER_ID = 2L;
-    private static final Long ARTICLE_ID = 1L;
-    private static final Long COMMENT_ID = 1L;
-    private static final String CONTENT = "테스트 댓글 내용입니다.";
-    private static final String UPDATED_CONTENT = "수정된 댓글 내용입니다.";
-    private static final String NICKNAME = "테스트유저";
-    private static final String EMAIL = "test@example.com";
-    @Nested
-    @DisplayName("createComment 메서드")
-    class CreateComment {
+  @InjectMocks private CommentWriter commentWriter;
+  private static final Long MEMBER_ID = 1L;
+  private static final Long OTHER_MEMBER_ID = 2L;
+  private static final Long ARTICLE_ID = 1L;
+  private static final Long COMMENT_ID = 1L;
+  private static final String CONTENT = "테스트 댓글 내용입니다.";
+  private static final String UPDATED_CONTENT = "수정된 댓글 내용입니다.";
+  private static final String NICKNAME = "테스트유저";
+  private static final String EMAIL = "test@example.com";
+
+  @Nested
+  @DisplayName("createComment 메서드")
+  class CreateComment {
     @Test
     @DisplayName("성공: 댓글 정상 생성 (알림 발송 포함)")
     void createComment_Success() {
@@ -81,15 +82,14 @@ class CommentWriterTest {
       then(articleReader).should().getArticleById(ARTICLE_ID);
       then(memberReader).should().getById(MEMBER_ID);
       then(commentRepository).should().save(savedComment);
-      then(notificationSettingWriter)
-          .should()
-          .createNotificationSetting(articleAuthor, "comment");
+      then(notificationSettingWriter).should().createNotificationSetting(articleAuthor, "comment");
       then(notificationWriter).should().sendNotification(articleAuthor, ARTICLE_ID, "comment");
     }
   }
-    @Nested
-    @DisplayName("updateComment 메서드")
-    class UpdateComment {
+
+  @Nested
+  @DisplayName("updateComment 메서드")
+  class UpdateComment {
     @Test
     @DisplayName("성공: 본인 댓글 정상 수정")
     void updateComment_Success() {
@@ -105,6 +105,7 @@ class CommentWriterTest {
       assertThat(comment.getContent()).isEqualTo(UPDATED_CONTENT);
       then(commentReader).should().getById(COMMENT_ID);
     }
+
     @Test
     @DisplayName("실패: 타인의 댓글 수정 시도 → COMMENT_FORBIDDEN 예외")
     void updateComment_Forbidden() {
@@ -121,6 +122,7 @@ class CommentWriterTest {
           .isEqualTo(ErrorCode.COMMENT_FORBIDDEN);
       then(commentReader).should().getById(COMMENT_ID);
     }
+
     @Test
     @DisplayName("실패: 존재하지 않는 댓글 → COMMENT_NOT_FOUND 예외")
     void updateComment_NotFound() {
@@ -136,9 +138,10 @@ class CommentWriterTest {
       then(commentReader).should().getById(COMMENT_ID);
     }
   }
-    @Nested
-    @DisplayName("deleteComment 메서드")
-    class DeleteComment {
+
+  @Nested
+  @DisplayName("deleteComment 메서드")
+  class DeleteComment {
     @Test
     @DisplayName("성공: 본인 댓글 정상 삭제")
     void deleteComment_Success() {
@@ -154,6 +157,7 @@ class CommentWriterTest {
       then(commentReader).should().getById(COMMENT_ID);
       then(commentRepository).should().deleteById(COMMENT_ID);
     }
+
     @Test
     @DisplayName("실패: 타인의 댓글 삭제 시도 → COMMENT_FORBIDDEN 예외")
     void deleteComment_Forbidden() {
@@ -170,6 +174,7 @@ class CommentWriterTest {
       then(commentReader).should().getById(COMMENT_ID);
       then(commentRepository).should(never()).deleteById(any());
     }
+
     @Test
     @DisplayName("실패: 존재하지 않는 댓글 → COMMENT_NOT_FOUND 예외")
     void deleteComment_NotFound() {
@@ -185,6 +190,7 @@ class CommentWriterTest {
       then(commentRepository).should(never()).deleteById(any());
     }
   }
+
   private Member createMember(Long id) {
     return Member.builder()
         .id(id)
@@ -194,6 +200,7 @@ class CommentWriterTest {
         .profileImg("https://example.com/profile.jpg")
         .build();
   }
+
   private Article createArticle(Member member) {
     return Article.builder()
         .id(ARTICLE_ID)
@@ -202,6 +209,7 @@ class CommentWriterTest {
         .content("테스트 게시글 내용입니다.")
         .build();
   }
+
   private Comment createComment(Article article, Member member) {
     return Comment.builder()
         .id(COMMENT_ID)

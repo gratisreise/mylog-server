@@ -21,7 +21,9 @@ public class MemberWriter {
     memberRepository.deleteById(memberId);
   }
 
-  public void save(Member member) {}
+  public void save(Member member) {
+    memberRepository.save(member);
+  }
 
   public Member saveOrUpdate(Member entity) {
     return memberRepository

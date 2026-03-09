@@ -8,10 +8,12 @@ import com.mylog.domain.auth.dto.response.LoginResponse;
 import com.mylog.domain.auth.dto.response.RefreshResponse;
 import com.mylog.external.redis.RedisService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TokenService {
   private final JwtProvider jwtProvider;
   private final RedisService redisService;
@@ -34,6 +36,8 @@ public class TokenService {
 
     // 3. Redis 대조 (저장된 RT와 일치하는지)
     String storedRT = redisService.getRefreshToken(memberId);
+    log.info("저장{}",storedRT);
+    log.info("요청{}",refreshToken);
     if (!refreshToken.equals(storedRT)) {
       throw new BusinessException(ErrorCode.TOKEN_INVALID);
     }

@@ -38,7 +38,8 @@ class MemberWriterTest {
     void update_Success() {
       // given
       Member member = createMember();
-      UpdateMemberRequest request = new UpdateMemberRequest("password1!", "테스트", NICKNAME, BIO, IMAGE_URL);
+      UpdateMemberRequest request =
+          new UpdateMemberRequest("password1!", "테스트", NICKNAME, BIO, IMAGE_URL);
 
       // when
       memberWriter.update(member, request, IMAGE_URL);
@@ -77,10 +78,8 @@ class MemberWriterTest {
     void saveOrUpdate_ExistingMember() {
       // given
       Member existingMember = createMember();
-      Member newMember = Member.builder()
-          .provider(OauthProvider.GOOGLE)
-          .providerId("google-12345")
-          .build();
+      Member newMember =
+          Member.builder().provider(OauthProvider.GOOGLE).providerId("google-12345").build();
 
       given(memberRepository.findByProviderAndProviderId(OauthProvider.GOOGLE, "google-12345"))
           .willReturn(Optional.of(existingMember));
@@ -91,7 +90,9 @@ class MemberWriterTest {
       // then
       assertThat(result).isEqualTo(existingMember);
       assertThat(result.getId()).isEqualTo(MEMBER_ID);
-      then(memberRepository).should().findByProviderAndProviderId(OauthProvider.GOOGLE, "google-12345");
+      then(memberRepository)
+          .should()
+          .findByProviderAndProviderId(OauthProvider.GOOGLE, "google-12345");
       then(memberRepository).should(never()).save(any());
     }
 
@@ -99,18 +100,20 @@ class MemberWriterTest {
     @DisplayName("성공: 기존 회원이 없으면 새 회원 저장")
     void saveOrUpdate_NewMember() {
       // given
-      Member newMember = Member.builder()
-          .provider(OauthProvider.GOOGLE)
-          .providerId("google-12345")
-          .memberName("새회원")
-          .build();
+      Member newMember =
+          Member.builder()
+              .provider(OauthProvider.GOOGLE)
+              .providerId("google-12345")
+              .memberName("새회원")
+              .build();
 
-      Member savedMember = Member.builder()
-          .id(2L)
-          .provider(OauthProvider.GOOGLE)
-          .providerId("google-12345")
-          .memberName("새회원")
-          .build();
+      Member savedMember =
+          Member.builder()
+              .id(2L)
+              .provider(OauthProvider.GOOGLE)
+              .providerId("google-12345")
+              .memberName("새회원")
+              .build();
 
       given(memberRepository.findByProviderAndProviderId(OauthProvider.GOOGLE, "google-12345"))
           .willReturn(Optional.empty());
@@ -121,7 +124,9 @@ class MemberWriterTest {
 
       // then
       assertThat(result.getId()).isEqualTo(2L);
-      then(memberRepository).should().findByProviderAndProviderId(OauthProvider.GOOGLE, "google-12345");
+      then(memberRepository)
+          .should()
+          .findByProviderAndProviderId(OauthProvider.GOOGLE, "google-12345");
       then(memberRepository).should().save(newMember);
     }
   }

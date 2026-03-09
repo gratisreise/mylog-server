@@ -1,6 +1,7 @@
 package com.mylog.common.security;
 
 import java.util.List;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +10,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -29,8 +29,7 @@ public class SecurityConfig {
   private final ExceptionHandlerFilter exceptionHandlerFilter;
 
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http)
-      throws Exception {
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     return http.cors(Customizer.withDefaults())
         .csrf(AbstractHttpConfigurer::disable)
         .formLogin(AbstractHttpConfigurer::disable)
@@ -48,8 +47,10 @@ public class SecurityConfig {
         // 요청 정책
         .authorizeHttpRequests(
             auth ->
-                auth.requestMatchers(WHITELIST).permitAll() // 해당 url 허용
-                    .anyRequest().authenticated() // 나머지 접근 방지
+                auth.requestMatchers(WHITELIST)
+                    .permitAll() // 해당 url 허용
+                    .anyRequest()
+                    .authenticated() // 나머지 접근 방지
             )
 
         // jwt 커스텀 필터
@@ -61,16 +62,31 @@ public class SecurityConfig {
         .build();
   }
 
-  private static final String[] WHITELIST = {
-    "/api/auth/**",
-    "/api/members/sign-up",
+  // API - 인증/회원
+  private static final String[] AUTH_WHITELIST = {
+    "/api/auth/register",
+      "/api/auth/login",
+      "/api/oauth/login",
+      "/api/auth/refresh",
+  };
+
+  // 개발 도구
+  private static final String[] DEV_WHITELIST = {
     "/swagger-ui/**",
     "/v3/api-docs/**",
     "/h2-console/**",
-    "/actuator/**",
-    "/api/tests/**",
-    "/api/articles/all/**"
   };
+
+  // 모니터링
+  private static final String[] MONITOR_WHITELIST = {
+    "/actuator/**",
+  };
+
+  private static final String[] WHITELIST =
+      Stream.of(AUTH_WHITELIST, DEV_WHITELIST, MONITOR_WHITELIST)
+          .flatMap(Stream::of)
+          .toArray(String[]::new);
+
 
   @Bean
   public PasswordEncoder passwordEncoder() {

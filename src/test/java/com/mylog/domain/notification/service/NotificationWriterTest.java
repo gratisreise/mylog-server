@@ -106,7 +106,7 @@ class NotificationWriterTest {
       // when & then
       assertThatThrownBy(() -> notificationWriter.readNotification(otherMemberId, NOTIFICATION_ID))
           .isInstanceOf(BusinessException.class)
-          .extracting("errorCode")
+          .extracting("code")
           .isEqualTo(ErrorCode.ACCESS_DENIED);
 
       then(notification).should(never()).read();

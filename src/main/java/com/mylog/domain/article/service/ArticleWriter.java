@@ -29,7 +29,7 @@ public class ArticleWriter {
     Category category = categoryReader.getByMemberIdAndCategoryName(memberId, request.category());
 
     Article article = request.toEntity(member, category, imageUrl);
-    Article savedArticle  = articleRepository.save(article);
+    Article savedArticle = articleRepository.save(article);
 
     if (request.tagNames() != null && !request.tagNames().isEmpty()) {
       tagWriter.saveTag(request.tagNames(), article);

@@ -22,7 +22,8 @@ public class ArticleService {
   private final ArticleWriter articleWriter;
   private final S3Service s3Service;
 
-  public ArticleCreateResponse createArticle(ArticleCreateRequest request, Long memberId, MultipartFile file) {
+  public ArticleCreateResponse createArticle(
+      ArticleCreateRequest request, Long memberId, MultipartFile file) {
     String imageUrl = s3Service.upload(file);
     Article article = articleWriter.create(request, memberId, imageUrl);
     return ArticleCreateResponse.from(article.getId());

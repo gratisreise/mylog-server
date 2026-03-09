@@ -75,11 +75,12 @@ class NotificationSettingWriterTest {
     void toggleNotification_Success() {
       // given
       Member member = createMember();
-      NotificationSetting setting = NotificationSetting.builder()
-          .member(member)
-          .type(NOTIFICATION_TYPE)
-          .disabled(false)
-          .build();
+      NotificationSetting setting =
+          NotificationSetting.builder()
+              .member(member)
+              .type(NOTIFICATION_TYPE)
+              .disabled(false)
+              .build();
 
       given(notificationSettingRepository.findByMemberIdAndType(MEMBER_ID, NOTIFICATION_TYPE))
           .willReturn(Optional.of(setting));
@@ -88,7 +89,9 @@ class NotificationSettingWriterTest {
       notificationSettingWriter.toggleNotification(MEMBER_ID, NOTIFICATION_TYPE);
 
       // then
-      then(notificationSettingRepository).should().findByMemberIdAndType(MEMBER_ID, NOTIFICATION_TYPE);
+      then(notificationSettingRepository)
+          .should()
+          .findByMemberIdAndType(MEMBER_ID, NOTIFICATION_TYPE);
     }
 
     @Test
@@ -105,7 +108,9 @@ class NotificationSettingWriterTest {
           .extracting("code")
           .isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
 
-      then(notificationSettingRepository).should().findByMemberIdAndType(MEMBER_ID, NOTIFICATION_TYPE);
+      then(notificationSettingRepository)
+          .should()
+          .findByMemberIdAndType(MEMBER_ID, NOTIFICATION_TYPE);
     }
   }
 

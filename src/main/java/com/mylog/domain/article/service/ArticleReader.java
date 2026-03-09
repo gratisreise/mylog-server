@@ -75,8 +75,10 @@ public class ArticleReader {
 
   // 게시글 상세
   public ArticleResponse getArticle(Long id) {
-    Article article = articleRepository.findById(id)
-        .orElseThrow(() -> new BusinessException(ErrorCode.ARTICLE_NOT_FOUND));
+    Article article =
+        articleRepository
+            .findById(id)
+            .orElseThrow(() -> new BusinessException(ErrorCode.ARTICLE_NOT_FOUND));
     return new ArticleResponse(article, List.of());
   }
 

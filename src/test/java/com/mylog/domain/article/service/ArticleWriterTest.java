@@ -104,8 +104,7 @@ class ArticleWriterTest {
     void create_WithTags_Success() {
       // given
       List<String> tags = List.of("태그1", "태그2");
-      ArticleCreateRequest request =
-          new ArticleCreateRequest("테스트 제목", "테스트 내용입니다", "일상", tags);
+      ArticleCreateRequest request = new ArticleCreateRequest("테스트 제목", "테스트 내용입니다", "일상", tags);
       Member member = createMember();
       Category category = createCategory();
 
@@ -186,7 +185,8 @@ class ArticleWriterTest {
       given(articleRepository.findById(ARTICLE_ID)).willReturn(Optional.of(article));
 
       // when & then
-      assertThatThrownBy(() -> articleWriter.update(request, OTHER_MEMBER_ID, IMAGE_URL, ARTICLE_ID))
+      assertThatThrownBy(
+              () -> articleWriter.update(request, OTHER_MEMBER_ID, IMAGE_URL, ARTICLE_ID))
           .isInstanceOf(BusinessException.class)
           .extracting("code")
           .isEqualTo(ErrorCode.ACCESS_DENIED);

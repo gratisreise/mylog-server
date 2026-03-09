@@ -33,14 +33,14 @@ public class CommentWriter {
     Member member = memberReader.getById(memberId);
 
     Comment comment = request.toEntity(article, member);
-    commentRepository.save(comment);
+    Comment savedComment = commentRepository.save(comment);
 
     // 게시글 작성자에게 알림을 보냄
     Member articleMember = article.getMember();
     notificationSettingWriter.createNotificationSetting(articleMember, "comment");
     notificationWriter.sendNotification(articleMember, article.getId(), "comment");
 
-    return comment.getId();
+    return savedComment.getId();
   }
 
   public void updateComment(CommentUpdateRequest request, Long memberId, Long commentId) {

@@ -126,8 +126,7 @@ class ArticleReaderTest {
     void search_AllByKeyword_Success() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
-      ArticleSearchRequest request =
-          new ArticleSearchRequest("테스트", null, null, null, pageable);
+      ArticleSearchRequest request = new ArticleSearchRequest("테스트", null, null, null, pageable);
 
       ArticleResponse response =
           new ArticleResponse(ARTICLE_ID, "제목", "내용", "홍길동", "일상", null, List.of(), null, null);
@@ -149,8 +148,7 @@ class ArticleReaderTest {
     void search_AllByTag_Success() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
-      ArticleSearchRequest request =
-          new ArticleSearchRequest(null, "태그1", null, null, pageable);
+      ArticleSearchRequest request = new ArticleSearchRequest(null, "태그1", null, null, pageable);
 
       ArticleResponse response =
           new ArticleResponse(ARTICLE_ID, "제목", "내용", "홍길동", "일상", null, List.of(), null, null);
@@ -193,8 +191,7 @@ class ArticleReaderTest {
     void search_NoCondition_Success() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
-      ArticleSearchRequest request =
-          new ArticleSearchRequest(null, null, null, null, pageable);
+      ArticleSearchRequest request = new ArticleSearchRequest(null, null, null, null, pageable);
 
       ArticleResponse response =
           new ArticleResponse(ARTICLE_ID, "제목", "내용", "홍길동", "일상", null, List.of(), null, null);
@@ -224,8 +221,7 @@ class ArticleReaderTest {
       Page<ArticleResponse> expectedPage = new PageImpl<>(List.of(response));
 
       given(memberReader.getById(MEMBER_ID)).willReturn(member);
-      given(articleRepository.searchMineByTitle(member, "테스트", pageable))
-          .willReturn(expectedPage);
+      given(articleRepository.searchMineByTitle(member, "테스트", pageable)).willReturn(expectedPage);
 
       // when
       Page<ArticleResponse> result = articleReader.search(request);
