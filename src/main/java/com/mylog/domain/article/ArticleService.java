@@ -4,9 +4,13 @@ import com.mylog.common.response.PageResponse;
 import com.mylog.domain.article.dto.request.ArticleCreateRequest;
 import com.mylog.domain.article.dto.request.ArticleSearchRequest;
 import com.mylog.domain.article.dto.request.ArticleUpdateRequest;
+import com.mylog.domain.article.dto.request.StyleTransformRequest;
 import com.mylog.domain.article.dto.response.ArticleCreateResponse;
 import com.mylog.domain.article.dto.response.ArticleResponse;
+import com.mylog.domain.article.dto.response.ArticleSummaryResponse;
+import com.mylog.domain.article.dto.response.StyleTransformResponse;
 import com.mylog.domain.article.entity.Article;
+import com.mylog.domain.article.service.AiService;
 import com.mylog.domain.article.service.ArticleReader;
 import com.mylog.domain.article.service.ArticleWriter;
 import com.mylog.external.s3.S3Service;
@@ -21,6 +25,7 @@ public class ArticleService {
   private final ArticleReader articleReader;
   private final ArticleWriter articleWriter;
   private final S3Service s3Service;
+  private final AiService aiService;
 
   public ArticleCreateResponse createArticle(
       ArticleCreateRequest request, Long memberId, MultipartFile file) {
@@ -66,5 +71,18 @@ public class ArticleService {
     ArticleSearchRequest request =
         new ArticleSearchRequest(keyword, tag, categoryId, memberId, pageable);
     return PageResponse.from(articleReader.search(request));
+  }
+
+  // AI 문체 변환
+  public StyleTransformResponse transformWritingStyle(StyleTransformRequest request) {
+    String transformed = aiService.transformWritingStyle(request.content(), request.writingStyle());
+    return StyleTransformResponse.of(transformed, request.writingStyle().name());
+  }
+
+  // AI 요약 조회
+  public ArticleSummaryResponse getArticleSummary(Long articleId) {
+    Article article = articleReader.getArticleById(articleId);
+    return ArticleSummaryResponse.of(
+        articleId, article.getAiSummary(), article.getAiSummaryStatus());
   }
 }

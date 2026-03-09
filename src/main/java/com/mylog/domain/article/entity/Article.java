@@ -69,4 +69,9 @@ public class Article extends BaseEntity {
   public void markAiSummaryFailed() {
     this.aiSummaryStatus = AnalyzeStatus.FAILED;
   }
+
+  public void resetAiSummaryStatus() {
+    this.aiSummaryStatus = AnalyzeStatus.PENDING;
+    this.aiSummary = null;
+  }
 }
