@@ -56,8 +56,7 @@ class NotificationReaderTest {
               .type(TYPE)
               .build();
 
-      given(notificationRepository.findById(NOTIFICATION_ID))
-          .willReturn(Optional.of(notification));
+      given(notificationRepository.findById(NOTIFICATION_ID)).willReturn(Optional.of(notification));
 
       // when
       Notification result = notificationReader.getById(NOTIFICATION_ID);
@@ -78,7 +77,7 @@ class NotificationReaderTest {
       // when & then
       assertThatThrownBy(() -> notificationReader.getById(NOTIFICATION_ID))
           .isInstanceOf(BusinessException.class)
-          .extracting("errorCode")
+          .extracting("code")
           .isEqualTo(ErrorCode.NOTIFICATION_NOT_FOUND);
     }
   }

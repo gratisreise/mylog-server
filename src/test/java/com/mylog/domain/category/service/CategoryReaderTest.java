@@ -43,10 +43,13 @@ class CategoryReaderTest {
   @BeforeEach
   void setUp() {
     member = Member.builder().id(MEMBER_ID).build();
-    category =
-        Category.builder().id(CATEGORY_ID).member(member).categoryName("개발").build();
+    category = Category.builder().id(CATEGORY_ID).member(member).categoryName("개발").build();
     basicCategory =
-        Category.builder().id(CATEGORY_ID + 1).member(member).categoryName(CommonValue.BASIC_CATEGORY).build();
+        Category.builder()
+            .id(CATEGORY_ID + 1)
+            .member(member)
+            .categoryName(CommonValue.BASIC_CATEGORY)
+            .build();
   }
 
   @Nested

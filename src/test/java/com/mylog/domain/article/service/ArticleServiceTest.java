@@ -102,15 +102,12 @@ class ArticleServiceTest {
     void updateArticle_WithNewImage() {
       // given
       ArticleUpdateRequest request =
-          new ArticleUpdateRequest(
-              "수정된 제목", "수정된 내용", "일상", "홍길동", List.of("태그1"));
+          new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동", List.of("태그1"));
       MultipartFile file = mock(MultipartFile.class);
 
       given(file.isEmpty()).willReturn(false);
       given(s3Service.upload(file)).willReturn(IMAGE_URL);
-      willDoNothing()
-          .given(articleWriter)
-          .update(request, MEMBER_ID, IMAGE_URL, ARTICLE_ID);
+      willDoNothing().given(articleWriter).update(request, MEMBER_ID, IMAGE_URL, ARTICLE_ID);
 
       // when
       articleService.updateArticle(request, MEMBER_ID, file, ARTICLE_ID);
@@ -125,8 +122,7 @@ class ArticleServiceTest {
     void updateArticle_WithoutNewImage() {
       // given
       ArticleUpdateRequest request =
-          new ArticleUpdateRequest(
-              "수정된 제목", "수정된 내용", "일상", "홍길동", List.of("태그1"));
+          new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동", List.of("태그1"));
       MultipartFile file = mock(MultipartFile.class);
 
       given(file.isEmpty()).willReturn(true);
@@ -145,8 +141,7 @@ class ArticleServiceTest {
     void updateArticle_WithNullFile() {
       // given
       ArticleUpdateRequest request =
-          new ArticleUpdateRequest(
-              "수정된 제목", "수정된 내용", "일상", "홍길동", List.of("태그1"));
+          new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동", List.of("태그1"));
 
       willDoNothing().given(articleWriter).update(request, MEMBER_ID, null, ARTICLE_ID);
 
@@ -187,15 +182,7 @@ class ArticleServiceTest {
       // given
       ArticleResponse expectedResponse =
           new ArticleResponse(
-              ARTICLE_ID,
-              "제목",
-              "내용",
-              "홍길동",
-              "일상",
-              IMAGE_URL,
-              List.of("태그1"),
-              null,
-              null);
+              ARTICLE_ID, "제목", "내용", "홍길동", "일상", IMAGE_URL, List.of("태그1"), null, null);
 
       given(articleReader.getArticle(ARTICLE_ID)).willReturn(expectedResponse);
 

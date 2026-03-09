@@ -39,11 +39,12 @@ class NotificationSettingReaderTest {
     void isDisabled_True() {
       // given
       Member member = createMember();
-      NotificationSetting setting = NotificationSetting.builder()
-          .member(member)
-          .type(NOTIFICATION_TYPE)
-          .disabled(true)
-          .build();
+      NotificationSetting setting =
+          NotificationSetting.builder()
+              .member(member)
+              .type(NOTIFICATION_TYPE)
+              .disabled(true)
+              .build();
 
       given(notificationSettingRepository.findByMemberIdAndType(MEMBER_ID, NOTIFICATION_TYPE))
           .willReturn(Optional.of(setting));
@@ -53,7 +54,9 @@ class NotificationSettingReaderTest {
 
       // then
       assertThat(result).isTrue();
-      then(notificationSettingRepository).should().findByMemberIdAndType(MEMBER_ID, NOTIFICATION_TYPE);
+      then(notificationSettingRepository)
+          .should()
+          .findByMemberIdAndType(MEMBER_ID, NOTIFICATION_TYPE);
     }
 
     @Test
@@ -61,11 +64,12 @@ class NotificationSettingReaderTest {
     void isDisabled_False() {
       // given
       Member member = createMember();
-      NotificationSetting setting = NotificationSetting.builder()
-          .member(member)
-          .type(NOTIFICATION_TYPE)
-          .disabled(false)
-          .build();
+      NotificationSetting setting =
+          NotificationSetting.builder()
+              .member(member)
+              .type(NOTIFICATION_TYPE)
+              .disabled(false)
+              .build();
 
       given(notificationSettingRepository.findByMemberIdAndType(MEMBER_ID, NOTIFICATION_TYPE))
           .willReturn(Optional.of(setting));
@@ -75,7 +79,9 @@ class NotificationSettingReaderTest {
 
       // then
       assertThat(result).isFalse();
-      then(notificationSettingRepository).should().findByMemberIdAndType(MEMBER_ID, NOTIFICATION_TYPE);
+      then(notificationSettingRepository)
+          .should()
+          .findByMemberIdAndType(MEMBER_ID, NOTIFICATION_TYPE);
     }
 
     @Test
@@ -92,7 +98,9 @@ class NotificationSettingReaderTest {
           .extracting("code")
           .isEqualTo(ErrorCode.NOTIFICATION_NOT_FOUND);
 
-      then(notificationSettingRepository).should().findByMemberIdAndType(MEMBER_ID, NOTIFICATION_TYPE);
+      then(notificationSettingRepository)
+          .should()
+          .findByMemberIdAndType(MEMBER_ID, NOTIFICATION_TYPE);
     }
   }
 
@@ -105,22 +113,17 @@ class NotificationSettingReaderTest {
     void getNotificationSettings_Success() {
       // given
       Member member = createMember();
-      NotificationSetting setting1 = NotificationSetting.builder()
-          .member(member)
-          .type("COMMENT")
-          .disabled(false)
-          .build();
-      NotificationSetting setting2 = NotificationSetting.builder()
-          .member(member)
-          .type("LIKE")
-          .disabled(true)
-          .build();
+      NotificationSetting setting1 =
+          NotificationSetting.builder().member(member).type("COMMENT").disabled(false).build();
+      NotificationSetting setting2 =
+          NotificationSetting.builder().member(member).type("LIKE").disabled(true).build();
 
       given(notificationSettingRepository.findByMemberId(MEMBER_ID))
           .willReturn(List.of(setting1, setting2));
 
       // when
-      List<NotificationSettingResponse> result = notificationSettingReader.getNotificationSettings(MEMBER_ID);
+      List<NotificationSettingResponse> result =
+          notificationSettingReader.getNotificationSettings(MEMBER_ID);
 
       // then
       assertThat(result).hasSize(2);
@@ -135,11 +138,11 @@ class NotificationSettingReaderTest {
     @DisplayName("성공: 알림 설정이 없으면 빈 목록 반환")
     void getNotificationSettings_EmptyList() {
       // given
-      given(notificationSettingRepository.findByMemberId(MEMBER_ID))
-          .willReturn(List.of());
+      given(notificationSettingRepository.findByMemberId(MEMBER_ID)).willReturn(List.of());
 
       // when
-      List<NotificationSettingResponse> result = notificationSettingReader.getNotificationSettings(MEMBER_ID);
+      List<NotificationSettingResponse> result =
+          notificationSettingReader.getNotificationSettings(MEMBER_ID);
 
       // then
       assertThat(result).isEmpty();

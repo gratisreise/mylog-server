@@ -93,7 +93,11 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
             .fetchJoin()
             .join(article.category, category)
             .fetchJoin()
-            .where(article.member.eq(memberParam).and(article.title.lower().like("%" + keyword.toLowerCase() + "%")))
+            .where(
+                article
+                    .member
+                    .eq(memberParam)
+                    .and(article.title.lower().like("%" + keyword.toLowerCase() + "%")))
             .orderBy(article.createdAt.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -103,7 +107,11 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         jpaQueryFactory
             .select(article.count())
             .from(article)
-            .where(article.member.eq(memberParam).and(article.title.lower().like("%" + keyword.toLowerCase() + "%")))
+            .where(
+                article
+                    .member
+                    .eq(memberParam)
+                    .and(article.title.lower().like("%" + keyword.toLowerCase() + "%")))
             .fetchOne();
 
     List<ArticleResponse> responses =

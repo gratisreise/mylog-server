@@ -45,8 +45,7 @@ class CategoryWriterTest {
   @BeforeEach
   void setUp() {
     member = Member.builder().id(MEMBER_ID).build();
-    category =
-        Category.builder().id(CATEGORY_ID).member(member).categoryName("개발").build();
+    category = Category.builder().id(CATEGORY_ID).member(member).categoryName("개발").build();
   }
 
   @Nested
@@ -61,11 +60,14 @@ class CategoryWriterTest {
 
       given(memberReader.getById(MEMBER_ID)).willReturn(member);
       given(categoryRepository.countByMember(member)).willReturn(5);
-      willAnswer(invocation -> {
-        Category savedCategory = invocation.getArgument(0);
-        savedCategory.setId(CATEGORY_ID);
-        return savedCategory;
-      }).given(categoryRepository).save(any(Category.class));
+      willAnswer(
+              invocation -> {
+                Category savedCategory = invocation.getArgument(0);
+                savedCategory.setId(CATEGORY_ID);
+                return savedCategory;
+              })
+          .given(categoryRepository)
+          .save(any(Category.class));
 
       // when
       Long result = categoryWriter.createCategory(request, MEMBER_ID);

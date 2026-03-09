@@ -41,14 +41,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private String resolveToken(HttpServletRequest request) {
     String bearerToken = request.getHeader("Authorization");
-    int start = CommonValue.AUTH_PREFIX.length();
-    if (isTokenEmpty(bearerToken, start)) {
-      throw new BusinessException(ErrorCode.TOKEN_EMPTY);
+    if (!StringUtils.hasText(bearerToken)) {
+      return null;
     }
+    int start = CommonValue.AUTH_PREFIX.length();
     return bearerToken.substring(start);
   }
 
-  private static boolean isTokenEmpty(String bearerToken, int start) {
-    return !StringUtils.hasText(bearerToken) || !StringUtils.hasText(bearerToken.substring(start));
-  }
 }

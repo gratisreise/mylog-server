@@ -61,7 +61,8 @@ class MemberServiceTest {
     void updateMember_Success() {
       // given
       Member member = createMember();
-      UpdateMemberRequest request = new UpdateMemberRequest("password1!", "테스트", NICKNAME, BIO, IMAGE_URL);
+      UpdateMemberRequest request =
+          new UpdateMemberRequest("password1!", "테스트", NICKNAME, BIO, IMAGE_URL);
 
       given(memberReader.getById(MEMBER_ID)).willReturn(member);
       willDoNothing().given(memberWriter).update(member, request, IMAGE_URL);
