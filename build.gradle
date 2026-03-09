@@ -40,6 +40,9 @@ dependencies {
     annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
     annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
 
+    // AI
+    implementation 'com.google.genai:google-genai:1.40.0'
+
     // AWS S3
     implementation "software.amazon.awssdk:s3:${awsS3Version}"
 
@@ -56,6 +59,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 }
+tasks.named('build') {
+    dependsOn 'spotlessApply'
+}
+
 
 spotless {
     java {

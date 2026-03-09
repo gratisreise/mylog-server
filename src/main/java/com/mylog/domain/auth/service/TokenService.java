@@ -36,8 +36,8 @@ public class TokenService {
 
     // 3. Redis 대조 (저장된 RT와 일치하는지)
     String storedRT = redisService.getRefreshToken(memberId);
-    log.info("저장{}",storedRT);
-    log.info("요청{}",refreshToken);
+    log.info("저장{}", storedRT);
+    log.info("요청{}", refreshToken);
     if (!refreshToken.equals(storedRT)) {
       throw new BusinessException(ErrorCode.TOKEN_INVALID);
     }
