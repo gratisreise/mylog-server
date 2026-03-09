@@ -5,6 +5,7 @@ import com.mylog.common.exception.BusinessException;
 import com.mylog.common.exception.ErrorCode;
 import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.article.repository.ArticleRepository;
+import com.mylog.domain.member.entity.CustomWritingStyle;
 import com.mylog.external.gemini.GeminiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,13 @@ public class AiService {
   public String transformWritingStyle(String content, WritingStyle style) {
     log.info("문체 변환 시작: style={}", style);
     String prompt = style.generatePrompt(content);
+    return geminiService.gemini(prompt);
+  }
+
+  // 동기: 커스텀 문체 변환
+  public String transformWithCustomStyle(String content, CustomWritingStyle customStyle) {
+    log.info("커스텀 문체 변환 시작: styleId={}, name={}", customStyle.getId(), customStyle.getName());
+    String prompt = customStyle.generatePrompt(content);
     return geminiService.gemini(prompt);
   }
 

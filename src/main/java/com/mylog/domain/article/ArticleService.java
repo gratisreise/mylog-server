@@ -1,5 +1,6 @@
 package com.mylog.domain.article;
 
+import com.mylog.common.enums.WritingStyle;
 import com.mylog.common.response.PageResponse;
 import com.mylog.domain.article.dto.request.ArticleCreateRequest;
 import com.mylog.domain.article.dto.request.ArticleSearchRequest;
@@ -13,6 +14,8 @@ import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.article.service.AiService;
 import com.mylog.domain.article.service.ArticleReader;
 import com.mylog.domain.article.service.ArticleWriter;
+import com.mylog.domain.member.entity.CustomWritingStyle;
+import com.mylog.domain.member.service.CustomWritingStyleReader;
 import com.mylog.external.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +29,7 @@ public class ArticleService {
   private final ArticleWriter articleWriter;
   private final S3Service s3Service;
   private final AiService aiService;
+  private final CustomWritingStyleReader customWritingStyleReader;
 
   public ArticleCreateResponse createArticle(
       ArticleCreateRequest request, Long memberId, MultipartFile file) {
@@ -74,9 +78,23 @@ public class ArticleService {
   }
 
   // AI 문체 변환
-  public StyleTransformResponse transformWritingStyle(StyleTransformRequest request) {
-    String transformed = aiService.transformWritingStyle(request.content(), request.writingStyle());
-    return StyleTransformResponse.of(transformed, request.writingStyle().name());
+  public StyleTransformResponse transformWritingStyle(StyleTransformRequest request, Long memberId) {
+    String transformed;
+    String styleName;
+
+    if (request.customStyleId() != null) {
+      // 커스텀 스타일 사용
+      CustomWritingStyle customStyle = customWritingStyleReader.getByIdAndMemberId(request.customStyleId(), memberId);
+      transformed = aiService.transformWithCustomStyle(request.content(), customStyle);
+      styleName = customStyle.getName();
+    } else {
+      // 공통 스타일 사용
+      WritingStyle style = request.writingStyle();
+      transformed = aiService.transformWritingStyle(request.content(), style);
+      styleName = style.name();
+    }
+
+    return StyleTransformResponse.of(transformed, styleName);
   }
 
   // AI 요약 조회

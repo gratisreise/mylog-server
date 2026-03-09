@@ -314,14 +314,14 @@ class ArticleServiceTest {
     @DisplayName("성공: 문체 변환")
     void transformWritingStyle_Success() {
       // given
-      StyleTransformRequest request = new StyleTransformRequest("테스트 내용입니다", WritingStyle.FRIENDLY);
+      StyleTransformRequest request = new StyleTransformRequest("테스트 내용입니다", WritingStyle.FRIENDLY, null);
       String transformedContent = "변환된 내용이에요~ 😊";
 
       given(aiService.transformWritingStyle("테스트 내용입니다", WritingStyle.FRIENDLY))
           .willReturn(transformedContent);
 
       // when
-      StyleTransformResponse result = articleService.transformWritingStyle(request);
+      StyleTransformResponse result = articleService.transformWritingStyle(request, MEMBER_ID);
 
       // then
       assertThat(result.transformedContent()).isEqualTo(transformedContent);

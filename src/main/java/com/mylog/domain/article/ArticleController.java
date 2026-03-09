@@ -117,8 +117,8 @@ public class ArticleController {
   @PostMapping("/transform-style")
   @Operation(summary = "AI 문체 변환")
   public ResponseEntity<SuccessResponse<StyleTransformResponse>> transformWritingStyle(
-      @RequestBody @Valid StyleTransformRequest request) {
-    return SuccessResponse.toOk(articleService.transformWritingStyle(request));
+      @RequestBody @Valid StyleTransformRequest request, @MemberId Long memberId) {
+    return SuccessResponse.toOk(articleService.transformWritingStyle(request, memberId));
   }
 
   @GetMapping("/{articleId}/summary")
