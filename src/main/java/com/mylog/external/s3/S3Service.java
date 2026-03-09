@@ -17,46 +17,43 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 @RequiredArgsConstructor
 public class S3Service {
 
-    private final S3Client s3Client;
+  private final S3Client s3Client;
 
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucketName;
+  @Value("${cloud.aws.s3.bucket}")
+  private String bucketName;
 
-    //이미지 업로드
-    public String upload(MultipartFile file)  {
+  // 이미지 업로드
+  public String upload(MultipartFile file) {
 
-        if(file == null || file.isEmpty()) return null;
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        String contentType = file.getContentType();
-        String region = "ap-northeast-2";
+    if (file == null || file.isEmpty()) return null;
+    String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+    String contentType = file.getContentType();
+    String region = "ap-northeast-2";
 
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+    PutObjectRequest putObjectRequest =
+        PutObjectRequest.builder()
             .bucket(bucketName)
             .key(fileName)
             .contentType(contentType)
             .build();
 
-        try{
-            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(
-                file.getInputStream(), file.getSize()
-            ));
-        } catch(Exception e){
-            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
-
-        return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, fileName);
+    try {
+      s3Client.putObject(
+          putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+    } catch (Exception e) {
+      throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
     }
 
-    // 이미지 삭제
-    @Async
-    public void deleteImage(String url) {
-        String fileKey = url.substring(url.lastIndexOf("/") + 1);
-        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-            .bucket(bucketName)
-            .key(fileKey)
-            .build();
+    return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, fileName);
+  }
 
-        s3Client.deleteObject(deleteObjectRequest);
-    }
+  // 이미지 삭제
+  @Async
+  public void deleteImage(String url) {
+    String fileKey = url.substring(url.lastIndexOf("/") + 1);
+    DeleteObjectRequest deleteObjectRequest =
+        DeleteObjectRequest.builder().bucket(bucketName).key(fileKey).build();
 
+    s3Client.deleteObject(deleteObjectRequest);
+  }
 }

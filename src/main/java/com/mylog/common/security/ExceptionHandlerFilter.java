@@ -16,18 +16,19 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
-    private final ObjectMapper objectMapper;
+  private final ObjectMapper objectMapper;
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-        FilterChain filterChain) throws ServletException, IOException {
-        try {
-            filterChain.doFilter(request, response);
-        } catch (BusinessException e) {
-            ErrorResponse errorResponse = ErrorResponse.from(e.getCode());
-            response.setStatus(e.getCode().getStatus());
-            response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-        }
+  @Override
+  protected void doFilterInternal(
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      throws ServletException, IOException {
+    try {
+      filterChain.doFilter(request, response);
+    } catch (BusinessException e) {
+      ErrorResponse errorResponse = ErrorResponse.from(e.getCode());
+      response.setStatus(e.getCode().getStatus());
+      response.setContentType("application/json;charset=UTF-8");
+      response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
+  }
 }

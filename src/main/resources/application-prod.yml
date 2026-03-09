@@ -19,12 +19,3 @@ spring:
 sentry:
   dsn: ${SENTRY_DSN}
   environment: production
-
-management:
-  endpoint:
-    health:
-      show-details: when_authorized
-  endpoints:
-    web:
-      exposure:
-        include: health, info, prometheus

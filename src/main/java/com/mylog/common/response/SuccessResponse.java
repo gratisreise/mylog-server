@@ -7,32 +7,31 @@ import org.springframework.http.ResponseEntity;
 
 @Getter
 public class SuccessResponse<T> extends BaseResponse {
-    private final T data;
+  private final T data;
 
-    private SuccessResponse(T data) {
-        super(true, LocalDateTime.now());
-        this.data = data;
-    }
+  private SuccessResponse(T data) {
+    super(true, LocalDateTime.now());
+    this.data = data;
+  }
 
-    private static <T> SuccessResponse<T> of(T data) {
-        return new SuccessResponse<>(data);
-    }
+  private static <T> SuccessResponse<T> of(T data) {
+    return new SuccessResponse<>(data);
+  }
 
+  public static <T> ResponseEntity<SuccessResponse<T>> toOk(T data) {
+    return ResponseEntity.ok(of(data));
+  }
 
-    public static <T> ResponseEntity<SuccessResponse<T>> toOk(T data) {
-        return ResponseEntity.ok(of(data));
-    }
+  public static <T> ResponseEntity<SuccessResponse<T>> toCreated(T data) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(of(data));
+  }
 
-    public static <T> ResponseEntity<SuccessResponse<T>> toCreated(T data) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(of(data));
-    }
+  public static <T> ResponseEntity<SuccessResponse<T>> toNoContent() {
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(of(null));
+  }
 
-    public static <T> ResponseEntity<SuccessResponse<T>> toNoContent() {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(of(null));
-    }
-
-    //임시용도 확장성 위해 임시로 설정
-    public static <T> ResponseEntity<SuccessResponse<T>> to(HttpStatus status, T data) {
-        return ResponseEntity.status(status).body(of(data));
-    }
+  // 임시용도 확장성 위해 임시로 설정
+  public static <T> ResponseEntity<SuccessResponse<T>> to(HttpStatus status, T data) {
+    return ResponseEntity.status(status).body(of(data));
+  }
 }

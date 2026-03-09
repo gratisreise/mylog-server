@@ -30,7 +30,7 @@ public class NotificationReader {
   public Page<NotificationResponse> receiveNotification(Long memberId, Pageable pageable) {
     Member member = memberReader.getById(memberId);
     return notificationRepository
-        .findByMemberAndRead(member, pageable)
+        .findByMemberAndReadTrue(member, pageable)
         .map(NotificationResponse::from);
   }
   ;

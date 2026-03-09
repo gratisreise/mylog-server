@@ -13,136 +13,119 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtProvider {
-    private final SecretKey accessKey;
-    private final SecretKey refreshKey;
-    private final long accessValidity;
-    private final long refreshValidity;
-    private final static String MEMBER_ID = "memberId";
+  private final SecretKey accessKey;
+  private final SecretKey refreshKey;
+  private final long accessValidity;
+  private final long refreshValidity;
+  private static final String MEMBER_ID = "memberId";
 
-    public JwtProvider(
-        @Value("${jwt.access_secret}") String accessKey,
-        @Value("${jwt.refresh_secret}") String refreshKey,
-        @Value("${jwt.access_expiration}") long accessValidity,
-        @Value("${jwt.refresh_expiration}") long refreshValidity
-    ) {
-        // HMAC SHA-512 알고리즘을 사용하는 키 생성
-        this.accessKey = Keys.hmacShaKeyFor(accessKey.getBytes());
-        this.refreshKey = Keys.hmacShaKeyFor(refreshKey.getBytes());
-        this.accessValidity = accessValidity;
-        this.refreshValidity = refreshValidity;
-    }
+  public JwtProvider(
+      @Value("${jwt.access_secret}") String accessKey,
+      @Value("${jwt.refresh_secret}") String refreshKey,
+      @Value("${jwt.access_expiration}") long accessValidity,
+      @Value("${jwt.refresh_expiration}") long refreshValidity) {
+    // HMAC SHA-512 알고리즘을 사용하는 키 생성
+    this.accessKey = Keys.hmacShaKeyFor(accessKey.getBytes());
+    this.refreshKey = Keys.hmacShaKeyFor(refreshKey.getBytes());
+    this.accessValidity = accessValidity;
+    this.refreshValidity = refreshValidity;
+  }
 
-    //[ AccessToken ]
-    public String createAccessToken(long memberId) {
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + accessValidity);
+  // [ AccessToken ]
+  public String createAccessToken(long memberId) {
+    Date now = new Date();
+    Date validity = new Date(now.getTime() + accessValidity);
 
-        return Jwts.builder()
-            .subject(String.valueOf(memberId))
-            .claim(MEMBER_ID, memberId)
-            .issuedAt(now)
-            .expiration(validity)
-            .signWith(accessKey, Jwts.SIG.HS512)
-            .compact();
-    }
+    return Jwts.builder()
+        .subject(String.valueOf(memberId))
+        .claim(MEMBER_ID, memberId)
+        .issuedAt(now)
+        .expiration(validity)
+        .signWith(accessKey, Jwts.SIG.HS512)
+        .compact();
+  }
 
-    public String getUsername(String token) {
-        return Jwts.parser()
-            .verifyWith(accessKey)
-            .build()
-            .parseSignedClaims(token)
-            .getPayload()
-            .getSubject();
-    }
+  public String getUsername(String token) {
+    return Jwts.parser()
+        .verifyWith(accessKey)
+        .build()
+        .parseSignedClaims(token)
+        .getPayload()
+        .getSubject();
+  }
 
-    public Long getMemberId(String token){
-        return Jwts.parser()
-            .verifyWith(accessKey)
-            .build()
-            .parseSignedClaims(token)
-            .getPayload()
-            .get(MEMBER_ID, Long.class);
-    }
+  public Long getMemberId(String token) {
+    return Jwts.parser()
+        .verifyWith(accessKey)
+        .build()
+        .parseSignedClaims(token)
+        .getPayload()
+        .get(MEMBER_ID, Long.class);
+  }
 
-    public long getExpiration(String accessToken) {
-        Date expiration = Jwts.parser()
-            .verifyWith(accessKey)
-            .build()
-            .parseSignedClaims(accessToken)
-            .getPayload()
-            .getExpiration();
-        long now = new Date().getTime();
-        return (expiration.getTime() - now);
-    }
-
-    public boolean validateAccessToken(String token) {
-        try {
-            Jwts.parser()
-                .verifyWith(accessKey)
-                .build()
-                .parseSignedClaims(token);
-            return true;
-        } catch (ExpiredJwtException e) {
-            throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
-        } catch (RuntimeException e) {
-            throw new BusinessException(ErrorCode.TOKEN_INVALID);
-        }
-    }
-
-    // [ RefreshToken ]
-    public String createRefreshToken(long memberId) {
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + refreshValidity);
-
-        return Jwts.builder()
-            .subject(String.valueOf(memberId))
-            .claim(MEMBER_ID, memberId)
-            .issuedAt(now)
-            .expiration(validity)
-            .signWith(refreshKey, SIG.HS512)
-            .compact();
-    }
-
-    public String getRefreshSubject(String token){
-        return Jwts.parser()
-            .verifyWith(refreshKey)
-            .build()
-            .parseSignedClaims(token)
-            .getPayload()
-            .getSubject();
-    }
-
-    public long getRefreshMemberId(String token) {
-        return Jwts.parser()
-            .verifyWith(refreshKey)
-            .build()
-            .parseSignedClaims(token)
-            .getPayload()
-            .get(MEMBER_ID, Long.class);
-    }
-
-    public long getRefreshExpiration(String accessToken) {
-        Date expiration = Jwts.parser()
+  public long getExpiration(String accessToken) {
+    Date expiration =
+        Jwts.parser()
             .verifyWith(accessKey)
             .build()
             .parseSignedClaims(accessToken)
             .getPayload()
             .getExpiration();
-        long now = new Date().getTime();
-        return (expiration.getTime() - now);
-    }
+    long now = new Date().getTime();
+    return (expiration.getTime() - now);
+  }
 
-    public boolean validateRefreshToken(String token) {
-        try {
-            Jwts.parser()
-                .verifyWith(refreshKey)
-                .build()
-                .parseSignedClaims(token);
-            return true;
-        } catch (ExpiredJwtException e) {
-            throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
-        } catch (RuntimeException e) {
-            throw new BusinessException(ErrorCode.TOKEN_INVALID);
-        }
+  public boolean validateAccessToken(String token) {
+    try {
+      Jwts.parser().verifyWith(accessKey).build().parseSignedClaims(token);
+      return true;
+    } catch (ExpiredJwtException e) {
+      throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
+    } catch (RuntimeException e) {
+      throw new BusinessException(ErrorCode.TOKEN_INVALID);
     }
+  }
+
+  // [ RefreshToken ]
+  public String createRefreshToken(long memberId) {
+    Date now = new Date();
+    Date validity = new Date(now.getTime() + refreshValidity);
+
+    return Jwts.builder()
+        .subject(String.valueOf(memberId))
+        .claim(MEMBER_ID, memberId)
+        .issuedAt(now)
+        .expiration(validity)
+        .signWith(refreshKey, SIG.HS512)
+        .compact();
+  }
+
+  public String getRefreshSubject(String token) {
+    return Jwts.parser()
+        .verifyWith(refreshKey)
+        .build()
+        .parseSignedClaims(token)
+        .getPayload()
+        .getSubject();
+  }
+
+  public long getRefreshMemberId(String token) {
+    return Jwts.parser()
+        .verifyWith(refreshKey)
+        .build()
+        .parseSignedClaims(token)
+        .getPayload()
+        .get(MEMBER_ID, Long.class);
+  }
+
+  public boolean validateRefreshToken(String token) {
+    try {
+      Jwts.parser().verifyWith(refreshKey).build().parseSignedClaims(token);
+      return true;
+    } catch (ExpiredJwtException e) {
+      throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
+    } catch (RuntimeException e) {
+      throw new BusinessException(ErrorCode.TOKEN_INVALID);
+    }
+  }
 }

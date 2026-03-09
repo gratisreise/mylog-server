@@ -17,43 +17,38 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtProvider tokenProvider;
+  private final JwtProvider tokenProvider;
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                  HttpServletResponse response,
-                                  FilterChain filterChain) throws ServletException, IOException {
+  @Override
+  protected void doFilterInternal(
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      throws ServletException, IOException {
 
-        String accessToken = resolveToken(request);
+    String accessToken = resolveToken(request);
 
+    if (StringUtils.hasText(accessToken) && tokenProvider.validateAccessToken(accessToken)) {
+      Long memberId = tokenProvider.getMemberId(accessToken);
+      CustomUserDetails userDetails = new CustomUserDetails(memberId);
 
+      UsernamePasswordAuthenticationToken authentication =
+          new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-        if (StringUtils.hasText(accessToken) && tokenProvider.validateAccessToken(accessToken)) {
-            Long memberId = tokenProvider.getMemberId(accessToken);
-            CustomUserDetails userDetails = new CustomUserDetails(memberId);
-
-            UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.getAuthorities());
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-
-        filterChain.doFilter(request, response);
+      SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        int start = CommonValue.AUTH_PREFIX.length();
-        if(isTokenEmpty(bearerToken, start)){
-            throw new BusinessException(ErrorCode.TOKEN_EMPTY);
-        }
-        return bearerToken.substring(start);
-    }
+    filterChain.doFilter(request, response);
+  }
 
-    private static boolean isTokenEmpty(String bearerToken, int start) {
-        return !StringUtils.hasText(bearerToken) || !StringUtils.hasText(
-            bearerToken.substring(start));
+  private String resolveToken(HttpServletRequest request) {
+    String bearerToken = request.getHeader("Authorization");
+    int start = CommonValue.AUTH_PREFIX.length();
+    if (isTokenEmpty(bearerToken, start)) {
+      throw new BusinessException(ErrorCode.TOKEN_EMPTY);
     }
+    return bearerToken.substring(start);
+  }
 
+  private static boolean isTokenEmpty(String bearerToken, int start) {
+    return !StringUtils.hasText(bearerToken) || !StringUtils.hasText(bearerToken.substring(start));
+  }
 }

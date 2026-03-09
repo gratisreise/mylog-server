@@ -1,6 +1,5 @@
 package com.mylog.common.security;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mylog.common.exception.ErrorCode;
 import com.mylog.common.response.ErrorResponse;
@@ -17,16 +16,19 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
-    private final ObjectMapper objectMapper;
+  private final ObjectMapper objectMapper;
 
-    @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response,
-                       AccessDeniedException accessDeniedException) throws IOException {
+  @Override
+  public void handle(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      AccessDeniedException accessDeniedException)
+      throws IOException {
 
-        response.setStatus(HttpStatus.FORBIDDEN.value());
-        response.setContentType("application/json; charset=UTF-8");
-        ErrorResponse errorResponse = ErrorResponse.from(ErrorCode.ACCESS_DENIED);
+    response.setStatus(HttpStatus.FORBIDDEN.value());
+    response.setContentType("application/json; charset=UTF-8");
+    ErrorResponse errorResponse = ErrorResponse.from(ErrorCode.ACCESS_DENIED);
 
-        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-    }
+    response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+  }
 }

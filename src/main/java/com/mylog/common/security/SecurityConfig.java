@@ -1,6 +1,5 @@
 package com.mylog.common.security;
 
-
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -24,77 +23,71 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtProvider jwtProvider;
-    private final CustomAccessDeniedHandler accessDeniedHandler;
-    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
-    private final ExceptionHandlerFilter exceptionHandlerFilter;
+  private final JwtProvider jwtProvider;
+  private final CustomAccessDeniedHandler accessDeniedHandler;
+  private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+  private final ExceptionHandlerFilter exceptionHandlerFilter;
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, UserDetailsService userDetailsService) throws Exception {
-        return http
-            .cors(Customizer.withDefaults())
-            .csrf(AbstractHttpConfigurer::disable)
-            .formLogin(AbstractHttpConfigurer::disable)
-            .httpBasic(AbstractHttpConfigurer::disable)
-            .sessionManagement(
-                session -> session
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http)
+      throws Exception {
+    return http.cors(Customizer.withDefaults())
+        .csrf(AbstractHttpConfigurer::disable)
+        .formLogin(AbstractHttpConfigurer::disable)
+        .httpBasic(AbstractHttpConfigurer::disable)
+        .sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+        // 공통응답 형식 맞춰줌
+        .exceptionHandling(
+            exception ->
+                exception
+                    .authenticationEntryPoint(authenticationEntryPoint)
+                    .accessDeniedHandler(accessDeniedHandler))
+
+        // 요청 정책
+        .authorizeHttpRequests(
+            auth ->
+                auth.requestMatchers(WHITELIST).permitAll() // 해당 url 허용
+                    .anyRequest().authenticated() // 나머지 접근 방지
             )
 
-            // 공통응답 형식 맞춰줌
-            .exceptionHandling(exception -> exception
-                .authenticationEntryPoint(authenticationEntryPoint)
-                .accessDeniedHandler(accessDeniedHandler))
+        // jwt 커스텀 필터
+        .addFilterBefore(exceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(
+            new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
 
-            // 요청 정책
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(WHITELIST).permitAll() // 해당 url 허용
-                .anyRequest().authenticated() // 나머지 접근 방지
-            )
-            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+        // 빌드
+        .build();
+  }
 
-            //jwt 커스텀 필터
-            .addFilterBefore(exceptionHandlerFilter,
-                UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(
-                new JwtAuthenticationFilter(jwtProvider),
-                UsernamePasswordAuthenticationFilter.class)
+  private static final String[] WHITELIST = {
+    "/api/auth/**",
+    "/api/members/sign-up",
+    "/swagger-ui/**",
+    "/v3/api-docs/**",
+    "/h2-console/**",
+    "/actuator/**",
+    "/api/tests/**",
+    "/api/articles/all/**"
+  };
 
-            //빌드
-            .build();
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration config = new CorsConfiguration();
+    config.setAllowedOrigins(
+        List.of("https://mylog.fyi", "http://localhost:3000", "http://localhost:5300"));
+    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+    config.setAllowedHeaders(List.of("*"));
+    config.setAllowCredentials(true);
 
-    private static final String[] WHITELIST = {
-        "/api/auth/**",
-        "/api/members/sign-up",
-        "/swagger-ui/**",
-        "/v3/api-docs/**",
-        "/h2-console/**",
-        "/actuator/**",
-        "/api/tests/**",
-        "/api/articles/all/**"
-    };
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(
-            "https://mylog.fyi",
-            "http://localhost:3000",
-            "http://localhost:5300"
-        ));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
-    }
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", config);
+    return source;
+  }
 }

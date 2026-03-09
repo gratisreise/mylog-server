@@ -16,13 +16,13 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Password {
 
-    String message() default "비밀번호기 형식에 맞지 않습니다.";
+  String message() default "비밀번호기 형식에 맞지 않습니다.";
 
-    Class<?>[] groups() default {};
+  Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default {};
+  Class<? extends Payload>[] payload() default {};
 
-    int minLength() default 8;
+  int minLength() default 8;
 
-    int maxLength() default 20;
+  int maxLength() default 20;
 }
