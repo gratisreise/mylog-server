@@ -24,10 +24,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
-//    // Converter
-//    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
     // Database
     implementation 'org.postgresql:postgresql'
@@ -77,5 +73,4 @@ spotless {
 
 tasks.named('test') {
     useJUnitPlatform()
-    finalizedBy jacocoTestReport
 }

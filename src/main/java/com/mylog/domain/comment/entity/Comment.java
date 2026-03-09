@@ -26,28 +26,28 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @Getter
 public class Comment extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "article_id")
-    private Article article;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "article_id")
+  private Article article;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "member_id")
+  private Member member;
 
-    private long parentId;
+  private long parentId;
 
-    @Column(length = 200)
-    private String content;
+  @Column(length = 200)
+  private String content;
 
-    public void update(String content) {
-        this.content = content;
-    }
+  public void update(String content) {
+    this.content = content;
+  }
 
-    public boolean isOwnedBy(Long customUserId) {
-        return Objects.equals(customUserId, member.getId());
-    }
+  public boolean isOwnedBy(Long customUserId) {
+    return Objects.equals(customUserId, member.getId());
+  }
 }

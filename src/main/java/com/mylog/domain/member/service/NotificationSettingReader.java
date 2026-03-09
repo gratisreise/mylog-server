@@ -15,17 +15,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class NotificationSettingReader {
 
-    private final NotificationSettingRepository notificationSettingRepository;
+  private final NotificationSettingRepository notificationSettingRepository;
 
-    public boolean isDisabled(Member member, String type) {
-        return notificationSettingRepository.findByMemberIdAndType(member.getId(), type)
-            .orElseThrow(()-> new BusinessException(ErrorCode.NOTIFICATION_NOT_FOUND))
-            .isDisabled();
-    }
+  public boolean isDisabled(Member member, String type) {
+    return notificationSettingRepository
+        .findByMemberIdAndType(member.getId(), type)
+        .orElseThrow(() -> new BusinessException(ErrorCode.NOTIFICATION_NOT_FOUND))
+        .isDisabled();
+  }
 
-    public List<NotificationSettingResponse> getNotificationSettings(Long memberId){
-        return notificationSettingRepository.findByMemberId(memberId)
-            .stream().map(NotificationSettingResponse::new).toList();
-    }
-
+  public List<NotificationSettingResponse> getNotificationSettings(Long memberId) {
+    return notificationSettingRepository.findByMemberId(memberId).stream()
+        .map(NotificationSettingResponse::new)
+        .toList();
+  }
 }

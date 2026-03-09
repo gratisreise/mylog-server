@@ -26,31 +26,26 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Builder
 @AllArgsConstructor
 public class NotificationSetting {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "member_id")
+  private Member member;
 
-    @Column(length = 20, nullable = false)
-    private String type;
+  @Column(length = 20, nullable = false)
+  private String type;
 
-    private boolean disabled;
+  private boolean disabled;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
+  @CreatedDate private LocalDateTime createdAt;
 
-    public static NotificationSetting createDefault(Member member, String type) {
-        return NotificationSetting.builder()
-            .member(member)
-            .type(type)
-            .disabled(false)
-            .build();
-    }
+  public static NotificationSetting createDefault(Member member, String type) {
+    return NotificationSetting.builder().member(member).type(type).disabled(false).build();
+  }
 
-    public void toggle() {
-        this.disabled = !this.disabled;
-    }
+  public void toggle() {
+    this.disabled = !this.disabled;
+  }
 }

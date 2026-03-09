@@ -1,6 +1,5 @@
 package com.mylog.domain.article.service;
 
-
 import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.article.repository.TagRepository;
 import java.util.List;
@@ -13,12 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 public class TagWriter {
-    private final TagRepository tagRepository;
-    private final TagReader tagReader;
+  private final TagRepository tagRepository;
+  private final TagReader tagReader;
 
-    @Async
-    public void saveTag(List<String> tags, Article article) {
-
-    }
-
+  @Async
+  public void saveTag(List<String> tags, Article article) {}
 }

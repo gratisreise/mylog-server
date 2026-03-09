@@ -1,6 +1,5 @@
 package com.mylog.domain.comment.service;
 
-
 import com.mylog.common.exception.BusinessException;
 import com.mylog.common.exception.ErrorCode;
 import com.mylog.domain.article.service.ArticleReader;
@@ -24,40 +23,39 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CommentReader {
 
-    private final CommentRepository commentRepository;
-    private final MemberReader memberReader;
-    private final ArticleReader articleReader;
+  private final CommentRepository commentRepository;
+  private final MemberReader memberReader;
+  private final ArticleReader articleReader;
 
-    //내가 작성한 댓글
-    public Page<CommentResponse> getMyComments(Long memberId, Pageable pageable) {
-        Member member = memberReader.getById(memberId);
-        return commentRepository.findAllByMember(member, pageable)
-            .map(CommentResponse::from);
-    }
+  // 내가 작성한 댓글
+  public Page<CommentResponse> getMyComments(Long memberId, Pageable pageable) {
+    Member member = memberReader.getById(memberId);
+    return commentRepository.findAllByMember(member, pageable).map(CommentResponse::from);
+  }
 
-    public Comment getById(Long commentId) {
-        return commentRepository.findById(commentId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.COMMENT_NOT_FOUND));
-    }
+  public Comment getById(Long commentId) {
+    return commentRepository
+        .findById(commentId)
+        .orElseThrow(() -> new BusinessException(ErrorCode.COMMENT_NOT_FOUND));
+  }
 
-    private CommentArticleResponse getCommentArticleResponse(Comment comment) {
-        List<Reply> replies = getReplies(comment);
-        return CommentArticleResponse.of(comment, replies);
-    }
+  private CommentArticleResponse getCommentArticleResponse(Comment comment) {
+    List<Reply> replies = getReplies(comment);
+    return CommentArticleResponse.of(comment, replies);
+  }
 
+  private List<Reply> getReplies(Comment comment) {
+    long articleId = comment.getArticle().getId();
+    long parentId = comment.getId();
+    List<Comment> comments = commentRepository.findByArticle_IdAndParentId(articleId, parentId);
+    return comments.stream().map(Reply::from).toList();
+  }
 
-    private List<Reply> getReplies(Comment comment) {
-        long articleId = comment.getArticle().getId();
-        long parentId = comment.getId();
-        List<Comment> comments = commentRepository.findByArticle_IdAndParentId(articleId, parentId);
-        return comments.stream().map(Reply::new).toList();
-    }
+  public Page<CommentResponse> getComments(Long memberId, Pageable pageable) {
+    return null;
+  }
 
-    public Page<CommentResponse> getComments(Long memberId, Pageable pageable) {
-        return null;
-    }
-
-    public Page<CommentArticleResponse> getComments1(@Min(1) Long articleId, Pageable pageable) {
-        return null;
-    }
+  public Page<CommentArticleResponse> getComments1(@Min(1) Long articleId, Pageable pageable) {
+    return null;
+  }
 }

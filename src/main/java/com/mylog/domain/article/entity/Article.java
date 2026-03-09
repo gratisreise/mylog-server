@@ -26,47 +26,47 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Article extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "member_id")
+  private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "category_id")
+  private Category category;
 
-    @Column(length = 30, nullable = false)
-    private String title;
+  @Column(length = 30, nullable = false)
+  private String title;
 
-    @Column(length = 3000, nullable = false)
-    private String content;
+  @Column(length = 3000, nullable = false)
+  private String content;
 
-    @Column(length = 300)
-    private String articleImg;
+  @Column(length = 300)
+  private String articleImg;
 
-    @Column(columnDefinition = "TEXT")
-    private String aiSummary;
+  @Column(columnDefinition = "TEXT")
+  private String aiSummary;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private AnalyzeStatus aiSummaryStatus;
+  @Enumerated(EnumType.STRING)
+  @Column(length = 20)
+  private AnalyzeStatus aiSummaryStatus;
 
-    public void update(String title, String content, String articleImg, Category category) {
-        this.title = title;
-        this.content = content;
-        this.articleImg = articleImg;
-        this.category = category;
-    }
+  public void update(String title, String content, String articleImg, Category category) {
+    this.title = title;
+    this.content = content;
+    this.articleImg = articleImg;
+    this.category = category;
+  }
 
-    public void updateAiSummary(String aiSummary) {
-        this.aiSummary = aiSummary;
-        this.aiSummaryStatus = AnalyzeStatus.COMPLETED;
-    }
+  public void updateAiSummary(String aiSummary) {
+    this.aiSummary = aiSummary;
+    this.aiSummaryStatus = AnalyzeStatus.COMPLETED;
+  }
 
-    public void markAiSummaryFailed() {
-        this.aiSummaryStatus = AnalyzeStatus.FAILED;
-    }
+  public void markAiSummaryFailed() {
+    this.aiSummaryStatus = AnalyzeStatus.FAILED;
+  }
 }

@@ -2,21 +2,25 @@ package com.mylog.domain.comment.dto;
 
 import com.mylog.domain.comment.entity.Comment;
 import java.time.LocalDateTime;
+import lombok.Builder;
 
+@Builder
 public record CommentResponse(
     Long id,
     String content,
     String author,
     Long memberId,
     LocalDateTime createdAt,
-    LocalDateTime updatedAt
-) {
-    public static CommentResponse from(Comment comment) {
-        return new CommentResponse(
-            comment.getId(), comment.getContent(),
-            comment.getMember().getNickname(),
-            comment.getMember().getId(),
-            comment.getCreatedAt(), comment.getUpdatedAt()
-        );
-    }
+    LocalDateTime updatedAt) {
+
+  public static CommentResponse from(Comment comment) {
+    return CommentResponse.builder()
+        .id(comment.getId())
+        .content(comment.getContent())
+        .author(comment.getMember().getNickname())
+        .memberId(comment.getMember().getId())
+        .createdAt(comment.getCreatedAt())
+        .updatedAt(comment.getUpdatedAt())
+        .build();
+  }
 }

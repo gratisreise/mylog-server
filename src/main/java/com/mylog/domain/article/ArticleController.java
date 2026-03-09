@@ -5,6 +5,7 @@ import com.mylog.common.response.PageResponse;
 import com.mylog.common.response.SuccessResponse;
 import com.mylog.domain.article.dto.request.ArticleCreateRequest;
 import com.mylog.domain.article.dto.request.ArticleUpdateRequest;
+import com.mylog.domain.article.dto.response.ArticleCreateResponse;
 import com.mylog.domain.article.dto.response.ArticleResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -36,12 +37,11 @@ public class ArticleController {
 
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @Operation(summary = "게시글 생성")
-  public ResponseEntity<SuccessResponse<Void>> createArticle(
+  public ResponseEntity<SuccessResponse<ArticleCreateResponse>> createArticle(
       @RequestPart(value = "file") MultipartFile file,
       @RequestPart(value = "request") @Valid ArticleCreateRequest request,
       @MemberId Long memberId) {
-    articleService.createArticle(request, memberId, file);
-    return SuccessResponse.toNoContent();
+    return SuccessResponse.toOk(articleService.createArticle(request, memberId, file));
   }
 
   @PutMapping(value = "/{articleId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

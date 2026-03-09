@@ -14,28 +14,23 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 public class NotificationSettingWriter {
-    private final NotificationSettingRepository notificationSettingRepository;
+  private final NotificationSettingRepository notificationSettingRepository;
 
-
-    @Async
-    public void createNotificationSetting(Member member, String type){
-        if(notificationSettingRepository.existsByMemberAndType(member, type)){
-            return;
-        }
-        NotificationSetting setting = NotificationSetting.builder()
-            .member(member)
-            .type(type)
-            .build();
-
-        notificationSettingRepository.save(setting);
+  @Async
+  public void createNotificationSetting(Member member, String type) {
+    if (notificationSettingRepository.existsByMemberAndType(member, type)) {
+      return;
     }
+    NotificationSetting setting = NotificationSetting.builder().member(member).type(type).build();
 
-    //알림끄기
-    public void toggleNotification(Long memberId, String type){
-        notificationSettingRepository
-            .findByMemberIdAndType(memberId, type)
-            .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND))
-            .toggle();
-    }
+    notificationSettingRepository.save(setting);
+  }
 
+  // 알림끄기
+  public void toggleNotification(Long memberId, String type) {
+    notificationSettingRepository
+        .findByMemberIdAndType(memberId, type)
+        .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND))
+        .toggle();
+  }
 }

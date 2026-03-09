@@ -2,9 +2,14 @@ package com.mylog.domain.article.repository.impl;
 
 import com.mylog.domain.article.dto.response.ArticleResponse;
 import com.mylog.domain.article.entity.Article;
+import com.mylog.domain.article.entity.QArticle;
+import com.mylog.domain.article.entity.QArticleTag;
+import com.mylog.domain.article.entity.QTag;
 import com.mylog.domain.article.repository.ArticleRepositoryCustom;
+import com.mylog.domain.category.QCategory;
 import com.mylog.domain.member.entity.Member;
-import jakarta.persistence.EntityManager;
+import com.mylog.domain.member.entity.QMember;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,182 +19,268 @@ import org.springframework.data.domain.Pageable;
 @RequiredArgsConstructor
 public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
 
-    private final EntityManager em;
+  private final JPAQueryFactory jpaQueryFactory;
 
-    @Override
-    public Page<ArticleResponse> findAllCustom(Pageable pageable) {
-        String jpql = "SELECT a FROM Article a JOIN FETCH a.member JOIN FETCH a.category ORDER BY a.createdAt DESC";
-        List<Article> articles = em.createQuery(jpql, Article.class)
-            .setFirstResult((int) pageable.getOffset())
-            .setMaxResults(pageable.getPageSize())
-            .getResultList();
+  @Override
+  public Page<ArticleResponse> findAllCustom(Pageable pageable) {
+    QArticle article = QArticle.article;
+    QMember member = QMember.member;
+    QCategory category = QCategory.category;
 
-        String countJpql = "SELECT COUNT(a) FROM Article a";
-        Long count = em.createQuery(countJpql, Long.class).getSingleResult();
+    List<Article> articles =
+        jpaQueryFactory
+            .selectFrom(article)
+            .join(article.member, member)
+            .fetchJoin()
+            .join(article.category, category)
+            .fetchJoin()
+            .orderBy(article.createdAt.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
 
-        List<ArticleResponse> responses = articles.stream()
-            .map(a -> new ArticleResponse(a, List.of()))
-            .toList();
+    Long count = jpaQueryFactory.select(article.count()).from(article).fetchOne();
 
-        return new PageImpl<>(responses, pageable, count);
-    }
+    List<ArticleResponse> responses =
+        articles.stream().map(a -> new ArticleResponse(a, List.of())).toList();
 
-    @Override
-    public Page<ArticleResponse> findMineByMember(Member member, Pageable pageable) {
-        String jpql = "SELECT a FROM Article a JOIN FETCH a.member JOIN FETCH a.category WHERE a.member = :member ORDER BY a.createdAt DESC";
-        List<Article> articles = em.createQuery(jpql, Article.class)
-            .setParameter("member", member)
-            .setFirstResult((int) pageable.getOffset())
-            .setMaxResults(pageable.getPageSize())
-            .getResultList();
+    return new PageImpl<>(responses, pageable, count != null ? count : 0L);
+  }
 
-        String countJpql = "SELECT COUNT(a) FROM Article a WHERE a.member = :member";
-        Long count = em.createQuery(countJpql, Long.class)
-            .setParameter("member", member)
-            .getSingleResult();
+  @Override
+  public Page<ArticleResponse> findMineByMember(Member memberParam, Pageable pageable) {
+    QArticle article = QArticle.article;
+    QMember member = QMember.member;
+    QCategory category = QCategory.category;
 
-        List<ArticleResponse> responses = articles.stream()
-            .map(a -> new ArticleResponse(a, List.of()))
-            .toList();
+    List<Article> articles =
+        jpaQueryFactory
+            .selectFrom(article)
+            .join(article.member, member)
+            .fetchJoin()
+            .join(article.category, category)
+            .fetchJoin()
+            .where(article.member.eq(memberParam))
+            .orderBy(article.createdAt.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
 
-        return new PageImpl<>(responses, pageable, count);
-    }
+    Long count =
+        jpaQueryFactory
+            .select(article.count())
+            .from(article)
+            .where(article.member.eq(memberParam))
+            .fetchOne();
 
-    @Override
-    public Page<ArticleResponse> searchMineByTitle(Member member, String keyword, Pageable pageable) {
-        String jpql = "SELECT a FROM Article a JOIN FETCH a.member JOIN FETCH a.category WHERE a.member = :member AND LOWER(a.title) LIKE LOWER(:keyword) ORDER BY a.createdAt DESC";
-        List<Article> articles = em.createQuery(jpql, Article.class)
-            .setParameter("member", member)
-            .setParameter("keyword", "%" + keyword + "%")
-            .setFirstResult((int) pageable.getOffset())
-            .setMaxResults(pageable.getPageSize())
-            .getResultList();
+    List<ArticleResponse> responses =
+        articles.stream().map(a -> new ArticleResponse(a, List.of())).toList();
 
-        String countJpql = "SELECT COUNT(a) FROM Article a WHERE a.member = :member AND LOWER(a.title) LIKE LOWER(:keyword)";
-        Long count = em.createQuery(countJpql, Long.class)
-            .setParameter("member", member)
-            .setParameter("keyword", "%" + keyword + "%")
-            .getSingleResult();
+    return new PageImpl<>(responses, pageable, count != null ? count : 0L);
+  }
 
-        List<ArticleResponse> responses = articles.stream()
-            .map(a -> new ArticleResponse(a, List.of()))
-            .toList();
+  @Override
+  public Page<ArticleResponse> searchMineByTitle(
+      Member memberParam, String keyword, Pageable pageable) {
+    QArticle article = QArticle.article;
+    QMember member = QMember.member;
+    QCategory category = QCategory.category;
 
-        return new PageImpl<>(responses, pageable, count);
-    }
+    List<Article> articles =
+        jpaQueryFactory
+            .selectFrom(article)
+            .join(article.member, member)
+            .fetchJoin()
+            .join(article.category, category)
+            .fetchJoin()
+            .where(article.member.eq(memberParam).and(article.title.lower().like("%" + keyword.toLowerCase() + "%")))
+            .orderBy(article.createdAt.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
 
-    @Override
-    public Page<ArticleResponse> searchMineByTagName(Member member, String tagName, Pageable pageable) {
-        String jpql = "SELECT a FROM Article a JOIN FETCH a.member JOIN FETCH a.category " +
-            "WHERE a.member = :member AND a.id IN " +
-            "(SELECT at.article.id FROM ArticleTag at JOIN at.tag t WHERE t.tagName = :tagName) " +
-            "ORDER BY a.createdAt DESC";
-        List<Article> articles = em.createQuery(jpql, Article.class)
-            .setParameter("member", member)
-            .setParameter("tagName", tagName)
-            .setFirstResult((int) pageable.getOffset())
-            .setMaxResults(pageable.getPageSize())
-            .getResultList();
+    Long count =
+        jpaQueryFactory
+            .select(article.count())
+            .from(article)
+            .where(article.member.eq(memberParam).and(article.title.lower().like("%" + keyword.toLowerCase() + "%")))
+            .fetchOne();
 
-        String countJpql = "SELECT COUNT(at) FROM ArticleTag at JOIN at.tag t JOIN at.article a " +
-            "WHERE t.tagName = :tagName AND a.member = :member";
-        Long count = em.createQuery(countJpql, Long.class)
-            .setParameter("member", member)
-            .setParameter("tagName", tagName)
-            .getSingleResult();
+    List<ArticleResponse> responses =
+        articles.stream().map(a -> new ArticleResponse(a, List.of())).toList();
 
-        List<ArticleResponse> responses = articles.stream()
-            .map(a -> new ArticleResponse(a, List.of()))
-            .toList();
+    return new PageImpl<>(responses, pageable, count != null ? count : 0L);
+  }
 
-        return new PageImpl<>(responses, pageable, count);
-    }
+  @Override
+  public Page<ArticleResponse> searchMineByTagName(
+      Member memberParam, String tagName, Pageable pageable) {
+    QArticle article = QArticle.article;
+    QMember member = QMember.member;
+    QCategory category = QCategory.category;
+    QArticleTag articleTag = QArticleTag.articleTag;
+    QTag tag = QTag.tag;
 
-    @Override
-    public Page<ArticleResponse> searchAllByTitle(String keyword, Pageable pageable) {
-        String jpql = "SELECT a FROM Article a JOIN FETCH a.member JOIN FETCH a.category WHERE LOWER(a.title) LIKE LOWER(:keyword) ORDER BY a.createdAt DESC";
-        List<Article> articles = em.createQuery(jpql, Article.class)
-            .setParameter("keyword", "%" + keyword + "%")
-            .setFirstResult((int) pageable.getOffset())
-            .setMaxResults(pageable.getPageSize())
-            .getResultList();
+    List<Long> articleIds =
+        jpaQueryFactory
+            .select(articleTag.article.id)
+            .from(articleTag)
+            .join(articleTag.tag, tag)
+            .where(tag.tagName.eq(tagName).and(articleTag.article.member.eq(memberParam)))
+            .fetch();
 
-        String countJpql = "SELECT COUNT(a) FROM Article a WHERE LOWER(a.title) LIKE LOWER(:keyword)";
-        Long count = em.createQuery(countJpql, Long.class)
-            .setParameter("keyword", "%" + keyword + "%")
-            .getSingleResult();
+    List<Article> articles =
+        jpaQueryFactory
+            .selectFrom(article)
+            .join(article.member, member)
+            .fetchJoin()
+            .join(article.category, category)
+            .fetchJoin()
+            .where(article.id.in(articleIds))
+            .orderBy(article.createdAt.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
 
-        List<ArticleResponse> responses = articles.stream()
-            .map(a -> new ArticleResponse(a, List.of()))
-            .toList();
+    Long count = (long) articleIds.size();
 
-        return new PageImpl<>(responses, pageable, count);
-    }
+    List<ArticleResponse> responses =
+        articles.stream().map(a -> new ArticleResponse(a, List.of())).toList();
 
-    @Override
-    public Page<ArticleResponse> searchAllByTagName(String tagName, Pageable pageable) {
-        String jpql = "SELECT a FROM Article a JOIN FETCH a.member JOIN FETCH a.category " +
-            "WHERE a.id IN (SELECT at.article.id FROM ArticleTag at JOIN at.tag t WHERE t.tagName = :tagName) " +
-            "ORDER BY a.createdAt DESC";
-        List<Article> articles = em.createQuery(jpql, Article.class)
-            .setParameter("tagName", tagName)
-            .setFirstResult((int) pageable.getOffset())
-            .setMaxResults(pageable.getPageSize())
-            .getResultList();
+    return new PageImpl<>(responses, pageable, count);
+  }
 
-        String countJpql = "SELECT COUNT(at) FROM ArticleTag at JOIN at.tag t WHERE t.tagName = :tagName";
-        Long count = em.createQuery(countJpql, Long.class)
-            .setParameter("tagName", tagName)
-            .getSingleResult();
+  @Override
+  public Page<ArticleResponse> searchAllByTitle(String keyword, Pageable pageable) {
+    QArticle article = QArticle.article;
+    QMember member = QMember.member;
+    QCategory category = QCategory.category;
 
-        List<ArticleResponse> responses = articles.stream()
-            .map(a -> new ArticleResponse(a, List.of()))
-            .toList();
+    List<Article> articles =
+        jpaQueryFactory
+            .selectFrom(article)
+            .join(article.member, member)
+            .fetchJoin()
+            .join(article.category, category)
+            .fetchJoin()
+            .where(article.title.lower().like("%" + keyword.toLowerCase() + "%"))
+            .orderBy(article.createdAt.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
 
-        return new PageImpl<>(responses, pageable, count);
-    }
+    Long count =
+        jpaQueryFactory
+            .select(article.count())
+            .from(article)
+            .where(article.title.lower().like("%" + keyword.toLowerCase() + "%"))
+            .fetchOne();
 
-    @Override
-    public Page<ArticleResponse> findAllByCategory(Long categoryId, Pageable pageable) {
-        String jpql = "SELECT a FROM Article a JOIN FETCH a.member JOIN FETCH a.category WHERE a.category.id = :categoryId ORDER BY a.createdAt DESC";
-        List<Article> articles = em.createQuery(jpql, Article.class)
-            .setParameter("categoryId", categoryId)
-            .setFirstResult((int) pageable.getOffset())
-            .setMaxResults(pageable.getPageSize())
-            .getResultList();
+    List<ArticleResponse> responses =
+        articles.stream().map(a -> new ArticleResponse(a, List.of())).toList();
 
-        String countJpql = "SELECT COUNT(a) FROM Article a WHERE a.category.id = :categoryId";
-        Long count = em.createQuery(countJpql, Long.class)
-            .setParameter("categoryId", categoryId)
-            .getSingleResult();
+    return new PageImpl<>(responses, pageable, count != null ? count : 0L);
+  }
 
-        List<ArticleResponse> responses = articles.stream()
-            .map(a -> new ArticleResponse(a, List.of()))
-            .toList();
+  @Override
+  public Page<ArticleResponse> searchAllByTagName(String tagName, Pageable pageable) {
+    QArticle article = QArticle.article;
+    QMember member = QMember.member;
+    QCategory category = QCategory.category;
+    QArticleTag articleTag = QArticleTag.articleTag;
+    QTag tag = QTag.tag;
 
-        return new PageImpl<>(responses, pageable, count);
-    }
+    List<Long> articleIds =
+        jpaQueryFactory
+            .select(articleTag.article.id)
+            .from(articleTag)
+            .join(articleTag.tag, tag)
+            .where(tag.tagName.eq(tagName))
+            .fetch();
 
-    @Override
-    public Page<ArticleResponse> findMineByMemberAndCategory(Member member, Long categoryId, Pageable pageable) {
-        String jpql = "SELECT a FROM Article a JOIN FETCH a.member JOIN FETCH a.category WHERE a.member = :member AND a.category.id = :categoryId ORDER BY a.createdAt DESC";
-        List<Article> articles = em.createQuery(jpql, Article.class)
-            .setParameter("member", member)
-            .setParameter("categoryId", categoryId)
-            .setFirstResult((int) pageable.getOffset())
-            .setMaxResults(pageable.getPageSize())
-            .getResultList();
+    List<Article> articles =
+        jpaQueryFactory
+            .selectFrom(article)
+            .join(article.member, member)
+            .fetchJoin()
+            .join(article.category, category)
+            .fetchJoin()
+            .where(article.id.in(articleIds))
+            .orderBy(article.createdAt.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
 
-        String countJpql = "SELECT COUNT(a) FROM Article a WHERE a.member = :member AND a.category.id = :categoryId";
-        Long count = em.createQuery(countJpql, Long.class)
-            .setParameter("member", member)
-            .setParameter("categoryId", categoryId)
-            .getSingleResult();
+    Long count = (long) articleIds.size();
 
-        List<ArticleResponse> responses = articles.stream()
-            .map(a -> new ArticleResponse(a, List.of()))
-            .toList();
+    List<ArticleResponse> responses =
+        articles.stream().map(a -> new ArticleResponse(a, List.of())).toList();
 
-        return new PageImpl<>(responses, pageable, count);
-    }
+    return new PageImpl<>(responses, pageable, count);
+  }
+
+  @Override
+  public Page<ArticleResponse> findAllByCategory(Long categoryId, Pageable pageable) {
+    QArticle article = QArticle.article;
+    QMember member = QMember.member;
+    QCategory category = QCategory.category;
+
+    List<Article> articles =
+        jpaQueryFactory
+            .selectFrom(article)
+            .join(article.member, member)
+            .fetchJoin()
+            .join(article.category, category)
+            .fetchJoin()
+            .where(article.category.id.eq(categoryId))
+            .orderBy(article.createdAt.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+    Long count =
+        jpaQueryFactory
+            .select(article.count())
+            .from(article)
+            .where(article.category.id.eq(categoryId))
+            .fetchOne();
+
+    List<ArticleResponse> responses =
+        articles.stream().map(a -> new ArticleResponse(a, List.of())).toList();
+
+    return new PageImpl<>(responses, pageable, count != null ? count : 0L);
+  }
+
+  @Override
+  public Page<ArticleResponse> findMineByMemberAndCategory(
+      Member memberParam, Long categoryId, Pageable pageable) {
+    QArticle article = QArticle.article;
+    QMember member = QMember.member;
+    QCategory category = QCategory.category;
+
+    List<Article> articles =
+        jpaQueryFactory
+            .selectFrom(article)
+            .join(article.member, member)
+            .fetchJoin()
+            .join(article.category, category)
+            .fetchJoin()
+            .where(article.member.eq(memberParam).and(article.category.id.eq(categoryId)))
+            .orderBy(article.createdAt.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+    Long count =
+        jpaQueryFactory
+            .select(article.count())
+            .from(article)
+            .where(article.member.eq(memberParam).and(article.category.id.eq(categoryId)))
+            .fetchOne();
+
+    List<ArticleResponse> responses =
+        articles.stream().map(a -> new ArticleResponse(a, List.of())).toList();
+
+    return new PageImpl<>(responses, pageable, count != null ? count : 0L);
+  }
 }

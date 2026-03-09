@@ -10,6 +10,6 @@ import org.springframework.stereotype.Component;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Component
-public @interface OAuth2ServiceType {
+public @interface OAuthServiceType {
   OauthProvider value();
 }

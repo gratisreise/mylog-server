@@ -3,26 +3,32 @@ package com.mylog.domain.comment.dto;
 import com.mylog.domain.comment.entity.Comment;
 import com.mylog.domain.member.entity.Member;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Reply {
-    private Long id;
-    private String content;
-    private String author;
-    private Long memberId;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+  private Long id;
+  private String content;
+  private String author;
+  private Long memberId;
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
 
-    public Reply(Comment comment) {
-        Member member = comment.getMember();
-        this.id = comment.getId();
-        this.content = comment.getContent();
-        this.author = member.getNickname();
-        this.memberId = member.getId();
-        this.createdAt = comment.getCreatedAt();
-        this.updatedAt = comment.getUpdatedAt();
-    }
+  public static Reply from(Comment comment) {
+    Member member = comment.getMember();
+    return Reply.builder()
+        .id(comment.getId())
+        .content(comment.getContent())
+        .author(member.getNickname())
+        .memberId(member.getId())
+        .createdAt(comment.getCreatedAt())
+        .updatedAt(comment.getUpdatedAt())
+        .build();
+  }
 }

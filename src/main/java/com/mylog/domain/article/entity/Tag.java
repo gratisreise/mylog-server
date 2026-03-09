@@ -19,16 +19,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Tag extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(length = 10, unique = true)
-    private String tagName;
+  @Column(length = 10, unique = true)
+  private String tagName;
 
-    public static Tag from(String tagname){
-        return Tag.builder()
-            .tagName(tagname)
-            .build();
-    }
+  public static Tag from(String tagname) {
+    return Tag.builder().tagName(tagname).build();
+  }
 }

@@ -15,16 +15,16 @@ public record ArticleResponse(
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {
 
-    public ArticleResponse(Article article, List<String> tags) {
-        this(article.getId(),
-            article.getTitle(),
-            article.getContent(),
-            article.getMember().getNickname(),
-            article.getCategory().getCategoryName(),
-            article.getArticleImg(),
-            tags,
-            article.getCreatedAt(),
-            article.getUpdatedAt());
-    }
-
+  public ArticleResponse(Article article, List<String> tags) {
+    this(
+        article.getId(),
+        article.getTitle(),
+        article.getContent(),
+        article.getMember().getNickname(),
+        article.getCategory().getCategoryName(),
+        article.getArticleImg(),
+        tags,
+        article.getCreatedAt(),
+        article.getUpdatedAt());
+  }
 }

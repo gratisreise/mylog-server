@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class ArticleTagId implements Serializable {
-    private Long article;
-    private Long tag;
+  private Long article;
+  private Long tag;
 }
