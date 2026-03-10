@@ -2,9 +2,14 @@ package com.mylog.domain.member;
 
 import com.mylog.common.annotations.MemberId;
 import com.mylog.common.response.SuccessResponse;
+import com.mylog.domain.member.dto.CustomWritingStyleRequest;
+import com.mylog.domain.member.dto.CustomWritingStyleResponse;
 import com.mylog.domain.member.dto.MemberResponse;
 import com.mylog.domain.member.dto.NotificationSettingResponse;
 import com.mylog.domain.member.dto.UpdateMemberRequest;
+import com.mylog.domain.member.entity.CustomWritingStyle;
+import com.mylog.domain.member.service.CustomWritingStyleReader;
+import com.mylog.domain.member.service.CustomWritingStyleWriter;
 import com.mylog.domain.member.service.NotificationSettingReader;
 import com.mylog.domain.member.service.NotificationSettingWriter;
 import com.mylog.external.s3.S3Service;
@@ -18,7 +23,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,6 +40,8 @@ public class MemberController {
   private final S3Service s3Service;
   private final NotificationSettingReader notificationSettingReader;
   private final NotificationSettingWriter notificationSettingWriter;
+  private final CustomWritingStyleReader customWritingStyleReader;
+  private final CustomWritingStyleWriter customWritingStyleWriter;
 
   @GetMapping("/me")
   @Operation(summary = "개인정보조회")
@@ -70,6 +79,46 @@ public class MemberController {
   public ResponseEntity<SuccessResponse<Void>> toggleNotification(
       @MemberId Long memberId, @PathVariable String type) {
     notificationSettingWriter.toggleNotification(memberId, type);
+    return SuccessResponse.toNoContent();
+  }
+
+  // === 커스텀 문체 스타일 ===
+
+  @PostMapping("/me/custom-styles")
+  @Operation(summary = "커스텀 문체 스타일 생성")
+  public ResponseEntity<SuccessResponse<CustomWritingStyleResponse>> createCustomStyle(
+      @MemberId Long memberId, @RequestBody @Valid CustomWritingStyleRequest request) {
+    CustomWritingStyle style =
+        customWritingStyleWriter.create(memberId, request.name(), request.role(), request.instruction());
+    return SuccessResponse.toOk(CustomWritingStyleResponse.from(style));
+  }
+
+  @GetMapping("/me/custom-styles")
+  @Operation(summary = "커스텀 문체 스타일 목록 조회")
+  public ResponseEntity<SuccessResponse<List<CustomWritingStyleResponse>>> getCustomStyles(
+      @MemberId Long memberId) {
+    List<CustomWritingStyleResponse> styles =
+        customWritingStyleReader.getCustomStyles(memberId).stream()
+            .map(CustomWritingStyleResponse::from)
+            .toList();
+    return SuccessResponse.toOk(styles);
+  }
+
+  @PutMapping("/me/custom-styles/{styleId}")
+  @Operation(summary = "커스텀 문체 스타일 수정")
+  public ResponseEntity<SuccessResponse<Void>> updateCustomStyle(
+      @MemberId Long memberId,
+      @PathVariable Long styleId,
+      @RequestBody @Valid CustomWritingStyleRequest request) {
+    customWritingStyleWriter.update(styleId, memberId, request.name(), request.role(), request.instruction());
+    return SuccessResponse.toNoContent();
+  }
+
+  @DeleteMapping("/me/custom-styles/{styleId}")
+  @Operation(summary = "커스텀 문체 스타일 삭제")
+  public ResponseEntity<SuccessResponse<Void>> deleteCustomStyle(
+      @MemberId Long memberId, @PathVariable Long styleId) {
+    customWritingStyleWriter.delete(styleId, memberId);
     return SuccessResponse.toNoContent();
   }
 }

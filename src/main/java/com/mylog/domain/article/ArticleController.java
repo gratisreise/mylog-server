@@ -5,8 +5,11 @@ import com.mylog.common.response.PageResponse;
 import com.mylog.common.response.SuccessResponse;
 import com.mylog.domain.article.dto.request.ArticleCreateRequest;
 import com.mylog.domain.article.dto.request.ArticleUpdateRequest;
+import com.mylog.domain.article.dto.request.StyleTransformRequest;
 import com.mylog.domain.article.dto.response.ArticleCreateResponse;
 import com.mylog.domain.article.dto.response.ArticleResponse;
+import com.mylog.domain.article.dto.response.ArticleSummaryResponse;
+import com.mylog.domain.article.dto.response.StyleTransformResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -106,5 +110,21 @@ public class ArticleController {
       @MemberId Long memberId) {
     return SuccessResponse.toOk(
         articleService.searchMyArticles(keyword, tag, categoryId, pageable, memberId));
+  }
+
+  // === AI 서비스 ===
+
+  @PostMapping("/transform-style")
+  @Operation(summary = "AI 문체 변환")
+  public ResponseEntity<SuccessResponse<StyleTransformResponse>> transformWritingStyle(
+      @RequestBody @Valid StyleTransformRequest request, @MemberId Long memberId) {
+    return SuccessResponse.toOk(articleService.transformWritingStyle(request, memberId));
+  }
+
+  @GetMapping("/{articleId}/summary")
+  @Operation(summary = "AI 요약 조회")
+  public ResponseEntity<SuccessResponse<ArticleSummaryResponse>> getArticleSummary(
+      @PathVariable Long articleId) {
+    return SuccessResponse.toOk(articleService.getArticleSummary(articleId));
   }
 }

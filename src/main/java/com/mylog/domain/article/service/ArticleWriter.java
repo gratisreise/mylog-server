@@ -23,6 +23,7 @@ public class ArticleWriter {
   private final MemberReader memberReader;
   private final CategoryReader categoryReader;
   private final TagWriter tagWriter;
+  private final AiService aiService;
 
   public Article create(ArticleCreateRequest request, Long memberId, String imageUrl) {
     Member member = memberReader.getById(memberId);
@@ -34,6 +35,10 @@ public class ArticleWriter {
     if (request.tagNames() != null && !request.tagNames().isEmpty()) {
       tagWriter.saveTag(request.tagNames(), article);
     }
+
+    // 비동기 AI 요약 생성 트리거
+    aiService.generateSummaryAsync(savedArticle.getId());
+
     return savedArticle;
   }
 
@@ -51,6 +56,10 @@ public class ArticleWriter {
 
     String finalImageUrl = imageUrl != null ? imageUrl : article.getArticleImg();
     article.update(request.title(), request.content(), finalImageUrl, category);
+
+    // AI 요약 상태 리셋 후 비동기 재생성 트리거
+    article.resetAiSummaryStatus();
+    aiService.generateSummaryAsync(articleId);
   }
 
   public void delete(Long articleId, Long memberId) {

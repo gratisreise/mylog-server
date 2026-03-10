@@ -3,13 +3,18 @@ package com.mylog.domain.article.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
+import com.mylog.common.enums.AnalyzeStatus;
+import com.mylog.common.enums.WritingStyle;
 import com.mylog.common.response.PageResponse;
 import com.mylog.domain.article.ArticleService;
 import com.mylog.domain.article.dto.request.ArticleCreateRequest;
 import com.mylog.domain.article.dto.request.ArticleSearchRequest;
 import com.mylog.domain.article.dto.request.ArticleUpdateRequest;
+import com.mylog.domain.article.dto.request.StyleTransformRequest;
 import com.mylog.domain.article.dto.response.ArticleCreateResponse;
 import com.mylog.domain.article.dto.response.ArticleResponse;
+import com.mylog.domain.article.dto.response.ArticleSummaryResponse;
+import com.mylog.domain.article.dto.response.StyleTransformResponse;
 import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.category.Category;
 import com.mylog.domain.member.entity.Member;
@@ -35,6 +40,7 @@ class ArticleServiceTest {
   @Mock private ArticleReader articleReader;
   @Mock private ArticleWriter articleWriter;
   @Mock private S3Service s3Service;
+  @Mock private AiService aiService;
 
   @InjectMocks private ArticleService articleService;
 
@@ -297,6 +303,84 @@ class ArticleServiceTest {
       assertThat(result).isNotNull();
       assertThat(result.getData()).hasSize(1);
       then(articleReader).should().search(any(ArticleSearchRequest.class));
+    }
+  }
+
+  @Nested
+  @DisplayName("AI 문체 변환")
+  class TransformWritingStyle {
+
+    @Test
+    @DisplayName("성공: 문체 변환")
+    void transformWritingStyle_Success() {
+      // given
+      StyleTransformRequest request = new StyleTransformRequest("테스트 내용입니다", WritingStyle.FRIENDLY, null);
+      String transformedContent = "변환된 내용이에요~ 😊";
+
+      given(aiService.transformWritingStyle("테스트 내용입니다", WritingStyle.FRIENDLY))
+          .willReturn(transformedContent);
+
+      // when
+      StyleTransformResponse result = articleService.transformWritingStyle(request, MEMBER_ID);
+
+      // then
+      assertThat(result.transformedContent()).isEqualTo(transformedContent);
+      assertThat(result.writingStyle()).isEqualTo("FRIENDLY");
+      then(aiService).should().transformWritingStyle("테스트 내용입니다", WritingStyle.FRIENDLY);
+    }
+  }
+
+  @Nested
+  @DisplayName("AI 요약 조회")
+  class GetArticleSummary {
+
+    @Test
+    @DisplayName("성공: 요약 조회")
+    void getArticleSummary_Success() {
+      // given
+      Article article =
+          Article.builder()
+              .id(ARTICLE_ID)
+              .title("테스트 제목")
+              .content("테스트 내용")
+              .aiSummary("AI가 생성한 요약입니다.")
+              .aiSummaryStatus(AnalyzeStatus.COMPLETED)
+              .build();
+
+      given(articleReader.getArticleById(ARTICLE_ID)).willReturn(article);
+
+      // when
+      ArticleSummaryResponse result = articleService.getArticleSummary(ARTICLE_ID);
+
+      // then
+      assertThat(result.articleId()).isEqualTo(ARTICLE_ID);
+      assertThat(result.aiSummary()).isEqualTo("AI가 생성한 요약입니다.");
+      assertThat(result.status()).isEqualTo(AnalyzeStatus.COMPLETED);
+      then(articleReader).should().getArticleById(ARTICLE_ID);
+    }
+
+    @Test
+    @DisplayName("성공: 요약 대기 상태")
+    void getArticleSummary_Pending() {
+      // given
+      Article article =
+          Article.builder()
+              .id(ARTICLE_ID)
+              .title("테스트 제목")
+              .content("테스트 내용")
+              .aiSummary(null)
+              .aiSummaryStatus(AnalyzeStatus.PENDING)
+              .build();
+
+      given(articleReader.getArticleById(ARTICLE_ID)).willReturn(article);
+
+      // when
+      ArticleSummaryResponse result = articleService.getArticleSummary(ARTICLE_ID);
+
+      // then
+      assertThat(result.articleId()).isEqualTo(ARTICLE_ID);
+      assertThat(result.aiSummary()).isNull();
+      assertThat(result.status()).isEqualTo(AnalyzeStatus.PENDING);
     }
   }
 }

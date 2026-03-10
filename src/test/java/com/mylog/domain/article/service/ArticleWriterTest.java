@@ -31,6 +31,7 @@ class ArticleWriterTest {
   @Mock private MemberReader memberReader;
   @Mock private CategoryReader categoryReader;
   @Mock private TagWriter tagWriter;
+  @Mock private AiService aiService;
 
   @InjectMocks private ArticleWriter articleWriter;
 

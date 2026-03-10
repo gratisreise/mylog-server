@@ -37,7 +37,7 @@ public class CategoryWriter {
     return category.getId();
   }
 
-  @Async
+  @Async("threadPoolTaskExecutor")
   public void createCategory(Member member) {
     Category category =
         Category.builder().member(member).categoryName(CommonValue.BASIC_CATEGORY).build();

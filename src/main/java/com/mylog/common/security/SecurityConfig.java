@@ -65,16 +65,15 @@ public class SecurityConfig {
   // API - 인증/회원
   private static final String[] AUTH_WHITELIST = {
     "/api/auth/register",
-      "/api/auth/login",
-      "/api/oauth/login",
-      "/api/auth/refresh",
+    "/api/auth/login",
+    "/api/oauth/login",
+    "/api/auth/refresh",
+    "/api/external/**"
   };
 
   // 개발 도구
   private static final String[] DEV_WHITELIST = {
-    "/swagger-ui/**",
-    "/v3/api-docs/**",
-    "/h2-console/**",
+    "/swagger-ui/**", "/v3/api-docs/**", "/h2-console/**",
   };
 
   // 모니터링
@@ -86,7 +85,6 @@ public class SecurityConfig {
       Stream.of(AUTH_WHITELIST, DEV_WHITELIST, MONITOR_WHITELIST)
           .flatMap(Stream::of)
           .toArray(String[]::new);
-
 
   @Bean
   public PasswordEncoder passwordEncoder() {

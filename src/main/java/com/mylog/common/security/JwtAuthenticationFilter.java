@@ -1,8 +1,6 @@
 package com.mylog.common.security;
 
 import com.mylog.common.CommonValue;
-import com.mylog.common.exception.BusinessException;
-import com.mylog.common.exception.ErrorCode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,5 +45,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     int start = CommonValue.AUTH_PREFIX.length();
     return bearerToken.substring(start);
   }
-
 }
