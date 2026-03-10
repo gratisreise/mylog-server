@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationSettingWriter {
   private final NotificationSettingRepository notificationSettingRepository;
 
-  @Async
+  @Async("threadPoolTaskExecutor")
   public void createNotificationSetting(Member member, String type) {
     if (notificationSettingRepository.existsByMemberAndType(member, type)) {
       return;

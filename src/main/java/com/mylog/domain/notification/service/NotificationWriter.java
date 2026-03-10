@@ -19,7 +19,7 @@ public class NotificationWriter {
   private final NotificationReader notificationReader;
   private final NotificationSettingReader notificationSettingReader;
 
-  @Async
+  @Async("threadPoolTaskExecutor")
   public void sendNotification(Member member, Long relatedId, String type) {
     // 알림 ON 확인
     if (notificationSettingReader.isDisabled(member, type)) return;

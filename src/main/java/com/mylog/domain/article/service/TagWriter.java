@@ -15,6 +15,6 @@ public class TagWriter {
   private final TagRepository tagRepository;
   private final TagReader tagReader;
 
-  @Async
+  @Async("threadPoolTaskExecutor")
   public void saveTag(List<String> tags, Article article) {}
 }

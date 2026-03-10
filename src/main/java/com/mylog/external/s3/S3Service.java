@@ -48,7 +48,7 @@ public class S3Service {
   }
 
   // 이미지 삭제
-  @Async
+  @Async("threadPoolTaskExecutor")
   public void deleteImage(String url) {
     String fileKey = url.substring(url.lastIndexOf("/") + 1);
     DeleteObjectRequest deleteObjectRequest =

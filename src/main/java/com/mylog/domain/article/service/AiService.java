@@ -22,23 +22,20 @@ public class AiService {
 
   // 동기: 문체 변환 (GeminiService 에러는 이미 처리됨)
   public String transformWritingStyle(String content, WritingStyle style) {
-    log.info("문체 변환 시작: style={}", style);
     String prompt = style.generatePrompt(content);
     return geminiService.gemini(prompt);
   }
 
   // 동기: 커스텀 문체 변환
   public String transformWithCustomStyle(String content, CustomWritingStyle customStyle) {
-    log.info("커스텀 문체 변환 시작: styleId={}, name={}", customStyle.getId(), customStyle.getName());
     String prompt = customStyle.generatePrompt(content);
     return geminiService.gemini(prompt);
   }
 
   // 비동기: 요약 생성
-  @Async
+  @Async("threadPoolTaskExecutor")
   @Transactional
   public void generateSummaryAsync(Long articleId) {
-    log.info("비동기 요약 생성 시작: articleId={}", articleId);
 
     Article article =
         articleRepository
@@ -49,10 +46,8 @@ public class AiService {
       String prompt = buildSummaryPrompt(article.getContent());
       String summary = geminiService.gemini(prompt);
       article.updateAiSummary(summary);
-      log.info("요약 생성 완료: articleId={}", articleId);
     } catch (BusinessException e) {
       // GeminiService에서 던진 API 에러
-      log.error("요약 생성 실패 (API 에러): articleId={}", articleId);
       article.markAiSummaryFailed();
     }
   }
