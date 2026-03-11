@@ -7,7 +7,10 @@ import com.mylog.common.exception.BusinessException;
 import com.mylog.domain.article.dto.request.ArticleSearchRequest;
 import com.mylog.domain.article.dto.response.ArticleResponse;
 import com.mylog.domain.article.entity.Article;
+import com.mylog.domain.article.entity.ArticleTag;
+import com.mylog.domain.article.entity.Tag;
 import com.mylog.domain.article.repository.ArticleRepository;
+import com.mylog.domain.article.repository.ArticleTagRepository;
 import com.mylog.domain.category.Category;
 import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.service.MemberReader;
@@ -30,7 +33,7 @@ import org.springframework.data.domain.Pageable;
 class ArticleReaderTest {
 
   @Mock private ArticleRepository articleRepository;
-  @Mock private TagReader tagReader;
+  @Mock private ArticleTagRepository articleTagRepository;
   @Mock private MemberReader memberReader;
 
   @InjectMocks private ArticleReader articleReader;
@@ -316,7 +319,11 @@ class ArticleReaderTest {
     void getArticle_Success() {
       // given
       Article article = createArticle();
+      Tag tag = Tag.from("테스트태그");
+      ArticleTag articleTag = ArticleTag.builder().article(article).tag(tag).build();
+
       given(articleRepository.findById(ARTICLE_ID)).willReturn(Optional.of(article));
+      given(articleTagRepository.findAllByArticleId(ARTICLE_ID)).willReturn(List.of(articleTag));
 
       // when
       ArticleResponse result = articleReader.getArticle(ARTICLE_ID);
@@ -324,7 +331,9 @@ class ArticleReaderTest {
       // then
       assertThat(result).isNotNull();
       assertThat(result.id()).isEqualTo(ARTICLE_ID);
+      assertThat(result.tags()).containsExactly("테스트태그");
       then(articleRepository).should().findById(ARTICLE_ID);
+      then(articleTagRepository).should().findAllByArticleId(ARTICLE_ID);
     }
 
     @Test

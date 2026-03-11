@@ -12,6 +12,19 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+  // 서비스 동작시 거의 대부분의 에러
+  @ExceptionHandler(BusinessException.class)
+  public ResponseEntity<ErrorResponse> businessExceptionHandler(BusinessException ex) {
+    ErrorCode errorCode = ex.getCode();
+    return ResponseEntity.status(errorCode.getStatus()).body(ErrorResponse.from(errorCode));
+  }
+
+  // 처리되지 않은 오류
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ErrorResponse> missingExceptionHandler(Exception ex) {
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.unknown(ex));
+  }
+
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
       MethodArgumentNotValidException ex) {
@@ -29,17 +42,7 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.from(code, message));
   }
 
-  @ExceptionHandler(BusinessException.class)
-  public ResponseEntity<ErrorResponse> businessExceptionHandler(BusinessException ex) {
-    ErrorCode errorCode = ex.getCode();
-    return ResponseEntity.status(errorCode.getStatus()).body(ErrorResponse.from(errorCode));
-  }
 
-  // 처리되지 않은 오류
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<ErrorResponse> missingExceptionHandler(Exception ex) {
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.unknown(ex));
-  }
 
   private static @NonNull String getErrorMessage(MethodArgumentTypeMismatchException ex) {
     return String.format("'%s'의 타입이 맞지 않습니다.", ex.getName());

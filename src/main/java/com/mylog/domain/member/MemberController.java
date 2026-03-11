@@ -89,7 +89,8 @@ public class MemberController {
   public ResponseEntity<SuccessResponse<CustomWritingStyleResponse>> createCustomStyle(
       @MemberId Long memberId, @RequestBody @Valid CustomWritingStyleRequest request) {
     CustomWritingStyle style =
-        customWritingStyleWriter.create(memberId, request.name(), request.role(), request.instruction());
+        customWritingStyleWriter.create(
+            memberId, request.name(), request.role(), request.instruction());
     return SuccessResponse.toOk(CustomWritingStyleResponse.from(style));
   }
 
@@ -110,7 +111,8 @@ public class MemberController {
       @MemberId Long memberId,
       @PathVariable Long styleId,
       @RequestBody @Valid CustomWritingStyleRequest request) {
-    customWritingStyleWriter.update(styleId, memberId, request.name(), request.role(), request.instruction());
+    customWritingStyleWriter.update(
+        styleId, memberId, request.name(), request.role(), request.instruction());
     return SuccessResponse.toNoContent();
   }
 

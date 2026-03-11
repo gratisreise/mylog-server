@@ -2,10 +2,12 @@ package com.mylog.domain.article;
 
 import com.mylog.common.enums.WritingStyle;
 import com.mylog.common.response.PageResponse;
+import com.mylog.domain.article.dto.AiSummaryResult;
 import com.mylog.domain.article.dto.request.ArticleCreateRequest;
 import com.mylog.domain.article.dto.request.ArticleSearchRequest;
 import com.mylog.domain.article.dto.request.ArticleUpdateRequest;
 import com.mylog.domain.article.dto.request.StyleTransformRequest;
+import com.mylog.domain.article.dto.request.Temp;
 import com.mylog.domain.article.dto.response.ArticleCreateResponse;
 import com.mylog.domain.article.dto.response.ArticleResponse;
 import com.mylog.domain.article.dto.response.ArticleSummaryResponse;
@@ -78,13 +80,15 @@ public class ArticleService {
   }
 
   // AI 문체 변환
-  public StyleTransformResponse transformWritingStyle(StyleTransformRequest request, Long memberId) {
+  public StyleTransformResponse transformWritingStyle(
+      StyleTransformRequest request, Long memberId) {
     String transformed;
     String styleName;
 
     if (request.customStyleId() != null) {
       // 커스텀 스타일 사용
-      CustomWritingStyle customStyle = customWritingStyleReader.getByIdAndMemberId(request.customStyleId(), memberId);
+      CustomWritingStyle customStyle =
+          customWritingStyleReader.getByIdAndMemberId(request.customStyleId(), memberId);
       transformed = aiService.transformWithCustomStyle(request.content(), customStyle);
       styleName = customStyle.getName();
     } else {
@@ -102,5 +106,10 @@ public class ArticleService {
     Article article = articleReader.getArticleById(articleId);
     return ArticleSummaryResponse.of(
         articleId, article.getAiSummary(), article.getAiSummaryStatus());
+  }
+
+  // AI 요약 조회
+  public AiSummaryResult getArticleSummary(Temp temp) {
+      return aiService.test(temp.content());
   }
 }

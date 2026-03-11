@@ -9,7 +9,7 @@ import com.mylog.domain.auth.dto.request.SignUpRequest;
 import com.mylog.domain.auth.dto.response.LoginResponse;
 import com.mylog.domain.auth.dto.response.RefreshResponse;
 import com.mylog.domain.auth.service.AuthService;
-import com.mylog.domain.auth.service.oauth.OAuthUserServiceFactory;
+import com.mylog.domain.auth.service.oauth.OAuthServiceFactory;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AuthController {
   private final AuthService authService;
-  private final OAuthUserServiceFactory oAuth2UserServiceFactory;
+  private final OAuthServiceFactory oAuth2UserServiceFactory;
 
   @PostMapping("/register")
   @Operation(summary = "회원가입")
@@ -65,7 +65,7 @@ public class AuthController {
   public ResponseEntity<SuccessResponse<LoginResponse>> socialLogin(
       @RequestBody @Valid OAuthRequest request) {
     LoginResponse response =
-        oAuth2UserServiceFactory.getOAuthUserService(request.provider()).authenticate(request);
+        oAuth2UserServiceFactory.getOAuthService(request.provider()).authenticate(request);
     return SuccessResponse.toOk(response);
   }
 }

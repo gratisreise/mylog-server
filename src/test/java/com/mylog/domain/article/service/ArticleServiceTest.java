@@ -80,8 +80,7 @@ class ArticleServiceTest {
     @DisplayName("성공: 이미지 업로드 후 게시글 생성")
     void createArticle_Success() {
       // given
-      ArticleCreateRequest request =
-          new ArticleCreateRequest("테스트 제목", "테스트 내용입니다", "일상", List.of("태그1", "태그2"));
+      ArticleCreateRequest request = new ArticleCreateRequest("테스트 제목", "테스트 내용입니다", "일상");
       MultipartFile file = mock(MultipartFile.class);
       Article savedArticle = createArticle();
 
@@ -107,8 +106,7 @@ class ArticleServiceTest {
     @DisplayName("성공: 새 이미지가 있으면 업로드 후 수정")
     void updateArticle_WithNewImage() {
       // given
-      ArticleUpdateRequest request =
-          new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동", List.of("태그1"));
+      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동");
       MultipartFile file = mock(MultipartFile.class);
 
       given(file.isEmpty()).willReturn(false);
@@ -127,8 +125,7 @@ class ArticleServiceTest {
     @DisplayName("성공: 새 이미지가 없으면 기존 이미지 유지")
     void updateArticle_WithoutNewImage() {
       // given
-      ArticleUpdateRequest request =
-          new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동", List.of("태그1"));
+      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동");
       MultipartFile file = mock(MultipartFile.class);
 
       given(file.isEmpty()).willReturn(true);
@@ -146,8 +143,7 @@ class ArticleServiceTest {
     @DisplayName("성공: 파일이 null이면 이미지 업로드 안함")
     void updateArticle_WithNullFile() {
       // given
-      ArticleUpdateRequest request =
-          new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동", List.of("태그1"));
+      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동");
 
       willDoNothing().given(articleWriter).update(request, MEMBER_ID, null, ARTICLE_ID);
 
@@ -314,7 +310,8 @@ class ArticleServiceTest {
     @DisplayName("성공: 문체 변환")
     void transformWritingStyle_Success() {
       // given
-      StyleTransformRequest request = new StyleTransformRequest("테스트 내용입니다", WritingStyle.FRIENDLY, null);
+      StyleTransformRequest request =
+          new StyleTransformRequest("테스트 내용입니다", WritingStyle.FRIENDLY, null);
       String transformedContent = "변환된 내용이에요~ 😊";
 
       given(aiService.transformWritingStyle("테스트 내용입니다", WritingStyle.FRIENDLY))
