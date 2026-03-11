@@ -5,6 +5,7 @@ name: mylog-dev
 services:
   redis:
     image: redis:7-alpine
+
     container_name: redis
     restart: unless-stopped
     ports:

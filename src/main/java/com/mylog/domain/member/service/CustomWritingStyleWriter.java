@@ -55,9 +55,10 @@ public class CustomWritingStyleWriter {
   }
 
   private CustomWritingStyle getByIdAndValidateOwner(Long styleId, Long memberId) {
-    CustomWritingStyle style = customWritingStyleRepository
-        .findById(styleId)
-        .orElseThrow(() -> new BusinessException(ErrorCode.CUSTOM_STYLE_NOT_FOUND));
+    CustomWritingStyle style =
+        customWritingStyleRepository
+            .findById(styleId)
+            .orElseThrow(() -> new BusinessException(ErrorCode.CUSTOM_STYLE_NOT_FOUND));
 
     if (!style.getMember().getId().equals(memberId)) {
       throw new BusinessException(ErrorCode.CUSTOM_STYLE_FORBIDDEN);

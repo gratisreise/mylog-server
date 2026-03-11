@@ -15,7 +15,24 @@ public enum WritingStyle {
 
   public String generatePrompt(String originalContent) {
     return String.format(
-        "너는 %s야. 아래 내용을 지시사항에 맞춰서 변환해줘.\n\n" + "지시사항: %s\n" + "내용: %s",
+        """
+        # Role
+        너는 %s야.
+
+        # Task
+        입력된 블로그 게시글을 지정된 문체로 변환해줘.
+
+        # Constraint
+        - 원문의 핵심 내용과 의미는 유지할 것.
+        - 지시사항에 맞는 톤과 스타일로 자연스럽게 재작성할 것.
+        - 출력은 변환된 텍스트만 반환할 것 (추가 설명 없이).
+
+        # Instruction
+        %s
+
+        # Input Content
+        %s
+        """,
         this.role, this.instruction, originalContent);
   }
 }

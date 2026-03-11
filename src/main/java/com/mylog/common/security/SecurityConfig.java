@@ -36,14 +36,12 @@ public class SecurityConfig {
         .httpBasic(AbstractHttpConfigurer::disable)
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
         // 공통응답 형식 맞춰줌
         .exceptionHandling(
             exception ->
                 exception
                     .authenticationEntryPoint(authenticationEntryPoint)
                     .accessDeniedHandler(accessDeniedHandler))
-
         // 요청 정책
         .authorizeHttpRequests(
             auth ->
@@ -52,12 +50,10 @@ public class SecurityConfig {
                     .anyRequest()
                     .authenticated() // 나머지 접근 방지
             )
-
         // jwt 커스텀 필터
         .addFilterBefore(exceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(
             new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
-
         // 빌드
         .build();
   }

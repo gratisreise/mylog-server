@@ -22,7 +22,6 @@ public class ArticleWriter {
   private final ArticleRepository articleRepository;
   private final MemberReader memberReader;
   private final CategoryReader categoryReader;
-  private final TagWriter tagWriter;
   private final AiService aiService;
 
   public Article create(ArticleCreateRequest request, Long memberId, String imageUrl) {
@@ -32,11 +31,7 @@ public class ArticleWriter {
     Article article = request.toEntity(member, category, imageUrl);
     Article savedArticle = articleRepository.save(article);
 
-    if (request.tagNames() != null && !request.tagNames().isEmpty()) {
-      tagWriter.saveTag(request.tagNames(), article);
-    }
-
-    // 비동기 AI 요약 생성 트리거
+    // 비동기 AI 요약 + 태그 생성 트리거
     aiService.generateSummaryAsync(savedArticle.getId());
 
     return savedArticle;

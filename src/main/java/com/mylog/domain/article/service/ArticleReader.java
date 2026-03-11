@@ -7,6 +7,7 @@ import com.mylog.domain.article.dto.response.ArticleResponse;
 import com.mylog.domain.article.dto.response.ArticleTestResponse;
 import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.article.repository.ArticleRepository;
+import com.mylog.domain.article.repository.ArticleTagRepository;
 import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.service.MemberReader;
 import java.util.List;
@@ -21,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ArticleReader {
   private final ArticleRepository articleRepository;
-  private final TagReader tagReader;
+  private final ArticleTagRepository articleTagRepository;
   private final MemberReader memberReader;
 
   // 전체 게시글 목록 조회
@@ -79,7 +80,16 @@ public class ArticleReader {
         articleRepository
             .findById(id)
             .orElseThrow(() -> new BusinessException(ErrorCode.ARTICLE_NOT_FOUND));
-    return new ArticleResponse(article, List.of());
+
+    List<String> tags = getTagNames(id);
+    return new ArticleResponse(article, tags);
+  }
+
+  // 태그 목록 조회
+  private List<String> getTagNames(Long articleId) {
+    return articleTagRepository.findAllByArticleId(articleId).stream()
+        .map(at -> at.getTag().getTagName())
+        .toList();
   }
 
   public boolean isExists(Long articleId) {

@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public class ErrorResponse extends BaseResponse {
   private final ErrorDetail error;
+  public record ErrorDetail(String code, String message) {}
 
   private ErrorResponse(String code, String message) {
     super(false, LocalDateTime.now());
@@ -26,5 +27,5 @@ public class ErrorResponse extends BaseResponse {
     return new ErrorResponse(code.getCode(), ex.getMessage());
   }
 
-  public record ErrorDetail(String code, String message) {}
+
 }

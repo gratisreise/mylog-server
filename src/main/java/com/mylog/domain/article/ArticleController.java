@@ -3,9 +3,11 @@ package com.mylog.domain.article;
 import com.mylog.common.annotations.MemberId;
 import com.mylog.common.response.PageResponse;
 import com.mylog.common.response.SuccessResponse;
+import com.mylog.domain.article.dto.AiSummaryResult;
 import com.mylog.domain.article.dto.request.ArticleCreateRequest;
 import com.mylog.domain.article.dto.request.ArticleUpdateRequest;
 import com.mylog.domain.article.dto.request.StyleTransformRequest;
+import com.mylog.domain.article.dto.request.Temp;
 import com.mylog.domain.article.dto.response.ArticleCreateResponse;
 import com.mylog.domain.article.dto.response.ArticleResponse;
 import com.mylog.domain.article.dto.response.ArticleSummaryResponse;
@@ -127,4 +129,13 @@ public class ArticleController {
       @PathVariable Long articleId) {
     return SuccessResponse.toOk(articleService.getArticleSummary(articleId));
   }
+
+  @PostMapping("/summary")
+  @Operation(summary = "AI 문체 변환")
+  public ResponseEntity<SuccessResponse<AiSummaryResult>> transformWritingStyle(
+      @RequestBody @Valid Temp request, @MemberId Long memberId) {
+    return SuccessResponse.toOk(articleService.getArticleSummary(request));
+  }
+
+
 }

@@ -6,7 +6,6 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ErrorCode {
-
   // ========================================================================
   // AUTH - 인증 관련
   // ========================================================================
@@ -22,7 +21,6 @@ public enum ErrorCode {
   INVALID_REDIRECT_URI(400, "AUTH_010", "허용되지 않은 리다이렉트 URI입니다."),
   ALREADY_LOGGED_IN(400, "AUTH_011", "이미 로그인된 상태입니다."),
   NOT_LOGGED_IN(401, "AUTH_012", "로그인이 필요한 서비스입니다."),
-
   // ========================================================================
   // MEMBER - 회원 관련
   // ========================================================================
@@ -127,8 +125,8 @@ public enum ErrorCode {
   // 미처리 오류
   // ========================================================================
   UNKNOWN_ERROR(500, "UNKNOWN", "알 수 없는 오류가 발생했습니다.");
-
   private final int status;
   private final String code;
   private final String message;
+
 }

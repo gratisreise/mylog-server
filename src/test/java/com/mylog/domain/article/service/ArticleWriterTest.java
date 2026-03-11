@@ -13,7 +13,6 @@ import com.mylog.domain.category.Category;
 import com.mylog.domain.category.service.CategoryReader;
 import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.service.MemberReader;
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -30,7 +29,6 @@ class ArticleWriterTest {
   @Mock private ArticleRepository articleRepository;
   @Mock private MemberReader memberReader;
   @Mock private CategoryReader categoryReader;
-  @Mock private TagWriter tagWriter;
   @Mock private AiService aiService;
 
   @InjectMocks private ArticleWriter articleWriter;
@@ -78,11 +76,10 @@ class ArticleWriterTest {
   class Create {
 
     @Test
-    @DisplayName("성공: 태그 없이 게시글 생성")
-    void create_WithoutTags_Success() {
+    @DisplayName("성공: 게시글 생성 (AI가 태그 자동 생성)")
+    void create_Success() {
       // given
-      ArticleCreateRequest request =
-          new ArticleCreateRequest("테스트 제목", "테스트 내용입니다", "일상", List.of());
+      ArticleCreateRequest request = new ArticleCreateRequest("테스트 제목", "테스트 내용입니다", "일상");
       Member member = createMember();
       Category category = createCategory();
 
@@ -97,30 +94,7 @@ class ArticleWriterTest {
       then(memberReader).should().getById(MEMBER_ID);
       then(categoryReader).should().getByMemberIdAndCategoryName(MEMBER_ID, "일상");
       then(articleRepository).should().save(any(Article.class));
-      then(tagWriter).should(never()).saveTag(any(), any());
-    }
-
-    @Test
-    @DisplayName("성공: 태그와 함께 게시글 생성")
-    void create_WithTags_Success() {
-      // given
-      List<String> tags = List.of("태그1", "태그2");
-      ArticleCreateRequest request = new ArticleCreateRequest("테스트 제목", "테스트 내용입니다", "일상", tags);
-      Member member = createMember();
-      Category category = createCategory();
-
-      given(memberReader.getById(MEMBER_ID)).willReturn(member);
-      given(categoryReader.getByMemberIdAndCategoryName(MEMBER_ID, "일상")).willReturn(category);
-      given(articleRepository.save(any(Article.class))).willAnswer(inv -> inv.getArgument(0));
-
-      // when
-      articleWriter.create(request, MEMBER_ID, IMAGE_URL);
-
-      // then
-      then(memberReader).should().getById(MEMBER_ID);
-      then(categoryReader).should().getByMemberIdAndCategoryName(MEMBER_ID, "일상");
-      then(articleRepository).should().save(any(Article.class));
-      then(tagWriter).should().saveTag(eq(tags), any(Article.class));
+      then(aiService).should().generateSummaryAsync(any());
     }
   }
 
@@ -136,8 +110,7 @@ class ArticleWriterTest {
       Article article = createArticle(member);
       Category newCategory = Category.builder().id(2L).categoryName("개발").build();
 
-      ArticleUpdateRequest request =
-          new ArticleUpdateRequest("수정된 제목", "수정된 내용", "개발", "홍길동", List.of("태그1"));
+      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "개발", "홍길동");
 
       given(articleRepository.findById(ARTICLE_ID)).willReturn(Optional.of(article));
       given(categoryReader.getByMemberIdAndCategoryName(MEMBER_ID, "개발")).willReturn(newCategory);
@@ -160,8 +133,7 @@ class ArticleWriterTest {
       Article article = createArticle(member);
       Category category = createCategory();
 
-      ArticleUpdateRequest request =
-          new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동", List.of());
+      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동");
 
       given(articleRepository.findById(ARTICLE_ID)).willReturn(Optional.of(article));
       given(categoryReader.getByMemberIdAndCategoryName(MEMBER_ID, "일상")).willReturn(category);
@@ -180,8 +152,7 @@ class ArticleWriterTest {
       Member owner = createMember();
       Article article = createArticle(owner);
 
-      ArticleUpdateRequest request =
-          new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동", List.of());
+      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동");
 
       given(articleRepository.findById(ARTICLE_ID)).willReturn(Optional.of(article));
 
@@ -199,8 +170,7 @@ class ArticleWriterTest {
     @DisplayName("실패: 존재하지 않는 게시글 수정 시도")
     void update_NonExistentArticle_ThrowsException() {
       // given
-      ArticleUpdateRequest request =
-          new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동", List.of());
+      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동");
 
       given(articleRepository.findById(ARTICLE_ID)).willReturn(Optional.empty());
 
