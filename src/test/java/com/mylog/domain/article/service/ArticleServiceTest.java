@@ -8,7 +8,7 @@ import com.mylog.common.enums.WritingStyle;
 import com.mylog.common.response.PageResponse;
 import com.mylog.domain.article.ArticleService;
 import com.mylog.domain.article.dto.request.ArticleCreateRequest;
-import com.mylog.domain.article.dto.request.ArticleSearchRequest;
+import com.mylog.domain.article.dto.request.ArticleQueryParam;
 import com.mylog.domain.article.dto.request.ArticleUpdateRequest;
 import com.mylog.domain.article.dto.request.StyleTransformRequest;
 import com.mylog.domain.article.dto.response.ArticleCreateResponse;
@@ -46,6 +46,7 @@ class ArticleServiceTest {
 
   private static final Long MEMBER_ID = 1L;
   private static final Long ARTICLE_ID = 100L;
+  private static final Long CATEGORY_ID = 10L;
   private static final String IMAGE_URL = "https://s3.amazonaws.com/bucket/image.jpg";
 
   private Member createMember() {
@@ -58,7 +59,7 @@ class ArticleServiceTest {
   }
 
   private Category createCategory() {
-    return Category.builder().id(1L).categoryName("일상").build();
+    return Category.builder().id(CATEGORY_ID).categoryName("일상").build();
   }
 
   private Article createArticle() {
@@ -199,11 +200,11 @@ class ArticleServiceTest {
   }
 
   @Nested
-  @DisplayName("게시글 목록 조회")
+  @DisplayName("통합 게시글 목록/검색 조회")
   class GetArticles {
 
     @Test
-    @DisplayName("성공: 전체 게시글 목록 조회")
+    @DisplayName("성공: 전체 게시글 목록 조회 (필터 없음)")
     void getArticles_All_Success() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
@@ -212,20 +213,21 @@ class ArticleServiceTest {
               ARTICLE_ID, "제목", "내용", "홍길동", "일상", IMAGE_URL, List.of(), null, null);
       Page<ArticleResponse> page = new PageImpl<>(List.of(response));
 
-      given(articleReader.getArticles(pageable)).willReturn(page);
+      given(articleReader.getArticles(any(ArticleQueryParam.class), eq(pageable))).willReturn(page);
 
       // when
-      PageResponse<ArticleResponse> result = articleService.getArticles(pageable);
+      PageResponse<ArticleResponse> result =
+          articleService.getArticles(pageable, null, null, null, null);
 
       // then
       assertThat(result).isNotNull();
       assertThat(result.getData()).hasSize(1);
-      then(articleReader).should().getArticles(pageable);
+      then(articleReader).should().getArticles(any(ArticleQueryParam.class), eq(pageable));
     }
 
     @Test
-    @DisplayName("성공: 회원별 게시글 목록 조회")
-    void getArticles_ByMember_Success() {
+    @DisplayName("성공: 내 게시글 목록 조회")
+    void getArticles_My_Success() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
       ArticleResponse response =
@@ -233,72 +235,131 @@ class ArticleServiceTest {
               ARTICLE_ID, "제목", "내용", "홍길동", "일상", IMAGE_URL, List.of(), null, null);
       Page<ArticleResponse> page = new PageImpl<>(List.of(response));
 
-      given(articleReader.getArticles(pageable, MEMBER_ID)).willReturn(page);
+      given(articleReader.getArticles(any(ArticleQueryParam.class), eq(pageable))).willReturn(page);
 
       // when
-      PageResponse<ArticleResponse> result = articleService.getArticles(pageable, MEMBER_ID);
+      PageResponse<ArticleResponse> result =
+          articleService.getArticles(pageable, MEMBER_ID, null, null, null);
 
       // then
       assertThat(result).isNotNull();
       assertThat(result.getData()).hasSize(1);
-      then(articleReader).should().getArticles(pageable, MEMBER_ID);
+      then(articleReader).should().getArticles(any(ArticleQueryParam.class), eq(pageable));
     }
-  }
-
-  @Nested
-  @DisplayName("게시글 검색")
-  class SearchArticles {
 
     @Test
-    @DisplayName("성공: 전체 게시글 검색")
-    void searchArticles_Success() {
+    @DisplayName("성공: 키워드로 검색")
+    void getArticles_ByKeyword_Success() {
+      // given
+      Pageable pageable = PageRequest.of(0, 10);
+      String keyword = "테스트";
+      ArticleResponse response =
+          new ArticleResponse(
+              ARTICLE_ID, "제목", "내용", "홍길동", "일상", IMAGE_URL, List.of(), null, null);
+      Page<ArticleResponse> page = new PageImpl<>(List.of(response));
+
+      given(articleReader.getArticles(any(ArticleQueryParam.class), eq(pageable))).willReturn(page);
+
+      // when
+      PageResponse<ArticleResponse> result =
+          articleService.getArticles(pageable, null, keyword, null, null);
+
+      // then
+      assertThat(result).isNotNull();
+      assertThat(result.getData()).hasSize(1);
+      then(articleReader).should().getArticles(any(ArticleQueryParam.class), eq(pageable));
+    }
+
+    @Test
+    @DisplayName("성공: 태그로 검색")
+    void getArticles_ByTag_Success() {
+      // given
+      Pageable pageable = PageRequest.of(0, 10);
+      String tag = "태그1";
+      ArticleResponse response =
+          new ArticleResponse(
+              ARTICLE_ID, "제목", "내용", "홍길동", "일상", IMAGE_URL, List.of(), null, null);
+      Page<ArticleResponse> page = new PageImpl<>(List.of(response));
+
+      given(articleReader.getArticles(any(ArticleQueryParam.class), eq(pageable))).willReturn(page);
+
+      // when
+      PageResponse<ArticleResponse> result =
+          articleService.getArticles(pageable, null, null, tag, null);
+
+      // then
+      assertThat(result).isNotNull();
+      assertThat(result.getData()).hasSize(1);
+      then(articleReader).should().getArticles(any(ArticleQueryParam.class), eq(pageable));
+    }
+
+    @Test
+    @DisplayName("성공: 카테고리로 검색")
+    void getArticles_ByCategory_Success() {
+      // given
+      Pageable pageable = PageRequest.of(0, 10);
+      ArticleResponse response =
+          new ArticleResponse(
+              ARTICLE_ID, "제목", "내용", "홍길동", "일상", IMAGE_URL, List.of(), null, null);
+      Page<ArticleResponse> page = new PageImpl<>(List.of(response));
+
+      given(articleReader.getArticles(any(ArticleQueryParam.class), eq(pageable))).willReturn(page);
+
+      // when
+      PageResponse<ArticleResponse> result =
+          articleService.getArticles(pageable, null, null, null, CATEGORY_ID);
+
+      // then
+      assertThat(result).isNotNull();
+      assertThat(result.getData()).hasSize(1);
+      then(articleReader).should().getArticles(any(ArticleQueryParam.class), eq(pageable));
+    }
+
+    @Test
+    @DisplayName("성공: 복합 필터 검색 (키워드 + 카테고리)")
+    void getArticles_ByKeywordAndCategory_Success() {
+      // given
+      Pageable pageable = PageRequest.of(0, 10);
+      String keyword = "테스트";
+      ArticleResponse response =
+          new ArticleResponse(
+              ARTICLE_ID, "제목", "내용", "홍길동", "일상", IMAGE_URL, List.of(), null, null);
+      Page<ArticleResponse> page = new PageImpl<>(List.of(response));
+
+      given(articleReader.getArticles(any(ArticleQueryParam.class), eq(pageable))).willReturn(page);
+
+      // when
+      PageResponse<ArticleResponse> result =
+          articleService.getArticles(pageable, null, keyword, null, CATEGORY_ID);
+
+      // then
+      assertThat(result).isNotNull();
+      assertThat(result.getData()).hasSize(1);
+      then(articleReader).should().getArticles(any(ArticleQueryParam.class), eq(pageable));
+    }
+
+    @Test
+    @DisplayName("성공: 내 게시글 복합 필터 검색")
+    void getArticles_MyWithFilters_Success() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
       String keyword = "테스트";
       String tag = "태그1";
-      Long categoryId = 1L;
-
       ArticleResponse response =
           new ArticleResponse(
               ARTICLE_ID, "제목", "내용", "홍길동", "일상", IMAGE_URL, List.of(), null, null);
       Page<ArticleResponse> page = new PageImpl<>(List.of(response));
 
-      given(articleReader.search(any(ArticleSearchRequest.class))).willReturn(page);
+      given(articleReader.getArticles(any(ArticleQueryParam.class), eq(pageable))).willReturn(page);
 
       // when
       PageResponse<ArticleResponse> result =
-          articleService.searchArticles(keyword, tag, categoryId, pageable);
+          articleService.getArticles(pageable, MEMBER_ID, keyword, tag, CATEGORY_ID);
 
       // then
       assertThat(result).isNotNull();
       assertThat(result.getData()).hasSize(1);
-      then(articleReader).should().search(any(ArticleSearchRequest.class));
-    }
-
-    @Test
-    @DisplayName("성공: 내 게시글 검색")
-    void searchMyArticles_Success() {
-      // given
-      Pageable pageable = PageRequest.of(0, 10);
-      String keyword = "테스트";
-      String tag = "태그1";
-      Long categoryId = 1L;
-
-      ArticleResponse response =
-          new ArticleResponse(
-              ARTICLE_ID, "제목", "내용", "홍길동", "일상", IMAGE_URL, List.of(), null, null);
-      Page<ArticleResponse> page = new PageImpl<>(List.of(response));
-
-      given(articleReader.search(any(ArticleSearchRequest.class))).willReturn(page);
-
-      // when
-      PageResponse<ArticleResponse> result =
-          articleService.searchMyArticles(keyword, tag, categoryId, pageable, MEMBER_ID);
-
-      // then
-      assertThat(result).isNotNull();
-      assertThat(result.getData()).hasSize(1);
-      then(articleReader).should().search(any(ArticleSearchRequest.class));
+      then(articleReader).should().getArticles(any(ArticleQueryParam.class), eq(pageable));
     }
   }
 

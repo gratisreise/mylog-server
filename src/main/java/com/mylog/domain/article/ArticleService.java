@@ -4,7 +4,7 @@ import com.mylog.common.enums.WritingStyle;
 import com.mylog.common.response.PageResponse;
 import com.mylog.domain.article.dto.AiSummaryResult;
 import com.mylog.domain.article.dto.request.ArticleCreateRequest;
-import com.mylog.domain.article.dto.request.ArticleSearchRequest;
+import com.mylog.domain.article.dto.request.ArticleQueryParam;
 import com.mylog.domain.article.dto.request.ArticleUpdateRequest;
 import com.mylog.domain.article.dto.request.StyleTransformRequest;
 import com.mylog.domain.article.dto.request.Temp;
@@ -57,26 +57,20 @@ public class ArticleService {
     return articleReader.getArticle(articleId);
   }
 
-  public PageResponse<ArticleResponse> getArticles(Pageable pageable) {
-    return PageResponse.from(articleReader.getArticles(pageable));
-  }
-
-  public PageResponse<ArticleResponse> getArticles(Pageable pageable, Long memberId) {
-    return PageResponse.from(articleReader.getArticles(pageable, memberId));
-  }
-
-  public PageResponse<ArticleResponse> searchArticles(
-      String keyword, String tag, Long categoryId, Pageable pageable) {
-    ArticleSearchRequest request =
-        new ArticleSearchRequest(keyword, tag, categoryId, null, pageable);
-    return PageResponse.from(articleReader.search(request));
-  }
-
-  public PageResponse<ArticleResponse> searchMyArticles(
-      String keyword, String tag, Long categoryId, Pageable pageable, Long memberId) {
-    ArticleSearchRequest request =
-        new ArticleSearchRequest(keyword, tag, categoryId, memberId, pageable);
-    return PageResponse.from(articleReader.search(request));
+  /**
+   * 통합 게시글 목록/검색 조회
+   *
+   * @param pageable 페이징 정보
+   * @param memberId 회원 ID (null이면 전체, non-null이면 내 게시글)
+   * @param keyword 제목 검색 키워드 (선택)
+   * @param tag 태그 필터 (선택)
+   * @param categoryId 카테고리 필터 (선택)
+   * @return 게시글 목록
+   */
+  public PageResponse<ArticleResponse> getArticles(
+      Pageable pageable, Long memberId, String keyword, String tag, Long categoryId) {
+    ArticleQueryParam params = new ArticleQueryParam(memberId, keyword, tag, categoryId);
+    return PageResponse.from(articleReader.getArticles(params, pageable));
   }
 
   // AI 문체 변환
@@ -110,6 +104,6 @@ public class ArticleService {
 
   // AI 요약 조회
   public AiSummaryResult getArticleSummary(Temp temp) {
-      return aiService.test(temp.content());
+    return aiService.test(temp.content());
   }
 }

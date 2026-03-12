@@ -37,7 +37,7 @@ public class AiService {
     return geminiService.gemini(prompt);
   }
 
-  public AiSummaryResult test(String content){
+  public AiSummaryResult test(String content) {
     String prompt = buildSummaryPrompt(content);
     String response = geminiService.gemini(prompt);
 
@@ -83,7 +83,7 @@ public class AiService {
     return String.format(
         """
         # Role
-        너는 온라인 콘텐츠를 분석하고 핵심 정보를 정리하는 전문 콘텐츠 에디터다. 
+        너는 온라인 콘텐츠를 분석하고 핵심 정보를 정리하는 전문 콘텐츠 에디터다.
 
         # Task
         입력된 게시글을 분석하여 다음 두 가지 작업을 수행해줘.

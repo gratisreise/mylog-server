@@ -78,40 +78,26 @@ public class ArticleController {
   }
 
   @GetMapping
-  @Operation(summary = "전체 게시글 목록 조회")
+  @Operation(summary = "전체 게시글 목록/검색 조회")
   public ResponseEntity<SuccessResponse<PageResponse<ArticleResponse>>> getArticles(
-      @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
-    return SuccessResponse.toOk(articleService.getArticles(pageable));
-  }
-
-  @GetMapping("/search")
-  @Operation(summary = "전체 게시글 검색")
-  public ResponseEntity<SuccessResponse<PageResponse<ArticleResponse>>> searchArticles(
       @RequestParam(required = false) String keyword,
       @RequestParam(required = false) String tag,
       @RequestParam(required = false) Long categoryId,
       @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
-    return SuccessResponse.toOk(articleService.searchArticles(keyword, tag, categoryId, pageable));
+    return SuccessResponse.toOk(
+        articleService.getArticles(pageable, null, keyword, tag, categoryId));
   }
 
   @GetMapping("/me")
-  @Operation(summary = "내 게시글 목록 조회")
+  @Operation(summary = "내 게시글 목록/검색 조회")
   public ResponseEntity<SuccessResponse<PageResponse<ArticleResponse>>> getMyArticles(
-      @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable,
-      @MemberId Long memberId) {
-    return SuccessResponse.toOk(articleService.getArticles(pageable, memberId));
-  }
-
-  @GetMapping("/me/search")
-  @Operation(summary = "내 게시글 검색")
-  public ResponseEntity<SuccessResponse<PageResponse<ArticleResponse>>> searchMyArticles(
       @RequestParam(required = false) String keyword,
       @RequestParam(required = false) String tag,
       @RequestParam(required = false) Long categoryId,
       @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable,
       @MemberId Long memberId) {
     return SuccessResponse.toOk(
-        articleService.searchMyArticles(keyword, tag, categoryId, pageable, memberId));
+        articleService.getArticles(pageable, memberId, keyword, tag, categoryId));
   }
 
   // === AI 서비스 ===
@@ -136,6 +122,4 @@ public class ArticleController {
       @RequestBody @Valid Temp request, @MemberId Long memberId) {
     return SuccessResponse.toOk(articleService.getArticleSummary(request));
   }
-
-
 }

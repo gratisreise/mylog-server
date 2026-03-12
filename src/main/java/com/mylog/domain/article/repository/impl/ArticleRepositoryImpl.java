@@ -1,5 +1,6 @@
 package com.mylog.domain.article.repository.impl;
 
+import com.mylog.domain.article.dto.request.ArticleQueryParam;
 import com.mylog.domain.article.dto.response.ArticleResponse;
 import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.article.entity.QArticle;
@@ -7,8 +8,8 @@ import com.mylog.domain.article.entity.QArticleTag;
 import com.mylog.domain.article.entity.QTag;
 import com.mylog.domain.article.repository.ArticleRepositoryCustom;
 import com.mylog.domain.category.QCategory;
-import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.entity.QMember;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,121 +23,41 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
   private final JPAQueryFactory jpaQueryFactory;
 
   @Override
-  public Page<ArticleResponse> findAllCustom(Pageable pageable) {
-    QArticle article = QArticle.article;
-    QMember member = QMember.member;
-    QCategory category = QCategory.category;
-
-    List<Article> articles =
-        jpaQueryFactory
-            .selectFrom(article)
-            .join(article.member, member)
-            .fetchJoin()
-            .join(article.category, category)
-            .fetchJoin()
-            .orderBy(article.createdAt.desc())
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
-
-    Long count = jpaQueryFactory.select(article.count()).from(article).fetchOne();
-
-    List<ArticleResponse> responses =
-        articles.stream().map(a -> new ArticleResponse(a, List.of())).toList();
-
-    return new PageImpl<>(responses, pageable, count != null ? count : 0L);
-  }
-
-  @Override
-  public Page<ArticleResponse> findMineByMember(Member memberParam, Pageable pageable) {
-    QArticle article = QArticle.article;
-    QMember member = QMember.member;
-    QCategory category = QCategory.category;
-
-    List<Article> articles =
-        jpaQueryFactory
-            .selectFrom(article)
-            .join(article.member, member)
-            .fetchJoin()
-            .join(article.category, category)
-            .fetchJoin()
-            .where(article.member.eq(memberParam))
-            .orderBy(article.createdAt.desc())
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
-
-    Long count =
-        jpaQueryFactory
-            .select(article.count())
-            .from(article)
-            .where(article.member.eq(memberParam))
-            .fetchOne();
-
-    List<ArticleResponse> responses =
-        articles.stream().map(a -> new ArticleResponse(a, List.of())).toList();
-
-    return new PageImpl<>(responses, pageable, count != null ? count : 0L);
-  }
-
-  @Override
-  public Page<ArticleResponse> searchMineByTitle(
-      Member memberParam, String keyword, Pageable pageable) {
-    QArticle article = QArticle.article;
-    QMember member = QMember.member;
-    QCategory category = QCategory.category;
-
-    List<Article> articles =
-        jpaQueryFactory
-            .selectFrom(article)
-            .join(article.member, member)
-            .fetchJoin()
-            .join(article.category, category)
-            .fetchJoin()
-            .where(
-                article
-                    .member
-                    .eq(memberParam)
-                    .and(article.title.lower().like("%" + keyword.toLowerCase() + "%")))
-            .orderBy(article.createdAt.desc())
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
-
-    Long count =
-        jpaQueryFactory
-            .select(article.count())
-            .from(article)
-            .where(
-                article
-                    .member
-                    .eq(memberParam)
-                    .and(article.title.lower().like("%" + keyword.toLowerCase() + "%")))
-            .fetchOne();
-
-    List<ArticleResponse> responses =
-        articles.stream().map(a -> new ArticleResponse(a, List.of())).toList();
-
-    return new PageImpl<>(responses, pageable, count != null ? count : 0L);
-  }
-
-  @Override
-  public Page<ArticleResponse> searchMineByTagName(
-      Member memberParam, String tagName, Pageable pageable) {
+  public Page<ArticleResponse> searchArticles(ArticleQueryParam params, Pageable pageable) {
     QArticle article = QArticle.article;
     QMember member = QMember.member;
     QCategory category = QCategory.category;
     QArticleTag articleTag = QArticleTag.articleTag;
     QTag tag = QTag.tag;
 
-    List<Long> articleIds =
-        jpaQueryFactory
-            .select(articleTag.article.id)
-            .from(articleTag)
-            .join(articleTag.tag, tag)
-            .where(tag.tagName.eq(tagName).and(articleTag.article.member.eq(memberParam)))
-            .fetch();
+    BooleanBuilder builder = new BooleanBuilder();
 
+    // 회원 필터 (내 게시글)
+    if (params.hasMemberFilter()) {
+      builder.and(article.member.id.eq(params.memberId()));
+    }
+
+    // 키워드 필터 (제목 검색)
+    if (params.hasKeyword()) {
+      builder.and(article.title.lower().like("%" + params.keyword().toLowerCase() + "%"));
+    }
+
+    // 카테고리 필터
+    if (params.hasCategory()) {
+      builder.and(article.category.id.eq(params.categoryId()));
+    }
+
+    // 태그 필터 (서브쿼리로 article ID 목록 조회)
+    if (params.hasTag()) {
+      List<Long> articleIds = findArticleIdsByTag(params.tag(), params.memberId());
+      if (articleIds.isEmpty()) {
+        // 태그에 해당하는 게시글이 없으면 빈 결과 반환
+        return new PageImpl<>(List.of(), pageable, 0L);
+      }
+      builder.and(article.id.in(articleIds));
+    }
+
+    // 데이터 조회
     List<Article> articles =
         jpaQueryFactory
             .selectFrom(article)
@@ -144,45 +65,14 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
             .fetchJoin()
             .join(article.category, category)
             .fetchJoin()
-            .where(article.id.in(articleIds))
+            .where(builder)
             .orderBy(article.createdAt.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
 
-    Long count = (long) articleIds.size();
-
-    List<ArticleResponse> responses =
-        articles.stream().map(a -> new ArticleResponse(a, List.of())).toList();
-
-    return new PageImpl<>(responses, pageable, count);
-  }
-
-  @Override
-  public Page<ArticleResponse> searchAllByTitle(String keyword, Pageable pageable) {
-    QArticle article = QArticle.article;
-    QMember member = QMember.member;
-    QCategory category = QCategory.category;
-
-    List<Article> articles =
-        jpaQueryFactory
-            .selectFrom(article)
-            .join(article.member, member)
-            .fetchJoin()
-            .join(article.category, category)
-            .fetchJoin()
-            .where(article.title.lower().like("%" + keyword.toLowerCase() + "%"))
-            .orderBy(article.createdAt.desc())
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
-
-    Long count =
-        jpaQueryFactory
-            .select(article.count())
-            .from(article)
-            .where(article.title.lower().like("%" + keyword.toLowerCase() + "%"))
-            .fetchOne();
+    // 전체 카운트 조회
+    Long count = jpaQueryFactory.select(article.count()).from(article).where(builder).fetchOne();
 
     List<ArticleResponse> responses =
         articles.stream().map(a -> new ArticleResponse(a, List.of())).toList();
@@ -190,105 +80,30 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     return new PageImpl<>(responses, pageable, count != null ? count : 0L);
   }
 
-  @Override
-  public Page<ArticleResponse> searchAllByTagName(String tagName, Pageable pageable) {
-    QArticle article = QArticle.article;
-    QMember member = QMember.member;
-    QCategory category = QCategory.category;
+  /**
+   * 태그 이름으로 게시글 ID 목록 조회
+   *
+   * @param tagName 태그 이름
+   * @param memberId 회원 ID (null이면 전체 검색)
+   * @return 게시글 ID 목록
+   */
+  private List<Long> findArticleIdsByTag(String tagName, Long memberId) {
     QArticleTag articleTag = QArticleTag.articleTag;
     QTag tag = QTag.tag;
+    QArticle article = QArticle.article;
 
-    List<Long> articleIds =
+    var query =
         jpaQueryFactory
             .select(articleTag.article.id)
             .from(articleTag)
             .join(articleTag.tag, tag)
-            .where(tag.tagName.eq(tagName))
-            .fetch();
+            .join(articleTag.article, article)
+            .where(tag.tagName.eq(tagName));
 
-    List<Article> articles =
-        jpaQueryFactory
-            .selectFrom(article)
-            .join(article.member, member)
-            .fetchJoin()
-            .join(article.category, category)
-            .fetchJoin()
-            .where(article.id.in(articleIds))
-            .orderBy(article.createdAt.desc())
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
+    if (memberId != null) {
+      query.where(tag.tagName.eq(tagName).and(article.member.id.eq(memberId)));
+    }
 
-    Long count = (long) articleIds.size();
-
-    List<ArticleResponse> responses =
-        articles.stream().map(a -> new ArticleResponse(a, List.of())).toList();
-
-    return new PageImpl<>(responses, pageable, count);
-  }
-
-  @Override
-  public Page<ArticleResponse> findAllByCategory(Long categoryId, Pageable pageable) {
-    QArticle article = QArticle.article;
-    QMember member = QMember.member;
-    QCategory category = QCategory.category;
-
-    List<Article> articles =
-        jpaQueryFactory
-            .selectFrom(article)
-            .join(article.member, member)
-            .fetchJoin()
-            .join(article.category, category)
-            .fetchJoin()
-            .where(article.category.id.eq(categoryId))
-            .orderBy(article.createdAt.desc())
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
-
-    Long count =
-        jpaQueryFactory
-            .select(article.count())
-            .from(article)
-            .where(article.category.id.eq(categoryId))
-            .fetchOne();
-
-    List<ArticleResponse> responses =
-        articles.stream().map(a -> new ArticleResponse(a, List.of())).toList();
-
-    return new PageImpl<>(responses, pageable, count != null ? count : 0L);
-  }
-
-  @Override
-  public Page<ArticleResponse> findMineByMemberAndCategory(
-      Member memberParam, Long categoryId, Pageable pageable) {
-    QArticle article = QArticle.article;
-    QMember member = QMember.member;
-    QCategory category = QCategory.category;
-
-    List<Article> articles =
-        jpaQueryFactory
-            .selectFrom(article)
-            .join(article.member, member)
-            .fetchJoin()
-            .join(article.category, category)
-            .fetchJoin()
-            .where(article.member.eq(memberParam).and(article.category.id.eq(categoryId)))
-            .orderBy(article.createdAt.desc())
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
-
-    Long count =
-        jpaQueryFactory
-            .select(article.count())
-            .from(article)
-            .where(article.member.eq(memberParam).and(article.category.id.eq(categoryId)))
-            .fetchOne();
-
-    List<ArticleResponse> responses =
-        articles.stream().map(a -> new ArticleResponse(a, List.of())).toList();
-
-    return new PageImpl<>(responses, pageable, count != null ? count : 0L);
+    return query.fetch();
   }
 }
