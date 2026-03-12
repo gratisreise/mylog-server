@@ -7,11 +7,11 @@ import org.springframework.data.domain.Page;
 
 @Getter
 public class PageResponse<T> {
-  private final List<T> data;
+  private final List<T> contents;
   private final Pagination pagination;
 
   private PageResponse(Page<T> page) {
-    this.data = page.getContent();
+    this.contents = page.getContent();
     this.pagination = Pagination.from(page);
   }
 

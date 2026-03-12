@@ -3,7 +3,9 @@ package com.mylog.domain.article.dto.response;
 import com.mylog.domain.article.entity.Article;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.Builder;
 
+@Builder
 public record ArticleResponse(
     Long id,
     String title,
@@ -26,5 +28,9 @@ public record ArticleResponse(
         tags,
         article.getCreatedAt(),
         article.getUpdatedAt());
+  }
+
+  public static ArticleResponse from(Article article) {
+    return new ArticleResponse(article, List.of("친구", "생활", "게임"));
   }
 }

@@ -7,6 +7,7 @@ import com.mylog.domain.comment.dto.CommentArticleResponse;
 import com.mylog.domain.comment.dto.CommentCreateRequest;
 import com.mylog.domain.comment.dto.CommentResponse;
 import com.mylog.domain.comment.dto.CommentUpdateRequest;
+import com.mylog.domain.comment.dto.Reply;
 import com.mylog.domain.comment.service.CommentReader;
 import com.mylog.domain.comment.service.CommentWriter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,6 +52,15 @@ public class CommentController {
       @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
     Page<CommentArticleResponse> comments = commentReader.getComments1(articleId, pageable);
     return SuccessResponse.toOk(PageResponse.from(comments));
+  }
+
+  @GetMapping("/comments/{parentId}/replies")
+  @Operation(summary = "대댓글 목록 조회")
+  public ResponseEntity<SuccessResponse<PageResponse<Reply>>> getReplies(
+      @PathVariable @Min(1) Long parentId,
+      @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
+    Page<Reply> replies = commentReader.getRepliesByParentId(parentId, pageable);
+    return SuccessResponse.toOk(PageResponse.from(replies));
   }
 
   @GetMapping("/comments/me")

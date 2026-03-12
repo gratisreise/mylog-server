@@ -1,9 +1,15 @@
 package com.mylog.domain.article.dto.request;
 
-import org.springframework.data.domain.Pageable;
+public record ArticleQueryParam(
+    Long memberId,
+    String keyword,
+    String tag,
+    Long categoryId
+    ) {
+  public boolean hasMemberFilter() {
+    return memberId != null;
+  }
 
-public record ArticleSearchRequest(
-    String keyword, String tag, Long categoryId, Long memberId, Pageable pageable) {
   public boolean hasKeyword() {
     return keyword != null && !keyword.isBlank();
   }
@@ -14,9 +20,5 @@ public record ArticleSearchRequest(
 
   public boolean hasCategory() {
     return categoryId != null;
-  }
-
-  public boolean isMyArticles() {
-    return memberId != null;
   }
 }

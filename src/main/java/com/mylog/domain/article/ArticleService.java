@@ -4,7 +4,7 @@ import com.mylog.common.enums.WritingStyle;
 import com.mylog.common.response.PageResponse;
 import com.mylog.domain.article.dto.AiSummaryResult;
 import com.mylog.domain.article.dto.request.ArticleCreateRequest;
-import com.mylog.domain.article.dto.request.ArticleSearchRequest;
+import com.mylog.domain.article.dto.request.ArticleQueryParam;
 import com.mylog.domain.article.dto.request.ArticleUpdateRequest;
 import com.mylog.domain.article.dto.request.StyleTransformRequest;
 import com.mylog.domain.article.dto.request.Temp;
@@ -57,26 +57,10 @@ public class ArticleService {
     return articleReader.getArticle(articleId);
   }
 
-  public PageResponse<ArticleResponse> getArticles(Pageable pageable) {
-    return PageResponse.from(articleReader.getArticles(pageable));
-  }
-
-  public PageResponse<ArticleResponse> getArticles(Pageable pageable, Long memberId) {
-    return PageResponse.from(articleReader.getArticles(pageable, memberId));
-  }
-
-  public PageResponse<ArticleResponse> searchArticles(
-      String keyword, String tag, Long categoryId, Pageable pageable) {
-    ArticleSearchRequest request =
-        new ArticleSearchRequest(keyword, tag, categoryId, null, pageable);
-    return PageResponse.from(articleReader.search(request));
-  }
-
-  public PageResponse<ArticleResponse> searchMyArticles(
-      String keyword, String tag, Long categoryId, Pageable pageable, Long memberId) {
-    ArticleSearchRequest request =
-        new ArticleSearchRequest(keyword, tag, categoryId, memberId, pageable);
-    return PageResponse.from(articleReader.search(request));
+  public PageResponse<ArticleResponse> getArticles(
+      Pageable pageable, Long memberId, String keyword, String tag, Long categoryId) {
+    ArticleQueryParam params = new ArticleQueryParam(memberId, keyword, tag, categoryId);
+    return PageResponse.from(articleReader.getArticles(params, pageable));
   }
 
   // AI 문체 변환
@@ -101,15 +85,13 @@ public class ArticleService {
     return StyleTransformResponse.of(transformed, styleName);
   }
 
-  // AI 요약 조회
   public ArticleSummaryResponse getArticleSummary(Long articleId) {
     Article article = articleReader.getArticleById(articleId);
     return ArticleSummaryResponse.of(
         articleId, article.getAiSummary(), article.getAiSummaryStatus());
   }
 
-  // AI 요약 조회
   public AiSummaryResult getArticleSummary(Temp temp) {
-      return aiService.test(temp.content());
+    return aiService.test(temp.content());
   }
 }

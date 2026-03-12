@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import com.mylog.common.exception.BusinessException;
-import com.mylog.domain.article.dto.request.ArticleSearchRequest;
+import com.mylog.domain.article.dto.request.ArticleQueryParam;
 import com.mylog.domain.article.dto.response.ArticleResponse;
 import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.article.entity.ArticleTag;
@@ -13,7 +13,6 @@ import com.mylog.domain.article.repository.ArticleRepository;
 import com.mylog.domain.article.repository.ArticleTagRepository;
 import com.mylog.domain.category.Category;
 import com.mylog.domain.member.entity.Member;
-import com.mylog.domain.member.service.MemberReader;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +33,6 @@ class ArticleReaderTest {
 
   @Mock private ArticleRepository articleRepository;
   @Mock private ArticleTagRepository articleTagRepository;
-  @Mock private MemberReader memberReader;
 
   @InjectMocks private ArticleReader articleReader;
 
@@ -68,245 +66,177 @@ class ArticleReaderTest {
   }
 
   @Nested
-  @DisplayName("전체 게시글 목록 조회")
+  @DisplayName("통합 게시글 목록/검색 조회")
   class GetArticles {
 
     @Test
-    @DisplayName("성공: 전체 게시글 목록 조회")
+    @DisplayName("성공: 전체 게시글 목록 조회 (필터 없음)")
     void getArticles_All_Success() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
+      ArticleQueryParam params = new ArticleQueryParam(null, null, null, null);
+
       ArticleResponse response =
           new ArticleResponse(ARTICLE_ID, "제목", "내용", "홍길동", "일상", null, List.of(), null, null);
       Page<ArticleResponse> expectedPage = new PageImpl<>(List.of(response));
 
-      given(articleRepository.findAllCustom(pageable)).willReturn(expectedPage);
+      given(articleRepository.searchArticles(params, pageable)).willReturn(expectedPage);
 
       // when
-      Page<ArticleResponse> result = articleReader.getArticles(pageable);
+      Page<ArticleResponse> result = articleReader.getArticles(params, pageable);
 
       // then
       assertThat(result).isNotNull();
       assertThat(result.getContent()).hasSize(1);
-      then(articleRepository).should().findAllCustom(pageable);
+      then(articleRepository).should().searchArticles(params, pageable);
     }
-  }
-
-  @Nested
-  @DisplayName("회원별 게시글 목록 조회")
-  class GetArticlesByMember {
 
     @Test
-    @DisplayName("성공: 회원의 게시글 목록 조회")
-    void getArticles_ByMember_Success() {
+    @DisplayName("성공: 내 게시글 목록 조회")
+    void getArticles_My_Success() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
-      Member member = createMember();
+      ArticleQueryParam params = new ArticleQueryParam(MEMBER_ID, null, null, null);
+
       ArticleResponse response =
           new ArticleResponse(ARTICLE_ID, "제목", "내용", "홍길동", "일상", null, List.of(), null, null);
       Page<ArticleResponse> expectedPage = new PageImpl<>(List.of(response));
 
-      given(memberReader.getById(MEMBER_ID)).willReturn(member);
-      given(articleRepository.findMineByMember(member, pageable)).willReturn(expectedPage);
+      given(articleRepository.searchArticles(params, pageable)).willReturn(expectedPage);
 
       // when
-      Page<ArticleResponse> result = articleReader.getArticles(pageable, MEMBER_ID);
+      Page<ArticleResponse> result = articleReader.getArticles(params, pageable);
 
       // then
       assertThat(result).isNotNull();
       assertThat(result.getContent()).hasSize(1);
-      then(memberReader).should().getById(MEMBER_ID);
-      then(articleRepository).should().findMineByMember(member, pageable);
+      then(articleRepository).should().searchArticles(params, pageable);
     }
-  }
-
-  @Nested
-  @DisplayName("게시글 검색")
-  class Search {
 
     @Test
-    @DisplayName("성공: 키워드로 전체 검색")
-    void search_AllByKeyword_Success() {
+    @DisplayName("성공: 키워드로 검색")
+    void getArticles_ByKeyword_Success() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
-      ArticleSearchRequest request = new ArticleSearchRequest("테스트", null, null, null, pageable);
+      ArticleQueryParam params = new ArticleQueryParam(null, "테스트", null, null);
 
       ArticleResponse response =
           new ArticleResponse(ARTICLE_ID, "제목", "내용", "홍길동", "일상", null, List.of(), null, null);
       Page<ArticleResponse> expectedPage = new PageImpl<>(List.of(response));
 
-      given(articleRepository.searchAllByTitle("테스트", pageable)).willReturn(expectedPage);
+      given(articleRepository.searchArticles(params, pageable)).willReturn(expectedPage);
 
       // when
-      Page<ArticleResponse> result = articleReader.search(request);
+      Page<ArticleResponse> result = articleReader.getArticles(params, pageable);
 
       // then
       assertThat(result).isNotNull();
-      assertThat(result.getContent()).hasSize(1);
-      then(articleRepository).should().searchAllByTitle("테스트", pageable);
+      then(articleRepository).should().searchArticles(params, pageable);
     }
 
     @Test
-    @DisplayName("성공: 태그로 전체 검색")
-    void search_AllByTag_Success() {
+    @DisplayName("성공: 태그로 검색")
+    void getArticles_ByTag_Success() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
-      ArticleSearchRequest request = new ArticleSearchRequest(null, "태그1", null, null, pageable);
+      ArticleQueryParam params = new ArticleQueryParam(null, null, "태그1", null);
 
       ArticleResponse response =
           new ArticleResponse(ARTICLE_ID, "제목", "내용", "홍길동", "일상", null, List.of(), null, null);
       Page<ArticleResponse> expectedPage = new PageImpl<>(List.of(response));
 
-      given(articleRepository.searchAllByTagName("태그1", pageable)).willReturn(expectedPage);
+      given(articleRepository.searchArticles(params, pageable)).willReturn(expectedPage);
 
       // when
-      Page<ArticleResponse> result = articleReader.search(request);
+      Page<ArticleResponse> result = articleReader.getArticles(params, pageable);
 
       // then
       assertThat(result).isNotNull();
-      then(articleRepository).should().searchAllByTagName("태그1", pageable);
+      then(articleRepository).should().searchArticles(params, pageable);
     }
 
     @Test
-    @DisplayName("성공: 카테고리로 전체 검색")
-    void search_AllByCategory_Success() {
+    @DisplayName("성공: 카테고리로 검색")
+    void getArticles_ByCategory_Success() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
-      ArticleSearchRequest request =
-          new ArticleSearchRequest(null, null, CATEGORY_ID, null, pageable);
+      ArticleQueryParam params = new ArticleQueryParam(null, null, null, CATEGORY_ID);
 
       ArticleResponse response =
           new ArticleResponse(ARTICLE_ID, "제목", "내용", "홍길동", "일상", null, List.of(), null, null);
       Page<ArticleResponse> expectedPage = new PageImpl<>(List.of(response));
 
-      given(articleRepository.findAllByCategory(CATEGORY_ID, pageable)).willReturn(expectedPage);
+      given(articleRepository.searchArticles(params, pageable)).willReturn(expectedPage);
 
       // when
-      Page<ArticleResponse> result = articleReader.search(request);
+      Page<ArticleResponse> result = articleReader.getArticles(params, pageable);
 
       // then
       assertThat(result).isNotNull();
-      then(articleRepository).should().findAllByCategory(CATEGORY_ID, pageable);
+      then(articleRepository).should().searchArticles(params, pageable);
     }
 
     @Test
-    @DisplayName("성공: 검색 조건 없으면 전체 목록 조회")
-    void search_NoCondition_Success() {
+    @DisplayName("성공: 복합 필터 검색 (키워드 + 카테고리)")
+    void getArticles_ByKeywordAndCategory_Success() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
-      ArticleSearchRequest request = new ArticleSearchRequest(null, null, null, null, pageable);
+      ArticleQueryParam params = new ArticleQueryParam(null, "테스트", null, CATEGORY_ID);
 
       ArticleResponse response =
           new ArticleResponse(ARTICLE_ID, "제목", "내용", "홍길동", "일상", null, List.of(), null, null);
       Page<ArticleResponse> expectedPage = new PageImpl<>(List.of(response));
 
-      given(articleRepository.findAllCustom(pageable)).willReturn(expectedPage);
+      given(articleRepository.searchArticles(params, pageable)).willReturn(expectedPage);
 
       // when
-      Page<ArticleResponse> result = articleReader.search(request);
+      Page<ArticleResponse> result = articleReader.getArticles(params, pageable);
 
       // then
       assertThat(result).isNotNull();
-      then(articleRepository).should().findAllCustom(pageable);
+      then(articleRepository).should().searchArticles(params, pageable);
     }
 
     @Test
-    @DisplayName("성공: 내 게시글 키워드 검색")
-    void search_MineByKeyword_Success() {
+    @DisplayName("성공: 내 게시글 키워드 + 태그 복합 검색")
+    void getArticles_MyByKeywordAndTag_Success() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
-      Member member = createMember();
-      ArticleSearchRequest request =
-          new ArticleSearchRequest("테스트", null, null, MEMBER_ID, pageable);
+      ArticleQueryParam params = new ArticleQueryParam(MEMBER_ID, "테스트", "태그1", null);
 
       ArticleResponse response =
           new ArticleResponse(ARTICLE_ID, "제목", "내용", "홍길동", "일상", null, List.of(), null, null);
       Page<ArticleResponse> expectedPage = new PageImpl<>(List.of(response));
 
-      given(memberReader.getById(MEMBER_ID)).willReturn(member);
-      given(articleRepository.searchMineByTitle(member, "테스트", pageable)).willReturn(expectedPage);
+      given(articleRepository.searchArticles(params, pageable)).willReturn(expectedPage);
 
       // when
-      Page<ArticleResponse> result = articleReader.search(request);
+      Page<ArticleResponse> result = articleReader.getArticles(params, pageable);
 
       // then
       assertThat(result).isNotNull();
-      then(memberReader).should().getById(MEMBER_ID);
-      then(articleRepository).should().searchMineByTitle(member, "테스트", pageable);
+      then(articleRepository).should().searchArticles(params, pageable);
     }
 
     @Test
-    @DisplayName("성공: 내 게시글 태그 검색")
-    void search_MineByTag_Success() {
+    @DisplayName("성공: 모든 필터 조합 (회원 + 키워드 + 태그 + 카테고리)")
+    void getArticles_AllFilters_Success() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
-      Member member = createMember();
-      ArticleSearchRequest request =
-          new ArticleSearchRequest(null, "태그1", null, MEMBER_ID, pageable);
+      ArticleQueryParam params = new ArticleQueryParam(MEMBER_ID, "테스트", "태그1", CATEGORY_ID);
 
       ArticleResponse response =
           new ArticleResponse(ARTICLE_ID, "제목", "내용", "홍길동", "일상", null, List.of(), null, null);
       Page<ArticleResponse> expectedPage = new PageImpl<>(List.of(response));
 
-      given(memberReader.getById(MEMBER_ID)).willReturn(member);
-      given(articleRepository.searchMineByTagName(member, "태그1", pageable))
-          .willReturn(expectedPage);
+      given(articleRepository.searchArticles(params, pageable)).willReturn(expectedPage);
 
       // when
-      Page<ArticleResponse> result = articleReader.search(request);
+      Page<ArticleResponse> result = articleReader.getArticles(params, pageable);
 
       // then
       assertThat(result).isNotNull();
-      then(articleRepository).should().searchMineByTagName(member, "태그1", pageable);
-    }
-
-    @Test
-    @DisplayName("성공: 내 게시글 카테고리 검색")
-    void search_MineByCategory_Success() {
-      // given
-      Pageable pageable = PageRequest.of(0, 10);
-      Member member = createMember();
-      ArticleSearchRequest request =
-          new ArticleSearchRequest(null, null, CATEGORY_ID, MEMBER_ID, pageable);
-
-      ArticleResponse response =
-          new ArticleResponse(ARTICLE_ID, "제목", "내용", "홍길동", "일상", null, List.of(), null, null);
-      Page<ArticleResponse> expectedPage = new PageImpl<>(List.of(response));
-
-      given(memberReader.getById(MEMBER_ID)).willReturn(member);
-      given(articleRepository.findMineByMemberAndCategory(member, CATEGORY_ID, pageable))
-          .willReturn(expectedPage);
-
-      // when
-      Page<ArticleResponse> result = articleReader.search(request);
-
-      // then
-      assertThat(result).isNotNull();
-      then(articleRepository).should().findMineByMemberAndCategory(member, CATEGORY_ID, pageable);
-    }
-
-    @Test
-    @DisplayName("성공: 내 게시글 검색 조건 없으면 내 전체 목록 조회")
-    void search_MineNoCondition_Success() {
-      // given
-      Pageable pageable = PageRequest.of(0, 10);
-      Member member = createMember();
-      ArticleSearchRequest request =
-          new ArticleSearchRequest(null, null, null, MEMBER_ID, pageable);
-
-      ArticleResponse response =
-          new ArticleResponse(ARTICLE_ID, "제목", "내용", "홍길동", "일상", null, List.of(), null, null);
-      Page<ArticleResponse> expectedPage = new PageImpl<>(List.of(response));
-
-      given(memberReader.getById(MEMBER_ID)).willReturn(member);
-      given(articleRepository.findMineByMember(member, pageable)).willReturn(expectedPage);
-
-      // when
-      Page<ArticleResponse> result = articleReader.search(request);
-
-      // then
-      assertThat(result).isNotNull();
-      then(articleRepository).should().findMineByMember(member, pageable);
+      then(articleRepository).should().searchArticles(params, pageable);
     }
   }
 

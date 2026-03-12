@@ -18,6 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @OAuthServiceType(OauthProvider.KAKAO)
 public class KakaoOAuthService implements OAuthService {
+  private final MemberWriter memberWriter;
+  private final TokenService tokenService;
+  private final KakaoApiClient apiClient;
+
   @Override
   public LoginResponse authenticate(OAuthRequest request) {
     // 인증 코드를 액세스 토큰으로 교환
@@ -32,10 +36,4 @@ public class KakaoOAuthService implements OAuthService {
     // 토큰반환
     return tokenService.generateToken(member.getId());
   }
-
-  private final MemberWriter memberWriter;
-  private final TokenService tokenService;
-  private final KakaoApiClient apiClient;
-
-
 }

@@ -68,7 +68,7 @@ class CommentWriterTest {
                     .article(savedComment.getArticle())
                     .member(savedComment.getMember())
                     .content(savedComment.getContent())
-                    .parentId(savedComment.getParentId())
+                    .parent(savedComment.getParent())
                     .build();
               });
       // when
@@ -216,7 +216,7 @@ class CommentWriterTest {
         .article(article)
         .member(member)
         .content(CONTENT)
-        .parentId(0L)
+        .parent(null)
         .build();
   }
 }
