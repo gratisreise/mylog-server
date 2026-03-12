@@ -9,49 +9,10 @@
 - **문체 변환**: 친근한, 전문적인 등 다양한 문체로 게시글 변환
 - **커스텀 문체**: 사용자만의 문체 스타일을 정의하여 적용
 - **소셜 로그인**: Google, Kakao, Naver 계정으로 간편 가입
-- **실시간 알림**: 댓글 작성 시 알림 제공
 
 ## 아키텍처
-
-### CQRS Service Pattern
-각 도메인은 조회와 명령을 분리한 Reader/Writer 서비스 패턴을 사용합니다.
-
-```java
-// 조회 전용
-@Service
-@Transactional(readOnly = true)
-public class ArticleReader {
-    public Article getById(Long id) { ... }
-    public Page<Article> getArticles(Pageable pageable) { ... }
-}
-
-// 명령 전용
-@Service
-@Transactional
-public class ArticleWriter {
-    public Article create(Article article) { ... }
-    public void delete(Long id) { ... }
-}
-```
-
-### OAuth2 Factory Pattern
-`@OAuth2ServiceType` 어노테이션과 Factory를 통해 OAuth 제공자별 서비스를 분리합니다.
-
-```java
-@OAuth2ServiceType(OauthProvider.GOOGLE)
-public class GoogleOAuthUserService extends AbstractOAuth2UserService { ... }
-```
-
-### 통일된 응답 구조
-모든 API는 일관된 응답 형식을 사용합니다.
-
-```json
-{
-  "code": "1",
-  "message": "성공하였습니다.",
-  "data": { }
-}
-```
+### 시스템 아키텍처
+![시스템아키텍처](https://diagrams-noaahh.s3.ap-northeast-2.amazonaws.com/mylog-system-architecture.png)
 
 ## 주요 기능
 
