@@ -42,8 +42,6 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.from(code, message));
   }
 
-
-
   private static @NonNull String getErrorMessage(MethodArgumentTypeMismatchException ex) {
     return String.format("'%s'의 타입이 맞지 않습니다.", ex.getName());
   }

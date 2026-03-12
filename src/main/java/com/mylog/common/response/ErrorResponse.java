@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public class ErrorResponse extends BaseResponse {
   private final ErrorDetail error;
+
   public record ErrorDetail(String code, String message) {}
 
   private ErrorResponse(String code, String message) {
@@ -26,6 +27,4 @@ public class ErrorResponse extends BaseResponse {
     ErrorCode code = ErrorCode.UNKNOWN_ERROR;
     return new ErrorResponse(code.getCode(), ex.getMessage());
   }
-
-
 }

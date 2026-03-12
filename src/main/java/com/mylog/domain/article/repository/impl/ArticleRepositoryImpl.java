@@ -32,32 +32,26 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
 
     BooleanBuilder builder = new BooleanBuilder();
 
-    // 회원 필터 (내 게시글)
     if (params.hasMemberFilter()) {
       builder.and(article.member.id.eq(params.memberId()));
     }
 
-    // 키워드 필터 (제목 검색)
     if (params.hasKeyword()) {
       builder.and(article.title.lower().like("%" + params.keyword().toLowerCase() + "%"));
     }
 
-    // 카테고리 필터
     if (params.hasCategory()) {
       builder.and(article.category.id.eq(params.categoryId()));
     }
 
-    // 태그 필터 (서브쿼리로 article ID 목록 조회)
     if (params.hasTag()) {
       List<Long> articleIds = findArticleIdsByTag(params.tag(), params.memberId());
       if (articleIds.isEmpty()) {
-        // 태그에 해당하는 게시글이 없으면 빈 결과 반환
         return new PageImpl<>(List.of(), pageable, 0L);
       }
       builder.and(article.id.in(articleIds));
     }
 
-    // 데이터 조회
     List<Article> articles =
         jpaQueryFactory
             .selectFrom(article)
@@ -71,22 +65,13 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
             .limit(pageable.getPageSize())
             .fetch();
 
-    // 전체 카운트 조회
     Long count = jpaQueryFactory.select(article.count()).from(article).where(builder).fetchOne();
 
-    List<ArticleResponse> responses =
-        articles.stream().map(a -> new ArticleResponse(a, List.of())).toList();
+    List<ArticleResponse> responses = articles.stream().map(ArticleResponse::from).toList();
 
     return new PageImpl<>(responses, pageable, count != null ? count : 0L);
   }
 
-  /**
-   * 태그 이름으로 게시글 ID 목록 조회
-   *
-   * @param tagName 태그 이름
-   * @param memberId 회원 ID (null이면 전체 검색)
-   * @return 게시글 ID 목록
-   */
   private List<Long> findArticleIdsByTag(String tagName, Long memberId) {
     QArticleTag articleTag = QArticleTag.articleTag;
     QTag tag = QTag.tag;

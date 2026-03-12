@@ -22,13 +22,6 @@ public class ArticleReader {
   private final ArticleRepository articleRepository;
   private final ArticleTagRepository articleTagRepository;
 
-  /**
-   * 통합 게시글 목록/검색 조회
-   *
-   * @param params 검색 파라미터
-   * @param pageable 페이징 정보
-   * @return 게시글 목록
-   */
   public Page<ArticleResponse> getArticles(ArticleQueryParam params, Pageable pageable) {
     return articleRepository.searchArticles(params, pageable);
   }

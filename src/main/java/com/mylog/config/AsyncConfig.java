@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
-@EnableAsync // 비동기 기능 활성화
+@EnableAsync
 public class AsyncConfig {
 
   @Bean(name = "threadPoolTaskExecutor")

@@ -221,7 +221,7 @@ class ArticleServiceTest {
 
       // then
       assertThat(result).isNotNull();
-      assertThat(result.getData()).hasSize(1);
+      assertThat(result.getContents()).hasSize(1);
       then(articleReader).should().getArticles(any(ArticleQueryParam.class), eq(pageable));
     }
 
@@ -243,7 +243,7 @@ class ArticleServiceTest {
 
       // then
       assertThat(result).isNotNull();
-      assertThat(result.getData()).hasSize(1);
+      assertThat(result.getContents()).hasSize(1);
       then(articleReader).should().getArticles(any(ArticleQueryParam.class), eq(pageable));
     }
 
@@ -266,7 +266,7 @@ class ArticleServiceTest {
 
       // then
       assertThat(result).isNotNull();
-      assertThat(result.getData()).hasSize(1);
+      assertThat(result.getContents()).hasSize(1);
       then(articleReader).should().getArticles(any(ArticleQueryParam.class), eq(pageable));
     }
 
@@ -289,7 +289,7 @@ class ArticleServiceTest {
 
       // then
       assertThat(result).isNotNull();
-      assertThat(result.getData()).hasSize(1);
+      assertThat(result.getContents()).hasSize(1);
       then(articleReader).should().getArticles(any(ArticleQueryParam.class), eq(pageable));
     }
 
@@ -311,7 +311,7 @@ class ArticleServiceTest {
 
       // then
       assertThat(result).isNotNull();
-      assertThat(result.getData()).hasSize(1);
+      assertThat(result.getContents()).hasSize(1);
       then(articleReader).should().getArticles(any(ArticleQueryParam.class), eq(pageable));
     }
 
@@ -334,7 +334,7 @@ class ArticleServiceTest {
 
       // then
       assertThat(result).isNotNull();
-      assertThat(result.getData()).hasSize(1);
+      assertThat(result.getContents()).hasSize(1);
       then(articleReader).should().getArticles(any(ArticleQueryParam.class), eq(pageable));
     }
 
@@ -358,7 +358,7 @@ class ArticleServiceTest {
 
       // then
       assertThat(result).isNotNull();
-      assertThat(result.getData()).hasSize(1);
+      assertThat(result.getContents()).hasSize(1);
       then(articleReader).should().getArticles(any(ArticleQueryParam.class), eq(pageable));
     }
   }

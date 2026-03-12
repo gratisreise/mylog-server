@@ -57,16 +57,6 @@ public class ArticleService {
     return articleReader.getArticle(articleId);
   }
 
-  /**
-   * 통합 게시글 목록/검색 조회
-   *
-   * @param pageable 페이징 정보
-   * @param memberId 회원 ID (null이면 전체, non-null이면 내 게시글)
-   * @param keyword 제목 검색 키워드 (선택)
-   * @param tag 태그 필터 (선택)
-   * @param categoryId 카테고리 필터 (선택)
-   * @return 게시글 목록
-   */
   public PageResponse<ArticleResponse> getArticles(
       Pageable pageable, Long memberId, String keyword, String tag, Long categoryId) {
     ArticleQueryParam params = new ArticleQueryParam(memberId, keyword, tag, categoryId);
@@ -95,14 +85,12 @@ public class ArticleService {
     return StyleTransformResponse.of(transformed, styleName);
   }
 
-  // AI 요약 조회
   public ArticleSummaryResponse getArticleSummary(Long articleId) {
     Article article = articleReader.getArticleById(articleId);
     return ArticleSummaryResponse.of(
         articleId, article.getAiSummary(), article.getAiSummaryStatus());
   }
 
-  // AI 요약 조회
   public AiSummaryResult getArticleSummary(Temp temp) {
     return aiService.test(temp.content());
   }
