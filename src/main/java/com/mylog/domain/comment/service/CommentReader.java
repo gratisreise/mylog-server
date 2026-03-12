@@ -45,17 +45,27 @@ public class CommentReader {
   }
 
   private List<Reply> getReplies(Comment comment) {
-    long articleId = comment.getArticle().getId();
     long parentId = comment.getId();
-    List<Comment> comments = commentRepository.findByArticle_IdAndParentId(articleId, parentId);
+    List<Comment> comments = commentRepository.findByParent_Id(parentId);
     return comments.stream().map(Reply::from).toList();
   }
 
   public Page<CommentResponse> getComments(Long memberId, Pageable pageable) {
-    return null;
+    return commentRepository.findByMemberId(memberId, pageable).map(CommentResponse::from);
   }
 
   public Page<CommentArticleResponse> getComments1(@Min(1) Long articleId, Pageable pageable) {
-    return null;
+    Page<Comment> parentComments =
+        commentRepository.findByArticle_IdAndParentIsNull(articleId, pageable);
+
+    return parentComments.map(
+        comment -> {
+          List<Reply> replies = getReplies(comment);
+          return CommentArticleResponse.of(comment, replies);
+        });
+  }
+
+  public Page<Reply> getRepliesByParentId(Long parentId, Pageable pageable) {
+    return commentRepository.findByParent_Id(parentId, pageable).map(Reply::from);
   }
 }

@@ -32,7 +32,12 @@ public class CommentWriter {
     Article article = articleReader.getArticleById(articleId);
     Member member = memberReader.getById(memberId);
 
-    Comment comment = request.toEntity(article, member);
+    Comment parentComment = null;
+    if (request.parentCommentId() > 0) {
+      parentComment = commentReader.getById(request.parentCommentId());
+    }
+
+    Comment comment = request.toEntity(article, member, parentComment);
     Comment savedComment = commentRepository.save(comment);
 
     // 게시글 작성자에게 알림을 보냄

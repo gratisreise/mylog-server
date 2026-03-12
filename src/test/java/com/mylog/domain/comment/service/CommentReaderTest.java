@@ -98,7 +98,7 @@ class CommentReaderTest {
               .article(article)
               .member(member)
               .content("두 번째 댓글입니다.")
-              .parentId(0L)
+              .parent(null)
               .build();
 
       Pageable pageable = PageRequest.of(0, 10);
@@ -144,7 +144,7 @@ class CommentReaderTest {
         .article(article)
         .member(member)
         .content(CONTENT)
-        .parentId(0L)
+        .parent(null)
         .build();
   }
 }

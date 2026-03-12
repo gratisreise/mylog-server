@@ -38,7 +38,11 @@ public class Comment extends BaseEntity {
   @JoinColumn(name = "member_id")
   private Member member;
 
-  private long parentId;
+  // --- 기존 private long parentId; 를 아래와 같이 수정 ---
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "parent_id")
+  private Comment parent; // 부모 댓글을 객체로 참조
 
   @Column(length = 200)
   private String content;
