@@ -57,6 +57,8 @@
 <details>
 <summary>자세히 보기</summary>
 
+#### [api명세서링크](https://4nbr7ansok.apidog.io)  
+
 ### 인증 (Auth)
 
 | Method | Endpoint | Description | Auth |
