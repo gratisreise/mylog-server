@@ -1,11 +1,6 @@
 package com.mylog.domain.article.dto.request;
 
-public record ArticleQueryParam(
-    Long memberId,
-    String keyword,
-    String tag,
-    Long categoryId
-    ) {
+public record ArticleQueryParam(Long memberId, String keyword, String tag, Long categoryId) {
   public boolean hasMemberFilter() {
     return memberId != null;
   }

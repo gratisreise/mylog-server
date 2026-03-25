@@ -48,12 +48,6 @@ public class ArticleReader {
     return articleRepository.existsById(articleId);
   }
 
-  public List<ArticleTestResponse> getArticlesTest(Pageable pageable) {
-    return articleRepository.findAll(pageable).getContent().stream()
-        .map(ArticleTestResponse::from)
-        .toList();
-  }
-
   public Article getArticleById(Long articleId) {
     return articleRepository.findById(articleId).orElse(null);
   }

@@ -1,4 +1,4 @@
-package com.mylog.domain.article.entity;
+package com.mylog.domain.article.entity.key;
 
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
