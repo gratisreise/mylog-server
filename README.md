@@ -10,9 +10,12 @@
 - **커스텀 문체**: 사용자만의 문체 스타일을 정의하여 적용
 - **소셜 로그인**: Google, Kakao, Naver 계정으로 간편 가입
 
-## 아키텍처
+## 다이어그램
 ### 시스템 아키텍처
 ![시스템아키텍처](https://diagrams-noaahh.s3.ap-northeast-2.amazonaws.com/mylog-system-architecture.png)
+
+### ERD
+![ERD](https://diagrams-noaahh.s3.ap-northeast-2.amazonaws.com/mylog_erd.png)
 
 ## 주요 기능
 
