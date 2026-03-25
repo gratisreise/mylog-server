@@ -16,7 +16,7 @@ public class MemberService {
 
   public MemberResponse getMember(Long memberId) {
     Member member = memberReader.getById(memberId);
-    return new MemberResponse(member);
+    return MemberResponse.from(member);
   }
 
   public void updateMember(UpdateMemberRequest request, String imageUrl, Long memberId) {
