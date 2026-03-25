@@ -1,6 +1,6 @@
 package com.mylog.domain.category;
 
-import com.mylog.common.annotations.MemberId;
+import com.mylog.common.annotations.AuthenticatedMember;
 import com.mylog.common.response.SuccessResponse;
 import com.mylog.domain.category.dto.CategoryCreateRequest;
 import com.mylog.domain.category.dto.CategoryResponse;
@@ -33,43 +33,43 @@ public class CategoryController {
   @PostMapping
   @Operation(summary = "카테고리 생성")
   public ResponseEntity<SuccessResponse<Long>> createCategory(
-      @RequestBody @Valid CategoryCreateRequest request, @MemberId Long memberId) {
+      @RequestBody @Valid CategoryCreateRequest request, @AuthenticatedMember Long memberId) {
     Long categoryId = categoryWriter.createCategory(request, memberId);
     return SuccessResponse.toCreated(categoryId);
   }
 
   // 카테고리 조회
-  @GetMapping
   @Operation(summary = "카테고리 목록 조회")
+  @GetMapping
   public ResponseEntity<SuccessResponse<List<CategoryResponse>>> getCategories(
-      @MemberId Long memberId) {
+      @AuthenticatedMember Long memberId) {
     return SuccessResponse.toOk(categoryReader.getCategories(memberId));
   }
 
   // 카테고리 단일 조회
-  @GetMapping("/{categoryId}")
   @Operation(summary = "카테고리 단일 조회")
+  @GetMapping("/{categoryId}")
   public ResponseEntity<SuccessResponse<CategoryResponse>> getCategory(
-      @PathVariable @Min(1) Long categoryId, @MemberId Long memberId) {
+      @PathVariable @Min(1) Long categoryId, @AuthenticatedMember Long memberId) {
     return SuccessResponse.toOk(categoryReader.getCategory(categoryId, memberId));
   }
 
   // 카테고리 수정
-  @PutMapping("/{categoryId}")
   @Operation(summary = "카테고리 수정")
+  @PutMapping("/{categoryId}")
   public ResponseEntity<SuccessResponse<Void>> updateCategory(
       @PathVariable @Min(1) Long categoryId,
       @RequestBody @Valid CategoryUpdateRequest request,
-      @MemberId Long memberId) {
+      @AuthenticatedMember Long memberId) {
     categoryWriter.updateCategory(request, categoryId, memberId);
     return SuccessResponse.toNoContent();
   }
 
   // 카테고리 삭제
-  @DeleteMapping("/{categoryId}")
   @Operation(summary = "카테고리 삭제")
+  @DeleteMapping("/{categoryId}")
   public ResponseEntity<SuccessResponse<Void>> deleteCategory(
-      @PathVariable @Min(1) Long categoryId, @MemberId Long memberId) {
+      @PathVariable @Min(1) Long categoryId, @AuthenticatedMember Long memberId) {
     categoryWriter.deleteCategory(categoryId, memberId);
     return SuccessResponse.toNoContent();
   }
