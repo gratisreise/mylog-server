@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class RedisService {
+public class RedisTokenService {
   private final StringRedisTemplate redisTemplate;
 
   private static final String RT_PREFIX = "RT:";

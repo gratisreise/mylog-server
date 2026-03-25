@@ -22,13 +22,14 @@ public class S3Service {
   @Value("${cloud.aws.s3.bucket}")
   private String bucketName;
 
+  private static final String REGION = "ap-northeast-2";
+
   // 이미지 업로드
   public String upload(MultipartFile file) {
 
     if (file == null || file.isEmpty()) return null;
     String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
     String contentType = file.getContentType();
-    String region = "ap-northeast-2";
 
     PutObjectRequest putObjectRequest =
         PutObjectRequest.builder()
@@ -44,7 +45,7 @@ public class S3Service {
       throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
     }
 
-    return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, fileName);
+    return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, REGION, fileName);
   }
 
   // 이미지 삭제
