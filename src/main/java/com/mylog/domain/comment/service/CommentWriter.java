@@ -52,7 +52,7 @@ public class CommentWriter {
     Comment comment = commentReader.getById(commentId);
 
     if (!comment.isOwnedBy(memberId)) {
-      throw new BusinessException(ErrorCode.COMMENT_FORBIDDEN);
+      throw BusinessException.error(ErrorCode.COMMENT_FORBIDDEN);
     }
 
     comment.update(request.content());
@@ -62,7 +62,7 @@ public class CommentWriter {
     Comment comment = commentReader.getById(commentId);
 
     if (!comment.isOwnedBy(memberId)) {
-      throw new BusinessException(ErrorCode.COMMENT_FORBIDDEN);
+      throw BusinessException.error(ErrorCode.COMMENT_FORBIDDEN);
     }
 
     commentRepository.deleteById(commentId);
