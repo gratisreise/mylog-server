@@ -37,7 +37,7 @@ public class NotificationWriter {
 
     // 소유권 검증
     if (!notification.getMember().getId().equals(memberId)) {
-      throw new BusinessException(ErrorCode.ACCESS_DENIED);
+      throw BusinessException.error(ErrorCode.ACCESS_DENIED);
     }
 
     notification.read();
