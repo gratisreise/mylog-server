@@ -151,7 +151,6 @@
 - **Spring Boot 3.x**
 - **Spring Data JPA** - ORM 및 데이터베이스 접근
 - **Spring Security** - 인증/인가
-- **Spring OAuth2 Client** - 소셜 로그인
 
 ### Database & Cache
 - **PostgreSQL** - 메인 데이터베이스
