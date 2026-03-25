@@ -1,7 +1,6 @@
 package com.mylog.common.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mylog.common.exception.ErrorCode;
 import com.mylog.common.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,12 +23,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
       HttpServletResponse response,
       AuthenticationException authException)
       throws IOException {
-
     response.setStatus(HttpStatus.UNAUTHORIZED.value());
     response.setContentType("application/json; charset=UTF-8");
-    ErrorResponse errorResponse = ErrorResponse.from(ErrorCode.UNAUTHORIZED_USER);
-
-    String jsonResponse = objectMapper.writeValueAsString(errorResponse);
-    response.getWriter().write(jsonResponse);
+    ErrorResponse errorResponse = ErrorResponse.entry(authException);
+    response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
   }
 }

@@ -1,6 +1,6 @@
 package com.mylog.common.resolver;
 
-import com.mylog.common.annotations.MemberId;
+import com.mylog.common.annotations.AuthenticatedMember;
 import com.mylog.common.security.CustomUserDetails;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
@@ -10,11 +10,11 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-public class MemberIdArgumentResolver implements HandlerMethodArgumentResolver {
+public class AuthenticatedMemberResolver implements HandlerMethodArgumentResolver {
 
   @Override
   public boolean supportsParameter(MethodParameter parameter) {
-    return parameter.hasParameterAnnotation(MemberId.class)
+    return parameter.hasParameterAnnotation(AuthenticatedMember.class)
         && parameter.getParameterType().equals(Long.class);
   }
 

@@ -15,26 +15,22 @@ import org.springframework.stereotype.Component;
 public class JwtProvider {
   private final SecretKey accessKey;
   private final SecretKey refreshKey;
-  private final long accessValidity;
-  private final long refreshValidity;
+  private static final long ACCESS_VALIDITY = 1_800_000L;
+  private static final long REFRESH_VALIDITY = 604_800_000L;
   private static final String MEMBER_ID = "memberId";
 
   public JwtProvider(
       @Value("${jwt.access_secret}") String accessKey,
-      @Value("${jwt.refresh_secret}") String refreshKey,
-      @Value("${jwt.access_expiration}") long accessValidity,
-      @Value("${jwt.refresh_expiration}") long refreshValidity) {
+      @Value("${jwt.refresh_secret}") String refreshKey) {
     // HMAC SHA-512 알고리즘을 사용하는 키 생성
     this.accessKey = Keys.hmacShaKeyFor(accessKey.getBytes());
     this.refreshKey = Keys.hmacShaKeyFor(refreshKey.getBytes());
-    this.accessValidity = accessValidity;
-    this.refreshValidity = refreshValidity;
   }
 
   // [ AccessToken ]
   public String createAccessToken(long memberId) {
     Date now = new Date();
-    Date validity = new Date(now.getTime() + accessValidity);
+    Date validity = new Date(now.getTime() + ACCESS_VALIDITY);
 
     return Jwts.builder()
         .subject(String.valueOf(memberId))
@@ -89,7 +85,7 @@ public class JwtProvider {
   // [ RefreshToken ]
   public String createRefreshToken(long memberId) {
     Date now = new Date();
-    Date validity = new Date(now.getTime() + refreshValidity);
+    Date validity = new Date(now.getTime() + REFRESH_VALIDITY);
 
     return Jwts.builder()
         .subject(String.valueOf(memberId))
