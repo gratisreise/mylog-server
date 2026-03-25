@@ -1,5 +1,11 @@
 # Mylog
 
+[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.5-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-blue.svg)](https://www.postgresql.org/)
+[![Redis](https://img.shields.io/badge/Redis-Cache-red.svg)](https://redis.io/)
+[![Google Gemini](https://img.shields.io/badge/Google%20Gemini-AI-8E75B2.svg)](https://ai.google.dev/)
+
 **Mylog**는 AI 기능을 탑재한 개인 블로그 플랫폼입니다.
 
 사용자는 게시글을 작성하고 카테고리 및 태그로 분류할 수 있으며, Google Gemini API를 활용한 **AI 요약**과 **문체 변환** 기능을 통해 더 풍부한 콘텐츠를 경험할 수 있습니다. 소셜 로그인(Google, Kakao, Naver)을 지원하여 간편하게 가입하고, JWT 기반 인증으로 안전하게 서비스를 이용할 수 있습니다.
@@ -18,7 +24,6 @@
 ![ERD](https://diagrams-noaahh.s3.ap-northeast-2.amazonaws.com/mylog_erd.png)
 
 ## 주요 기능
-
 <details>
 <summary>자세히 보기</summary>
 
