@@ -11,7 +11,7 @@ import com.mylog.domain.auth.dto.response.RefreshResponse;
 import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.service.MemberReader;
 import com.mylog.domain.member.service.MemberWriter;
-import com.mylog.external.redis.RedisService;
+import com.mylog.external.redis.RedisTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,7 +26,7 @@ public class AuthService {
   private final TokenService tokenService;
   private final PasswordEncoder encoder;
   private final MemberWriter memberWriter;
-  private final RedisService redisService;
+  private final RedisTokenService redisTokenService;
   private final JwtProvider jwtProvider;
 
   // 회원가입
@@ -53,8 +53,8 @@ public class AuthService {
   public void logout(String authHeader, Long memberId) {
     String accessToken = TokenService.extractToken(authHeader);
     long remainingTime = jwtProvider.getExpiration(accessToken);
-    redisService.addBlacklist(accessToken, remainingTime);
-    redisService.deleteRefreshToken(memberId);
+    redisTokenService.addBlacklist(accessToken, remainingTime);
+    redisTokenService.deleteRefreshToken(memberId);
   }
 
   private void validateDuplicateMember(String email) {

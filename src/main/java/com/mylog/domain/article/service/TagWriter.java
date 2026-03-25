@@ -16,9 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class TagWriter {
   private final TagRepository tagRepository;
   private final ArticleTagRepository articleTagRepository;
-  private final TagReader tagReader;
 
-  /** AI가 생성한 태그를 저장 - 기존 태그가 있으면 재사용 (unique) - 새로운 태그면 생성 */
+  //AI가 생성한 태그를 저장
   public void saveAiTags(List<String> tagNames, Article article) {
     // 기존 연결된 태그 삭제
     articleTagRepository.deleteByArticle(article);

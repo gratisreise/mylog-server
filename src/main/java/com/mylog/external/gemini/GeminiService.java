@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 public class GeminiService {
 
   private final Client client;
+  private static final String MODEL = "gemini-2.5-flash";
 
   public String gemini(String prompt) {
     try {
-      GenerateContentResponse response =
-          client.models.generateContent("gemini-2.5-flash", prompt, null);
+      GenerateContentResponse response = client.models.generateContent(MODEL, prompt, null);
       return response.text();
     } catch (Exception e) {
       throw new BusinessException(ErrorCode.EXTERNAL_API_ERROR);

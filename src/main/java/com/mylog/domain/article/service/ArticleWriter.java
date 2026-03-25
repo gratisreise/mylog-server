@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArticleWriter {
 
   private final ArticleRepository articleRepository;
+  private final ArticleReader articleReader;
   private final MemberReader memberReader;
   private final CategoryReader categoryReader;
   private final AiService aiService;
@@ -38,10 +39,7 @@ public class ArticleWriter {
   }
 
   public void update(ArticleUpdateRequest request, Long memberId, String imageUrl, Long articleId) {
-    Article article =
-        articleRepository
-            .findById(articleId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+    Article article = articleReader.getArticleById(articleId);
 
     if (!article.getMember().getId().equals(memberId)) {
       throw new BusinessException(ErrorCode.ACCESS_DENIED);

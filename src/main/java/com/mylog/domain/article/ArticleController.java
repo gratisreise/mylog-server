@@ -1,13 +1,11 @@
 package com.mylog.domain.article;
 
-import com.mylog.common.annotations.MemberId;
+import com.mylog.common.annotations.AuthenticatedMember;
 import com.mylog.common.response.PageResponse;
 import com.mylog.common.response.SuccessResponse;
-import com.mylog.domain.article.dto.AiSummaryResult;
 import com.mylog.domain.article.dto.request.ArticleCreateRequest;
 import com.mylog.domain.article.dto.request.ArticleUpdateRequest;
 import com.mylog.domain.article.dto.request.StyleTransformRequest;
-import com.mylog.domain.article.dto.request.Temp;
 import com.mylog.domain.article.dto.response.ArticleCreateResponse;
 import com.mylog.domain.article.dto.response.ArticleResponse;
 import com.mylog.domain.article.dto.response.ArticleSummaryResponse;
@@ -39,46 +37,46 @@ public class ArticleController {
 
   private final ArticleService articleService;
 
-  // === 생성/수정/삭제 ===
+  // === 쓰기 ===
 
-  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @Operation(summary = "게시글 생성")
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<SuccessResponse<ArticleCreateResponse>> createArticle(
       @RequestPart(value = "file") MultipartFile file,
       @RequestPart(value = "request") @Valid ArticleCreateRequest request,
-      @MemberId Long memberId) {
-    return SuccessResponse.toOk(articleService.createArticle(request, memberId, file));
+      @AuthenticatedMember Long memberId) {
+    return SuccessResponse.toCreated(articleService.createArticle(request, memberId, file));
   }
 
-  @PutMapping(value = "/{articleId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @Operation(summary = "게시글 수정")
+  @PutMapping(value = "/{articleId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<SuccessResponse<Void>> updateArticle(
       @RequestPart(value = "request") @Valid ArticleUpdateRequest request,
       @RequestPart(required = false, value = "file") MultipartFile file,
-      @MemberId Long memberId,
+      @AuthenticatedMember Long memberId,
       @PathVariable Long articleId) {
     articleService.updateArticle(request, memberId, file, articleId);
     return SuccessResponse.toNoContent();
   }
 
-  @DeleteMapping("/{articleId}")
   @Operation(summary = "게시글 삭제")
+  @DeleteMapping("/{articleId}")
   public ResponseEntity<SuccessResponse<Void>> deleteArticle(
-      @MemberId Long memberId, @PathVariable Long articleId) {
+      @AuthenticatedMember Long memberId, @PathVariable Long articleId) {
     articleService.deleteArticle(articleId, memberId);
     return SuccessResponse.toNoContent();
   }
 
-  // === 조회 ===
+  // === 읽기 ===
 
-  @GetMapping("/{articleId}")
   @Operation(summary = "게시글 상세")
+  @GetMapping("/{articleId}")
   public ResponseEntity<SuccessResponse<ArticleResponse>> getArticle(@PathVariable Long articleId) {
     return SuccessResponse.toOk(articleService.getArticle(articleId));
   }
 
-  @GetMapping
   @Operation(summary = "전체 게시글 목록/검색 조회")
+  @GetMapping
   public ResponseEntity<SuccessResponse<PageResponse<ArticleResponse>>> getArticles(
       @RequestParam(required = false) String keyword,
       @RequestParam(required = false) String tag,
@@ -88,38 +86,31 @@ public class ArticleController {
         articleService.getArticles(pageable, null, keyword, tag, categoryId));
   }
 
-  @GetMapping("/me")
   @Operation(summary = "내 게시글 목록/검색 조회")
+  @GetMapping("/me")
   public ResponseEntity<SuccessResponse<PageResponse<ArticleResponse>>> getMyArticles(
       @RequestParam(required = false) String keyword,
       @RequestParam(required = false) String tag,
       @RequestParam(required = false) Long categoryId,
       @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable,
-      @MemberId Long memberId) {
+      @AuthenticatedMember Long memberId) {
     return SuccessResponse.toOk(
         articleService.getArticles(pageable, memberId, keyword, tag, categoryId));
   }
 
   // === AI 서비스 ===
 
-  @PostMapping("/transform-style")
   @Operation(summary = "AI 문체 변환")
+  @PostMapping("/transform-style")
   public ResponseEntity<SuccessResponse<StyleTransformResponse>> transformWritingStyle(
-      @RequestBody @Valid StyleTransformRequest request, @MemberId Long memberId) {
+      @RequestBody @Valid StyleTransformRequest request, @AuthenticatedMember Long memberId) {
     return SuccessResponse.toOk(articleService.transformWritingStyle(request, memberId));
   }
 
-  @GetMapping("/{articleId}/summary")
   @Operation(summary = "AI 요약 조회")
+  @GetMapping("/{articleId}/summary")
   public ResponseEntity<SuccessResponse<ArticleSummaryResponse>> getArticleSummary(
       @PathVariable Long articleId) {
     return SuccessResponse.toOk(articleService.getArticleSummary(articleId));
-  }
-
-  @PostMapping("/summary")
-  @Operation(summary = "AI 문체 변환")
-  public ResponseEntity<SuccessResponse<AiSummaryResult>> transformWritingStyle(
-      @RequestBody @Valid Temp request, @MemberId Long memberId) {
-    return SuccessResponse.toOk(articleService.getArticleSummary(request));
   }
 }

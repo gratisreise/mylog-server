@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
       MethodArgumentNotValidException ex) {
     String message = getErrorMessage(ex);
     String code = ErrorCode.VALIDATION_FAILED.getCode();
-    return ResponseEntity.status(ex.getStatusCode()).body(ErrorResponse.from(code, message));
+    return ResponseEntity.status(ex.getStatusCode()).body(ErrorResponse.of(code, message));
   }
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -39,10 +39,10 @@ public class GlobalExceptionHandler {
     String message = getErrorMessage(ex);
     String code = ErrorCode.TYPE_MISMATCH.getCode();
 
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.from(code, message));
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.of(code, message));
   }
 
-  private static @NonNull String getErrorMessage(MethodArgumentTypeMismatchException ex) {
+  private static String getErrorMessage(MethodArgumentTypeMismatchException ex) {
     return String.format("'%s'의 타입이 맞지 않습니다.", ex.getName());
   }
 

@@ -129,7 +129,7 @@ class CategoryReaderTest {
 
   @Nested
   @DisplayName("getByMemberIdAndCategoryName - 회원ID와 이름으로 조회")
-  class GetByMemberIdAndCategoryName {
+  class GetByAuthenticatedMemberAndCategoryName {
 
     @Test
     @DisplayName("성공: 회원ID + 이름으로 조회 성공")

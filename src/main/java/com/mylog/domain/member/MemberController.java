@@ -1,6 +1,6 @@
 package com.mylog.domain.member;
 
-import com.mylog.common.annotations.MemberId;
+import com.mylog.common.annotations.AuthenticatedMember;
 import com.mylog.common.response.SuccessResponse;
 import com.mylog.domain.member.dto.CustomWritingStyleRequest;
 import com.mylog.domain.member.dto.CustomWritingStyleResponse;
@@ -43,61 +43,61 @@ public class MemberController {
   private final CustomWritingStyleReader customWritingStyleReader;
   private final CustomWritingStyleWriter customWritingStyleWriter;
 
-  @GetMapping("/me")
   @Operation(summary = "개인정보조회")
-  public ResponseEntity<SuccessResponse<MemberResponse>> getMember(@MemberId Long memberId) {
+  @GetMapping("/me")
+  public ResponseEntity<SuccessResponse<MemberResponse>> getMember(@AuthenticatedMember Long memberId) {
     return SuccessResponse.toOk(memberService.getMember(memberId));
   }
 
-  @PatchMapping("/me")
   @Operation(summary = "개인정보수정")
+  @PatchMapping("/me")
   public ResponseEntity<SuccessResponse<Void>> updateMember(
       @RequestPart(value = "request") @Valid UpdateMemberRequest request,
       @RequestPart(required = false, value = "file") MultipartFile file,
-      @MemberId Long memberId) {
+      @AuthenticatedMember Long memberId) {
     String imageUrl = (file != null && !file.isEmpty()) ? s3Service.upload(file) : null;
     memberService.updateMember(request, imageUrl, memberId);
     return SuccessResponse.toNoContent();
   }
 
-  @DeleteMapping("/me")
   @Operation(summary = "개인정보삭제")
-  public ResponseEntity<SuccessResponse<Void>> deleteMember(@MemberId Long memberId) {
+  @DeleteMapping("/me")
+  public ResponseEntity<SuccessResponse<Void>> deleteMember(@AuthenticatedMember Long memberId) {
     memberService.delete(memberId);
     return SuccessResponse.toNoContent();
   }
 
-  @GetMapping("/me/notification-settings")
   @Operation(summary = "알림 설정 조회")
+  @GetMapping("/me/notification-settings")
   public ResponseEntity<SuccessResponse<List<NotificationSettingResponse>>> getNotificationSettings(
-      @MemberId Long memberId) {
+      @AuthenticatedMember Long memberId) {
     return SuccessResponse.toOk(notificationSettingReader.getNotificationSettings(memberId));
   }
 
-  @PutMapping("/me/notification-settings/{type}")
   @Operation(summary = "알림 토글")
+  @PutMapping("/me/notification-settings/{type}")
   public ResponseEntity<SuccessResponse<Void>> toggleNotification(
-      @MemberId Long memberId, @PathVariable String type) {
+      @AuthenticatedMember Long memberId, @PathVariable String type) {
     notificationSettingWriter.toggleNotification(memberId, type);
     return SuccessResponse.toNoContent();
   }
 
   // === 커스텀 문체 스타일 ===
 
-  @PostMapping("/me/custom-styles")
   @Operation(summary = "커스텀 문체 스타일 생성")
+  @PostMapping("/me/custom-styles")
   public ResponseEntity<SuccessResponse<CustomWritingStyleResponse>> createCustomStyle(
-      @MemberId Long memberId, @RequestBody @Valid CustomWritingStyleRequest request) {
+      @AuthenticatedMember Long memberId, @RequestBody @Valid CustomWritingStyleRequest request) {
     CustomWritingStyle style =
         customWritingStyleWriter.create(
             memberId, request.name(), request.role(), request.instruction());
     return SuccessResponse.toOk(CustomWritingStyleResponse.from(style));
   }
 
-  @GetMapping("/me/custom-styles")
   @Operation(summary = "커스텀 문체 스타일 목록 조회")
+  @GetMapping("/me/custom-styles")
   public ResponseEntity<SuccessResponse<List<CustomWritingStyleResponse>>> getCustomStyles(
-      @MemberId Long memberId) {
+      @AuthenticatedMember Long memberId) {
     List<CustomWritingStyleResponse> styles =
         customWritingStyleReader.getCustomStyles(memberId).stream()
             .map(CustomWritingStyleResponse::from)
@@ -105,10 +105,10 @@ public class MemberController {
     return SuccessResponse.toOk(styles);
   }
 
-  @PutMapping("/me/custom-styles/{styleId}")
   @Operation(summary = "커스텀 문체 스타일 수정")
+  @PutMapping("/me/custom-styles/{styleId}")
   public ResponseEntity<SuccessResponse<Void>> updateCustomStyle(
-      @MemberId Long memberId,
+      @AuthenticatedMember Long memberId,
       @PathVariable Long styleId,
       @RequestBody @Valid CustomWritingStyleRequest request) {
     customWritingStyleWriter.update(
@@ -116,10 +116,10 @@ public class MemberController {
     return SuccessResponse.toNoContent();
   }
 
-  @DeleteMapping("/me/custom-styles/{styleId}")
   @Operation(summary = "커스텀 문체 스타일 삭제")
+  @DeleteMapping("/me/custom-styles/{styleId}")
   public ResponseEntity<SuccessResponse<Void>> deleteCustomStyle(
-      @MemberId Long memberId, @PathVariable Long styleId) {
+      @AuthenticatedMember Long memberId, @PathVariable Long styleId) {
     customWritingStyleWriter.delete(styleId, memberId);
     return SuccessResponse.toNoContent();
   }

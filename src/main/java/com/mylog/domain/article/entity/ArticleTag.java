@@ -1,5 +1,6 @@
 package com.mylog.domain.article.entity;
 
+import com.mylog.domain.article.entity.key.ArticleTagId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;

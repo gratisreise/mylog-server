@@ -62,7 +62,7 @@ public class SecurityConfig {
   private static final String[] AUTH_WHITELIST = {
     "/api/auth/register",
     "/api/auth/login",
-    "/api/oauth/login",
+    "/api/auth/oauth/login",
     "/api/auth/refresh",
     "/api/external/**"
   };

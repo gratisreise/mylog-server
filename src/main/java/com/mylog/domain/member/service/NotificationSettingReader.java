@@ -20,13 +20,13 @@ public class NotificationSettingReader {
   public boolean isDisabled(Member member, String type) {
     return notificationSettingRepository
         .findByMemberIdAndType(member.getId(), type)
-        .orElseThrow(() -> new BusinessException(ErrorCode.NOTIFICATION_NOT_FOUND))
+        .orElseThrow(() -> BusinessException.error(ErrorCode.NOTIFICATION_NOT_FOUND))
         .isDisabled();
   }
 
   public List<NotificationSettingResponse> getNotificationSettings(Long memberId) {
     return notificationSettingRepository.findByMemberId(memberId).stream()
-        .map(NotificationSettingResponse::new)
+        .map(NotificationSettingResponse::from)
         .toList();
   }
 }

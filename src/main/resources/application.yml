@@ -25,9 +25,7 @@ oauth:
 
 jwt:
   access_secret: ${ACCESS_TOKEN_SECRET}
-  access_expiration: 86400000  # 1hours
   refresh_secret: ${REFRESH_TOKEN_SECRET}
-  refresh_expiration: 604800000 #1주
 
 # aws.s3.bucket
 cloud:
@@ -35,7 +33,5 @@ cloud:
     credentials:
       access-key: ${AWS_ACCESS_KEY}
       secret-key: ${AWS_SECRET_KEY}
-    region:
-      static: ap-northeast-2
     s3:
       bucket: mylog-imgsource

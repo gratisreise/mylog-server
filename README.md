@@ -52,6 +52,92 @@
 
 </details>
 
+## API 명세서
+
+<details>
+<summary>자세히 보기</summary>
+
+#### [api명세서링크](https://4nbr7ansok.apidog.io)  
+
+### 인증 (Auth)
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/auth/register` | 회원가입 | ❌ |
+| POST | `/api/auth/login` | 이메일 로그인 | ❌ |
+| POST | `/api/auth/logout` | 로그아웃 | ✅ |
+| POST | `/api/auth/refresh` | 토큰 리프레시 | ❌ |
+| POST | `/api/auth/oauth/login` | 소셜 로그인 (Google, Kakao, Naver) | ❌ |
+
+### 게시글 (Article)
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/articles` | 게시글 생성 (multipart/form-data) | ✅ |
+| PUT | `/api/articles/{articleId}` | 게시글 수정 (multipart/form-data) | ✅ |
+| DELETE | `/api/articles/{articleId}` | 게시글 삭제 | ✅ |
+| GET | `/api/articles/{articleId}` | 게시글 상세 조회 | ❌ |
+| GET | `/api/articles` | 게시글 목록/검색 조회 (`keyword`, `tag`, `categoryId` 쿼리) | ❌ |
+| GET | `/api/articles/me` | 내 게시글 목록/검색 조회 | ✅ |
+| POST | `/api/articles/transform-style` | AI 문체 변환 | ✅ |
+| GET | `/api/articles/{articleId}/summary` | AI 요약 조회 | ❌ |
+
+### 댓글 (Comment)
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/articles/{articleId}/comments` | 댓글 생성 | ✅ |
+| GET | `/api/articles/{articleId}/comments` | 댓글 목록 조회 (페이징) | ❌ |
+| GET | `/api/comments/{parentId}/replies` | 대댓글 목록 조회 (페이징) | ❌ |
+| GET | `/api/comments/me` | 내가 작성한 댓글 조회 | ✅ |
+| GET | `/api/comments/me/received` | 내 게시글에 작성된 댓글 조회 | ✅ |
+| PATCH | `/api/comments/{commentId}` | 댓글 수정 | ✅ |
+| DELETE | `/api/comments/{commentId}` | 댓글 삭제 | ✅ |
+
+### 카테고리 (Category)
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/categories` | 카테고리 생성 | ✅ |
+| GET | `/api/categories` | 카테고리 목록 조회 | ✅ |
+| GET | `/api/categories/{categoryId}` | 카테고리 단일 조회 | ✅ |
+| PUT | `/api/categories/{categoryId}` | 카테고리 수정 | ✅ |
+| DELETE | `/api/categories/{categoryId}` | 카테고리 삭제 | ✅ |
+
+### 회원 (Member)
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/members/me` | 개인정보 조회 | ✅ |
+| PATCH | `/api/members/me` | 개인정보 수정 (multipart/form-data) | ✅ |
+| DELETE | `/api/members/me` | 회원 탈퇴 | ✅ |
+| GET | `/api/members/me/notification-settings` | 알림 설정 조회 | ✅ |
+| PUT | `/api/members/me/notification-settings/{type}` | 알림 토글 | ✅ |
+
+### 커스텀 문체 스타일 (Custom Writing Style)
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/members/me/custom-styles` | 커스텀 문체 스타일 생성 | ✅ |
+| GET | `/api/members/me/custom-styles` | 커스텀 문체 스타일 목록 조회 | ✅ |
+| PUT | `/api/members/me/custom-styles/{styleId}` | 커스텀 문체 스타일 수정 | ✅ |
+| DELETE | `/api/members/me/custom-styles/{styleId}` | 커스텀 문체 스타일 삭제 | ✅ |
+
+### 알림 (Notification)
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/notifications` | 알림 목록 조회 (페이징) | ✅ |
+| PUT | `/api/notifications/{id}` | 알림 읽음 처리 | ✅ |
+
+### 외부 서비스 (External)
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/external/gemini` | AI 텍스트 생성 테스트 | ❌ |
+
+</details>
+
 ## 기술 스택
 
 <details>

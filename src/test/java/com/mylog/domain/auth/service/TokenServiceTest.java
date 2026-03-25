@@ -13,7 +13,7 @@ import com.mylog.common.exception.ErrorCode;
 import com.mylog.common.security.JwtProvider;
 import com.mylog.domain.auth.dto.response.LoginResponse;
 import com.mylog.domain.auth.dto.response.RefreshResponse;
-import com.mylog.external.redis.RedisService;
+import com.mylog.external.redis.RedisTokenService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ class TokenServiceTest {
   private static final String AUTH_HEADER = "Bearer " + ACCESS_TOKEN;
 
   @Mock private JwtProvider jwtProvider;
-  @Mock private RedisService redisService;
+  @Mock private RedisTokenService redisTokenService;
 
   @InjectMocks private TokenService tokenService;
 
@@ -47,7 +47,7 @@ class TokenServiceTest {
       // given
       given(jwtProvider.createAccessToken(MEMBER_ID)).willReturn(ACCESS_TOKEN);
       given(jwtProvider.createRefreshToken(MEMBER_ID)).willReturn(REFRESH_TOKEN);
-      willDoNothing().given(redisService).saveRefreshToken(MEMBER_ID, REFRESH_TOKEN);
+      willDoNothing().given(redisTokenService).saveRefreshToken(MEMBER_ID, REFRESH_TOKEN);
 
       // when
       LoginResponse response = tokenService.generateToken(MEMBER_ID);
@@ -59,7 +59,7 @@ class TokenServiceTest {
 
       then(jwtProvider).should().createAccessToken(MEMBER_ID);
       then(jwtProvider).should().createRefreshToken(MEMBER_ID);
-      then(redisService).should().saveRefreshToken(MEMBER_ID, REFRESH_TOKEN);
+      then(redisTokenService).should().saveRefreshToken(MEMBER_ID, REFRESH_TOKEN);
     }
   }
 
@@ -72,11 +72,11 @@ class TokenServiceTest {
     void 정상_토큰_재발급에_성공한다() {
       // given
       given(jwtProvider.getRefreshMemberId(REFRESH_TOKEN)).willReturn(MEMBER_ID);
-      given(redisService.getRefreshToken(MEMBER_ID)).willReturn(REFRESH_TOKEN);
-      willDoNothing().given(redisService).deleteRefreshToken(MEMBER_ID);
+      given(redisTokenService.getRefreshToken(MEMBER_ID)).willReturn(REFRESH_TOKEN);
+      willDoNothing().given(redisTokenService).deleteRefreshToken(MEMBER_ID);
       given(jwtProvider.createAccessToken(MEMBER_ID)).willReturn(NEW_ACCESS_TOKEN);
       given(jwtProvider.createRefreshToken(MEMBER_ID)).willReturn(NEW_REFRESH_TOKEN);
-      willDoNothing().given(redisService).saveRefreshToken(MEMBER_ID, NEW_REFRESH_TOKEN);
+      willDoNothing().given(redisTokenService).saveRefreshToken(MEMBER_ID, NEW_REFRESH_TOKEN);
 
       // when
       RefreshResponse response = tokenService.reissueToken(REFRESH_TOKEN);
@@ -88,11 +88,11 @@ class TokenServiceTest {
 
       then(jwtProvider).should().validateRefreshToken(REFRESH_TOKEN);
       then(jwtProvider).should().getRefreshMemberId(REFRESH_TOKEN);
-      then(redisService).should().getRefreshToken(MEMBER_ID);
-      then(redisService).should().deleteRefreshToken(MEMBER_ID);
+      then(redisTokenService).should().getRefreshToken(MEMBER_ID);
+      then(redisTokenService).should().deleteRefreshToken(MEMBER_ID);
       then(jwtProvider).should().createAccessToken(MEMBER_ID);
       then(jwtProvider).should().createRefreshToken(MEMBER_ID);
-      then(redisService).should().saveRefreshToken(MEMBER_ID, NEW_REFRESH_TOKEN);
+      then(redisTokenService).should().saveRefreshToken(MEMBER_ID, NEW_REFRESH_TOKEN);
     }
 
     @Test
@@ -110,7 +110,7 @@ class TokenServiceTest {
           .isEqualTo(ErrorCode.TOKEN_INVALID);
 
       then(jwtProvider).should().validateRefreshToken(REFRESH_TOKEN);
-      then(redisService).shouldHaveNoInteractions();
+      then(redisTokenService).shouldHaveNoInteractions();
     }
 
     @Test
@@ -120,7 +120,7 @@ class TokenServiceTest {
       String storedRefreshToken = "differentRefreshToken";
 
       given(jwtProvider.getRefreshMemberId(REFRESH_TOKEN)).willReturn(MEMBER_ID);
-      given(redisService.getRefreshToken(MEMBER_ID)).willReturn(storedRefreshToken);
+      given(redisTokenService.getRefreshToken(MEMBER_ID)).willReturn(storedRefreshToken);
 
       // when & then
       assertThatThrownBy(() -> tokenService.reissueToken(REFRESH_TOKEN))
@@ -129,7 +129,7 @@ class TokenServiceTest {
           .isEqualTo(ErrorCode.TOKEN_INVALID);
 
       then(jwtProvider).should().getRefreshMemberId(REFRESH_TOKEN);
-      then(redisService).should().getRefreshToken(MEMBER_ID);
+      then(redisTokenService).should().getRefreshToken(MEMBER_ID);
     }
   }
 

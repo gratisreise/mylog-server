@@ -3,7 +3,9 @@ package com.mylog.domain.member.dto;
 import com.mylog.common.enums.OauthProvider;
 import com.mylog.domain.member.entity.Member;
 import java.time.LocalDateTime;
+import lombok.Builder;
 
+@Builder
 public record MemberResponse(
     Long id,
     String email,
@@ -15,17 +17,18 @@ public record MemberResponse(
     String providerId,
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {
-  public MemberResponse(Member member) {
-    this(
-        member.getId(),
-        member.getEmail(),
-        member.getMemberName(),
-        member.getNickname(),
-        member.getProfileImg(),
-        member.getBio(),
-        member.getProvider(),
-        member.getProviderId(),
-        member.getCreatedAt(),
-        member.getUpdatedAt());
+  public static MemberResponse from(Member member) {
+    return MemberResponse.builder()
+        .id(member.getId())
+        .email(member.getEmail())
+        .memberName(member.getMemberName())
+        .nickname(member.getNickname())
+        .profileImg(member.getProfileImg())
+        .bio(member.getBio())
+        .provider(member.getProvider())
+        .providerId(member.getProviderId())
+        .createdAt(member.getCreatedAt())
+        .updatedAt(member.getUpdatedAt())
+        .build();
   }
 }

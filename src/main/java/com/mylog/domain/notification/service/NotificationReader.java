@@ -23,7 +23,7 @@ public class NotificationReader {
   public Notification getById(long notificationId) {
     return notificationRepository
         .findById(notificationId)
-        .orElseThrow(() -> new BusinessException(ErrorCode.NOTIFICATION_NOT_FOUND));
+        .orElseThrow(() -> BusinessException.error(ErrorCode.NOTIFICATION_NOT_FOUND));
   }
 
   // 알림목록조회

@@ -30,7 +30,7 @@ public class NotificationSettingWriter {
   public void toggleNotification(Long memberId, String type) {
     notificationSettingRepository
         .findByMemberIdAndType(memberId, type)
-        .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND))
+        .orElseThrow(() -> BusinessException.error(ErrorCode.MEMBER_NOT_FOUND))
         .toggle();
   }
 }
