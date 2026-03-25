@@ -1,6 +1,6 @@
 package com.mylog.domain.auth;
 
-import com.mylog.common.annotations.MemberId;
+import com.mylog.common.annotations.AuthenticatedMember;
 import com.mylog.common.response.SuccessResponse;
 import com.mylog.domain.auth.dto.request.LoginRequest;
 import com.mylog.domain.auth.dto.request.OAuthRequest;
@@ -9,6 +9,7 @@ import com.mylog.domain.auth.dto.request.SignUpRequest;
 import com.mylog.domain.auth.dto.response.LoginResponse;
 import com.mylog.domain.auth.dto.response.RefreshResponse;
 import com.mylog.domain.auth.service.AuthService;
+import com.mylog.domain.auth.service.oauth.OAuthService;
 import com.mylog.domain.auth.service.oauth.OAuthServiceFactory;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -29,25 +30,24 @@ public class AuthController {
   private final AuthService authService;
   private final OAuthServiceFactory oAuth2UserServiceFactory;
 
-  @PostMapping("/register")
   @Operation(summary = "회원가입")
+  @PostMapping("/register")
   public ResponseEntity<SuccessResponse<Void>> signUp(@RequestBody @Valid SignUpRequest request) {
     authService.signUp(request);
-    return SuccessResponse.toNoContent();
+    return SuccessResponse.toCreated(null);
   }
 
   @Operation(summary = "이메일 로그인")
   @PostMapping("/login")
   public ResponseEntity<SuccessResponse<LoginResponse>> login(
       @RequestBody @Valid LoginRequest request) {
-    LoginResponse response = authService.login(request);
-    return SuccessResponse.toOk(response);
+    return SuccessResponse.toOk(authService.login(request));
   }
 
   @Operation(summary = "로그아웃")
   @PostMapping("/logout")
   public ResponseEntity<SuccessResponse<Void>> logout(
-      @RequestHeader("Authorization") String authHeader, @MemberId Long memberId) {
+      @RequestHeader("Authorization") String authHeader, @AuthenticatedMember Long memberId) {
     authService.logout(authHeader, memberId);
     return SuccessResponse.toNoContent();
   }
@@ -56,16 +56,14 @@ public class AuthController {
   @PostMapping("/refresh")
   public ResponseEntity<SuccessResponse<RefreshResponse>> refresh(
       @RequestBody RefreshRequest request) {
-    RefreshResponse response = authService.refresh(request);
-    return SuccessResponse.toOk(response);
+    return SuccessResponse.toOk(authService.refresh(request));
   }
 
   @Operation(summary = "소셜 로그인")
   @PostMapping("/oauth/login")
   public ResponseEntity<SuccessResponse<LoginResponse>> socialLogin(
       @RequestBody @Valid OAuthRequest request) {
-    LoginResponse response =
-        oAuth2UserServiceFactory.getOAuthService(request.provider()).authenticate(request);
-    return SuccessResponse.toOk(response);
+    OAuthService oAuthService = oAuth2UserServiceFactory.getOAuthService(request.provider());
+    return SuccessResponse.toOk(oAuthService.authenticate(request));
   }
 }

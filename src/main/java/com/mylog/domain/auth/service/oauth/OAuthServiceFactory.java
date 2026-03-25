@@ -2,6 +2,8 @@ package com.mylog.domain.auth.service.oauth;
 
 import com.mylog.common.annotations.OAuthServiceType;
 import com.mylog.common.enums.OauthProvider;
+import com.mylog.common.exception.BusinessException;
+import com.mylog.common.exception.ErrorCode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,9 @@ public class OAuthServiceFactory {
   }
 
   public OAuthService getOAuthService(OauthProvider provider) {
+    if(!serviceMap.containsKey(provider)){
+      throw BusinessException.error(ErrorCode.OAUTH_UNSUPPORTED_PROVIDER);
+    }
     return serviceMap.get(provider);
   }
 }

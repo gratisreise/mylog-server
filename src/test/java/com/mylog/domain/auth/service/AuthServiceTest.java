@@ -19,7 +19,7 @@ import com.mylog.domain.auth.dto.response.RefreshResponse;
 import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.service.MemberReader;
 import com.mylog.domain.member.service.MemberWriter;
-import com.mylog.external.redis.RedisService;
+import com.mylog.external.redis.RedisTokenService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ class AuthServiceTest {
   @Mock private TokenService tokenService;
   @Mock private PasswordEncoder encoder;
   @Mock private MemberWriter memberWriter;
-  @Mock private RedisService redisService;
+  @Mock private RedisTokenService redisTokenService;
   @Mock private JwtProvider jwtProvider;
 
   @InjectMocks private AuthService authService;
@@ -189,16 +189,16 @@ class AuthServiceTest {
       long remainingTime = 3600000L;
 
       given(jwtProvider.getExpiration(ACCESS_TOKEN)).willReturn(remainingTime);
-      willDoNothing().given(redisService).addBlacklist(ACCESS_TOKEN, remainingTime);
-      willDoNothing().given(redisService).deleteRefreshToken(MEMBER_ID);
+      willDoNothing().given(redisTokenService).addBlacklist(ACCESS_TOKEN, remainingTime);
+      willDoNothing().given(redisTokenService).deleteRefreshToken(MEMBER_ID);
 
       // when
       authService.logout(AUTH_HEADER, MEMBER_ID);
 
       // then
       then(jwtProvider).should().getExpiration(ACCESS_TOKEN);
-      then(redisService).should().addBlacklist(ACCESS_TOKEN, remainingTime);
-      then(redisService).should().deleteRefreshToken(MEMBER_ID);
+      then(redisTokenService).should().addBlacklist(ACCESS_TOKEN, remainingTime);
+      then(redisTokenService).should().deleteRefreshToken(MEMBER_ID);
     }
   }
 
