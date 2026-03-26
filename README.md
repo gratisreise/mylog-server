@@ -166,11 +166,11 @@
 - **Google Gemini API** - AI 요약 및 문체 변환
 
 ### Infrastructure
-- **QueryDSL** - 동적 쿼리 작성
+- **Querydsl** - 동적 쿼리 작성
 - **JWT (jjwt)** - 토큰 기반 인증
 - **Springdoc OpenAPI** - API 문서화
 - **Sentry** - 에러 추적
-- **Prometheus + Micrometer** - 모니터링
+- **Prometheus + Grafana** - 모니터링
 
 </details>
 
