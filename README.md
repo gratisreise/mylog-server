@@ -156,6 +156,8 @@
 - **Spring Boot 3.x**
 - **Spring Data JPA** - ORM 및 데이터베이스 접근
 - **Spring Security** - 인증/인가
+- **Querydsl** - 동적 쿼리 작성
+- **JWT (jjwt)** - 토큰 기반 인증
 
 ### Database & Cache
 - **PostgreSQL** - 메인 데이터베이스
@@ -166,9 +168,8 @@
 - **Google Gemini API** - AI 요약 및 문체 변환
 
 ### Infrastructure
-- **Querydsl** - 동적 쿼리 작성
-- **JWT (jjwt)** - 토큰 기반 인증
-- **Springdoc OpenAPI** - API 문서화
+- **AWS EC2** - 서버 배포
+- **AWS RDS** - 데이터베이스 서버
 - **Sentry** - 에러 추적
 - **Prometheus + Grafana** - 모니터링
 
