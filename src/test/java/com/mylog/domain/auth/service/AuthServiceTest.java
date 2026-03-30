@@ -10,7 +10,6 @@ import static org.mockito.BDDMockito.willThrow;
 
 import com.mylog.common.exception.BusinessException;
 import com.mylog.common.exception.ErrorCode;
-import com.mylog.common.security.JwtProvider;
 import com.mylog.domain.auth.dto.request.LoginRequest;
 import com.mylog.domain.auth.dto.request.RefreshRequest;
 import com.mylog.domain.auth.dto.request.SignUpRequest;
@@ -19,7 +18,6 @@ import com.mylog.domain.auth.dto.response.RefreshResponse;
 import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.service.MemberReader;
 import com.mylog.domain.member.service.MemberWriter;
-import com.mylog.external.redis.RedisTokenService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -44,8 +42,6 @@ class AuthServiceTest {
   @Mock private TokenService tokenService;
   @Mock private PasswordEncoder encoder;
   @Mock private MemberWriter memberWriter;
-  @Mock private RedisTokenService redisTokenService;
-  @Mock private JwtProvider jwtProvider;
 
   @InjectMocks private AuthService authService;
 
@@ -183,22 +179,16 @@ class AuthServiceTest {
   class Logout {
 
     @Test
-    @DisplayName("정상 로그아웃에 성공한다 - 블랙리스트 등록 및 RT 삭제")
+    @DisplayName("정상 로그아웃에 성공한다")
     void 정상_로그아웃에_성공한다() {
       // given
-      long remainingTime = 3600000L;
-
-      given(jwtProvider.getExpiration(ACCESS_TOKEN)).willReturn(remainingTime);
-      willDoNothing().given(redisTokenService).addBlacklist(ACCESS_TOKEN, remainingTime);
-      willDoNothing().given(redisTokenService).deleteRefreshToken(MEMBER_ID);
+      willDoNothing().given(tokenService).logout(AUTH_HEADER, MEMBER_ID);
 
       // when
       authService.logout(AUTH_HEADER, MEMBER_ID);
 
       // then
-      then(jwtProvider).should().getExpiration(ACCESS_TOKEN);
-      then(redisTokenService).should().addBlacklist(ACCESS_TOKEN, remainingTime);
-      then(redisTokenService).should().deleteRefreshToken(MEMBER_ID);
+      then(tokenService).should().logout(AUTH_HEADER, MEMBER_ID);
     }
   }
 

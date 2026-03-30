@@ -52,6 +52,14 @@ public class TokenService {
     return RefreshResponse.of(newAT, newRT);
   }
 
+  // 로그아웃 - AT 블랙리스트 등록 및 RT 삭제
+  public void logout(String authHeader, long memberId) {
+    String accessToken = extractToken(authHeader);
+    long remainingTime = jwtProvider.getExpiration(accessToken);
+    redisTokenService.addBlacklist(accessToken, remainingTime);
+    redisTokenService.deleteRefreshToken(memberId);
+  }
+
   public static String extractToken(String token) {
     return token.replace(CommonValue.AUTH_PREFIX, "");
   }

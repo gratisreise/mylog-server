@@ -2,7 +2,6 @@ package com.mylog.domain.auth.service;
 
 import com.mylog.common.exception.BusinessException;
 import com.mylog.common.exception.ErrorCode;
-import com.mylog.common.security.JwtProvider;
 import com.mylog.domain.auth.dto.request.LoginRequest;
 import com.mylog.domain.auth.dto.request.RefreshRequest;
 import com.mylog.domain.auth.dto.request.SignUpRequest;
@@ -11,7 +10,6 @@ import com.mylog.domain.auth.dto.response.RefreshResponse;
 import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.service.MemberReader;
 import com.mylog.domain.member.service.MemberWriter;
-import com.mylog.external.redis.RedisTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,8 +24,6 @@ public class AuthService {
   private final TokenService tokenService;
   private final PasswordEncoder encoder;
   private final MemberWriter memberWriter;
-  private final RedisTokenService redisTokenService;
-  private final JwtProvider jwtProvider;
 
   // 회원가입
   public void signUp(SignUpRequest request) {
@@ -51,12 +47,11 @@ public class AuthService {
 
   // 로그아웃
   public void logout(String authHeader, Long memberId) {
-    String accessToken = TokenService.extractToken(authHeader);
-    long remainingTime = jwtProvider.getExpiration(accessToken);
-    redisTokenService.addBlacklist(accessToken, remainingTime);
-    redisTokenService.deleteRefreshToken(memberId);
+    tokenService.logout(authHeader, memberId);
   }
 
+
+  // === Private ===
   private void validateDuplicateMember(String email) {
     if (memberReader.existsByEmail(email)) {
       throw new BusinessException(ErrorCode.MEMBER_EMAIL_ALREADY_EXISTS);
