@@ -2,7 +2,6 @@ package com.mylog.common.response;
 
 import com.mylog.common.exception.ErrorCode;
 import java.time.LocalDateTime;
-import java.lang.Exception;
 import lombok.Getter;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
@@ -40,7 +39,4 @@ public class ErrorResponse extends BaseResponse {
     ErrorCode code = ErrorCode.UNKNOWN_ERROR;
     return new ErrorResponse(code.getCode(), ex.getMessage());
   }
-
-
-
 }

@@ -1,7 +1,6 @@
 package com.mylog.common.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mylog.common.exception.ErrorCode;
 import com.mylog.common.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
