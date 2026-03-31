@@ -2,12 +2,10 @@ package com.mylog.domain.article;
 
 import com.mylog.common.enums.WritingStyle;
 import com.mylog.common.response.PageResponse;
-import com.mylog.domain.article.dto.AiSummaryResult;
 import com.mylog.domain.article.dto.request.ArticleCreateRequest;
 import com.mylog.domain.article.dto.request.ArticleQueryParam;
 import com.mylog.domain.article.dto.request.ArticleUpdateRequest;
 import com.mylog.domain.article.dto.request.StyleTransformRequest;
-import com.mylog.domain.article.dto.request.Temp;
 import com.mylog.domain.article.dto.response.ArticleCreateResponse;
 import com.mylog.domain.article.dto.response.ArticleResponse;
 import com.mylog.domain.article.dto.response.ArticleSummaryResponse;
@@ -42,10 +40,7 @@ public class ArticleService {
 
   public void updateArticle(
       ArticleUpdateRequest request, Long memberId, MultipartFile file, Long articleId) {
-    String imageUrl = null;
-    if (file != null && !file.isEmpty()) {
-      imageUrl = s3Service.upload(file);
-    }
+    String imageUrl = s3Service.upload(file);
     articleWriter.update(request, memberId, imageUrl, articleId);
   }
 
@@ -89,9 +84,5 @@ public class ArticleService {
     Article article = articleReader.getArticleById(articleId);
     return ArticleSummaryResponse.of(
         articleId, article.getAiSummary(), article.getAiSummaryStatus());
-  }
-
-  public AiSummaryResult getArticleSummary(Temp temp) {
-    return aiService.test(temp.content());
   }
 }

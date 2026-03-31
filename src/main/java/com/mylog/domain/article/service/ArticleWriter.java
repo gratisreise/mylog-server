@@ -59,7 +59,7 @@ public class ArticleWriter {
     Article article =
         articleRepository
             .findById(articleId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(ErrorCode.ARTICLE_NOT_FOUND));
 
     if (!article.getMember().getId().equals(memberId)) {
       throw new BusinessException(ErrorCode.ACCESS_DENIED);

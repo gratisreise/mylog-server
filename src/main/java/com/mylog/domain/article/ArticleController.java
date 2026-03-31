@@ -53,8 +53,8 @@ public class ArticleController {
   public ResponseEntity<SuccessResponse<Void>> updateArticle(
       @RequestPart(value = "request") @Valid ArticleUpdateRequest request,
       @RequestPart(required = false, value = "file") MultipartFile file,
-      @AuthenticatedMember Long memberId,
-      @PathVariable Long articleId) {
+      @PathVariable Long articleId,
+      @AuthenticatedMember Long memberId) {
     articleService.updateArticle(request, memberId, file, articleId);
     return SuccessResponse.toNoContent();
   }
@@ -99,7 +99,6 @@ public class ArticleController {
   }
 
   // === AI 서비스 ===
-
   @Operation(summary = "AI 문체 변환")
   @PostMapping("/transform-style")
   public ResponseEntity<SuccessResponse<StyleTransformResponse>> transformWritingStyle(

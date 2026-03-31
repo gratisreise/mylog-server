@@ -104,13 +104,12 @@ class ArticleServiceTest {
   class UpdateArticle {
 
     @Test
-    @DisplayName("성공: 새 이미지가 있으면 업로드 후 수정")
-    void updateArticle_WithNewImage() {
+    @DisplayName("성공: 이미지 업로드 후 수정")
+    void updateArticle_Success() {
       // given
-      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동");
+      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상");
       MultipartFile file = mock(MultipartFile.class);
 
-      given(file.isEmpty()).willReturn(false);
       given(s3Service.upload(file)).willReturn(IMAGE_URL);
       willDoNothing().given(articleWriter).update(request, MEMBER_ID, IMAGE_URL, ARTICLE_ID);
 
@@ -120,40 +119,6 @@ class ArticleServiceTest {
       // then
       then(s3Service).should().upload(file);
       then(articleWriter).should().update(request, MEMBER_ID, IMAGE_URL, ARTICLE_ID);
-    }
-
-    @Test
-    @DisplayName("성공: 새 이미지가 없으면 기존 이미지 유지")
-    void updateArticle_WithoutNewImage() {
-      // given
-      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동");
-      MultipartFile file = mock(MultipartFile.class);
-
-      given(file.isEmpty()).willReturn(true);
-      willDoNothing().given(articleWriter).update(request, MEMBER_ID, null, ARTICLE_ID);
-
-      // when
-      articleService.updateArticle(request, MEMBER_ID, file, ARTICLE_ID);
-
-      // then
-      then(s3Service).should(never()).upload(any());
-      then(articleWriter).should().update(request, MEMBER_ID, null, ARTICLE_ID);
-    }
-
-    @Test
-    @DisplayName("성공: 파일이 null이면 이미지 업로드 안함")
-    void updateArticle_WithNullFile() {
-      // given
-      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동");
-
-      willDoNothing().given(articleWriter).update(request, MEMBER_ID, null, ARTICLE_ID);
-
-      // when
-      articleService.updateArticle(request, MEMBER_ID, null, ARTICLE_ID);
-
-      // then
-      then(s3Service).should(never()).upload(any());
-      then(articleWriter).should().update(request, MEMBER_ID, null, ARTICLE_ID);
     }
   }
 
