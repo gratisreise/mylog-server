@@ -53,7 +53,7 @@ public class TokenService {
   }
 
   // 로그아웃 - AT 블랙리스트 등록 및 RT 삭제
-  public void logout(String authHeader, long memberId) {
+  public void logout(String authHeader, Long memberId) {
     String accessToken = extractToken(authHeader);
     long remainingTime = jwtProvider.getExpiration(accessToken);
     redisTokenService.addBlacklist(accessToken, remainingTime);

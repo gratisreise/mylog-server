@@ -10,6 +10,7 @@ import com.mylog.domain.category.repository.CategoryRepository;
 import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.service.MemberReader;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,13 +18,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CategoryWriter {
 
   private final MemberReader memberReader;
   private final CategoryRepository categoryRepository;
   private final CategoryReader categoryReader;
 
-  public Long createCategory(CategoryCreateRequest request, long memberId) {
+  public Long createCategory(CategoryCreateRequest request, Long memberId) {
+    log.info("memberId {}", memberId);
     Member member = memberReader.getById(memberId);
     int categorySize = categoryRepository.countByMember(member);
 

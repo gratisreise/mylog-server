@@ -12,6 +12,7 @@ import com.mylog.external.gemini.GeminiService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ public class AiService {
   private final ArticleRepository articleRepository;
   private final TagWriter tagWriter;
   private final ObjectMapper objectMapper;
+  private final RetryTemplate aiRetryTemplate;
 
   // 동기: 문체 변환 (GeminiService 에러는 이미 처리됨)
   public String transformWritingStyle(String content, WritingStyle style) {
@@ -58,7 +60,12 @@ public class AiService {
 
     try {
       String prompt = buildSummaryPrompt(article.getContent());
-      String response = geminiService.gemini(prompt);
+      String response =
+          aiRetryTemplate.execute(
+              context -> {
+                log.info("AI 요약 생성 시도 (attempt: {})", context.getRetryCount() + 1);
+                return geminiService.gemini(prompt);
+              });
 
       // JSON 파싱
       AiSummaryResult result = parseAiSummaryResponse(response);

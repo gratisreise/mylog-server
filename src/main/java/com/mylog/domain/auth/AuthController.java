@@ -55,8 +55,8 @@ public class AuthController {
   @Operation(summary = "토큰 리프레시")
   @PostMapping("/refresh")
   public ResponseEntity<SuccessResponse<RefreshResponse>> refresh(
-      @RequestBody RefreshRequest request) {
-    return SuccessResponse.toOk(authService.refresh(request));
+      @RequestBody @Valid RefreshRequest request) {
+    return SuccessResponse.toOk(authService.refresh(request.refreshToken()));
   }
 
   @Operation(summary = "소셜 로그인")

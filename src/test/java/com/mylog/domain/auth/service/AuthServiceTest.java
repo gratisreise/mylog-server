@@ -11,7 +11,6 @@ import static org.mockito.BDDMockito.willThrow;
 import com.mylog.common.exception.BusinessException;
 import com.mylog.common.exception.ErrorCode;
 import com.mylog.domain.auth.dto.request.LoginRequest;
-import com.mylog.domain.auth.dto.request.RefreshRequest;
 import com.mylog.domain.auth.dto.request.SignUpRequest;
 import com.mylog.domain.auth.dto.response.LoginResponse;
 import com.mylog.domain.auth.dto.response.RefreshResponse;
@@ -77,7 +76,7 @@ class AuthServiceTest {
       assertThatThrownBy(() -> authService.signUp(request))
           .isInstanceOf(BusinessException.class)
           .extracting("code")
-          .isEqualTo(ErrorCode.MEMBER_EMAIL_ALREADY_EXISTS);
+          .isEqualTo(ErrorCode.MEMBER_ALREADY_EXISTS);
 
       then(memberWriter).shouldHaveNoInteractions();
     }
@@ -157,13 +156,12 @@ class AuthServiceTest {
     @DisplayName("정상 토큰 재발급에 성공한다")
     void 정상_토큰_재발급에_성공한다() {
       // given
-      RefreshRequest request = new RefreshRequest(REFRESH_TOKEN, null);
       RefreshResponse expectedResponse = RefreshResponse.of(ACCESS_TOKEN, REFRESH_TOKEN);
 
       given(tokenService.reissueToken(REFRESH_TOKEN)).willReturn(expectedResponse);
 
       // when
-      RefreshResponse response = authService.refresh(request);
+      RefreshResponse response = authService.refresh(REFRESH_TOKEN);
 
       // then
       assertThat(response).isNotNull();

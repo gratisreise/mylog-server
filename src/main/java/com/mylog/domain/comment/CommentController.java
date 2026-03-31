@@ -12,7 +12,6 @@ import com.mylog.domain.comment.service.CommentReader;
 import com.mylog.domain.comment.service.CommentWriter;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +37,7 @@ public class CommentController {
   @Operation(summary = "댓글 생성")
   @PostMapping("/articles/{articleId}/comments")
   public ResponseEntity<SuccessResponse<Long>> createComment(
-      @PathVariable @Min(1) Long articleId,
+      @PathVariable Long articleId,
       @RequestBody @Valid CommentCreateRequest request,
       @AuthenticatedMember Long memberId) {
     Long commentId = commentWriter.createComment(articleId, request, memberId);
@@ -48,7 +47,7 @@ public class CommentController {
   @Operation(summary = "댓글 목록 조회")
   @GetMapping("/articles/{articleId}/comments")
   public ResponseEntity<SuccessResponse<PageResponse<CommentArticleResponse>>> getComments(
-      @PathVariable @Min(1) Long articleId,
+      @PathVariable Long articleId,
       @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
     Page<CommentArticleResponse> comments = commentReader.getComments1(articleId, pageable);
     return SuccessResponse.toOk(PageResponse.from(comments));
@@ -57,7 +56,7 @@ public class CommentController {
   @Operation(summary = "대댓글 목록 조회")
   @GetMapping("/comments/{parentId}/replies")
   public ResponseEntity<SuccessResponse<PageResponse<Reply>>> getReplies(
-      @PathVariable @Min(1) Long parentId,
+      @PathVariable Long parentId,
       @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
     Page<Reply> replies = commentReader.getRepliesByParentId(parentId, pageable);
     return SuccessResponse.toOk(PageResponse.from(replies));
@@ -85,7 +84,7 @@ public class CommentController {
   @PatchMapping("/comments/{commentId}")
   public ResponseEntity<SuccessResponse<Void>> updateComment(
       @RequestBody @Valid CommentUpdateRequest request,
-      @PathVariable @Min(1) Long commentId,
+      @PathVariable Long commentId,
       @AuthenticatedMember Long memberId) {
     commentWriter.updateComment(request, memberId, commentId);
     return SuccessResponse.toNoContent();
@@ -94,7 +93,7 @@ public class CommentController {
   @Operation(summary = "댓글 삭제")
   @DeleteMapping("/comments/{commentId}")
   public ResponseEntity<SuccessResponse<Void>> deleteComment(
-      @PathVariable @Min(1) Long commentId, @AuthenticatedMember Long memberId) {
+      @PathVariable Long commentId, @AuthenticatedMember Long memberId) {
     commentWriter.deleteComment(commentId, memberId);
     return SuccessResponse.toNoContent();
   }

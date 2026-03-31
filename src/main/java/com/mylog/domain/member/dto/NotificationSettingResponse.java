@@ -7,7 +7,7 @@ import lombok.Builder;
 public record NotificationSettingResponse(String type, boolean disabled) {
 
   public static NotificationSettingResponse from(NotificationSetting setting) {
-    return  NotificationSettingResponse.builder()
+    return NotificationSettingResponse.builder()
         .type(setting.getType())
         .disabled(setting.isDisabled())
         .build();

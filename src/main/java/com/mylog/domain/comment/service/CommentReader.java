@@ -10,7 +10,6 @@ import com.mylog.domain.comment.entity.Comment;
 import com.mylog.domain.comment.repository.CommentRepository;
 import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.service.MemberReader;
-import jakarta.validation.constraints.Min;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -54,7 +53,7 @@ public class CommentReader {
     return commentRepository.findByMemberId(memberId, pageable).map(CommentResponse::from);
   }
 
-  public Page<CommentArticleResponse> getComments1(@Min(1) Long articleId, Pageable pageable) {
+  public Page<CommentArticleResponse> getComments1(Long articleId, Pageable pageable) {
     Page<Comment> parentComments =
         commentRepository.findByArticle_IdAndParentIsNull(articleId, pageable);
 

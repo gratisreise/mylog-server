@@ -3,7 +3,6 @@ package com.mylog.domain.auth.service;
 import com.mylog.common.exception.BusinessException;
 import com.mylog.common.exception.ErrorCode;
 import com.mylog.domain.auth.dto.request.LoginRequest;
-import com.mylog.domain.auth.dto.request.RefreshRequest;
 import com.mylog.domain.auth.dto.request.SignUpRequest;
 import com.mylog.domain.auth.dto.response.LoginResponse;
 import com.mylog.domain.auth.dto.response.RefreshResponse;
@@ -40,8 +39,7 @@ public class AuthService {
   }
 
   // 리프레쉬
-  public RefreshResponse refresh(RefreshRequest request) {
-    String refreshToken = request.refreshToken();
+  public RefreshResponse refresh(String refreshToken) {
     return tokenService.reissueToken(refreshToken);
   }
 
@@ -50,11 +48,10 @@ public class AuthService {
     tokenService.logout(authHeader, memberId);
   }
 
-
   // === Private ===
   private void validateDuplicateMember(String email) {
     if (memberReader.existsByEmail(email)) {
-      throw new BusinessException(ErrorCode.MEMBER_EMAIL_ALREADY_EXISTS);
+      throw new BusinessException(ErrorCode.MEMBER_ALREADY_EXISTS);
     }
   }
 }

@@ -47,8 +47,7 @@ class GoogleOAuthServiceTest {
       // given
       OAuthRequest request = new OAuthRequest(OauthProvider.GOOGLE, AUTH_CODE);
       GoogleTokenResponse tokenResponse =
-          new GoogleTokenResponse(
-              GOOGLE_ACCESS_TOKEN, "Bearer", 3600L, "rt", "scope", "idToken");
+          new GoogleTokenResponse(GOOGLE_ACCESS_TOKEN, "Bearer", 3600L, "rt", "scope", "idToken");
       GoogleUserInfoResponse userInfo =
           new GoogleUserInfoResponse("12345", "홍길동", "https://img.url");
       Member member = createMember();
@@ -74,10 +73,6 @@ class GoogleOAuthServiceTest {
   }
 
   private Member createMember() {
-    return Member.builder()
-        .id(MEMBER_ID)
-        .email("12345@google.com")
-        .memberName("홍길동")
-        .build();
+    return Member.builder().id(MEMBER_ID).email("12345@google.com").memberName("홍길동").build();
   }
 }

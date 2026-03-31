@@ -45,7 +45,8 @@ public class MemberController {
 
   @Operation(summary = "개인정보조회")
   @GetMapping("/me")
-  public ResponseEntity<SuccessResponse<MemberResponse>> getMember(@AuthenticatedMember Long memberId) {
+  public ResponseEntity<SuccessResponse<MemberResponse>> getMember(
+      @AuthenticatedMember Long memberId) {
     return SuccessResponse.toOk(memberService.getMember(memberId));
   }
 
@@ -60,7 +61,7 @@ public class MemberController {
     return SuccessResponse.toNoContent();
   }
 
-  @Operation(summary = "개인정보삭제")
+  @Operation(summary = "회원탈퇴")
   @DeleteMapping("/me")
   public ResponseEntity<SuccessResponse<Void>> deleteMember(@AuthenticatedMember Long memberId) {
     memberService.delete(memberId);
