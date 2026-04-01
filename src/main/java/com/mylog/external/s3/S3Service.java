@@ -4,7 +4,9 @@ import com.mylog.common.exception.BusinessException;
 import com.mylog.common.exception.ErrorCode;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,9 +17,11 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class S3Service {
 
   private final S3Client s3Client;
+  private final RetryTemplate s3RetryTemplate;
 
   @Value("${cloud.aws.s3.bucket}")
   private String bucketName;
@@ -55,6 +59,11 @@ public class S3Service {
     DeleteObjectRequest deleteObjectRequest =
         DeleteObjectRequest.builder().bucket(bucketName).key(fileKey).build();
 
-    s3Client.deleteObject(deleteObjectRequest);
+    s3RetryTemplate.execute(
+        context -> {
+          log.info("S3 이미지 삭제 시도 (attempt: {})", context.getRetryCount() + 1);
+          s3Client.deleteObject(deleteObjectRequest);
+          return null;
+        });
   }
 }

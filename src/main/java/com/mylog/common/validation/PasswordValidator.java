@@ -1,5 +1,6 @@
 package com.mylog.common.validation;
 
+import com.mylog.common.annotations.Password;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;

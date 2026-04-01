@@ -17,7 +17,7 @@ public class TagWriter {
   private final TagRepository tagRepository;
   private final ArticleTagRepository articleTagRepository;
 
-  //AI가 생성한 태그를 저장
+  // AI가 생성한 태그를 저장
   public void saveAiTags(List<String> tagNames, Article article) {
     // 기존 연결된 태그 삭제
     articleTagRepository.deleteByArticle(article);

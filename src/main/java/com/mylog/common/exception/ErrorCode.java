@@ -21,11 +21,12 @@ public enum ErrorCode {
   INVALID_REDIRECT_URI(400, "AUTH_010", "허용되지 않은 리다이렉트 URI입니다."),
   ALREADY_LOGGED_IN(400, "AUTH_011", "이미 로그인된 상태입니다."),
   NOT_LOGGED_IN(401, "AUTH_012", "로그인이 필요한 서비스입니다."),
+
   // ========================================================================
   // MEMBER - 회원 관련
   // ========================================================================
   MEMBER_NOT_FOUND(404, "MEMBER_001", "사용자를 찾을 수 없습니다."),
-  MEMBER_EMAIL_ALREADY_EXISTS(409, "MEMBER_002", "이미 사용 중인 이메일입니다."),
+  MEMBER_ALREADY_EXISTS(409, "MEMBER_002", "이미 사용 중인 이메일입니다."),
   MEMBER_WITHDRAWN(410, "MEMBER_003", "이미 탈퇴한 회원입니다."),
   MEMBER_NAME_REQUIRED(400, "MEMBER_004", "이름은 필수 입력 항목입니다."),
   MEMBER_PROFILE_IMAGE_INVALID(400, "MEMBER_005", "프로필 이미지 URL이 유효하지 않습니다."),

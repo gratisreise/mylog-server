@@ -134,6 +134,30 @@ class TokenServiceTest {
   }
 
   @Nested
+  @DisplayName("로그아웃")
+  class Logout {
+
+    @Test
+    @DisplayName("AT 블랙리스트 등록 및 RT 삭제에 성공한다")
+    void AT_블랙리스트_등록_및_RT_삭제에_성공한다() {
+      // given
+      long remainingTime = 3600000L;
+
+      given(jwtProvider.getExpiration(ACCESS_TOKEN)).willReturn(remainingTime);
+      willDoNothing().given(redisTokenService).addBlacklist(ACCESS_TOKEN, remainingTime);
+      willDoNothing().given(redisTokenService).deleteRefreshToken(MEMBER_ID);
+
+      // when
+      tokenService.logout(AUTH_HEADER, MEMBER_ID);
+
+      // then
+      then(jwtProvider).should().getExpiration(ACCESS_TOKEN);
+      then(redisTokenService).should().addBlacklist(ACCESS_TOKEN, remainingTime);
+      then(redisTokenService).should().deleteRefreshToken(MEMBER_ID);
+    }
+  }
+
+  @Nested
   @DisplayName("토큰 추출")
   class ExtractToken {
 

@@ -1,4 +1,4 @@
-package com.mylog.config;
+package com.mylog.common.db;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

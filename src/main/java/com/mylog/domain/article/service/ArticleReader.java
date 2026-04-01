@@ -4,7 +4,6 @@ import com.mylog.common.exception.BusinessException;
 import com.mylog.common.exception.ErrorCode;
 import com.mylog.domain.article.dto.request.ArticleQueryParam;
 import com.mylog.domain.article.dto.response.ArticleResponse;
-import com.mylog.domain.article.dto.response.ArticleTestResponse;
 import com.mylog.domain.article.entity.Article;
 import com.mylog.domain.article.repository.ArticleRepository;
 import com.mylog.domain.article.repository.ArticleTagRepository;
@@ -49,6 +48,8 @@ public class ArticleReader {
   }
 
   public Article getArticleById(Long articleId) {
-    return articleRepository.findById(articleId).orElse(null);
+    return articleRepository
+        .findById(articleId)
+        .orElseThrow(() -> new BusinessException(ErrorCode.ARTICLE_NOT_FOUND));
   }
 }

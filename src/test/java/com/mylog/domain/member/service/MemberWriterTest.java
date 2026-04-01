@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import com.mylog.common.enums.OauthProvider;
+import com.mylog.domain.category.service.CategoryWriter;
 import com.mylog.domain.member.dto.UpdateMemberRequest;
 import com.mylog.domain.member.entity.Member;
 import com.mylog.domain.member.repository.MemberRepository;
@@ -21,6 +22,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MemberWriterTest {
 
   @Mock private MemberRepository memberRepository;
+  @Mock private CategoryWriter categoryWriter;
+  @Mock private NotificationSettingWriter notificationSettingWriter;
 
   @InjectMocks private MemberWriter memberWriter;
 

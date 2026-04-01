@@ -1,8 +1,8 @@
 package com.mylog.domain.auth.dto.request;
 
 import com.mylog.common.CommonValue;
+import com.mylog.common.annotations.Password;
 import com.mylog.common.enums.OauthProvider;
-import com.mylog.common.validation.Password;
 import com.mylog.domain.member.entity.Member;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

@@ -333,16 +333,14 @@ class ArticleReaderTest {
     }
 
     @Test
-    @DisplayName("성공: 게시글이 없으면 null 반환")
-    void getArticleById_NotFound_ReturnsNull() {
+    @DisplayName("실패: 게시글이 없으면 예외 발생")
+    void getArticleById_NotFound_ThrowsException() {
       // given
       given(articleRepository.findById(ARTICLE_ID)).willReturn(Optional.empty());
 
-      // when
-      Article result = articleReader.getArticleById(ARTICLE_ID);
-
-      // then
-      assertThat(result).isNull();
+      // when & then
+      assertThatThrownBy(() -> articleReader.getArticleById(ARTICLE_ID))
+          .isInstanceOf(BusinessException.class);
       then(articleRepository).should().findById(ARTICLE_ID);
     }
   }

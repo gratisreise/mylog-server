@@ -27,6 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ArticleWriterTest {
 
   @Mock private ArticleRepository articleRepository;
+  @Mock private ArticleReader articleReader;
   @Mock private MemberReader memberReader;
   @Mock private CategoryReader categoryReader;
   @Mock private AiService aiService;
@@ -110,16 +111,16 @@ class ArticleWriterTest {
       Article article = createArticle(member);
       Category newCategory = Category.builder().id(2L).categoryName("개발").build();
 
-      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "개발", "홍길동");
+      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "개발");
 
-      given(articleRepository.findById(ARTICLE_ID)).willReturn(Optional.of(article));
+      given(articleReader.getArticleById(ARTICLE_ID)).willReturn(article);
       given(categoryReader.getByMemberIdAndCategoryName(MEMBER_ID, "개발")).willReturn(newCategory);
 
       // when
       articleWriter.update(request, MEMBER_ID, IMAGE_URL, ARTICLE_ID);
 
       // then
-      then(articleRepository).should().findById(ARTICLE_ID);
+      then(articleReader).should().getArticleById(ARTICLE_ID);
       then(categoryReader).should().getByMemberIdAndCategoryName(MEMBER_ID, "개발");
       assertThat(article.getTitle()).isEqualTo("수정된 제목");
       assertThat(article.getContent()).isEqualTo("수정된 내용");
@@ -133,9 +134,9 @@ class ArticleWriterTest {
       Article article = createArticle(member);
       Category category = createCategory();
 
-      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동");
+      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상");
 
-      given(articleRepository.findById(ARTICLE_ID)).willReturn(Optional.of(article));
+      given(articleReader.getArticleById(ARTICLE_ID)).willReturn(article);
       given(categoryReader.getByMemberIdAndCategoryName(MEMBER_ID, "일상")).willReturn(category);
 
       // when
@@ -152,9 +153,9 @@ class ArticleWriterTest {
       Member owner = createMember();
       Article article = createArticle(owner);
 
-      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동");
+      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상");
 
-      given(articleRepository.findById(ARTICLE_ID)).willReturn(Optional.of(article));
+      given(articleReader.getArticleById(ARTICLE_ID)).willReturn(article);
 
       // when & then
       assertThatThrownBy(
@@ -170,15 +171,16 @@ class ArticleWriterTest {
     @DisplayName("실패: 존재하지 않는 게시글 수정 시도")
     void update_NonExistentArticle_ThrowsException() {
       // given
-      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상", "홍길동");
+      ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용", "일상");
 
-      given(articleRepository.findById(ARTICLE_ID)).willReturn(Optional.empty());
+      given(articleReader.getArticleById(ARTICLE_ID))
+          .willThrow(new BusinessException(ErrorCode.ARTICLE_NOT_FOUND));
 
       // when & then
       assertThatThrownBy(() -> articleWriter.update(request, MEMBER_ID, IMAGE_URL, ARTICLE_ID))
           .isInstanceOf(BusinessException.class)
           .extracting("code")
-          .isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
+          .isEqualTo(ErrorCode.ARTICLE_NOT_FOUND);
     }
   }
 
@@ -232,7 +234,7 @@ class ArticleWriterTest {
       assertThatThrownBy(() -> articleWriter.delete(ARTICLE_ID, MEMBER_ID))
           .isInstanceOf(BusinessException.class)
           .extracting("code")
-          .isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
+          .isEqualTo(ErrorCode.ARTICLE_NOT_FOUND);
 
       then(articleRepository).should(never()).delete(any());
     }

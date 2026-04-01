@@ -1,6 +1,5 @@
 package com.mylog.common.response;
 
-
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +19,6 @@ public class PageResponse<T> {
     return new PageResponse<>(page);
   }
 
-
   @Builder
   public record Pagination(
       int currentPage,
@@ -28,8 +26,7 @@ public class PageResponse<T> {
       long totalElements,
       int totalPages,
       boolean last,
-      boolean first
-  ) {
+      boolean first) {
     public static Pagination from(Page<?> page) {
       return Pagination.builder()
           .currentPage(page.getNumber() + 1) // 0-based를 1-based로 변환
@@ -41,5 +38,4 @@ public class PageResponse<T> {
           .build();
     }
   }
-
 }

@@ -29,8 +29,4 @@ public record ArticleResponse(
         article.getCreatedAt(),
         article.getUpdatedAt());
   }
-
-  public static ArticleResponse from(Article article) {
-    return new ArticleResponse(article, List.of("친구", "생활", "게임"));
-  }
 }

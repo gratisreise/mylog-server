@@ -9,7 +9,6 @@ import com.mylog.domain.category.service.CategoryReader;
 import com.mylog.domain.category.service.CategoryWriter;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +49,7 @@ public class CategoryController {
   @Operation(summary = "카테고리 단일 조회")
   @GetMapping("/{categoryId}")
   public ResponseEntity<SuccessResponse<CategoryResponse>> getCategory(
-      @PathVariable @Min(1) Long categoryId, @AuthenticatedMember Long memberId) {
+      @PathVariable Long categoryId, @AuthenticatedMember Long memberId) {
     return SuccessResponse.toOk(categoryReader.getCategory(categoryId, memberId));
   }
 
@@ -58,7 +57,7 @@ public class CategoryController {
   @Operation(summary = "카테고리 수정")
   @PutMapping("/{categoryId}")
   public ResponseEntity<SuccessResponse<Void>> updateCategory(
-      @PathVariable @Min(1) Long categoryId,
+      @PathVariable Long categoryId,
       @RequestBody @Valid CategoryUpdateRequest request,
       @AuthenticatedMember Long memberId) {
     categoryWriter.updateCategory(request, categoryId, memberId);
@@ -69,7 +68,7 @@ public class CategoryController {
   @Operation(summary = "카테고리 삭제")
   @DeleteMapping("/{categoryId}")
   public ResponseEntity<SuccessResponse<Void>> deleteCategory(
-      @PathVariable @Min(1) Long categoryId, @AuthenticatedMember Long memberId) {
+      @PathVariable Long categoryId, @AuthenticatedMember Long memberId) {
     categoryWriter.deleteCategory(categoryId, memberId);
     return SuccessResponse.toNoContent();
   }

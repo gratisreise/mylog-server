@@ -1,6 +1,6 @@
 package com.mylog.domain.member.dto;
 
-import com.mylog.common.validation.Password;
+import com.mylog.common.annotations.Password;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 

@@ -23,7 +23,7 @@ public class OAuthServiceFactory {
   }
 
   public OAuthService getOAuthService(OauthProvider provider) {
-    if(!serviceMap.containsKey(provider)){
+    if (!serviceMap.containsKey(provider)) {
       throw BusinessException.error(ErrorCode.OAUTH_UNSUPPORTED_PROVIDER);
     }
     return serviceMap.get(provider);
